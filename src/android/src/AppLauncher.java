@@ -1,10 +1,10 @@
-package org.cagnulen.qdomyoszwift;
+package io.github.brymon68.x22i;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.widget.Toast;
-import org.cagnulen.qdomyoszwift.QLog;
+import io.github.brymon68.x22i.QLog;
 
 public class AppLauncher {
     private static final String TAG = "AppLauncher";

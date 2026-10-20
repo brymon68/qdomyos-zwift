@@ -58,9 +58,9 @@ void bluetooth::debug(const QString &message) {
 
 void bluetooth::connectedAndDiscovered() {
 #ifdef Q_OS_ANDROID
-    const QAndroidJniObject notification = QAndroidJniObject::fromString("QZ is running!");
+    const QAndroidJniObject notification = QAndroidJniObject::fromString("X22i is running");
     QAndroidJniObject::callStaticMethod<void>(
-        "org/cagnulen/qdomyoszwift/NotificationClient", "notify", "(Landroid/content/Context;Ljava/lang/String;)V",
+        "io/github/brymon68/x22i/NotificationClient", "notify", "(Landroid/content/Context;Ljava/lang/String;)V",
         QtAndroid::androidContext().object(), notification.object<jstring>());
 #endif
 }

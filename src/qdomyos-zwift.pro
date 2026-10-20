@@ -1,1 +1,0 @@
-include(qdomyos-zwift.pri)

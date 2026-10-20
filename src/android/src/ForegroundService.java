@@ -1,4 +1,4 @@
-package org.cagnulen.qdomyoszwift;
+package io.github.brymon68.x22i;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -10,7 +10,7 @@ import android.os.Build;
 import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
 import android.content.pm.ServiceInfo;
-import org.cagnulen.qdomyoszwift.QLog;
+import io.github.brymon68.x22i.QLog;
 
 public class ForegroundService extends Service {
 	 public static final String CHANNEL_ID = "ForegroundServiceChannel";
@@ -29,7 +29,7 @@ public class ForegroundService extends Service {
 		  PendingIntent pendingIntent = PendingIntent.getActivity(this,
 		          0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 					Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-					 .setContentTitle("QZ is Running")
+					 .setContentTitle("X22i is running")
 					 .setContentText(input)
 					 .setSmallIcon(R.drawable.icon)
 					 .setContentIntent(pendingIntent)

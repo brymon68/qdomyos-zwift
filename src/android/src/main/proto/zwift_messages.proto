@@ -1,6 +1,6 @@
 syntax="proto3";
 
-package org.cagnulen.qdomyoszwift;
+package io.github.brymon68.x22i;
 
 message PlayerState {
     int32 id = 1;

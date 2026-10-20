@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = src/qdomyos-zwift.pro
+SUBDIRS = src/x22i.pro

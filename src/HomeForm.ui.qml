@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.12
 
 Page {
 
-    title: qsTr("QZ Fitness")
+    title: qsTr("X22i")
     id: page
 
     // VoiceOver accessibility - ignore Page itself, only children are accessible
@@ -164,7 +164,7 @@ Page {
             width: parent.width
             anchors.top: row1.bottom
             anchors.topMargin: 30
-            text: "Waiting for the X22i iFIT service. Open iFIT on this treadmill, then return to X22i Test."
+            text: "Waiting for the X22i iFIT service. Open iFIT on this treadmill, then return to X22i."
             wrapMode: Label.WordWrap
             visible: rootItem.labelHelp
         }

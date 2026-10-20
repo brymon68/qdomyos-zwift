@@ -2,15 +2,6 @@ name: X22i ARM64 builds
 
 on:
   workflow_dispatch:
-    inputs:
-      variant:
-        description: App variant to build
-        type: choice
-        required: true
-        default: test
-        options:
-          - test
-          - baseline
   push:
     branches: [master, 'codex/**']
 
@@ -28,8 +19,6 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     timeout-minutes: 120
-    env:
-      X22I_VARIANT: ${{ github.event_name == 'workflow_dispatch' && inputs.variant || 'test' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,8 +26,7 @@ jobs:
           persist-credentials: false
       - name: Test private settings and APK checks
         run: python3 -m unittest discover -s tools/x22i -p 'test_*.py' -v
-      - name: Prepare test app signing key
-        if: env.X22I_VARIANT == 'test'
+      - name: Prepare app signing key
         env:
           X22I_TEST_KEYSTORE_BASE64: ${{ secrets.X22I_TEST_KEYSTORE_BASE64 }}
           X22I_SIGNING_STORE_PASSWORD: ${{ secrets.X22I_TEST_KEYSTORE_PASSWORD }}
@@ -96,20 +84,20 @@ jobs:
       - name: Install pinned Android packages
         run: |
           "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" 'ndk;21.4.7075529' 'platforms;android-35' 'build-tools;35.0.0'
-      - name: Build fork source
+      - name: Build application source
         env:
           QT_ANDROID_DIR: ${{ runner.temp }}/x22i-qt/Qt/5.15.0/android
           X22I_BUILD_JOBS: '2'
-          X22I_SIGNING_STORE_FILE: ${{ env.X22I_VARIANT == 'test' && format('{0}/x22i-test-signing.p12', runner.temp) || '' }}
-          X22I_SIGNING_STORE_PASSWORD: ${{ env.X22I_VARIANT == 'test' && secrets.X22I_TEST_KEYSTORE_PASSWORD || '' }}
+          X22I_SIGNING_STORE_FILE: ${{ runner.temp }}/x22i-test-signing.p12
+          X22I_SIGNING_STORE_PASSWORD: ${{ secrets.X22I_TEST_KEYSTORE_PASSWORD }}
         run: bash tools/x22i/build_baseline.sh "$RUNNER_TEMP/x22i-build"
-      - name: Remove test app signing key
+      - name: Remove app signing key
         if: always()
         run: rm -f -- "$RUNNER_TEMP/x22i-test-signing.p12"
       - name: Upload APK and provenance
         uses: actions/upload-artifact@v4
         with:
-          name: x22i-${{ env.X22I_VARIANT }}-arm64
+          name: x22i-arm64
           path: ${{ runner.temp }}/x22i-build/artifacts/
           if-no-files-found: error
           retention-days: 30

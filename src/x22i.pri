@@ -1,8 +1,7 @@
 include(../defaults.pri)
 QT += httpserver core-private
-CONFIG += c++17 console optimize_full ltcg qmltypes
-QML_IMPORT_NAME = org.cagnulein.qdomyoszwift
-QML_IMPORT_MAJOR_VERSION = 1
+TARGET = x22i
+CONFIG += c++17 console optimize_full ltcg
 DEFINES += QT_DEPRECATED_WARNINGS IO_UNDER_QT Q_HTTPSERVER
 QMAKE_LFLAGS_RELEASE += -s
 QMAKE_CXXFLAGS += -fno-sized-deallocation

@@ -13,7 +13,7 @@ import zipfile
 
 SCRIPT = Path(__file__).with_name("verify_apk.py")
 LIBRARIES = (
-    "libqdomyos-zwift_arm64-v8a.so", "libc++_shared.so", "libcrypto_1_1.so", "libssl_1_1.so",
+    "libx22i_arm64-v8a.so", "libc++_shared.so", "libcrypto_1_1.so", "libssl_1_1.so",
     "libQt5Core_arm64-v8a.so", "libQt5Gui_arm64-v8a.so", "libQt5Qml_arm64-v8a.so",
     "libQt5Quick_arm64-v8a.so", "libQt5QuickControls2_arm64-v8a.so", "libQt5Widgets_arm64-v8a.so",
     "libQt5Bluetooth_arm64-v8a.so", "libQt5Network_arm64-v8a.so",
@@ -25,7 +25,7 @@ class VerifyApkTests(unittest.TestCase):
     def setUp(self):
         directory = tempfile.TemporaryDirectory(prefix="x22i-apk-test-")
         self.addCleanup(directory.cleanup)
-        self.apk = Path(directory.name) / "baseline.apk"
+        self.apk = Path(directory.name) / "x22i-arm64.apk"
         self.entries = {f"lib/arm64-v8a/{name}": b"synthetic native payload" for name in LIBRARIES}
         self.entries.update({
             "assets/android_rcc_bundle.rcc": b"synthetic QML payload",
@@ -63,6 +63,14 @@ class VerifyApkTests(unittest.TestCase):
         self.assertEqual(result.stdout, "")
         self.assertIn("Missing required APK entry: assets/android_rcc_bundle.rcc", result.stderr)
 
+    def test_wrong_application_library_name(self):
+        payload = self.entries.pop("lib/arm64-v8a/libx22i_arm64-v8a.so")
+        self.entries["lib/arm64-v8a/libother-app_arm64-v8a.so"] = payload
+        result = self.run_verifier()
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(result.stdout, "")
+        self.assertIn("Missing required APK entry: lib/arm64-v8a/libx22i_arm64-v8a.so", result.stderr)
+
     def test_stripped_payload(self):
         result = self.run_verifier("--no-fan", "--no-purchasing")
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -72,7 +80,7 @@ class VerifyApkTests(unittest.TestCase):
                                ("--no-purchasing", "InAppStore")):
             for encoding in ("utf-8", "utf-16-le"):
                 with self.subTest(option=option, encoding=encoding):
-                    self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = marker.encode(encoding)
+                    self.entries["lib/arm64-v8a/libx22i_arm64-v8a.so"] = marker.encode(encoding)
                     result = self.run_verifier(option)
                     self.assertEqual(result.returncode, 1)
                     self.assertIn(marker, result.stderr)
@@ -88,10 +96,10 @@ class VerifyApkTests(unittest.TestCase):
                 self.assertIn(marker, result.stderr)
 
     def test_removed_licensing_code_is_always_rejected_in_native_and_qt_string_encodings(self):
-        for marker in ("http://robertoviola.cloud:4010/?supporter=", "licensePopupVisible", "licenseRequest", "licenseTimeout"):
+        for marker in ("https://example.invalid/?supporter=", "licensePopupVisible", "licenseRequest", "licenseTimeout"):
             for encoding in ("utf-8", "utf-16-le"):
                 with self.subTest(marker=marker, encoding=encoding):
-                    self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = marker.encode(encoding)
+                    self.entries["lib/arm64-v8a/libx22i_arm64-v8a.so"] = marker.encode(encoding)
                     result = self.run_verifier()
                     self.assertEqual(result.returncode, 1)
                     self.assertIn("Removed licensing code remains", result.stderr)
@@ -101,13 +109,13 @@ class VerifyApkTests(unittest.TestCase):
                        "treadmill_follow_wattage"):
             for encoding in ("utf-8", "utf-16-le"):
                 with self.subTest(marker=marker, encoding=encoding):
-                    self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = marker.encode(encoding)
+                    self.entries["lib/arm64-v8a/libx22i_arm64-v8a.so"] = marker.encode(encoding)
                     result = self.run_verifier()
                     self.assertEqual(result.returncode, 1)
                     self.assertIn(marker, result.stderr)
 
     def test_ant_and_watts_services_are_rejected_in_secondary_dex(self):
-        for marker in ("com/dsi/ant/", "org/cagnulen/qdomyoszwift/ChannelService",
+        for marker in ("com/dsi/ant/", "io/github/brymon68/x22i/ChannelService",
                        "WattsServiceGrpc", "ConstantWattsServiceGrpc", "getCurrentWatts",
                        "ResistanceServiceGrpc", "StrokesServiceGrpc", "PaceServiceGrpc", "RpmServiceGrpc"):
             with self.subTest(marker=marker):
@@ -122,7 +130,7 @@ class VerifyApkTests(unittest.TestCase):
                        "WebTranslation", "cryptoKeySettingsProfiles", "profile_open_clicked"):
             for encoding in ("utf-8", "utf-16-le"):
                 with self.subTest(marker=marker, encoding=encoding):
-                    self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = marker.encode(encoding)
+                    self.entries["lib/arm64-v8a/libx22i_arm64-v8a.so"] = marker.encode(encoding)
                     result = self.run_verifier()
                     self.assertEqual(result.returncode, 1)
                     self.assertIn(marker, result.stderr)
@@ -133,7 +141,7 @@ class VerifyApkTests(unittest.TestCase):
                        "preview_workout_points", "clipboard_accept_workout_prompt"):
             for encoding in ("utf-8", "utf-16-le"):
                 with self.subTest(marker=marker, encoding=encoding):
-                    self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = marker.encode(encoding)
+                    self.entries["lib/arm64-v8a/libx22i_arm64-v8a.so"] = marker.encode(encoding)
                     result = self.run_verifier()
                     self.assertEqual(result.returncode, 1)
                     self.assertIn("Removed workout programs, recording and history remains", result.stderr)
@@ -143,7 +151,7 @@ class VerifyApkTests(unittest.TestCase):
         for name in ("ContentHelper", "Shortcuts", "ScreenCaptureService", "QZAdbRemote",
                      "CSafeRowerUSBHID", "Usbserial"):
             with self.subTest(java_class=name):
-                descriptor = "Lorg/cagnulen/qdomyoszwift/" + name + ";"
+                descriptor = "Lio/github/brymon68/x22i/" + name + ";"
                 self.entries["classes3.dex"] = descriptor.encode()
                 result = self.run_verifier()
                 self.assertEqual(result.returncode, 1)
@@ -152,7 +160,7 @@ class VerifyApkTests(unittest.TestCase):
 
     def test_required_ifit_control_and_zwift_metadata_are_allowed(self):
         payload = b"WorkoutServiceGrpc\x00WorkoutState\x00ZwiftWorkoutMetadata\x00"
-        self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = payload
+        self.entries["lib/arm64-v8a/libx22i_arm64-v8a.so"] = payload
         self.entries["classes.dex"] = payload + b"Lcom/ifit/glassos/workout/WorkoutServiceGrpc;"
         result = self.run_verifier("--no-fan", "--no-purchasing")
         self.assertEqual(result.returncode, 0, result.stderr)

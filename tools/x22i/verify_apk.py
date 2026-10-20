@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check the required ARM64 baseline payload without extracting APK assets.
+"""Check the required ARM64 X22i payload without extracting APK assets.
 
 This checks packaging prerequisites, not the complete native dependency closure
 or whether the application starts and connects on the treadmill.
@@ -18,7 +18,7 @@ QT_MODULES = (
     "Network", "HttpServer", "NetworkAuth", "WebSockets",
 )
 REQUIRED_FILES = (
-    "lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so",
+    "lib/arm64-v8a/libx22i_arm64-v8a.so",
     "lib/arm64-v8a/libc++_shared.so",
     "lib/arm64-v8a/libcrypto_1_1.so",
     "lib/arm64-v8a/libssl_1_1.so",
@@ -44,11 +44,11 @@ def verify_apk(path, no_fan=False, no_purchasing=False):
         for name in native_files:
             if name.endswith(".so") and name not in REQUIRED_FILES and entries[name].file_size == 0:
                 errors.append(f"Empty native library: {name}")
-        app_library = "lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"
+        app_library = "lib/arm64-v8a/libx22i_arm64-v8a.so"
         if app_library in entries:
             payload = apk.read(app_library)
             checks = [("Removed licensing code", (
-                "robertoviola.cloud:4010", "licensePopupVisible", "licenseRequest", "licenseTimeout"))]
+                "supporter=", "licensePopupVisible", "licenseRequest", "licenseTimeout"))]
             checks.append(("Removed ANT and treadmill power code", (
                 "antObject", "antbike", "strydrunpowersensor", "getCurrentWatts",
                 "treadmill_follow_wattage")))
@@ -69,10 +69,10 @@ def verify_apk(path, no_fan=False, no_purchasing=False):
                 for marker in markers:
                     if any(marker.encode(encoding) in payload for encoding in ("utf-8", "utf-16-le")):
                         errors.append(feature + " remains in the application library: " + marker)
-        markers = ["com/dsi/ant/", "org/cagnulen/qdomyoszwift/ChannelService",
+        markers = ["com/dsi/ant/", "io/github/brymon68/x22i/ChannelService",
                    "WattsServiceGrpc", "ConstantWattsServiceGrpc", "getCurrentWatts",
                    "ResistanceServiceGrpc", "StrokesServiceGrpc", "PaceServiceGrpc", "RpmServiceGrpc"]
-        markers.extend("org/cagnulen/qdomyoszwift/" + name for name in (
+        markers.extend("io/github/brymon68/x22i/" + name for name in (
             "ContentHelper", "Shortcuts", "ScreenCaptureService", "QZAdbRemote",
             "CSafeRowerUSBHID", "Usbserial",
         ))

@@ -1,108 +1,97 @@
 # X22i source and Android build
 
-This fork owns the application source in `src/` and builds it directly. GitHub Actions checks out this repository once, including its pinned dependency submodules. Application source is no longer downloaded from a separate upstream checkout, and the three feature-removal patches have been deleted.
+The application is **X22i**, package `io.github.brymon68.x22i`. Its source lives in `src/` and builds directly through `x22i.pro`. There is one application and one persistent signer.
 
-The source was aligned with the already tested NordicTrack gRPC revision `8b78e9464c55572b9eaf816128bac905c7150a26` in commit `1f48d493`. This alignment is a separate commit because the fork previously contained a different application revision. Subsequent cleanup uses ordinary source edits and deletions. The upstream revision in [`baseline.json`](../tools/x22i/baseline.json) records historical provenance; the build uses the current fork commit.
+Two direct dependency submodules provide Android OpenSSL and Qt HTTP Server. Qt HTTP Server also has a nested HTTP parser dependency. Initialize them recursively; none contains the application source. Dependency licenses and source notices remain with their code, alongside the application [LICENSE](../LICENSE) and [NOTICE](../NOTICE).
 
 ## Current scope
 
-- Only the X22i equipment driver is built or present under the equipment directories. DIRCON remains as a Zwift transport. Bike, rower, elliptical, other treadmill and accessory drivers, discovery/factory selection, and their tests are deleted.
-- The app connects directly to local iFIT at `localhost`. This hostname is required for TLS verification; the numeric loopback address is rejected by the console's certificate. The dashboard shows speed, incline, pace, distance, elapsed time and heart rate, with Start/Pause/Stop and manual speed/incline controls.
-- UI settings are limited to X22i connection, Zwift terrain, motion and calibration. General settings, user profiles, personal measurements, tile customization, fitness account integrations and email uploads are deleted.
-- Local workout programs, editing, recording, history, charts, FIT/GPX import and export, and their examples and tests are deleted. The floating overlay retains live treadmill metrics and manual controls. iFIT's workout-state protocol remains because it controls and monitors the physical treadmill.
-- Windows and ESP32 support, legacy platform packaging, Bluetooth capture samples and simulator helpers are deleted. Android ARM64 is the supported application target.
-- Locale is fixed to US English. Translation catalogs, translator loading, web translation service, language resources and translation maintenance jobs are deleted.
-- Licensing enforcement, purchasing, fan features, ANT+, power measurement, FTP/energy calculations and related dependencies are deleted. GPL licensing and attribution remain.
-- Zwift authentication and terrain polling, local iFIT gRPC, TLS/protobuf assets, incline calibration and limits, manual controls, Bluetooth and DIRCON remain. Existing saved settings are preserved; obsolete keys are inert.
+The X22i connects to local iFIT using `localhost`, which is required by the console's TLS certificate. It displays speed, incline, pace, distance, elapsed time, and heart rate, with Start/Pause/Stop and manual speed/incline controls. The floating overlay provides the same live metrics and controls. Bluetooth and DIRCON remain available for Zwift on the Mac, with Zwift authentication and terrain polling retained for automatic incline.
 
-Package renaming and physical console validation remain in [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1).
+Other equipment, accessories, Windows and ESP32 support, localization, personal profiles, cloud fitness integrations, trial enforcement, purchasing, fan support, ANT+, power measurement, and local workout programs, editing, recording, charts, history, and FIT/GPX import/export are removed. iFIT's workout-state protocol remains because it controls and monitors the physical treadmill.
 
-## Build from this fork
+## Build from source
 
-The supported target is Android ARM64 (`arm64-v8a`), version **2.21.5 / 1403**. Install Qt Android **5.15.0** with Network Auth, Java **17**, Android platform **35**, build tools **35.0.0**, NDK **21.4.7075529**, and host tools `git`, `make`, `python3`, and `rsync`. Gradle **8.13** is supplied by the repository. Use a dedicated Qt installation: the recipe installs the fork's Qt JARs and Qt HTTP server into it.
+The supported target is Android ARM64 (`arm64-v8a`). Install Qt Android **5.15.0** with Network Auth, Java **17**, Android platform **35**, build tools **35.0.0**, NDK **21.4.7075529**, and host tools `git`, `make`, `python3`, and `rsync`. Gradle **8.13** is supplied by the repository. Use a dedicated Qt installation: the recipe installs the repository's Qt Bluetooth JAR and Qt HTTP Server into it.
 
-On the configured workstation, activate the existing toolchain with:
+On the configured workstation, activate the existing toolchain:
 
 ```sh
 source "$HOME/.local/share/qz-x22i-toolchain/env.sh"
 ```
 
-Otherwise set `QT_ANDROID_DIR`, `ANDROID_SDK_ROOT`, and `JAVA_HOME` to your installed toolchain. From a checkout of **this fork**, initialize dependencies and run:
+Otherwise set `QT_ANDROID_DIR`, `ANDROID_SDK_ROOT`, and `JAVA_HOME` to your installed toolchain. Set `X22I_SIGNING_STORE_FILE` to the persistent private PKCS12 keystore and load `X22I_SIGNING_STORE_PASSWORD` privately. The existing key alias remains `x22i-test`; this is a signing-key identifier, not an application variant. Keep the key and password out of arguments, logs, and committed files.
 
 ```sh
 git submodule update --init --recursive
 python3 -m unittest discover -s tools/x22i -p 'test_*.py' -v
-# Configure X22I_SIGNING_STORE_FILE and X22I_SIGNING_STORE_PASSWORD privately.
 bash tools/x22i/build_baseline.sh /LOCAL/NEW-BUILD-DIRECTORY
 ```
 
-The single argument is a new output directory, which must not already exist. Commit source changes before building: the script requires a clean checkout and exact dependency revisions so artifact provenance identifies its full source. It never installs or launches an APK. Private `secret.h`/`secrets.h` headers are rejected. The Qt HTTP parser compatibility overlay is applied to an output-directory copy of the dependency, keeping the Git checkout clean.
-
-`X22I_VARIANT=test` is the default. It builds **X22i Test**, package `org.cagnulen.qdomyoszwift.x22ibaseline`, using the persistent private PKCS12 key with alias `x22i-test`. Set `X22I_SIGNING_STORE_FILE` to its path and load `X22I_SIGNING_STORE_PASSWORD` through your local secret mechanism; never put the password in arguments, logs, or committed files. The expected signing certificate SHA-256 is `38a1ec468bd45b37b20e7477613b9951aae24c3171673a5a6186abe7f3c7167d`.
-
-The compatibility variant `X22I_VARIANT=baseline` uses the original package `org.cagnulen.qdomyoszwift`, QZ launcher label, and ordinary debug signing. It omits the X22i settings preset. It contains the same application source. Its signer does not match the original installed QZ and it must not be treated as an in-place replacement.
+The output directory must not already exist. The script requires a clean checkout with committed changes and exact dependency revisions. It copies dependency source into the output directory before applying the HTTP parser compatibility overlay. Private authentication headers are rejected. It never installs or launches an APK.
 
 ### GitHub Actions
 
-The [X22i workflow](../.github/workflows/x22i-baseline.yml) is the application's build workflow. It runs on pushes to `master` and `codex/**` branches and on manual dispatch. The inherited platform/release workflows have been deleted. Test signing uses repository secrets `X22I_TEST_KEYSTORE_BASE64` and `X22I_TEST_KEYSTORE_PASSWORD`; CI removes the temporary key afterward.
+The [X22i workflow](../.github/workflows/x22i-baseline.yml) runs on pushes to `master` and `codex/**` and on manual dispatch. Signing uses the existing repository secrets `X22I_TEST_KEYSTORE_BASE64` and `X22I_TEST_KEYSTORE_PASSWORD`; these secret names remain unchanged. CI removes the temporary keystore afterward.
 
 ```sh
-gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref "$(git branch --show-current)" -f variant=test
-gh run download RUN_ID --repo brymon68/qdomyos-zwift --name x22i-test-arm64 --dir /LOCAL/ARTIFACTS
+gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref "$(git branch --show-current)"
+gh run download RUN_ID --repo brymon68/qdomyos-zwift --name x22i-arm64 --dir /LOCAL/ARTIFACTS
 ```
 
-CI runs the Python packaging and configuration checks, native QtCore tests of settings preservation and treadmill protocol behavior, and the standalone C++17 Zwift terrain-incline test before building. Never upload personal settings, credentials, or backups to CI.
+CI runs Python packaging and configuration checks, QtCore tests of settings preservation and treadmill protocol behavior, and a standalone C++17 Zwift terrain-incline test before building. Personal settings, credentials, and backups must stay outside CI.
 
 ### Docker toolchain
 
-The optional image contains the toolchain only. With rootless Docker:
+The optional image contains the toolchain. With rootless Docker:
 
 ```sh
 docker build --platform linux/amd64 -t x22i-toolchain docker/x22i
 docker run --rm --platform linux/amd64 \
-  --mount type=bind,src=/LOCAL/FORK-CHECKOUT,dst=/source \
+  --mount type=bind,src=/LOCAL/SOURCE-CHECKOUT,dst=/source \
   --mount type=bind,src=/LOCAL/BUILD-PARENT,dst=/build \
-  --mount type=bind,src=/PRIVATE/x22i-test.p12,dst=/run/secrets/test.p12,readonly \
+  --mount type=bind,src=/PRIVATE/signing.p12,dst=/run/secrets/signing.p12,readonly \
   --mount type=bind,src=/PRIVATE/keystore-password,dst=/run/secrets/password,readonly \
-  -e X22I_SIGNING_STORE_FILE=/run/secrets/test.p12 \
+  -e X22I_SIGNING_STORE_FILE=/run/secrets/signing.p12 \
   -e X22I_SIGNING_STORE_PASSWORD_FILE=/run/secrets/password \
   x22i-toolchain
 ```
 
-Initialize submodules and commit changes in the mounted fork first. `/LOCAL/BUILD-PARENT/output` must not exist; artifacts appear under `output/artifacts`. The Docker image and containerized APK path have not been runtime-validated; the native workstation build is the locally verified path.
+Initialize submodules and commit changes in the mounted checkout first. `/LOCAL/BUILD-PARENT/output` must not exist; artifacts appear under `output/artifacts`. The containerized build path has not been runtime-validated on the console.
 
 ## Artifacts and verification
 
-`artifacts/` contains the APK, `build-info.json`, signing report, package badging, merged manifest, GPL license, and (for `test`) the bundled defaults header. `source_revision` and `build_recipe_revision` identify the same fork commit. Provenance also records dependency revisions, toolchain versions, APK hash/size, and removed-feature flags. No source patch is required to reconstruct the application.
+`artifacts/` contains `x22i-arm64.apk`, `build-info.json`, the signing report, package badging, merged manifest, defaults header, LICENSE, and NOTICE. Source and recipe provenance identify the same repository commit and record dependency revisions, toolchain versions, and the APK checksum and size.
 
-The build verifies ARM64 Qt/OpenSSL/C++ payloads, QML resources, gRPC assets, package/component/provider identities, and removed-code markers in the native app and all DEX files. The removal checks reject workout editor/history APIs and orphan Android file, shortcut, screen-capture, ADB and USB helper classes while permitting the retained iFIT control protocol. APK signatures are verified separately. These checks establish packaging and source removal; they do not establish runtime connectivity or physical incline behavior.
+The build checks ARM64 Qt/OpenSSL/C++ payloads, QML resources, gRPC assets, package/component/provider identities, and removed-code markers in the native library and all DEX files. It rejects removed workout APIs and orphan Android helpers while permitting iFIT control services. Signatures are verified separately. These checks do not establish console connectivity or physical incline behavior.
 
-ANT+ drivers, services, SDKs, and controls have been deleted. The X22i no longer reads or estimates watts, offers power targets or FTP zones, or records power-derived metrics. Bluetooth/DIRCON treadmill payloads omit watts and reject target-power commands; speed and terrain-incline commands remain supported.
+## Settings
 
-## Settings and installation
+Qt uses organization `brymon68` and application `X22i`, with expected configuration filename `X22i.conf`. Verify the actual storage location on the console before migrating data; the application package, Android data directory, and Qt settings identity all affect where configuration is read.
 
-[`src/x22i_defaults.h`](../src/x22i_defaults.h) supplies reviewed nonsecret settings in test builds before normal settings reads and QML startup. It only writes missing keys. Saved custom values, explicit false/zero/empty values, and private credentials take precedence. It preserves miles, local iFIT, Bluetooth/DIRCON, Zwift auto-incline, gain/calibration, the 0.5% incline step, three-second delay, bounds, and the 31-entry incline lookup table. The general Reset Settings and profile import/export actions are removed.
+[`src/x22i_defaults.h`](../src/x22i_defaults.h) writes missing nonsecret keys before normal settings reads and QML startup. Existing values, including false, zero, empty values, and private credentials, take precedence. Retained defaults cover miles, Bluetooth/DIRCON, Zwift auto-incline, gain/calibration, the 0.5% incline step, delay, bounds, and the incline lookup table. Fresh configurations need private Zwift authentication.
 
-Upgrade X22i Test with the same package and persistent signer. Do not uninstall to work around an update failure or rotate the signing key casually. Fresh installs need private Zwift authentication; credentials are never bundled.
+## Private migration before first launch
 
-For migration, preserve the complete native QSettings configuration. Use [`verify_settings.py`](../tools/x22i/verify_settings.py) privately to compare source and candidate configurations before launch; all original settings must be present and unchanged, including obsolete keys. Startup bookkeeping changes must be reviewed separately. Keep backups, raw configuration, device addresses, and unrestricted startup logs outside Git and artifact uploads.
+Changing the package ID creates separate Android storage. Using the same signer does not copy settings from another package, and the new Qt organization/application identity also changes the settings filename and location. Migration is an explicit deployment step; the build does not perform it.
 
-Before a later installation or launch, obtain current confirmation that the owner is present and the belt is stopped. Back up the installed APK/configuration, verify the candidate's signer and actual data directories, and run only one QZ app. Both packages use the same fitness connection, and shared `Documents/QZ` storage may be selected by configuration. A package rename requires explicit migration; it is not included here.
+1. Discover the application currently used on the console, including its installed package, APK path, signer, and actual QSettings file location. Do not infer the source identity from an old guide or assume its settings path matches the new application.
+2. Back up that installed APK and the complete configuration privately. Preserve the source application and rollback backup throughout migration.
+3. Before installing or launching on the console, obtain current confirmation that the owner is present and the belt is stopped. Verify the candidate package is `io.github.brymon68.x22i` and its signer matches the persistent key.
+4. Install without launching, verify the new Android data directory and intended Qt settings location, and migrate the configuration with the correct owner and permissions. Preserve all source settings, including private authentication and obsolete keys. Read the candidate file back from that verified location before the first launch.
+5. Compare the backup and candidate readback privately:
 
-## Recorded device and build results
+   ```sh
+   python3 tools/x22i/verify_settings.py /PRIVATE/SOURCE-SETTINGS.ini /PRIVATE/CANDIDATE-READBACK.ini
+   ```
 
-The **direct-source build** from fork commit `b708868f34bf9ea43527b25310a3b2c9db39a26d` passed on October 20, 2026. It built native C++, Java, and protobuf from this checkout, then passed ARM64 payload, manifest, removed-feature, and v1/v2 signature checks. The persistent signer, defaults header, and GPL license matched. All 40 Python tests, modified QML syntax checks, and catalog count checks passed. The checkout remained clean after building.
+   The comparison reports counts only. Require zero missing and zero changed settings. Added defaults are allowed. Resolve discrepancies before launching.
+6. Keep the source application stopped while validating X22i so only one application controls the treadmill connection. Confirm live telemetry, the active Mac transport, and terrain incline separately from build checks. Review any post-launch settings changes against the backup.
 
-The resulting APK is **50,665,826 bytes**, SHA-256 **`4615f4bb88f754ef5852739be7c47fba20385a37f70a82fa5a3ab4480b1b830f`**. Its source and recipe provenance both identify the fork commit, with no source patch. It has not been installed. A comparison of 1,775 source files with the previous stripped build found no differences beyond the separately reviewed build-variant integration files.
-
-On October 20, 2026, the separate baseline was installed from [CI run 39365509040, attempt 2](https://github.com/brymon68/qdomyos-zwift/actions/runs/39365509040/attempts/2). All **861 saved settings** were migrated with exact readback. The owner then confirmed auto-incline and the overall app were working. The original QZ installation and private rollback backup remain available.
-
-An earlier update was subsequently installed in place with authorization. All **929 saved settings** were preserved before launch; afterward only the launch counter, internal web-server port, and template-ID ordering changed. Its SHA-256 is `a4b5707a1fb99523e53ef52dc00b0091c7d09bd0ec9573eeefec1dc7881d4211`. No new physical incline regression result was claimed.
-
-The prior patch-based stripped build at recipe `a807b591fd2d12844e11da97c657d0d73afe908a` passed a full native/Java/protobuf build, 40 Python tests, QML syntax checks, payload/manifest checks, removed-feature checks, and v1/v2 signatures. Size: **50,665,957 bytes**; SHA-256: `c46229cd57c0302de1e20212a4ac5dc85fdc18b5ee0b198ac32094c6a1b3b46a`. It was not installed. This is the comparison artifact for the direct-source build.
+Do not commit raw configuration, authentication data, private backups, or unrestricted console logs. Later updates to `io.github.brymon68.x22i` use the same package and persistent signing key; do not uninstall to work around an update failure.
 
 ## Retained behavior and limits
 
-Automatic incline remains Zwift authentication/polling and decode → grade gain/offset → `treadmill::changeInclination()` → NordicTrack update → JNI → `InclineService.SetIncline`. The treadmill step applies configured bounds, correction, difficulty, and rounding. Required gRPC 1.63.0/protobuf-lite 3.25.3 generation and shared TLS/session assets remain. No automatic speed or negative-incline behavior was added.
+Automatic incline follows Zwift authentication/polling and decode, grade gain/offset, `treadmill::changeInclination()`, the X22i update, JNI, and `InclineService.SetIncline`. Existing bounds, correction, difficulty, and rounding remain. Required gRPC/protobuf generation and TLS/session assets remain. No automatic speed behavior was added.
 
-Existing control limitations remain: C++ converts an absolute target to a delta and Java later adds it to its current metric; blocking RPCs share an executor without deadlines; stale metrics and queued commands lack freshness expiry; and initialization/command acknowledgments are incomplete. Legacy UDP/ADB equipment handling has been removed. These are follow-up concerns, not fixes claimed by this removal. Hardware checks of downhill clamping, stop/pause, restart/reconnect, and the active Mac transport remain separate from build verification.
+Existing control limitations include target-to-delta conversion across C++ and Java, blocking RPCs without deadlines, and incomplete stale-metric and acknowledgment handling. Hardware checks of downhill clamping, stop/pause, restart/reconnect, and the active Mac transport remain separate from build verification.

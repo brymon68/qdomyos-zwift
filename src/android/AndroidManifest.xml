@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<manifest package="org.cagnulen.qdomyoszwift" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="2.21.5" android:versionCode="1403" android:installLocation="auto">
+<manifest package="io.github.brymon68.x22i" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="2.21.5" android:versionCode="1403" android:installLocation="auto">
 <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.
           Remove the comment if you do not require these default permissions. -->
 			<!-- %%INSERT_PERMISSIONS -->
@@ -9,8 +9,8 @@
 			<!-- %%INSERT_FEATURES -->
 
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
-	 <application android:hardwareAccelerated="true" android:debuggable="false" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="${x22iApplicationLabel}" android:extractNativeLibs="true" android:icon="@drawable/icon" android:usesCleartextTraffic="true" android:networkSecurityConfig="@xml/network_security_config">
-             <activity android:theme="@style/Theme.AppCompat" android:exported="true" android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density" android:name="org.cagnulen.qdomyoszwift.CustomQtActivity" android:label="${x22iLauncherLabel}" android:launchMode="singleTop">
+	 <application android:hardwareAccelerated="true" android:debuggable="false" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="X22i" android:extractNativeLibs="true" android:icon="@drawable/icon" android:usesCleartextTraffic="true" android:networkSecurityConfig="@xml/network_security_config">
+             <activity android:theme="@style/Theme.AppCompat" android:exported="true" android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density" android:name="io.github.brymon68.x22i.CustomQtActivity" android:label="X22i" android:launchMode="singleTop">
 		      <intent-filter>
 				    <action android:name="android.intent.action.MAIN"/>
 					 <category android:name="android.intent.category.LAUNCHER"/>
@@ -18,7 +18,7 @@
 					<!-- Application arguments -->
 				<!-- meta-data android:name="android.app.arguments" android:value="arg1 arg2 arg3"/ -->
 				<!-- Application arguments -->
-				<meta-data android:name="android.app.lib_name" android:value="qdomyos-zwift"/>
+				<meta-data android:name="android.app.lib_name" android:value="x22i"/>
 				<meta-data android:name="android.app.qt_sources_resource_id" android:resource="@array/qt_sources"/>
 				<meta-data android:name="android.app.repository" android:value="default"/>
 				<meta-data android:name="android.app.qt_libs_resource_id" android:resource="@array/qt_libs"/>

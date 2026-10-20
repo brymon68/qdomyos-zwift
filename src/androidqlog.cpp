@@ -4,7 +4,7 @@
 #include <jni.h>
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_cagnulen_qdomyoszwift_QLog_sendToQt(JNIEnv *env, jclass clazz,
+Java_io_github_brymon68_x22i_QLog_sendToQt(JNIEnv *env, jclass clazz,
                                              jint level, jstring tag, jstring message) {
     const char *tagChars = env->GetStringUTFChars(tag, nullptr);
     const char *msgChars = env->GetStringUTFChars(message, nullptr);

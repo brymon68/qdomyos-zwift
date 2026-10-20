@@ -77,12 +77,12 @@ void ZwiftIncline::poll() {
         return;
     env->SetByteArrayRegion(bytes, 0, payload.size(), reinterpret_cast<const jbyte *>(payload.constData()));
     QAndroidJniObject::callStaticMethod<void>(
-        "org/cagnulen/qdomyoszwift/ZwiftAPI", "zwift_api_decodemessage_player", "([B)V", bytes);
+        "io/github/brymon68/x22i/ZwiftAPI", "zwift_api_decodemessage_player", "([B)V", bytes);
     env->DeleteLocalRef(bytes);
     const float altitude =
-        QAndroidJniObject::callStaticMethod<float>("org/cagnulen/qdomyoszwift/ZwiftAPI", "getAltitude", "()F");
+        QAndroidJniObject::callStaticMethod<float>("io/github/brymon68/x22i/ZwiftAPI", "getAltitude", "()F");
     const float distance =
-        QAndroidJniObject::callStaticMethod<float>("org/cagnulen/qdomyoszwift/ZwiftAPI", "getDistance", "()F");
+        QAndroidJniObject::callStaticMethod<float>("io/github/brymon68/x22i/ZwiftAPI", "getDistance", "()F");
 
     const bool enabled =
         settings.value(QZSettings::zwift_api_autoinclination, QZSettings::default_zwift_api_autoinclination).toBool();
