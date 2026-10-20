@@ -390,7 +390,7 @@ ApplicationWindow {
             id: toolButtonChart
             icon.source: ( "icons/icons/chart.png" )
             onClicked: { rootItem.chartFooterVisible = !rootItem.chartFooterVisible }
-            anchors.right: toolButtonLockTiles.left
+            anchors.right: toolButtonAutoResistance.left
             visible: rootItem.chartIconVisible
         }
 
