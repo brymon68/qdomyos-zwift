@@ -1,4 +1,3 @@
-src/qdomyos-zwift.pro.user
 
 .idea/
 
@@ -10,7 +9,7 @@ src/*.o
 src/moc_*
 src/qrc_*
 
-src/qdomyos-zwift
+src/x22i
 
 src/ui_charts.h
 src/ui_mainwindow.h
@@ -27,7 +26,6 @@ secrets.h
 *.swo
 *.swp
 
-build-qdomyos-zwift-Android_Qt_5_15_2_Clang_Multi_Abi-Debug/*
 **/node_modules/*
 
 
@@ -37,15 +35,14 @@ google_test/*
 
 # Qt-es
 *.pro.user
+*.pro.user.*
 *build-*
 src/inner_templates/googlemaps/cesium-key.js
 src/inner_templates/googlemaps/cesium.js
 cesium.js
 *.autosave
 .vscode/settings.json
-/tst/Devices/.vs
 src/inner_templates/googlemaps/cesium-key.js
-src/qdomyos-zwift.pro.user.49de507
 /.vs
 src/android/.gradle/
 src/android/local.properties

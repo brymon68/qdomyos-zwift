@@ -40,7 +40,7 @@ void metric::setValue(double v, bool applyGainAndOffset) {
         }
     }
 
-    // it has to be here, even if the value is the same, due to https://github.com/cagnulein/qdomyos-zwift/issues/1325
+    // Refresh the sample timestamp even when the measured value is unchanged.
     m_lastChanged = now;
 
     m_value = v;

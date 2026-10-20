@@ -82,7 +82,7 @@ void nordictrackifitadbtreadmill::update() {
             if (isPaused()) {
                 // Resume from pause
                 QAndroidJniObject::callStaticMethod<void>(
-                    "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+                    "io/github/brymon68/x22i/GrpcTreadmillService",
                     "resumeWorkout",
                     "()V"
                 );
@@ -90,7 +90,7 @@ void nordictrackifitadbtreadmill::update() {
             } else {
                 // Start new workout
                 QAndroidJniObject::callStaticMethod<void>(
-                    "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+                    "io/github/brymon68/x22i/GrpcTreadmillService",
                     "startWorkout",
                     "()V"
                 );
@@ -112,7 +112,7 @@ void nordictrackifitadbtreadmill::update() {
         // Stop workout via gRPC WorkoutService (only if not originated from gRPC)
         if (grpcInitialized && requestStopOrigin != ORIGIN_GRPC) {
             QAndroidJniObject::callStaticMethod<void>(
-                "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+                "io/github/brymon68/x22i/GrpcTreadmillService",
                 "stopWorkout",
                 "()V"
             );
@@ -133,7 +133,7 @@ void nordictrackifitadbtreadmill::update() {
         // Pause workout via gRPC WorkoutService (only if not originated from gRPC)
         if (grpcInitialized && requestPauseOrigin != ORIGIN_GRPC) {
             QAndroidJniObject::callStaticMethod<void>(
-                "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+                "io/github/brymon68/x22i/GrpcTreadmillService",
                 "pauseWorkout",
                 "()V"
             );
@@ -200,7 +200,7 @@ void nordictrackifitadbtreadmill::update() {
         // Get next state transition from queue (returns null if queue empty)
         QAndroidJniEnvironment env;
         QAndroidJniObject result = QAndroidJniObject::callStaticObjectMethod(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "getNextWorkoutStateChange",
             "()[I"
         );
@@ -223,22 +223,22 @@ void nordictrackifitadbtreadmill::update() {
 
                 // If workout started (IDLE/PAUSED -> RUNNING)
                 if (currentWorkoutState == 3 && (previousState == 1 || previousState == 4)) {
-                    emit debug("Workout started in iFit app - auto-starting QZ recording");
+                    emit debug("Workout started in iFit app - synchronizing X22i start state");
                     if (homeform::singleton()) {
                         const bool qzPausedOrStopped = isPaused();
-                        // If starting from IDLE and QZ is on complete screen (stopped), close it first
+                        // If starting from IDLE and X22i is on complete screen (stopped), close it first
                         if (previousState == 1 && qzPausedOrStopped) {
                             emit debug("Closing complete screen before starting new workout");
                         }
 
-                        // Only call Start() if QZ is not already running (to avoid toggling pause)
+                        // Only call Start() if X22i is not already running (to avoid toggling pause)
                         if (qzPausedOrStopped) {
                             requestStartOrigin = ORIGIN_GRPC;
                             requestStopOrigin = ORIGIN_GRPC;
                             requestPauseOrigin = ORIGIN_GRPC;
                             homeform::singleton()->Start();
                         } else {
-                            emit debug("QZ already running, not calling Start() again");
+                            emit debug("X22i already running, not calling Start() again");
                         }
                     }
                 }
@@ -253,7 +253,7 @@ void nordictrackifitadbtreadmill::update() {
                 }
                 // If workout paused (RUNNING -> PAUSED)
                 else if (currentWorkoutState == 4 && previousState == 3) {
-                    emit debug("Workout paused in iFit app - auto-pausing QZ recording");
+                    emit debug("Workout paused in iFit app - synchronizing X22i pause state");
                     if (homeform::singleton()) {
                         requestStopOrigin = ORIGIN_GRPC;
                         requestPauseOrigin = ORIGIN_GRPC;
@@ -293,7 +293,7 @@ void nordictrackifitadbtreadmill::initializeGrpcService() {
             
             // Set Android context first
             QAndroidJniObject::callStaticMethod<void>(
-                "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+                "io/github/brymon68/x22i/GrpcTreadmillService",
                 "setContext",
                 "(Landroid/content/Context;)V",
                 QtAndroid::androidContext().object()
@@ -302,7 +302,7 @@ void nordictrackifitadbtreadmill::initializeGrpcService() {
             // Now initialize the service with the local hostname.
             QAndroidJniObject hostObj = QAndroidJniObject::fromString(host);
             QAndroidJniObject::callStaticMethod<void>(
-                "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+                "io/github/brymon68/x22i/GrpcTreadmillService",
                 "initialize",
                 "(Ljava/lang/String;)V",
                 hostObj.object<jstring>()
@@ -321,7 +321,7 @@ void nordictrackifitadbtreadmill::startGrpcMetricsUpdates() {
 #ifdef Q_OS_ANDROID
     if (grpcInitialized) {
         QAndroidJniObject::callStaticMethod<void>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "startMetricsUpdates",
             "()V"
         );
@@ -334,7 +334,7 @@ void nordictrackifitadbtreadmill::stopGrpcMetricsUpdates() {
 #ifdef Q_OS_ANDROID
     if (grpcInitialized) {
         QAndroidJniObject::callStaticMethod<void>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "stopMetricsUpdates",
             "()V"
         );
@@ -347,7 +347,7 @@ double nordictrackifitadbtreadmill::getGrpcSpeed() {
 #ifdef Q_OS_ANDROID
     if (grpcInitialized) {
         return QAndroidJniObject::callStaticMethod<jdouble>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "getCurrentSpeed",
             "()D"
         );
@@ -360,7 +360,7 @@ double nordictrackifitadbtreadmill::getGrpcIncline() {
 #ifdef Q_OS_ANDROID
     if (grpcInitialized) {
         return QAndroidJniObject::callStaticMethod<jdouble>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "getCurrentIncline",
             "()D"
         );
@@ -373,7 +373,7 @@ double nordictrackifitadbtreadmill::getGrpcCadence() {
 #ifdef Q_OS_ANDROID
     if (grpcInitialized) {
         return QAndroidJniObject::callStaticMethod<jdouble>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "getCurrentCadence",
             "()D"
         );
@@ -386,7 +386,7 @@ double nordictrackifitadbtreadmill::getGrpcHeartRate() {
 #ifdef Q_OS_ANDROID
     if (grpcInitialized) {
         return QAndroidJniObject::callStaticMethod<jdouble>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "getCurrentHeartRate",
             "()D"
         );
@@ -399,7 +399,7 @@ void nordictrackifitadbtreadmill::setGrpcSpeed(double speed) {
 #ifdef Q_OS_ANDROID
     if (grpcInitialized) {
         QAndroidJniObject::callStaticMethod<void>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "adjustSpeed",
             "(D)V",
             speed - Speed.value()
@@ -413,7 +413,7 @@ void nordictrackifitadbtreadmill::setGrpcIncline(double incline) {
 #ifdef Q_OS_ANDROID
     if (grpcInitialized) {
         QAndroidJniObject::callStaticMethod<void>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "adjustIncline",
             "(D)V",
             incline - Inclination.value()
@@ -428,26 +428,26 @@ void nordictrackifitadbtreadmill::startGrpcWorkoutStateMonitoring() {
     emit debug(QString("startGrpcWorkoutStateMonitoring() called, grpcInitialized=%1").arg(grpcInitialized));
     if (grpcInitialized) {
         QAndroidJniObject::callStaticMethod<void>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "startWorkoutStateMonitoring",
             "()V"
         );
         emit debug(QString("Started gRPC workout state monitoring"));
 
-        // Synchronize QZ with current iFit workout state
+        // Synchronize X22i with current iFit workout state
         int initialState = getGrpcWorkoutState();
         emit debug(QString("Initial workout state at startup: %1").arg(initialState));
 
         if (initialState == 3) { // RUNNING
-            emit debug("iFit workout already running - QZ already started by default, no action needed");
+            emit debug("iFit workout already running - X22i already started by default, no action needed");
         } else if (initialState == 4) { // PAUSED
-            emit debug("iFit workout paused - auto-pausing QZ recording");
+            emit debug("iFit workout paused - synchronizing X22i pause state");
             if (homeform::singleton()) {
                 requestPauseOrigin = ORIGIN_GRPC;
-                homeform::singleton()->Start(); // This will pause since QZ is already running
+                homeform::singleton()->Start(); // This will pause since X22i is already running
             }
         } else if (initialState == 1 || initialState == 5) { // IDLE or RESULTS
-            emit debug("iFit workout stopped/idle - auto-stopping QZ recording");
+            emit debug("iFit workout stopped/idle - synchronizing X22i stop state");
             if (homeform::singleton()) {
                 requestStopOrigin = ORIGIN_GRPC;
                 homeform::singleton()->Stop();
@@ -466,7 +466,7 @@ int nordictrackifitadbtreadmill::getGrpcWorkoutState() {
 #ifdef Q_OS_ANDROID
     if (grpcInitialized) {
         return QAndroidJniObject::callStaticMethod<jint>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+            "io/github/brymon68/x22i/GrpcTreadmillService",
             "getWorkoutState",
             "()I"
         );

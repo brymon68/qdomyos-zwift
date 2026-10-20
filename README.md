@@ -1,29 +1,31 @@
 # X22i Zwift bridge
 
-An Android fork of [QDomyos-Zwift](https://github.com/cagnulein/qdomyos-zwift) for a NordicTrack X22i console, with Zwift running on a Mac. It reads treadmill telemetry through the local iFIT gRPC service and preserves automatic incline following Zwift terrain. iFIT remains required.
+**X22i** is an Android application for a NordicTrack X22i console, with package ID `io.github.brymon68.x22i`. It reads treadmill telemetry through the local iFIT gRPC service and follows Zwift terrain while Zwift runs on a Mac. iFIT remains required.
 
-The application source lives in this repository's `src/`. The Android build compiles this checkout directly. The app connects only to the X22i, uses US English, and shows speed, incline, pace, distance, elapsed time, and heart rate. Other equipment drivers, localization catalogs, user profiles, ANT+, power measurement, cloud fitness accounts, and local workout planning, recording, history, and file import/export are removed. Zwift authentication remains for terrain incline. Package renaming and console validation remain in [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1).
+The app shows speed, incline, pace, distance, elapsed time, and heart rate, with Start/Pause/Stop and manual speed/incline controls. Bluetooth and DIRCON connect it to Zwift. The source in `src/` builds directly from this repository. The app uses US English and contains no other equipment drivers, ANT+, power measurement, user profiles, cloud fitness accounts, or local workout planning, recording, history, and file import/export. Zwift authentication remains for terrain incline.
 
 ## Build
 
-Use the **X22i ARM64 builds** GitHub Actions workflow with variant `test`, or build locally with the documented Qt/Android toolchain:
+Use the **X22i ARM64 builds** GitHub Actions workflow, or build locally with the documented Qt/Android toolchain:
 
 ```sh
 git submodule update --init --recursive
-# Configure the toolchain and private test signing environment first.
+# Configure the toolchain and private signing environment first.
 bash tools/x22i/build_baseline.sh /LOCAL/NEW-BUILD-DIRECTORY
 ```
 
-Builds require committed source and produce an APK plus commit, checksum, manifest, and signing records. See [build and configuration instructions](docs/x22i-baseline.md) for toolchain versions, signing setup, and Docker usage.
+The single application builds from `x22i.pro` and produces `artifacts/x22i-arm64.apk` plus commit, checksum, manifest, and signing records. Builds require committed source. See the [build and configuration guide](docs/x22i-baseline.md) for dependencies, signing, CI, and Docker instructions.
 
-## Configuration and updates
+## Configuration and migration
 
-The current app is **X22i Test**, package `org.cagnulen.qdomyoszwift.x22ibaseline`. Update it in place with the same signing key to preserve its configuration. Do not uninstall to resolve an update failure.
+The new package has separate Android storage. Its Qt settings identity is organization `brymon68`, application `X22i`. Existing configuration does not transfer automatically from an earlier application identity.
 
-The app supplies missing nonsecret X22i settings, including miles and the accepted incline calibration. The treadmill connection uses local iFIT at `localhost`. Existing saved values take precedence. A fresh install still needs private Zwift authentication. Preserve both Bluetooth and DIRCON until the active Mac connection is established. If speed connects but incline does not follow terrain, verify the saved Zwift authentication and auto-incline configuration first.
+Before the first launch, perform the [private migration procedure](docs/x22i-baseline.md#private-migration-before-first-launch): discover the installed source package and its actual configuration path on the console, preserve its APK and settings backup, copy settings to the verified new location, and compare the readback with `verify_settings.py`. Keep authentication data and backups outside Git and build artifacts.
 
-Keep credentials and configuration backups outside Git and build artifacts. The build never installs or launches the app.
+The app supplies missing nonsecret settings, including miles and incline calibration; saved values take precedence. It connects to local iFIT using `localhost` for TLS verification. Preserve both Bluetooth and DIRCON until the active Mac connection is established. Future updates to `io.github.brymon68.x22i` must use the same persistent signing key.
+
+The build never installs or launches the app. Development and console validation are tracked in [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1).
 
 ## License
 
-Derived from QDomyos-Zwift by Roberto Viola and contributors. The [GPL-3.0 license](LICENSE) and source attribution are retained. This project is not affiliated with NordicTrack, iFIT, or Zwift.
+See the [GPL-3.0 license](LICENSE) and [source attribution](NOTICE). This project is not affiliated with NordicTrack, iFIT, or Zwift.

@@ -312,7 +312,7 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
             pars.setInterval(100, 100);
 
 #ifdef Q_OS_ANDROID
-        QAndroidJniObject::callStaticMethod<void>("org/cagnulen/qdomyoszwift/BleAdvertiser",
+        QAndroidJniObject::callStaticMethod<void>("io/github/brymon68/x22i/BleAdvertiser",
                                                  "startAdvertisingTreadmill",
                                                  "(Landroid/content/Context;)V",
                                                  QtAndroid::androidContext().object());
@@ -412,7 +412,7 @@ void virtualtreadmill::reconnect() {
 
     if (serviceFTMS || serviceRSC || serviceWahoo) {
 #ifdef Q_OS_ANDROID
-        QAndroidJniObject::callStaticMethod<void>("org/cagnulen/qdomyoszwift/BleAdvertiser",
+        QAndroidJniObject::callStaticMethod<void>("io/github/brymon68/x22i/BleAdvertiser",
                                                  "startAdvertisingTreadmill",
                                                  "(Landroid/content/Context;)V",
                                                  QtAndroid::androidContext().object());

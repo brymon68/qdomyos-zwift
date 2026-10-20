@@ -1,41 +1,28 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a problem with the X22i Android app
 title: "[BUG]"
 labels: bug
-assignees: cagnulein
-
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+Describe the observed behavior and what you expected.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Build and setup**
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+- App version and source commit, if known:
+- X22i console Android and iFIT versions:
+- Zwift version on the Mac:
+- Connection to Zwift: Bluetooth, DIRCON, or not connected:
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Steps to reproduce**
+List the actions that led to the problem, including the affected control or metric.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Version [e.g. 22]
+**Treadmill state**
+Describe whether the belt was stopped, running, or paused, and whether live speed and incline were updating.
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Version [e.g. 22]
+**Diagnostics**
+Attach relevant log excerpts or screenshots. Remove credentials and private configuration values.
 
-**Append a debug log**
-
- Follow this guide https://github.com/cagnulein/qdomyos-zwift/wiki/How-do-i-get-the-debug-log-in-case-something-doesn't-work%3F
-  
-  
 **Additional context**
-Add any other context about the problem here.
+Include any recent app or console updates. The supported build and configuration are documented in `docs/x22i-baseline.md`.

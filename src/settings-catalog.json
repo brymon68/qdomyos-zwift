@@ -1,7 +1,6 @@
 {
-  "$schema": "https://qdomyos-zwift.local/settings-catalog.schema.json",
   "schemaVersion": 1,
-  "format": "qdomyos-zwift-settings-catalog",
+  "format": "x22i-settings-catalog",
   "settingCount": 56,
   "pages": [
     {

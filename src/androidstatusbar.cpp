@@ -32,7 +32,7 @@ void AndroidStatusBar::registerQmlType()
 int AndroidStatusBar::apiLevel() const
 {
 #ifdef Q_OS_ANDROID
-    return QAndroidJniObject::callStaticMethod<jint>("org/cagnulen/qdomyoszwift/CustomQtActivity", "getApiLevel", "()I");
+    return QAndroidJniObject::callStaticMethod<jint>("io/github/brymon68/x22i/CustomQtActivity", "getApiLevel", "()I");
 #else
     return 0;
 #endif
@@ -63,7 +63,7 @@ void AndroidStatusBar::onInsetsChanged(int top, int bottom, int left, int right,
 #ifdef Q_OS_ANDROID
 // JNI method with standard naming convention
 extern "C" JNIEXPORT void JNICALL
-Java_org_cagnulen_qdomyoszwift_CustomQtActivity_onInsetsChanged(JNIEnv *env, jobject thiz, jint top,
+Java_io_github_brymon68_x22i_CustomQtActivity_onInsetsChanged(JNIEnv *env, jobject thiz, jint top,
                                                                     jint bottom, jint left, jint right,
                                                                     jint waterfallTop, jint waterfallBottom,
                                                                     jint waterfallLeft, jint waterfallRight)

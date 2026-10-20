@@ -1,4 +1,4 @@
-package org.cagnulen.qdomyoszwift;
+package io.github.brymon68.x22i;
 
 import android.app.ActivityManager;
 import android.app.Activity;
@@ -17,7 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.os.Looper;
 import android.os.Handler;
-import org.cagnulen.qdomyoszwift.QLog;
+import io.github.brymon68.x22i.QLog;
 import android.content.BroadcastReceiver;
 import android.content.ContextWrapper;
 import android.content.IntentFilter;

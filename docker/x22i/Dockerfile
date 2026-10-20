@@ -18,7 +18,6 @@ ENV JAVA_HOME=/opt/java \
     ANDROID_NDK=/opt/android-sdk/ndk/21.4.7075529 \
     QT_ANDROID_DIR=/opt/qt/5.15.0/android \
     X22I_BUILD_JOBS=4 \
-    X22I_VARIANT=test \
     LANG=C.UTF-8
 ENV PATH="${QT_ANDROID_DIR}/bin:${JAVA_HOME}/bin:${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${PATH}"
 
@@ -48,7 +47,7 @@ RUN python3 -m pip install --no-cache-dir aqtinstall==3.3.0 py7zr==1.0.0 \
     && python3 -m aqt install-qt linux android 5.15.0 android \
         --outputdir /opt/qt --modules qtnetworkauth
 
-# Mount this fork checkout at /source and the output parent at /build.
+# Mount the repository checkout at /source and the output parent at /build.
 # Container root maps to the rootless host user.
 COPY entrypoint.sh /usr/local/bin/x22i-entrypoint
 WORKDIR /build

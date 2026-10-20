@@ -11,8 +11,9 @@ from pathlib import Path
 import sys
 
 
-ORIGINAL_PACKAGE = "org.cagnulen.qdomyoszwift"
-MAIN_ACTIVITY = ORIGINAL_PACKAGE + ".CustomQtActivity"
+APP_PACKAGE = "io.github.brymon68.x22i"
+APP_LABEL = "X22i"
+MAIN_ACTIVITY = APP_PACKAGE + ".CustomQtActivity"
 QT_APPLICATION = "org.qtproject.qt5.android.bindings.QtApplication"
 COMPONENT_TYPES = ("activity", "service", "receiver", "provider", "activity-alias")
 
@@ -52,12 +53,12 @@ def parse_tree(text):
     return roots[0]
 
 
-def verify_manifest(text, expected_package, expected_label):
+def verify_manifest(text):
     manifest = parse_tree(text)
     package = manifest["attributes"].get("package")
     errors = []
-    if package != expected_package:
-        errors.append(f"Expected package {expected_package}; found {package!r}")
+    if package != APP_PACKAGE:
+        errors.append(f"Expected package {APP_PACKAGE}; found {package!r}")
     applications = [node for node in manifest["children"] if node["tag"] == "application"]
     if len(applications) != 1:
         raise ValueError("Expected one application element")
@@ -66,9 +67,8 @@ def verify_manifest(text, expected_package, expected_label):
     application_label = application["attributes"].get("android:label")
     if application_name != QT_APPLICATION:
         errors.append(f"Expected application class {QT_APPLICATION}; found {application_name!r}")
-    expected_application_label = "qdomyos-zwift" if expected_package == ORIGINAL_PACKAGE else expected_label
-    if application_label != expected_application_label:
-        errors.append(f"Expected application label {expected_application_label!r}; found {application_label!r}")
+    if application_label != APP_LABEL:
+        errors.append(f"Expected application label {APP_LABEL!r}; found {application_label!r}")
 
     components = []
     launchers = []
@@ -85,21 +85,21 @@ def verify_manifest(text, expected_package, expected_label):
             target = attributes.get("android:targetActivity", "")
             component["targetActivity"] = target
             class_names.append(("targetActivity", target))
-            if not target.startswith(ORIGINAL_PACKAGE + "."):
-                errors.append(f"Activity alias target must retain original Java namespace: {target!r}")
+            if not target.startswith(APP_PACKAGE + "."):
+                errors.append(f"Activity alias target must belong to {APP_PACKAGE}: {target!r}")
         for attribute, class_name in class_names:
             parts = class_name.split(".")
             if len(parts) < 2 or not all(part.replace("$", "_").isidentifier() for part in parts):
                 errors.append(f"Component {kind} {attribute} must be fully qualified: {class_name!r}")
-            if expected_package != ORIGINAL_PACKAGE and (class_name == expected_package or class_name.startswith(expected_package + ".")):
-                errors.append(f"Component class incorrectly uses test application ID: {class_name}")
+            if not class_name.startswith((APP_PACKAGE + ".", "org.qtproject.qt5.", "androidx.")):
+                errors.append(f"Unexpected component namespace: {class_name!r}")
 
         if kind == "provider":
             provider_authorities = attributes.get("android:authorities", "").split(";")
             for authority in provider_authorities:
                 authority = authority.strip()
-                if not authority or not (authority == expected_package or authority.startswith(expected_package + ".")):
-                    errors.append(f"Provider authority must belong to {expected_package}: {authority!r}")
+                if not authority or not (authority == APP_PACKAGE or authority.startswith(APP_PACKAGE + ".")):
+                    errors.append(f"Provider authority must belong to {APP_PACKAGE}: {authority!r}")
                 if authority in authorities:
                     errors.append(f"Duplicate provider authority: {authority!r}")
                 authorities.add(authority)
@@ -120,8 +120,15 @@ def verify_manifest(text, expected_package, expected_label):
         if launcher["tag"] != "activity" or launcher["attributes"].get("android:name") != MAIN_ACTIVITY:
             errors.append(f"Expected launcher activity {MAIN_ACTIVITY}")
         label = launcher["attributes"].get("android:label")
-        if label != expected_label:
-            errors.append(f"Expected launcher label {expected_label!r}; found {label!r}")
+        if label != APP_LABEL:
+            errors.append(f"Expected launcher label {APP_LABEL!r}; found {label!r}")
+        libraries = [
+            child["attributes"].get("android:value")
+            for child in launcher["children"]
+            if child["tag"] == "meta-data" and child["attributes"].get("android:name") == "android.app.lib_name"
+        ]
+        if libraries != ["x22i"]:
+            errors.append(f"Expected launcher native library x22i; found {libraries!r}")
     if errors:
         raise ValueError("\n".join(errors))
     return {
@@ -129,7 +136,7 @@ def verify_manifest(text, expected_package, expected_label):
         "application": application_name,
         "application_label": application_label,
         "launcher_activity": MAIN_ACTIVITY,
-        "launcher_label": expected_label,
+        "launcher_label": APP_LABEL,
         "components": components,
         "provider_authorities": sorted(authorities),
     }
@@ -138,11 +145,9 @@ def verify_manifest(text, expected_package, expected_label):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest_tree", type=Path)
-    parser.add_argument("expected_package")
-    parser.add_argument("expected_launcher_label")
     args = parser.parse_args(argv)
     try:
-        result = verify_manifest(args.manifest_tree.read_text(), args.expected_package, args.expected_launcher_label)
+        result = verify_manifest(args.manifest_tree.read_text())
     except (OSError, UnicodeError):
         print("Cannot read the AAPT manifest tree.", file=sys.stderr)
         return 1

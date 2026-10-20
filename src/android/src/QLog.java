@@ -1,10 +1,10 @@
-package org.cagnulen.qdomyoszwift;
+package io.github.brymon68.x22i;
 
 import android.util.Log;
 
 /**
  * QLog - Wrapper for Android's Log class that redirects logs to Qt's logging system
- * Usage: import org.cagnulen.qdomyoszwift.Log;
+ * Usage: import io.github.brymon68.x22i.Log;
  */
 public class QLog {
     public static native void sendToQt(int level, String tag, String message);

@@ -1,6 +1,6 @@
 // https://www.geeksforgeeks.org/how-to-make-a-floating-window-application-in-android/
 
-package org.cagnulen.qdomyoszwift;
+package io.github.brymon68.x22i;
 
 import android.app.Service;
 import android.content.Context;
@@ -24,7 +24,7 @@ import android.widget.Toast;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
-import org.cagnulen.qdomyoszwift.QLog;
+import io.github.brymon68.x22i.QLog;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
@@ -108,7 +108,7 @@ public class FloatingWindowGFG extends Service {
                   settings.setBuiltInZoomControls(true);
                   settings.setUseWideViewPort(true);
                   settings.setDomStorageEnabled(true);
-                  QLog.d("QZ","loadurl");
+                  QLog.d("X22i","loadurl");
                   
                   // Initially set reduced margin for normal operation
                   setWebViewMargin(reducedMargin);
@@ -178,7 +178,7 @@ public class FloatingWindowGFG extends Service {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 
-                                         QLog.d("QZ","onTouch action: " + event.getAction());
+                                         QLog.d("X22i","onTouch action: " + event.getAction());
 
 					 switch (event.getAction()) {
 						  case MotionEvent.ACTION_DOWN:
@@ -281,7 +281,7 @@ public class FloatingWindowGFG extends Service {
 	             isDraggingEnabled = false;
 	             // Restore reduced margin for normal operation
 	             setWebViewMargin(reducedMargin);
-	             QLog.d("QZ", "Dragging disabled after timeout, margin restored");
+	             QLog.d("X22i", "Dragging disabled after timeout, margin restored");
 	         }
 	     };
 	     
@@ -307,7 +307,7 @@ public class FloatingWindowGFG extends Service {
 	         }
 	         
 	         windowManager.updateViewLayout(floatView, floatWindowLayoutParam);
-	         QLog.d("QZ", "Window expanded to height: " + floatWindowLayoutParam.height);
+	         QLog.d("X22i", "Window expanded to height: " + floatWindowLayoutParam.height);
 	     }
 	 }
 	 
@@ -317,7 +317,7 @@ public class FloatingWindowGFG extends Service {
 	         isExpanded = false;
 	         floatWindowLayoutParam.height = originalHeight;
 	         windowManager.updateViewLayout(floatView, floatWindowLayoutParam);
-	         QLog.d("QZ", "Window restored to original height: " + originalHeight);
+	         QLog.d("X22i", "Window restored to original height: " + originalHeight);
 	     }
 	 }
 	 
@@ -328,7 +328,7 @@ public class FloatingWindowGFG extends Service {
 	         int marginPx = (int) (marginDp * getResources().getDisplayMetrics().density);
 	         params.setMargins(marginPx, marginPx, marginPx, marginPx);
 	         webView.setLayoutParams(params);
-	         QLog.d("QZ", "WebView margin set to: " + marginDp + "dp (" + marginPx + "px)");
+	         QLog.d("X22i", "WebView margin set to: " + marginDp + "dp (" + marginPx + "px)");
 	     }
 	 }
 	 

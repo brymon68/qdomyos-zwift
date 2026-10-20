@@ -11,9 +11,7 @@
 #include <QOperatingSystemVersion>
 #include <QQmlApplicationEngine>
 #include <QSettings>
-#ifdef X22I_TEST
 #include "x22i_defaults.h"
-#endif
 #include <QStandardPaths>
 #include <QList>
 #include <QThread>
@@ -102,14 +100,12 @@ int main(int argc, char *argv[]) {
     QScopedPointer<QApplication> app(new QApplication(argc, argv));
 
 
-    app->setOrganizationName(QStringLiteral("Roberto Viola"));
-    app->setOrganizationDomain(QStringLiteral("robertoviola.cloud"));
-    app->setApplicationName(QStringLiteral("qDomyos-Zwift"));
+    app->setOrganizationName(QStringLiteral("brymon68"));
+    app->setOrganizationDomain(QStringLiteral("brymon68.github.io"));
+    app->setApplicationName(QStringLiteral("X22i"));
 
     QSettings settings;
-#ifdef X22I_TEST
     applyX22iDefaults(settings);
-#endif
 
     // Older Android consoles may not support a CPU wake lock.
     if (QOperatingSystemVersion::current() < QOperatingSystemVersion(QOperatingSystemVersion::Android, 7) &&

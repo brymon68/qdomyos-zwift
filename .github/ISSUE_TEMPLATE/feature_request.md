@@ -1,20 +1,18 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest an improvement to the X22i Android app
 title: "[REQ]"
 labels: enhancement
-assignees: cagnulein
-
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**X22i use case**
+Describe the problem with the current treadmill controls, live metrics, or Zwift terrain connection.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Requested behavior**
+Explain what you want the app to do and how that would improve your X22i setup.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**Current setup**
+Include the app version and whether your Mac connects through Bluetooth or DIRCON.
 
 **Additional context**
-Add any other context or screenshots about the feature request here.
+Add relevant examples or screenshots. See `docs/x22i-baseline.md` for the current application scope.

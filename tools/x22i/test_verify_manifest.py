@@ -10,43 +10,46 @@ import unittest
 
 
 SCRIPT = Path(__file__).with_name("verify_manifest.py")
-ORIGINAL_PACKAGE = "org.cagnulen.qdomyoszwift"
-TEST_PACKAGE = ORIGINAL_PACKAGE + ".x22ibaseline"
+APP_PACKAGE = "io.github.brymon68.x22i"
+OTHER_PACKAGE = "example.other.application"
 TREE = '''N: android=http://schemas.android.com/apk/res/android
   E: manifest (line=1)
-    A: package="org.cagnulen.qdomyoszwift.x22ibaseline" (Raw: "org.cagnulen.qdomyoszwift.x22ibaseline")
+    A: package="io.github.brymon68.x22i" (Raw: "io.github.brymon68.x22i")
     E: application (line=10)
       A: android:name(0x01010003)="org.qtproject.qt5.android.bindings.QtApplication" (Raw: "org.qtproject.qt5.android.bindings.QtApplication")
-      A: android:label(0x01010001)="X22i Test" (Raw: "X22i Test")
+      A: android:label(0x01010001)="X22i" (Raw: "X22i")
       E: activity (line=11)
-        A: android:name(0x01010003)="org.cagnulen.qdomyoszwift.CustomQtActivity" (Raw: "org.cagnulen.qdomyoszwift.CustomQtActivity")
-        A: android:label(0x01010001)="X22i Test" (Raw: "X22i Test")
-        E: intent-filter (line=12)
-          E: action (line=13)
+        A: android:name(0x01010003)="io.github.brymon68.x22i.CustomQtActivity" (Raw: "io.github.brymon68.x22i.CustomQtActivity")
+        A: android:label(0x01010001)="X22i" (Raw: "X22i")
+        E: meta-data (line=12)
+          A: android:name(0x01010003)="android.app.lib_name" (Raw: "android.app.lib_name")
+          A: android:value(0x01010024)="x22i" (Raw: "x22i")
+        E: intent-filter (line=13)
+          E: action (line=14)
             A: android:name(0x01010003)="android.intent.action.MAIN" (Raw: "android.intent.action.MAIN")
-          E: category (line=14)
+          E: category (line=15)
             A: android:name(0x01010003)="android.intent.category.LAUNCHER" (Raw: "android.intent.category.LAUNCHER")
       E: service (line=20)
-        A: android:name(0x01010003)="org.cagnulen.qdomyoszwift.ForegroundService" (Raw: "org.cagnulen.qdomyoszwift.ForegroundService")
+        A: android:name(0x01010003)="io.github.brymon68.x22i.ForegroundService" (Raw: "io.github.brymon68.x22i.ForegroundService")
       E: activity-alias (line=21)
-        A: android:name(0x01010003)="org.cagnulen.qdomyoszwift.SyntheticAliasActivity" (Raw: "org.cagnulen.qdomyoszwift.SyntheticAliasActivity")
-        A: android:targetActivity(0x01010202)="org.cagnulen.qdomyoszwift.SyntheticAliasTargetActivity" (Raw: "org.cagnulen.qdomyoszwift.SyntheticAliasTargetActivity")
+        A: android:name(0x01010003)="io.github.brymon68.x22i.SyntheticAliasActivity" (Raw: "io.github.brymon68.x22i.SyntheticAliasActivity")
+        A: android:targetActivity(0x01010202)="io.github.brymon68.x22i.SyntheticAliasTargetActivity" (Raw: "io.github.brymon68.x22i.SyntheticAliasTargetActivity")
       E: receiver (line=22)
-        A: android:name(0x01010003)="org.cagnulen.qdomyoszwift.MediaButtonReceiver" (Raw: "org.cagnulen.qdomyoszwift.MediaButtonReceiver")
+        A: android:name(0x01010003)="io.github.brymon68.x22i.SyntheticReceiver" (Raw: "io.github.brymon68.x22i.SyntheticReceiver")
 '''
 PROVIDER = '''      E: provider (line=30)
         A: android:name(0x01010003)="androidx.startup.InitializationProvider" (Raw: "androidx.startup.InitializationProvider")
-        A: android:authorities(0x01010018)="org.cagnulen.qdomyoszwift.x22ibaseline.androidx-startup" (Raw: "org.cagnulen.qdomyoszwift.x22ibaseline.androidx-startup")
+        A: android:authorities(0x01010018)="io.github.brymon68.x22i.androidx-startup" (Raw: "io.github.brymon68.x22i.androidx-startup")
 '''
 
 
 class VerifyManifestTests(unittest.TestCase):
-    def run_verifier(self, tree, package=TEST_PACKAGE, label="X22i Test"):
+    def run_verifier(self, tree):
         with tempfile.TemporaryDirectory(prefix="x22i-manifest-test-") as directory:
             path = Path(directory) / "manifest-tree.txt"
             path.write_text(tree)
             result = subprocess.run(
-                [sys.executable, str(SCRIPT), str(path), package, label],
+                [sys.executable, str(SCRIPT), str(path)],
                 capture_output=True, text=True, check=False,
             )
             self.assertEqual(path.read_text(), tree)
@@ -58,13 +61,15 @@ class VerifyManifestTests(unittest.TestCase):
         self.assertEqual(result.stdout, "")
         self.assertIn(message, result.stderr)
 
-    def test_test_package_preserves_original_component_namespace(self):
+    def test_standalone_identity_and_owned_component_namespace(self):
         result = self.run_verifier(TREE + PROVIDER)
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
-        self.assertEqual(report["package"], TEST_PACKAGE)
-        self.assertEqual(report["launcher_activity"], ORIGINAL_PACKAGE + ".CustomQtActivity")
-        self.assertEqual(report["provider_authorities"], [TEST_PACKAGE + ".androidx-startup"])
+        self.assertEqual(report["package"], APP_PACKAGE)
+        self.assertEqual(report["application_label"], "X22i")
+        self.assertEqual(report["launcher_label"], "X22i")
+        self.assertEqual(report["launcher_activity"], APP_PACKAGE + ".CustomQtActivity")
+        self.assertEqual(report["provider_authorities"], [APP_PACKAGE + ".androidx-startup"])
         self.assertEqual(len(report["components"]), 5)
 
     def test_no_providers_is_valid(self):
@@ -72,53 +77,64 @@ class VerifyManifestTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(result.stdout)["provider_authorities"], [])
 
-    def test_baseline_labels(self):
-        tree = TREE.replace(TEST_PACKAGE, ORIGINAL_PACKAGE).replace('"X22i Test"', '"QZ"')
-        tree = tree.replace('      A: android:label(0x01010001)="QZ" (Raw: "QZ")', '      A: android:label(0x01010001)="qdomyos-zwift" (Raw: "qdomyos-zwift")', 1)
-        result = self.run_verifier(tree, ORIGINAL_PACKAGE, "QZ")
-        self.assertEqual(result.returncode, 0, result.stderr)
+    def test_qt_and_androidx_components_are_allowed(self):
+        for name in ("org.qtproject.qt5.android.bindings.QtService", "androidx.core.app.SyntheticService"):
+            with self.subTest(name=name):
+                result = self.run_verifier(TREE.replace(APP_PACKAGE + ".ForegroundService", name))
+                self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_wrong_package(self):
-        self.assert_rejected(TREE.replace(TEST_PACKAGE, ORIGINAL_PACKAGE), "Expected package")
+        self.assert_rejected(TREE.replace('package="' + APP_PACKAGE + '"', 'package="' + OTHER_PACKAGE + '"'), "Expected package")
 
     def test_wrong_launcher_label(self):
-        tree = TREE.replace('        A: android:label(0x01010001)="X22i Test"', '        A: android:label(0x01010001)="QZ"')
+        tree = TREE.replace('        A: android:label(0x01010001)="X22i"', '        A: android:label(0x01010001)="Other app"')
         self.assert_rejected(tree, "Expected launcher label")
 
     def test_wrong_application_label(self):
-        tree = TREE.replace('      A: android:label(0x01010001)="X22i Test"', '      A: android:label(0x01010001)="qdomyos-zwift"', 1)
+        tree = TREE.replace('      A: android:label(0x01010001)="X22i"', '      A: android:label(0x01010001)="Other app"', 1)
         self.assert_rejected(tree, "Expected application label")
 
     def test_wrong_application_class(self):
-        self.assert_rejected(TREE.replace("org.qtproject.qt5.android.bindings.QtApplication", TEST_PACKAGE + ".QtApplication"), "Expected application class")
+        self.assert_rejected(TREE.replace("org.qtproject.qt5.android.bindings.QtApplication", APP_PACKAGE + ".QtApplication"), "Expected application class")
 
-    def test_component_class_rewritten_to_test_id(self):
-        self.assert_rejected(TREE.replace(ORIGINAL_PACKAGE + ".ForegroundService", TEST_PACKAGE + ".ForegroundService"), "incorrectly uses test application ID")
+    def test_wrong_launcher_activity(self):
+        self.assert_rejected(TREE.replace(APP_PACKAGE + ".CustomQtActivity", APP_PACKAGE + ".OtherActivity"), "Expected launcher activity")
+
+    def test_wrong_native_library(self):
+        self.assert_rejected(TREE.replace('android:value(0x01010024)="x22i"', 'android:value(0x01010024)="other-app"'), "Expected launcher native library x22i")
+
+    def test_missing_native_library(self):
+        self.assert_rejected(TREE.replace('android.app.lib_name', 'android.app.other'), "Expected launcher native library x22i")
+
+    def test_wrong_component_namespace(self):
+        for package in (OTHER_PACKAGE, APP_PACKAGE + "other", "androidxother", "org.qtproject.qt5other"):
+            with self.subTest(package=package):
+                self.assert_rejected(TREE.replace(APP_PACKAGE + ".ForegroundService", package + ".ForegroundService"), "Unexpected component namespace")
 
     def test_conflicting_provider_authority(self):
-        provider = PROVIDER.replace(TEST_PACKAGE + ".androidx-startup", ORIGINAL_PACKAGE + ".androidx-startup")
+        provider = PROVIDER.replace(APP_PACKAGE + ".androidx-startup", OTHER_PACKAGE + ".androidx-startup")
         self.assert_rejected(TREE + provider, "Provider authority must belong")
 
     def test_duplicate_provider_authority(self):
         self.assert_rejected(TREE + PROVIDER + PROVIDER, "Duplicate provider authority")
 
     def test_semicolon_separated_authorities_are_checked(self):
-        provider = PROVIDER.replace(TEST_PACKAGE + ".androidx-startup", TEST_PACKAGE + ".first;" + ORIGINAL_PACKAGE + ".second")
+        provider = PROVIDER.replace(APP_PACKAGE + ".androidx-startup", APP_PACKAGE + ".first;" + OTHER_PACKAGE + ".second")
         self.assert_rejected(TREE + provider, "Provider authority must belong")
 
     def test_relative_component_class(self):
         for name in (".ForegroundService", "ForegroundService"):
             with self.subTest(name=name):
-                self.assert_rejected(TREE.replace(ORIGINAL_PACKAGE + ".ForegroundService", name), "must be fully qualified")
+                self.assert_rejected(TREE.replace(APP_PACKAGE + ".ForegroundService", name), "must be fully qualified")
 
-    def test_alias_target_keeps_original_namespace(self):
-        self.assert_rejected(TREE.replace(ORIGINAL_PACKAGE + ".SyntheticAliasTargetActivity", "other.package.SyntheticAliasTargetActivity"), "alias target must retain original Java namespace")
+    def test_alias_target_requires_owned_namespace(self):
+        self.assert_rejected(TREE.replace(APP_PACKAGE + ".SyntheticAliasTargetActivity", OTHER_PACKAGE + ".SyntheticAliasTargetActivity"), "Activity alias target must belong")
 
     def test_relative_alias_target(self):
-        self.assert_rejected(TREE.replace(ORIGINAL_PACKAGE + ".SyntheticAliasTargetActivity", ".SyntheticAliasTargetActivity"), "must be fully qualified")
+        self.assert_rejected(TREE.replace(APP_PACKAGE + ".SyntheticAliasTargetActivity", ".SyntheticAliasTargetActivity"), "must be fully qualified")
 
     def test_launcher_action_and_category_must_share_filter(self):
-        tree = TREE.replace('          E: category (line=14)', '        E: intent-filter (line=14)\n          E: category (line=14)')
+        tree = TREE.replace('          E: category (line=15)', '        E: intent-filter (line=15)\n          E: category (line=15)')
         self.assert_rejected(tree, "Expected one MAIN/LAUNCHER activity")
 
     def test_malformed_or_empty_input(self):

@@ -1,4 +1,4 @@
-package org.cagnulen.qdomyoszwift;
+package io.github.brymon68.x22i;
 
 import android.content.Intent;
 import android.os.Build;
@@ -103,7 +103,7 @@ public class CustomQtActivity extends QtActivity {
                 // Guard against the race where Qt's native library hasn't finished
                 // loading yet when Android fires onApplyWindowInsets early (targetSdk>=36
                 // forces edge-to-edge, triggering this before QtActivity finishes
-                // loading libqdomyos-zwift in its background thread).
+                // loading libx22i in its background thread).
                 try {
                     onInsetsChanged(top, bottom, left, right, waterfallTop, waterfallBottom, waterfallLeft, waterfallRight);
                 } catch (UnsatisfiedLinkError ignored) {

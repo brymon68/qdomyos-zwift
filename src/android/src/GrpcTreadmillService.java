@@ -1,4 +1,4 @@
-package org.cagnulen.qdomyoszwift;
+package io.github.brymon68.x22i;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -47,7 +47,7 @@ import com.ifit.glassos.workout.WorkoutStateMessage;
 import com.ifit.glassos.workout.HeartRateMetric;
 import com.ifit.glassos.workout.HeartRateServiceGrpc;
 
-import org.cagnulen.qdomyoszwift.QLog;
+import io.github.brymon68.x22i.QLog;
 
 public class GrpcTreadmillService {
 

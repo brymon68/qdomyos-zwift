@@ -155,7 +155,7 @@ homeform::~homeform() { m_singleton = nullptr; }
 
 void homeform::launchIFitApp() {
 #ifdef Q_OS_ANDROID
-    QAndroidJniObject::callStaticMethod<void>("org/cagnulen/qdomyoszwift/AppLauncher", "launchIFitApp",
+    QAndroidJniObject::callStaticMethod<void>("io/github/brymon68/x22i/AppLauncher", "launchIFitApp",
         "(Landroid/content/Context;)V", QtAndroid::androidContext().object());
 #endif
 }
@@ -163,7 +163,7 @@ void homeform::launchIFitApp() {
 void homeform::aboutToQuit() {
 #ifdef Q_OS_ANDROID
     if (floating_open) floatingOpen();
-    QAndroidJniObject::callStaticMethod<void>("org/cagnulen/qdomyoszwift/NotificationClient", "hide", "()V");
+    QAndroidJniObject::callStaticMethod<void>("io/github/brymon68/x22i/NotificationClient", "hide", "()V");
 #endif
     if (bluetoothManager->device()) bluetoothManager->device()->disconnectBluetooth();
 }
@@ -186,7 +186,7 @@ void homeform::floatingOpen() {
         QAndroidJniObject javaHtmlFile = QAndroidJniObject::fromString(htmlFile);
 
         QAndroidJniObject::callStaticMethod<void>(
-            "org/cagnulen/qdomyoszwift/FloatingHandler", "show", "(Landroid/content/Context;IIIILjava/lang/String;)V",
+            "io/github/brymon68/x22i/FloatingHandler", "show", "(Landroid/content/Context;IIIILjava/lang/String;)V",
             QtAndroid::androidContext().object(),
             settings.value("template_inner_QZWS_port", 6666).toInt(),
             settings.value(QZSettings::floating_width, QZSettings::default_floating_width).toInt(),
@@ -194,7 +194,7 @@ void homeform::floatingOpen() {
             settings.value(QZSettings::floating_transparency, QZSettings::default_floating_transparency).toInt(),
             javaHtmlFile.object<jstring>());
     } else {
-        QAndroidJniObject::callStaticMethod<void>("org/cagnulen/qdomyoszwift/FloatingHandler", "hide", "()V");
+        QAndroidJniObject::callStaticMethod<void>("io/github/brymon68/x22i/FloatingHandler", "hide", "()V");
     }
     floating_open = !floating_open;
 #endif
@@ -237,7 +237,7 @@ QString homeform::getWritableAppDir() {
     QSettings settings;
     bool android_documents_folder = settings.value(QZSettings::android_documents_folder, QZSettings::default_android_documents_folder).toBool();
     if (android_documents_folder || QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::Android, 14)) {
-        path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/QZ/";
+        path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/X22i/";
         QDir().mkdir(path);
         // Create .nomedia file to prevent gallery indexing
         QFile nomediaFile(path + ".nomedia");
