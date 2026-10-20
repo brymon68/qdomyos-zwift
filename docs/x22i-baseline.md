@@ -10,6 +10,12 @@ This increment leaves fan support, Zwift/iFIT authentication, treadmill commands
 
 The APK check now rejects known trial symbols and the supporter endpoint in the native application library, including Qt's UTF-16 string representation. It is a regression check for this removed implementation, not proof of all runtime behavior. A physical console session beyond the former ten-minute trial plus two-minute dialog timeout remains required. Obtain a fresh owner-present, belt-stopped confirmation before installing or launching the candidate.
 
+### Verified local trial-free build: 2026-10-20
+
+Recipe commit `846235d01e49f605adfb3e642b8a0c9c3ece8b7e` produced a signed ARM64 X22i Test APK. All **38 Python tests** passed. The resulting APK passed the required-payload, manifest, and no-trial checks; the same no-trial check rejected the earlier trial-enabled local APK. APK size is **50,999,107 bytes**, SHA-256 **`a4b5707a1fb99523e53ef52dc00b0091c7d09bd0ec9573eeefec1dc7881d4211`**.
+
+Signature schemes v1/v2 verified, and certificate SHA-256 matched the persistent X22i Test signer recorded below. Package/version remain `org.cagnulen.qdomyoszwift.x22ibaseline`, **2.21.5 / 1403**. The bundled settings header and software license match the repository copies. Artifact checksums and both patch hashes match `build-info.json`. Source comparison confirmed that Zwift polling, the gRPC service, NordicTrack treadmill controls, and virtual treadmill implementation are unchanged from the tested source. This candidate has **not been installed or exercised on the console**; the duration and physical regression checks remain pending.
+
 ## Verified settings migration and auto-incline retest: 2026-10-20 UTC
 
 An initial launch before migration used a fresh configuration with only 98 settings: Zwift auto-incline was disabled, Zwift credentials were absent, and X22i was unselected. The original installation still matched the complete 861-setting backup.
