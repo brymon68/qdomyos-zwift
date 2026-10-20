@@ -1,6 +1,14 @@
 # X22i Android baseline
 
-This is the first-phase build and migration tooling for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). The pinned ARM64 baseline and separate X22i Test app build successfully. Installation, settings migration, and physical treadmill comparison remain to be demonstrated. Packaging checks alone do not establish device behavior.
+This is the first-phase build and migration tooling for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). The pinned ARM64 baseline and separate X22i Test app build successfully. X22i Test is installed on the console; settings migration, first launch, and physical treadmill comparison remain to be demonstrated. Packaging and installation checks alone do not establish device behavior.
+
+## Verified installation: 2026-10-20 UTC
+
+The separate CI test APK from run `39365509040`, attempt 2, was installed through ADB on the verified Android 9 / ARM64 console. Before installation, its checksum, source provenance, v1/v2 signatures, expected signing certificate, native payload, and merged manifest were checked again.
+
+ADB reported success. The installed package is `org.cagnulen.qdomyoszwift.x22ibaseline`, version **2.21.5**, version code **1403**. Its installed APK SHA-256 is `24aa9d15a4cce01ed403485311bf7c94d196b7a2c732f6390015b5b957b28ecb`, matching the CI artifact. The original QZ APK matched the private rollback backup before installation and remained byte-for-byte unchanged afterward.
+
+Android reported `stopped=true` and `notLaunched=true`, with no test-app process running. No app launch, settings migration, reboot, or physical control was performed. Complete the private settings migration and verification below before first launch; hardware acceptance is still pending.
 
 ## Verified separate test app: 2026-10-20 UTC
 
