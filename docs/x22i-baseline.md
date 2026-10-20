@@ -26,6 +26,12 @@ Purchase removal deletes the Swag Bag screen, store/product objects, native purc
 
 The APK verifier checks the native library and every DEX for removed feature symbols. The settings/catalog comparison verifies all non-fan entries remain unchanged. The workout editor uses named fields, so removing its fan definition does not shift incline or speed values. This increment does not perform the issue's later equipment/integration pruning, package rename, or dashboard redesign.
 
+### Verified stripped build: 2026-10-20
+
+Recipe commit `a807b591fd2d12844e11da97c657d0d73afe908a` produced the signed ARM64 APK with trial, fan, and purchasing removal. All **40 Python tests** passed, the modified QML passed `qmllint`, and a clean native/Java/protobuf build succeeded. The final APK passed payload, manifest, no-trial, no-fan, and no-purchasing checks. The previous APK was rejected for its native and Java fan/purchase code.
+
+APK size is **50,665,957 bytes** (333,150 bytes smaller than the trial-only build), SHA-256 **`c46229cd57c0302de1e20212a4ac5dc85fdc18b5ee0b198ac32094c6a1b3b46a`**. Package/version remain `org.cagnulen.qdomyoszwift.x22ibaseline`, **2.21.5 / 1403**. The persistent signer, software license, bundled defaults, all three patch hashes, and complete source-patch hash were independently verified. The merged manifest has no billing permission. Artifacts are under the ignored `build-x22i-strip/output/artifacts/` directory. This stripped candidate has not been installed; no physical regression result is claimed for it.
+
 ## Verified settings migration and auto-incline retest: 2026-10-20 UTC
 
 An initial launch before migration used a fresh configuration with only 98 settings: Zwift auto-incline was disabled, Zwift credentials were absent, and X22i was unselected. The original installation still matched the complete 861-setting backup.
@@ -184,7 +190,7 @@ The recipe includes this header in the pinned app and applies it immediately aft
 
 Upgrade X22i Test in place using the same package ID and persistent signing key. Its existing private configuration, including credentials, remains the source of truth; the bundled values supply missing settings. Never uninstall to work around an update failure. Fresh installations still require private Zwift authentication before automatic incline can work. Credentials, tokens, encryption keys, personal measurements, device identifiers, and runtime metadata are not bundled.
 
-The existing Reset Settings action still writes upstream defaults; this preset does not redefine that action. CI exercises the helper using real QSettings files, covering fresh configuration, preservation across repeated launches and reloads, explicit false/zero/empty values, and credential exclusion. Feature removal and UI redesign remain follow-up work.
+The existing Reset Settings action still writes upstream defaults; this preset does not redefine that action. CI exercises the helper using real QSettings files, covering fresh configuration, preservation across repeated launches and reloads, explicit false/zero/empty values, and credential exclusion. Further feature pruning and UI redesign remain follow-up work.
 
 ## Private settings and installation
 
