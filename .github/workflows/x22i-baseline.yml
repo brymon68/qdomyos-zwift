@@ -11,6 +11,9 @@ on:
 permissions:
   contents: read
 
+env:
+  ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+
 concurrency:
   group: x22i-baseline-${{ github.ref }}
   cancel-in-progress: true
@@ -59,7 +62,8 @@ jobs:
           cache: true
           cache-key-prefix: x22i-baseline-qt
       - name: Install pinned Android packages
-        run: sdkmanager 'ndk;21.4.7075529' 'platforms;android-35' 'build-tools;35.0.0'
+        run: |
+          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" 'ndk;21.4.7075529' 'platforms;android-35' 'build-tools;35.0.0'
       - name: Build pinned gRPC baseline
         env:
           QT_ANDROID_DIR: ${{ runner.temp }}/x22i-qt/Qt/5.15.0/android
