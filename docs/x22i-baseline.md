@@ -1,6 +1,16 @@
 # X22i Android baseline
 
-This is the first-phase build and migration tooling for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). The pinned ARM64 baseline and separate X22i Test app build successfully. X22i Test is installed on the console; settings migration, first launch, and physical treadmill comparison remain to be demonstrated. Packaging and installation checks alone do not establish device behavior.
+This is the first-phase build and migration tooling for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). The pinned ARM64 baseline and separate X22i Test app build successfully. X22i Test is installed, its saved configuration is migrated, and the owner confirms automatic incline works after restart. The remaining physical comparison checks below are still pending.
+
+## Verified settings migration and auto-incline retest: 2026-10-20 UTC
+
+An initial launch before migration used a fresh configuration with only 98 settings: Zwift auto-incline was disabled, Zwift credentials were absent, and X22i was unselected. The original installation still matched the complete 861-setting backup.
+
+After the owner confirmed the belt was fully stopped, X22i Test was stopped and its fresh configuration privately preserved. The verified native backup was copied only into the test app's existing private settings location. Readback was byte-for-byte identical: **861 preserved, zero missing, zero changed, zero added**. App ownership and mode `600` were verified; the original configuration remained unchanged.
+
+X22i Test was restarted while the original app remained stopped. A private post-start comparison found 855 original settings unchanged, zero missing, six startup changes, and 68 added settings. The six changes were reviewed against source: the launch counter incremented, template folders gained the bundled `i18n` directory, two template network-address lists refreshed, the internal web-server port was assigned, and template IDs were reordered without changing their set. All backed-up incline, units, authentication, device, and control settings retained their stored values.
+
+The owner then reported **“Auto-incline is working now.”** No application-code change was needed for this recovery. Downhill zero-floor behavior, stop/pause, reconnect behavior, and the actual Mac pairing transport still require explicit baseline observations before pruning.
 
 ## Verified installation: 2026-10-20 UTC
 
@@ -8,7 +18,7 @@ The separate CI test APK from run `39365509040`, attempt 2, was installed throug
 
 ADB reported success. The installed package is `org.cagnulen.qdomyoszwift.x22ibaseline`, version **2.21.5**, version code **1403**. Its installed APK SHA-256 is `24aa9d15a4cce01ed403485311bf7c94d196b7a2c732f6390015b5b957b28ecb`, matching the CI artifact. The original QZ APK matched the private rollback backup before installation and remained byte-for-byte unchanged afterward.
 
-Android reported `stopped=true` and `notLaunched=true`, with no test-app process running. No app launch, settings migration, reboot, or physical control was performed. Complete the private settings migration and verification below before first launch; hardware acceptance is still pending.
+Immediately after installation, Android reported `stopped=true` and `notLaunched=true`, with no test-app process running. The installation step performed no app launch, settings migration, reboot, or physical control. Subsequent migration and startup verification are recorded above.
 
 ## Verified separate test app: 2026-10-20 UTC
 
@@ -25,7 +35,7 @@ Android reported `stopped=true` and `notLaunched=true`, with no test-app process
 | Signature verification | v1 and v2 passed |
 | Provider authorities | Both use the separate test package prefix |
 
-The first attempt was cancelled during active Gradle processing after native compilation completed. The retry finished in approximately 14 minutes. No installation or launch was performed as part of this build verification. The original app remains installed; settings migration and on-device acceptance are still pending.
+The first attempt was cancelled during active Gradle processing after native compilation completed. The retry finished in approximately 14 minutes. No installation or launch was performed as part of this build verification. The original app remains installed; subsequent installation, migration, and partial on-device acceptance are recorded above.
 
 ## Verified build: 2026-10-20 UTC
 
