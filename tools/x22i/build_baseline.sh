@@ -43,6 +43,7 @@ done
 python3 - "$source_dir" "$script_dir/baseline.json" <<'PY'
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -110,6 +111,20 @@ android {
         text = text.replace(original, 'android:label="X22i Test"')
     # Keep the source manifest package, Java namespace and JNI names unchanged.
     manifest.write_text(text)
+
+    main = source / 'src/main.cpp'
+    text = main.read_text()
+    include = '#include <QSettings>\n'
+    startup = '''    app->setApplicationName(QStringLiteral("qDomyos-Zwift"));
+
+    QSettings settings;
+'''
+    if text.count(include) != 1 or text.count(startup) != 1:
+        raise SystemExit('Expected settings initialization point was not found')
+    text = text.replace(include, include + '#include "x22i_defaults.h"\n')
+    text = text.replace(startup, startup + '    applyX22iDefaults(settings);\n')
+    main.write_text(text)
+    shutil.copyfile(Path(sys.argv[2]).with_name('x22i_defaults.h'), source / 'src/x22i_defaults.h')
 PY
 
 mkdir -p "$output_dir/httpserver" "$output_dir/native" "$output_dir/android" "$output_dir/artifacts"
@@ -176,7 +191,12 @@ else
 fi
 cp "$apk" "$output_dir/artifacts/x22i-$X22I_VARIANT-arm64.apk"
 cp "$source_dir/LICENSE" "$output_dir/artifacts/LICENSE"
-git -C "$source_dir" diff -- src/settings.qml src/qzsettings.cpp src/settings-catalog.json src/android/build.gradle src/android/AndroidManifest.xml > "$output_dir/artifacts/source.patch"
+if [[ "$X22I_VARIANT" == test ]]; then
+    # Include the new header in the reproducible source patch without committing it.
+    git -C "$source_dir" add --intent-to-add src/x22i_defaults.h
+    cp "$source_dir/src/x22i_defaults.h" "$output_dir/artifacts/"
+fi
+git -C "$source_dir" diff -- src/main.cpp src/x22i_defaults.h src/settings.qml src/qzsettings.cpp src/settings-catalog.json src/android/build.gradle src/android/AndroidManifest.xml > "$output_dir/artifacts/source.patch"
 python3 - "$script_dir" "$source_dir" "$output_dir" <<'PY'
 import hashlib
 import json
@@ -191,6 +211,8 @@ if info['variant'] == 'test':
     info['package'] = 'org.cagnulen.qdomyoszwift.x22ibaseline'
     info['label'] = 'X22i Test'
     info['signing'] = 'Persistent private test key; separate from installed QZ signer'
+    info['settings_defaults_sha256'] = hashlib.sha256((scripts / 'x22i_defaults.h').read_bytes()).hexdigest()
+    info['settings_defaults_policy'] = 'Fill missing nonsecret X22i settings; preserve existing saved values'
 apk = output / ('artifacts/x22i-' + info['variant'] + '-arm64.apk')
 info['apk_sha256'] = hashlib.sha256(apk.read_bytes()).hexdigest()
 info['apk_bytes'] = apk.stat().st_size

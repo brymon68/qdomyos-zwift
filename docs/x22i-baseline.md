@@ -1,6 +1,6 @@
 # X22i Android baseline
 
-This is the first-phase build and migration tooling for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). The pinned ARM64 baseline and separate X22i Test app build successfully. X22i Test is installed, its saved configuration is migrated, and the owner confirms automatic incline works after restart. The remaining physical comparison checks below are still pending.
+This is the first-phase build and migration tooling for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). The pinned ARM64 baseline and separate X22i Test app build successfully. X22i Test is installed, its saved configuration is migrated, and the owner confirms automatic incline works after restart. The owner subsequently reported that everything is working and accepted preparing this branch's PR before feature removal and UI work. Both Mac connection transports remain supported because the active transport has not been identified.
 
 ## Verified settings migration and auto-incline retest: 2026-10-20 UTC
 
@@ -10,7 +10,7 @@ After the owner confirmed the belt was fully stopped, X22i Test was stopped and 
 
 X22i Test was restarted while the original app remained stopped. A private post-start comparison found 855 original settings unchanged, zero missing, six startup changes, and 68 added settings. The six changes were reviewed against source: the launch counter incremented, template folders gained the bundled `i18n` directory, two template network-address lists refreshed, the internal web-server port was assigned, and template IDs were reordered without changing their set. All backed-up incline, units, authentication, device, and control settings retained their stored values.
 
-The owner then reported **“Auto-incline is working now.”** No application-code change was needed for this recovery. Downhill zero-floor behavior, stop/pause, reconnect behavior, and the actual Mac pairing transport still require explicit baseline observations before pruning.
+The owner then reported **“Auto-incline is working now,”** followed by **“Its all working.”** This records owner acceptance of the migrated baseline; individual downhill, stop/pause, and reconnect observations were not separately recorded. No application-code change was needed for this recovery. Keep the comparison checklist below for subsequent changes.
 
 ## Verified installation: 2026-10-20 UTC
 
@@ -61,7 +61,7 @@ This baseline is larger than the installed January build; feature removal has no
 
 The target is ARM64 (`arm64-v8a`), version **2.21.5**, version code **1403**, package **`org.cagnulen.qdomyoszwift`**. The disposable source checkout receives the documented localhost-default variant in QML, C++, and the settings catalog, plus a Gradle ARM64 filter for native dependencies. The build retains `DEFINES+=LICENSE` trial enforcement and the baseline fan implementation until the existing installation has been compared on hardware. Trial removal, feature removal, and a smaller application are later changes.
 
-The artifact bundle contains the APK, checksum/provenance in `build-info.json`, `source.patch`, signing information, package badging, and `LICENSE`. The APK checker verifies required ARM64 Qt/OpenSSL/C++ libraries, QML resources, and gRPC client assets. It does not verify the entire native dependency graph, launch, TLS connectivity, or incline behavior.
+The artifact bundle contains the APK, checksum/provenance in `build-info.json`, `source.patch`, signing information, package badging, and `LICENSE`. New test builds also include `x22i_defaults.h` and its SHA-256 in the provenance; the source patch includes its startup integration. The APK checker verifies required ARM64 Qt/OpenSSL/C++ libraries, QML resources, and gRPC client assets. It does not verify the entire native dependency graph, launch, TLS connectivity, or incline behavior.
 
 ## Build
 
@@ -152,6 +152,16 @@ For local builds set `X22I_VARIANT=test`, `X22I_SIGNING_STORE_FILE` to the priva
 
 The build records the final manifest and checks package identity, launcher identity, component names, and provider authorities. Only one QZ app may run during testing: both identities still advertise the same fitness device and access the same iFIT endpoint. Before copying any private settings, verify the candidate's actual settings/profile locations on the console and stop both QZ apps. Copy into the candidate only, then verify all 861 original settings. Rollback consists of stopping the test app and returning to the original installation; neither installation nor hardware testing is performed by the build workflow.
 
+### Settings retained across upgrades
+
+[`tools/x22i/x22i_defaults.h`](../tools/x22i/x22i_defaults.h) bundles 70 reviewed, nonsecret X22i settings with every new `test` build. These cover the local iFIT connection, miles, Bluetooth and DIRCON, Zwift auto-incline, the saved scaling and calibration, the 0.5% incline step, three-second incline delay, configured bounds, and the 31-entry inclination lookup table.
+
+The recipe includes this header in the pinned app and applies it immediately after QSettings initialization, before normal settings reads, profile loading, and QML creation. Each value is written only when its key is absent. Existing saved values—including `false`, zero, empty strings, and custom incline settings—remain unchanged on upgrade. The original-package `baseline` variant retains its previous behavior. No QML properties or catalog definitions are added or renamed.
+
+Upgrade X22i Test in place using the same package ID and persistent signing key. Its existing private configuration, including credentials, remains the source of truth; the bundled values supply missing settings. Never uninstall to work around an update failure. Fresh installations still require private Zwift authentication before automatic incline can work. Credentials, tokens, encryption keys, personal measurements, device identifiers, and runtime metadata are not bundled.
+
+The existing Reset Settings action still writes upstream defaults; this preset does not redefine that action. CI exercises the helper using real QSettings files, covering fresh configuration, preservation across repeated launches and reloads, explicit false/zero/empty values, and credential exclusion. Feature removal and UI redesign remain follow-up work.
+
 ## Private settings and installation
 
 The existing **861 settings** are the migration source of truth. Newer defaults must not replace them. Preserve every backed-up value, including credentials, selected devices, transport settings, incline limits, Zwift gain/offset and negative-incline behavior, difficulty settings, and calibration. Keep the complete inclination override table and its gain/offset keys even though this baseline's NordicTrack gRPC path does not call `treadmillInclinationOverride()`.
@@ -196,7 +206,7 @@ The pinned implementation has limitations that this scaffolding does not repair:
 
 ## Physical comparison checklist
 
-Record observations against the currently working installation before changing behavior. No item below is considered passed by building or inspecting source.
+Use this checklist for subsequent APK changes against the owner-accepted baseline. The owner reported the baseline working overall; individual observations below are retained as regression checks rather than claimed as independently witnessed tests. No item is considered passed merely by building or inspecting source.
 
 - [ ] Establish the **actual Mac-to-QZ transport and incline source** in the working setup. Confirm whether incline comes from Zwift API, virtual-device control, or another configured source; confirm the source used by the candidate matches.
 - [ ] Confirm manual treadmill speed is reported correctly in QZ and on the Mac, with the intended units. Confirm no automatic speed command is generated during incline-only testing.

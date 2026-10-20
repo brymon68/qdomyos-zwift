@@ -84,7 +84,12 @@ jobs:
       - name: Install Qt host dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libgl1-mesa-dev libxkbcommon-x11-0 libxcb-xinerama0 libxcb-cursor0 libpulse-mainloop-glib0 rsync
+          sudo apt-get install -y build-essential qtbase5-dev libgl1-mesa-dev libxkbcommon-x11-0 libxcb-xinerama0 libxcb-cursor0 libpulse-mainloop-glib0 rsync
+      - name: Test X22i settings across upgrades
+        run: |
+          c++ -std=c++11 -fPIC tools/x22i/test_x22i_defaults.cpp \
+            -o "$RUNNER_TEMP/test-x22i-defaults" $(pkg-config --cflags --libs Qt5Core)
+          "$RUNNER_TEMP/test-x22i-defaults"
       - uses: jdpurcell/install-qt-action@v5
         with:
           version: '5.15.0'
