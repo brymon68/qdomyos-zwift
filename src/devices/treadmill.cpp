@@ -119,7 +119,6 @@ void treadmill::clearStats() {
     rawSpeed.clear(false);
     rawInclination.clear(false);
     Distance.clear(true);
-    Distance1s.clear(true);
     Heart.clear(false);
     elevationAcc = 0;
     negativeElevationAcc = 0;
@@ -140,31 +139,12 @@ void treadmill::setPaused(bool p) {
     rawSpeed.setPaused(p);
     rawInclination.setPaused(p);
     Distance.setPaused(p);
-    Distance1s.setPaused(p);
     Heart.setPaused(p);
     Inclination.setPaused(p);
     Cadence.setPaused(p);
     for(int i=0; i<maxHeartZone(); i++) {
         hrZonesSeconds[i].setPaused(p);
     }    
-}
-
-void treadmill::setLap() {
-
-    moving.setLap(true);
-    elapsed.setLap(true);
-    Speed.setLap(false);
-    rawSpeed.setLap(false);
-    rawInclination.setLap(false);
-    Distance.setLap(true);
-    Distance1s.setLap(true);
-    Heart.setLap(false);
-    Cadence.setLap(false);
-
-    Inclination.setLap(false);
-    for(int i=0; i<maxHeartZone(); i++) {
-        hrZonesSeconds[i].setLap(false);
-    }
 }
 
 void treadmill::setLastSpeed(double speed) { lastSpeed = speed; }

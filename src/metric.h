@@ -3,7 +3,7 @@
 
 #include "bluetoothdevicetype.h"
 #include "qdebugfixup.h"
-#include "sessionline.h"
+#include <QList>
 #include <QDateTime>
 #include <math.h>
 

@@ -12,11 +12,9 @@ This directory contains reusable diagnostic intake guidance for QZ support. It f
 - [External speed and cadence sensors](external-sensors.md)
 - [Test and beta build verification](test-builds.md)
 - [Profiles and settings storage](profiles.md)
-- [GPX and training program control](training-programs.md)
 - [Treadmill control diagnostics](treadmill-controls.md)
 - [Virtual device settings diagnostics](virtual-device-settings.md)
 - [Virtual profile diagnostic intake](virtual-profile-intake.md)
-- [Workout recording and history](workout-recording.md)
 
 
 ## How to use these guides

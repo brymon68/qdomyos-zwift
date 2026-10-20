@@ -9,7 +9,6 @@
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <QBluetoothDeviceInfo>
 #include <QDateTime>
-#include <QGeoCoordinate>
 #include <QObject>
 #include <QTimer>
 
@@ -24,29 +23,6 @@
 #include <QtBluetooth/qlowenergyservicedata.h>
 
 #include "virtualdevices/virtualdevice.h"
-
-#if defined(Q_OS_IOS)
-#define SAME_BLUETOOTH_DEVICE(d1, d2) (d1.deviceUuid() == d2.deviceUuid())
-#else
-#define SAME_BLUETOOTH_DEVICE(d1, d2) (d1.address() == d2.address())
-#endif
-
-/**
- * @brief The MetersByInclination class represents a section of track at a specific inclination.
- */
-class MetersByInclination {
-  public:
-    /**
-     * @brief meters The length of the section. Units: meters
-     */
-    double meters;
-
-    /**
-     * @brief inclination The inclination of the section.
-     * Units: Percentage vertical to horizontal
-     */
-    double inclination;
-};
 
 class bluetoothdevice : public QObject {
 
@@ -103,8 +79,6 @@ class bluetoothdevice : public QObject {
     virtual double odometer();
     virtual double odometerFromStartup();
     virtual metric currentDistance() {return Distance;}
-    virtual metric currentDistance1s() {return Distance1s;}
-    void addCurrentDistance1s(double distance) { Distance1s += distance; }
 
     /**
      * @brief elapsedTime The elapsed time for the session(?).
@@ -122,16 +96,6 @@ class bluetoothdevice : public QObject {
      * @brief movingTime Gets the time spent moving.
      */
     virtual QTime movingTime();
-
-    /**
-     * @brief lapElapsedTime Gets the time elapsed on the current lap.
-     */
-    virtual QTime lapElapsedTime();
-
-    /**
-     * @brief lapOdometer Gets the distance elapsed on the current lap.
-     */
-    virtual double lapOdometer();
 
     /**
      * @brief connected Gets a value to indicate if the device is connected.
@@ -153,34 +117,6 @@ class bluetoothdevice : public QObject {
      * @brief currentCrankRevolutions Gets the current total number of crank revolutions.
      */
     virtual double currentCrankRevolutions();
-
-    /**
-     * @brief currentCordinate Gets the current geographic coordinates.
-     */
-    virtual QGeoCoordinate currentCordinate();
-
-    /**
-     * @brief nextInclination300Meters The next 300m of track sections: length and inclination
-     * @return A list of MetersByInclination objects
-     */
-    virtual QList<MetersByInclination> nextInclination300Meters() { return NextInclination300Meters; }
-
-    /**
-     * @brief currentAzimuth Gets the current azimuth. Units: degrees (? = North)
-     */
-    virtual double currentAzimuth() { return azimuth; }
-
-    /**
-     * @brief averageAzimuthNext300m Gets the average azimuth for the next 300m
-     * Units: degrees (? = North)
-     */
-    virtual double averageAzimuthNext300m() { return azimuthAvgNext300m; }
-
-    /**
-     * @brief setAverageAzimuthNext300m Sets the average azimuth for the next 300m.
-     * @param azimuth The azimuth. Units: degrees (? = North)
-     */
-    virtual void setAverageAzimuthNext300m(double azimuth) { azimuthAvgNext300m = azimuth; }
 
     /**
      * @brief lastCrankEventTime The time of the last crank event. Units: 1/1024s
@@ -227,11 +163,6 @@ class bluetoothdevice : public QObject {
      * @brief isPaused Indicates if the device is currently paused.
      */
     bool isPaused() { return paused; }
-
-    /**
-     * @brief setLap Begins a new lap for the statistics calculated by the metrics objects.
-     */
-    virtual void setLap();
 
     /**
      * @brief setAutoResistance Toggles auto-resistance.
@@ -329,17 +260,6 @@ class bluetoothdevice : public QObject {
     uint32_t secondsForHeatZone(uint8_t zone);
 
     /**
-     * @brief setGPXFile Sets the file for GPS data exchange.
-     * @param filename The file path.
-     */
-    void setGPXFile(QString filename);
-
-    /**
-     * @brief currentGPXBase64 Returns the Base64 encode for the current GPX used.
-     */
-    QString currentGPXBase64() { return gpxBase64; }
-
-    /**
      * @brief setHeatZone Set the current heat zone based on Heat Strain Index.
      * This is equivalent to currentHeatZone().setvalue(hz)
      * @param heatStrainIndex The heat strain index to determine zone. Unit: depends on implementation.
@@ -348,7 +268,6 @@ class bluetoothdevice : public QObject {
 
     void setHeatZone(double heatStrainIndex);
 
-    enum WORKOUT_EVENT_STATE { STARTED = 0, PAUSED = 1, RESUMED = 2, STOPPED = 3 };
 
     /**
      * @brief deviceType The type of device represented by this object.
@@ -376,16 +295,6 @@ class bluetoothdevice : public QObject {
      */
     metric currentHRV() { return HRV; }
 
-    /**
-     * @brief Get and clear accumulated RR-intervals for FIT file saving
-     * @return List of RR-intervals in milliseconds
-     */
-    QList<double> getRRIntervalsAndClear() {
-        QList<double> intervals = rrIntervalsForFit;
-        rrIntervalsForFit.clear();
-        return intervals;
-    }
-
   public Q_SLOTS:
     virtual void start();
     virtual void stop(bool pause);
@@ -399,12 +308,9 @@ class bluetoothdevice : public QObject {
     virtual void inclinationSensor(double grade, double inclination);
     virtual void changeResistance(resistance_t res);
     virtual void changeInclination(double grade, double percentage);
-    virtual void changeGeoPosition(QGeoCoordinate p, double azimuth, double avgAzimuthNext300Meters);
-    virtual void workoutEventStateChanged(bluetoothdevice::WORKOUT_EVENT_STATE state);
     virtual void instantaneousStrideLengthSensor(double length);
     virtual void groundContactSensor(double groundContact);
     virtual void verticalOscillationSensor(double verticalOscillation);
-    virtual void changeNextInclination300Meters(QList<MetersByInclination> i) { NextInclination300Meters = i; }
 
   Q_SIGNALS:
     void connectedAndDiscovered();
@@ -468,14 +374,12 @@ class bluetoothdevice : public QObject {
      *      the length of belt traversed on a treadmill.
      */
     metric Distance;
-    metric Distance1s; // used to populate the distance on the FIT file. Since Strava is using the distance to graph it, it has to have 1s trigger.
 
 
     /**
      * @brief Heart rate. Unit: beats per minute
      */
     metric Heart;
-    bool heartRateFromHealthKit = false;
 
     /**
      * @brief HRV Heart Rate Variability (RMSSD). Unit: milliseconds
@@ -486,11 +390,6 @@ class bluetoothdevice : public QObject {
      * @brief RR-intervals buffer for HRV calculation
      */
     QList<double> rrIntervals;
-
-    /**
-     * @brief RR-intervals buffer for FIT file saving (cleared after each SessionLine)
-     */
-    QList<double> rrIntervalsForFit;
 
     int8_t requestStart = -1;
     int8_t requestStop = -1;
@@ -546,46 +445,6 @@ class bluetoothdevice : public QObject {
     metric Resistance;
 
     /**
-     * @brief coordinate The geolocation for the device.
-     */
-    QGeoCoordinate coordinate;
-
-    /**
-     * @brief azimuth The azimuth. Units: degrees (? = North)
-     */
-    double azimuth;
-
-    /**
-     * @brief azimuthAvgNext300m The average azimuth for the next 300m. Units: degrees (? = North)
-     */
-    double azimuthAvgNext300m;
-
-    /**
-     * @brief coordinateTS ???. Unit: ???
-     */
-    quint64 coordinateTS = 0;
-
-    /**
-     * @brief coordinateOdometer ???. Unit: ???
-     */
-    double coordinateOdometer = 0;
-
-    /**
-     * @brief The currently loaded gpxBase64 GPS exchange data.
-     */
-    QString gpxBase64 = "";
-
-    /**
-     * @brief gpxFileName The file path of the currently loaded GPS exchange data.
-     */
-    QString gpxFileName = "";
-
-    /**
-     * @brief NextInclination300Meters A list of the length and inclination of track sections for the next 300m
-     */
-    QList<MetersByInclination> NextInclination300Meters;
-
-    /**
      * @brief Inclination A metric to get and set the currently requested inclinaton. Units: degrees (0 = horizontal)
      */
     metric Inclination;
@@ -618,7 +477,6 @@ class bluetoothdevice : public QObject {
     static const uint8_t maxheatzone = 4;
     metric heatZonesSeconds[maxheatzone];
 
-    bluetoothdevice::WORKOUT_EVENT_STATE lastState;
 
     /**
      * @brief paused Indicates if the device is currently paused.

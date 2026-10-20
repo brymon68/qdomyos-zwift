@@ -29,7 +29,6 @@ static QStringList expectedKeys() {
         "continuous_moving",
         "speed_gain",
         "speed_offset",
-        "treadmill_force_speed",
         "treadmill_inclination_ovveride_gain",
         "treadmill_inclination_ovveride_offset",
         "treadmill_step_incline",
@@ -37,10 +36,6 @@ static QStringList expectedKeys() {
         "treadmill_incline_min",
         "treadmill_incline_max",
         "min_inclination",
-        "trainprogram_incline_min",
-        "trainprogram_incline_max",
-        "trainprogram_speed_min",
-        "trainprogram_speed_max",
     };
     for (int halfSteps = 0; halfSteps <= 30; ++halfSteps) {
         const QString suffix = halfSteps == 1 ? QStringLiteral("05") : QString::number(halfSteps * 5);
@@ -60,8 +55,8 @@ static void requireNumber(QSettings &settings, const char *key, double expected)
 static void checkFreshSettings(QSettings &settings) {
     QStringList actualKeys = settings.allKeys();
     actualKeys.sort();
-    require(actualKeys == expectedKeys() && actualKeys.size() == 57,
-            "Fresh settings do not match the exact 57-key public allowlist.");
+    require(actualKeys == expectedKeys() && actualKeys.size() == 52,
+            "Fresh settings do not match the exact 52-key public allowlist.");
     require(settings.value("miles_unit").toBool(),
             "The fresh unit preference is incorrect.");
     require(settings.value("dircon_yes").toBool() &&

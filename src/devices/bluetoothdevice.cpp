@@ -1,16 +1,8 @@
 #include "devices/bluetoothdevice.h"
 
-#include <QFile>
 #include <QSettings>
 #include <QTime>
 #include <cmath>
-
-#ifdef Q_OS_ANDROID
-#include <QAndroidJniObject>
-#endif
-#ifdef Q_OS_IOS
-#include "ios/lockscreen.h"
-#endif
 
 bluetoothdevice::bluetoothdevice() {}
 
@@ -43,12 +35,6 @@ QTime bluetoothdevice::elapsedTime() {
     int hours = (int)(elapsed.value() / 3600.0);
     return QTime(hours, (int)(elapsed.value() - ((double)hours * 3600.0)) / 60.0, ((uint32_t)elapsed.value()) % 60, 0);
 }
-QTime bluetoothdevice::lapElapsedTime() {
-    int hours = (int)(elapsed.lapValue() / 3600.0);
-    return QTime(hours, (int)(elapsed.lapValue() - ((double)hours * 3600.0)) / 60.0,
-                 ((uint32_t)elapsed.lapValue()) % 60, 0);
-}
-
 metric bluetoothdevice::currentResistance() { return Resistance; }
 metric bluetoothdevice::currentCadence() { return Cadence; }
 double bluetoothdevice::currentCrankRevolutions() { return 0; }
@@ -112,21 +98,11 @@ QTime bluetoothdevice::maxPace() {
 
 double bluetoothdevice::odometerFromStartup() { return Distance.valueRaw(); }
 double bluetoothdevice::odometer() { return Distance.value(); }
-double bluetoothdevice::lapOdometer() { return Distance.lapValue(); }
 bool bluetoothdevice::connected() { return false; }
 metric bluetoothdevice::elevationGain() { return elevationAcc; }
 metric bluetoothdevice::negativeElevationGain() { return negativeElevationAcc; }
 void bluetoothdevice::heartRate(uint8_t heart) {
     Heart.setValue(heart);
-    heartRateFromHealthKit = false;
-#ifdef Q_OS_IOS
-#ifndef IO_UNDER_QT
-    // Write heart rate from Bluetooth to Apple Health during workout
-    lockscreen h;
-    if(heart > 0)
-        h.setHeartRate(heart);
-#endif
-#endif
 }
 void bluetoothdevice::coreBodyTemperature(double coreBodyTemperature) { CoreBodyTemperature.setValue(coreBodyTemperature); }
 void bluetoothdevice::skinTemperature(double skinTemperature) { SkinTemperature.setValue(skinTemperature); }
@@ -140,9 +116,6 @@ void bluetoothdevice::rrIntervalReceived(double rrInterval) {
     while (rrIntervals.size() > 30) {
         rrIntervals.removeFirst();
     }
-
-    // Also add to FIT file buffer (will be cleared when SessionLine is created)
-    rrIntervalsForFit.append(rrInterval);
 
     // Calculate RMSSD when we have at least 5 RR-intervals
     if (rrIntervals.size() >= 5) {
@@ -199,7 +172,6 @@ void bluetoothdevice::clearStats() {
     moving.clear(true);
     Speed.clear(false);
     Distance.clear(true);
-    Distance1s.clear(true);
     Heart.clear(false);
     elevationAcc = 0;
     negativeElevationAcc = 0;
@@ -219,7 +191,6 @@ void bluetoothdevice::setPaused(bool p) {
     elapsed.setPaused(p);
     Speed.setPaused(p);
     Distance.setPaused(p);
-    Distance1s.setPaused(p);
     Heart.setPaused(p);
     Cadence.setPaused(p);
     for(int i=0; i<maxHeartZone(); i++) {
@@ -230,23 +201,6 @@ void bluetoothdevice::setPaused(bool p) {
     }    
 }
 
-void bluetoothdevice::setLap() {
-
-    moving.setLap(true);
-    elapsed.setLap(true);
-    Speed.setLap(false);
-    Distance.setLap(true);
-    Distance1s.setLap(true);
-    Heart.setLap(false);
-    Cadence.setLap(false);
-    for(int i=0; i<maxHeartZone(); i++) {
-        hrZonesSeconds[i].setLap(false);
-    }
-    for(int i=0; i<maxHeatZone(); i++) {
-        heatZonesSeconds[i].setLap(false);
-    }    
-}
-
 QStringList bluetoothdevice::metrics() {
     return {QStringLiteral("Speed"), QStringLiteral("Inclination"), QStringLiteral("Pace"),
             QStringLiteral("Odometer"), QStringLiteral("Elapsed"), QStringLiteral("Heart Rate")};
@@ -254,36 +208,7 @@ QStringList bluetoothdevice::metrics() {
 
 resistance_t bluetoothdevice::maxResistance() { return 100; }
 
-void bluetoothdevice::changeGeoPosition(QGeoCoordinate p, double azimuth, double avgAzimuthNext300Meters) {
-    coordinateTS = QDateTime::currentMSecsSinceEpoch();
-    coordinateOdometer = odometer();
-    coordinate = p;
-    this->setAverageAzimuthNext300m(avgAzimuthNext300Meters);
-    this->azimuth = azimuth;
-}
-QGeoCoordinate bluetoothdevice::currentCordinate() {
-    if (coordinateTS) {
-        double distance = odometer() - coordinateOdometer;
-        QGeoCoordinate c = coordinate.atDistanceAndAzimuth(distance * 1000.0, this->azimuth);
-        c.setAltitude(coordinate.altitude());
-        // qDebug() << "currentCordinate" << c << distance << currentSpeed().value();
-        return c;
-    }
-    return coordinate;
-}
-
-void bluetoothdevice::workoutEventStateChanged(bluetoothdevice::WORKOUT_EVENT_STATE state) { lastState = state; }
 void bluetoothdevice::setInclination(double inclination) { Inclination = inclination; }
-void bluetoothdevice::setGPXFile(QString filename) {
-    gpxFileName = filename;
-    QFile input(filename);
-    if (input.open(QIODevice::ReadOnly)) {
-        QByteArray asSaved = input.readAll();
-        gpxBase64 = "data:@file/xml;base64," + asSaved.toBase64();
-        input.close();
-    }
-}
-
 void bluetoothdevice::setHeartZone(double hz) {
     HeartZone = hz;
     if(isPaused() == false && currentHeart().value() > 0) {

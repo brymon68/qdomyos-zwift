@@ -30,7 +30,6 @@
     <button onclick="command('start')">Start / Pause</button>
     <button class="stop" onclick="command('stop')">Stop</button>
     <button onclick="command('autoresistance')" id="automatic">Automatic incline</button>
-    <button onclick="command('lap')">Lap</button>
     <button onclick="command('floating_close')">Close</button>
   </div>
   <script>
@@ -41,7 +40,7 @@
       }, 15000, 1);
       request.enqueue().catch(function(error) { console.error(error); });
     }
-    function updateWorkout(data) {
+    function updateTelemetry(data) {
       $('#speed').text((Number(data.speed || 0) * miles).toFixed(1));
       $('#inclination').text(Number(data.inclination || 0).toFixed(1));
       $('#distance').text((Number(data.distance || 0) * miles).toFixed(2));
@@ -50,24 +49,24 @@
       $('#heart').text(Math.round(Number(data.heart || 0)));
       $('#automatic').text('Automatic incline ' + (data.autoresistance ? 'on' : 'off'));
     }
-    function listenWorkout() {
+    function listenTelemetry() {
       const request = new MainWSQueueElement(null, function(message) {
-        return message.msg === 'workout' ? message.content : null;
+        return message.msg === 'telemetry' ? message.content : null;
       }, 2000, 1);
       request.enqueue().then(function(data) {
-        updateWorkout(data);
-        listenWorkout();
-      }).catch(function() { setTimeout(listenWorkout, 1000); });
+        updateTelemetry(data);
+        listenTelemetry();
+      }).catch(function() { setTimeout(listenTelemetry, 1000); });
     }
     $(window).on('load', function() {
-      const request = new MainWSQueueElement({msg: 'getsettings', content: {keys: ['miles_unit']}}, function(message) {
-        return message.msg === 'R_getsettings' ? message.content : null;
+      const request = new MainWSQueueElement({msg: 'display_settings'}, function(message) {
+        return message.msg === 'R_display_settings' ? message.content : null;
       }, 5000, 1);
       request.enqueue().then(function(settings) {
         miles = settings.miles_unit === false || settings.miles_unit === 'false' ? 1 : 0.621371;
         $('#speed-unit').text(miles === 1 ? 'km/h' : 'mph');
         $('#distance-unit').text(miles === 1 ? 'km' : 'mi');
-      }).catch(function(error) { console.error(error); }).finally(listenWorkout);
+      }).catch(function(error) { console.error(error); }).finally(listenTelemetry);
     });
   </script>
 </body>

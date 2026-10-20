@@ -46,7 +46,7 @@ RUN sdkmanager --sdk_root="$ANDROID_SDK_ROOT" \
 
 RUN python3 -m pip install --no-cache-dir aqtinstall==3.3.0 py7zr==1.0.0 \
     && python3 -m aqt install-qt linux android 5.15.0 android \
-        --outputdir /opt/qt --modules qtcharts qtnetworkauth
+        --outputdir /opt/qt --modules qtnetworkauth
 
 # Mount this fork checkout at /source and the output parent at /build.
 # Container root maps to the rootless host user.

@@ -23,8 +23,6 @@ import android.content.ContextWrapper;
 import android.content.IntentFilter;
 import android.widget.Toast;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.util.HashMap;

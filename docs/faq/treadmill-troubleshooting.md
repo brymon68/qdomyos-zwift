@@ -99,8 +99,6 @@ QZ can use the Zwift integration for **automatic inclination**. Configure your Z
 
 Zwift does not provide QZ with a treadmill target speed in the same way, so Zwift cannot directly drive automatic treadmill speed through this integration.
 
-If you want automatic speed changes for a structured workout, recreate the workout in the **QZ workout editor** and run it from QZ. QZ can then control the treadmill speed according to the workout steps while the Zwift integration supplies the inclination information.
-
 ## Can I use a Stryd footpod with a non-smart treadmill and send the data to Zwift through QZ?
 
 Yes. If the treadmill itself has no FTMS or other usable fitness connection, QZ can connect directly to a **Stryd** sensor and use it as the treadmill data source, then expose the resulting treadmill data to Zwift.

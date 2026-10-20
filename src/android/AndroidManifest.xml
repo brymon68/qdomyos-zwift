@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<manifest package="org.cagnulen.qdomyoszwift" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:versionName="2.21.5" android:versionCode="1403" android:installLocation="auto">
+<manifest package="org.cagnulen.qdomyoszwift" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="2.21.5" android:versionCode="1403" android:installLocation="auto">
 <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.
           Remove the comment if you do not require these default permissions. -->
 			<!-- %%INSERT_PERMISSIONS -->
@@ -15,12 +15,6 @@
 				    <action android:name="android.intent.action.MAIN"/>
 					 <category android:name="android.intent.category.LAUNCHER"/>
 					</intent-filter>
-                                        <intent-filter>
-                                            <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-                                        </intent-filter>
-                                        <meta-data
-                                            android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                                            android:resource="@xml/device_filter" />
 					<!-- Application arguments -->
 				<!-- meta-data android:name="android.app.arguments" android:value="arg1 arg2 arg3"/ -->
 				<!-- Application arguments -->
@@ -83,30 +77,14 @@
 
 				<service android:name=".FloatingWindowGFG" android:enabled="true" android:exported="true"/>
 
-            <service android:name="com.cgutman.androidremotedebugger.service.ShellService"
-				    android:enabled="true"
-                                    android:foregroundServiceType="connectedDevice"
-					 android:exported="false" >
-					</service>
-
-                                <service
-                                    android:name=".ScreenCaptureService"
-                                    android:foregroundServiceType="mediaProjection" />
-
-                                <meta-data
-                                    android:name="com.google.mlkit.vision.DEPENDENCIES"
-                                    android:value="ocr" />
-
-				<activity android:name="org.cagnulen.qdomyoszwift.MyActivity" />
 		  <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
 		</application>
 
-<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="36" tools:overrideLibrary="com.google.android.gms.common" />
+<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="36" />
 <uses-permission android:name="android.permission.WAKE_LOCK"/>
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-permission android:name="android.permission.ACCESS_CHECKIN_PROPERTIES"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
@@ -114,8 +92,4 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 	 <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-	 <uses-permission android:name="com.google.android.things.permission.USE_PERIPHERAL_IO" />
-	 <uses-permission android:name="android.permission.GET_TASKS" />
-	 <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
-	     tools:ignore="ProtectedPermissions" />
 </manifest>

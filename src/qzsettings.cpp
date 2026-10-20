@@ -10,8 +10,6 @@ const QString QZSettings::zwift_negative_inclination_x2 = QStringLiteral("zwift_
 const QString QZSettings::zwift_inclination_offset = QStringLiteral("zwift_inclination_offset");
 const QString QZSettings::zwift_inclination_gain = QStringLiteral("zwift_inclination_gain");
 const QString QZSettings::miles_unit = QStringLiteral("miles_unit");
-const QString QZSettings::treadmill_force_speed = QStringLiteral("treadmill_force_speed");
-const QString QZSettings::treadmill_force_running_activity = QStringLiteral("treadmill_force_running_activity");
 const QString QZSettings::pause_on_start_treadmill = QStringLiteral("pause_on_start_treadmill");
 const QString QZSettings::continuous_moving = QStringLiteral("continuous_moving");
 const QString QZSettings::speed_offset = QStringLiteral("speed_offset");
@@ -30,13 +28,7 @@ const QString QZSettings::treadmill_step_incline = QStringLiteral("treadmill_ste
 const QString QZSettings::dircon_yes = QStringLiteral("dircon_yes");
 const QString QZSettings::dircon_server_base_port = QStringLiteral("dircon_server_base_port");
 const QString QZSettings::app_opening = QStringLiteral("app_opening");
-const QString QZSettings::tts_enabled = QStringLiteral("tts_enabled");
 // from version 2.11.22
-const QString QZSettings::trainprogram_stop_at_end = QStringLiteral("trainprogram_stop_at_end");
-const QString QZSettings::trainprogram_clipboard_workout_enabled =
-    QStringLiteral("trainprogram_clipboard_workout_enabled");
-const QString QZSettings::trainprogram_sound_on_segment = QStringLiteral("trainprogram_sound_on_segment");
-const QString QZSettings::gpx_loop = QStringLiteral("gpx_loop");
 const QString QZSettings::floating_height = QStringLiteral("floating_height");
 const QString QZSettings::floating_width = QStringLiteral("floating_width");
 const QString QZSettings::floating_transparency = QStringLiteral("floating_transparency");
@@ -72,14 +64,9 @@ const QString QZSettings::treadmill_inclination_override_135 = QStringLiteral("t
 const QString QZSettings::treadmill_inclination_override_140 = QStringLiteral("treadmill_inclination_override_140");
 const QString QZSettings::treadmill_inclination_override_145 = QStringLiteral("treadmill_inclination_override_145");
 const QString QZSettings::treadmill_inclination_override_150 = QStringLiteral("treadmill_inclination_override_150");
-const QString QZSettings::treadmill_direct_distance = QStringLiteral("treadmill_direct_distance");
 const QString QZSettings::treadmill_inclination_ovveride_gain = QStringLiteral("treadmill_inclination_ovveride_gain");
 const QString QZSettings::treadmill_inclination_ovveride_offset =
     QStringLiteral("treadmill_inclination_ovveride_offset");
-const QString QZSettings::zwift_ocr = QStringLiteral("zwift_ocr");
-const QString QZSettings::fit_file_saved_on_quit = QStringLiteral("fit_file_saved_on_quit");
-const QString QZSettings::zwift_workout_ocr = QStringLiteral("zwift_workout_ocr");
-const QString QZSettings::zwift_ocr_climb_portal = QStringLiteral("zwift_ocr_climb_portal");
 const QString QZSettings::zwift_username = QStringLiteral("zwift_username");
 const QString QZSettings::default_zwift_username = QStringLiteral("");
 const QString QZSettings::zwift_password = QStringLiteral("zwift_password");
@@ -93,20 +80,7 @@ const QString QZSettings::zwift_api_autoinclination = QStringLiteral("zwift_api_
 const QString QZSettings::zwift_api_poll = QStringLiteral("zwift_api_poll");
 const QString QZSettings::inclination_delay_seconds = QStringLiteral("inclination_delay_seconds");
 const QString QZSettings::dircon_id = QStringLiteral("dircon_id");
-const QString QZSettings::skipLocationServicesDialog = QStringLiteral("skipLocationServicesDialog");
 const QString QZSettings::min_inclination = QStringLiteral("min_inclination");
-const QString QZSettings::mqtt_host = QStringLiteral("mqtt_host");
-const QString QZSettings::default_mqtt_host = QStringLiteral("");
-const QString QZSettings::mqtt_port = QStringLiteral("mqtt_port");
-const QString QZSettings::mqtt_username = QStringLiteral("mqtt_username");
-const QString QZSettings::mqtt_password = QStringLiteral("mqtt_password");
-const QString QZSettings::mqtt_deviceid = QStringLiteral("mqtt_deviceid");
-const QString QZSettings::default_mqtt_username = QStringLiteral("");
-const QString QZSettings::default_mqtt_password = QStringLiteral("");
-const QString QZSettings::default_mqtt_deviceid = QStringLiteral("default");
-const QString QZSettings::OSC_ip = QStringLiteral("osc_ip");
-const QString QZSettings::default_OSC_ip = QStringLiteral("");
-const QString QZSettings::OSC_port = QStringLiteral("osc_port");
 
 
 
@@ -136,8 +110,6 @@ const QString QZSettings::real_inclination_to_virtual_treamill_bridge = QStringL
 
 const QString QZSettings::floatingwindow_type = QStringLiteral("floatingwindow_type");
 
-const QString QZSettings::confirm_stop_workout = QStringLiteral("confirm_stop_workout");
-const QString QZSettings::trainprogram_auto_lap_on_segment = QStringLiteral("trainprogram_auto_lap_on_segment");
 
 const QString QZSettings::shortcuts_enabled = QStringLiteral("shortcuts_enabled");
 const QString QZSettings::shortcut_speed_plus = QStringLiteral("shortcut_speed_plus");
@@ -148,14 +120,12 @@ const QString QZSettings::shortcut_inclination_plus = QStringLiteral("shortcut_i
 const QString QZSettings::default_shortcut_inclination_plus = QStringLiteral("");
 const QString QZSettings::shortcut_inclination_minus = QStringLiteral("shortcut_inclination_minus");
 const QString QZSettings::default_shortcut_inclination_minus = QStringLiteral("");
-const QString QZSettings::shortcut_lap = QStringLiteral("shortcut_lap");
-const QString QZSettings::default_shortcut_lap = QStringLiteral("");
 const QString QZSettings::shortcut_start_stop = QStringLiteral("shortcut_start_stop");
 const QString QZSettings::default_shortcut_start_stop = QStringLiteral("");
 const QString QZSettings::shortcut_stop = QStringLiteral("shortcut_stop");
 const QString QZSettings::default_shortcut_stop = QStringLiteral("");
 
-const uint32_t allSettingsCount = 99;
+const uint32_t allSettingsCount = 76;
 
 QVariant allSettings[allSettingsCount][2] = {
     {QZSettings::bike_heartrate_service, QZSettings::default_bike_heartrate_service},
@@ -163,8 +133,6 @@ QVariant allSettings[allSettingsCount][2] = {
     {QZSettings::zwift_inclination_offset, QZSettings::default_zwift_inclination_offset},
     {QZSettings::zwift_inclination_gain, QZSettings::default_zwift_inclination_gain},
     {QZSettings::miles_unit, QZSettings::default_miles_unit},
-    {QZSettings::treadmill_force_speed, QZSettings::default_treadmill_force_speed},
-    {QZSettings::treadmill_force_running_activity, QZSettings::default_treadmill_force_running_activity},
     {QZSettings::pause_on_start_treadmill, QZSettings::default_pause_on_start_treadmill},
     {QZSettings::continuous_moving, QZSettings::default_continuous_moving},
     {QZSettings::speed_offset, QZSettings::default_speed_offset},
@@ -178,12 +146,6 @@ QVariant allSettings[allSettingsCount][2] = {
     {QZSettings::dircon_yes, QZSettings::default_dircon_yes},
     {QZSettings::dircon_server_base_port, QZSettings::default_dircon_server_base_port},
     {QZSettings::app_opening, QZSettings::default_app_opening},
-    {QZSettings::tts_enabled, QZSettings::default_tts_enabled},
-    {QZSettings::trainprogram_stop_at_end, QZSettings::default_trainprogram_stop_at_end},
-    {QZSettings::trainprogram_clipboard_workout_enabled,
-     QZSettings::default_trainprogram_clipboard_workout_enabled},
-    {QZSettings::trainprogram_sound_on_segment, QZSettings::default_trainprogram_sound_on_segment},
-    {QZSettings::gpx_loop, QZSettings::default_gpx_loop},
     {QZSettings::floating_height, QZSettings::default_floating_height},
     {QZSettings::floating_width, QZSettings::default_floating_width},
     {QZSettings::floating_transparency, QZSettings::default_floating_transparency},
@@ -219,13 +181,8 @@ QVariant allSettings[allSettingsCount][2] = {
     {QZSettings::treadmill_inclination_override_140, QZSettings::default_treadmill_inclination_override_140},
     {QZSettings::treadmill_inclination_override_145, QZSettings::default_treadmill_inclination_override_145},
     {QZSettings::treadmill_inclination_override_150, QZSettings::default_treadmill_inclination_override_150},
-    {QZSettings::treadmill_direct_distance, QZSettings::default_treadmill_direct_distance},
     {QZSettings::treadmill_inclination_ovveride_gain, QZSettings::default_treadmill_inclination_ovveride_gain},
     {QZSettings::treadmill_inclination_ovveride_offset, QZSettings::default_treadmill_inclination_ovveride_offset},
-    {QZSettings::zwift_ocr, QZSettings::default_zwift_ocr},
-    {QZSettings::fit_file_saved_on_quit, QZSettings::default_fit_file_saved_on_quit},
-    {QZSettings::zwift_workout_ocr, QZSettings::default_zwift_workout_ocr},
-    {QZSettings::zwift_ocr_climb_portal, QZSettings::default_zwift_ocr_climb_portal},
     {QZSettings::zwift_username, QZSettings::default_zwift_username},
     {QZSettings::zwift_password, QZSettings::default_zwift_password},
     {QZSettings::treadmill_incline_min, QZSettings::default_treadmill_incline_min},
@@ -237,15 +194,7 @@ QVariant allSettings[allSettingsCount][2] = {
     {QZSettings::zwift_api_poll, QZSettings::default_zwift_api_poll},
     {QZSettings::inclination_delay_seconds, QZSettings::default_inclination_delay_seconds},
     {QZSettings::dircon_id, QZSettings::default_dircon_id},
-    {QZSettings::skipLocationServicesDialog, QZSettings::default_skipLocationServicesDialog},
     {QZSettings::min_inclination, QZSettings::default_min_inclination},
-    {QZSettings::mqtt_host, QZSettings::default_mqtt_host},
-    {QZSettings::mqtt_port, QZSettings::default_mqtt_port},
-    {QZSettings::mqtt_username, QZSettings::default_mqtt_username},
-    {QZSettings::mqtt_password, QZSettings::default_mqtt_password},
-    {QZSettings::mqtt_deviceid, QZSettings::default_mqtt_deviceid},
-    {QZSettings::OSC_ip, QZSettings::default_OSC_ip},
-    {QZSettings::OSC_port, QZSettings::default_OSC_port},
 
 
 
@@ -263,14 +212,11 @@ QVariant allSettings[allSettingsCount][2] = {
 
 
     {QZSettings::floatingwindow_type, QZSettings::default_floatingwindow_type},
-    {QZSettings::confirm_stop_workout, QZSettings::default_confirm_stop_workout},
-    {QZSettings::trainprogram_auto_lap_on_segment, QZSettings::default_trainprogram_auto_lap_on_segment},
     {QZSettings::shortcuts_enabled, QZSettings::default_shortcuts_enabled},
     {QZSettings::shortcut_speed_plus, QZSettings::default_shortcut_speed_plus},
     {QZSettings::shortcut_speed_minus, QZSettings::default_shortcut_speed_minus},
     {QZSettings::shortcut_inclination_plus, QZSettings::default_shortcut_inclination_plus},
     {QZSettings::shortcut_inclination_minus, QZSettings::default_shortcut_inclination_minus},
-    {QZSettings::shortcut_lap, QZSettings::default_shortcut_lap},
     {QZSettings::shortcut_start_stop, QZSettings::default_shortcut_start_stop},
     {QZSettings::shortcut_stop, QZSettings::default_shortcut_stop},
 };

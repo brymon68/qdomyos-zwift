@@ -6,7 +6,6 @@
 #include "logwriter.h"
 #include "bluetooth.h"
 #include "homeform.h"
-#include "qfit.h"
 #include <QDir>
 #include <QGuiApplication>
 #include <QOperatingSystemVersion>
@@ -17,29 +16,17 @@
 #endif
 #include <QStandardPaths>
 #include <QList>
-#ifdef CHARTJS
-#include <QtWebView/QtWebView>
-#endif
+#include <QThread>
 
-#include "mqttpublisher.h"
 #include "androidstatusbar.h"
-#include "fontmanager.h"
-#include "filesearcher.h"
 
 #ifdef Q_OS_ANDROID
 #include "keepawakehelper.h"
 #include <QtAndroid>
 #endif
 
-#ifdef Q_OS_MACOS
-#include "macos/lockscreen.h"
-#endif
 
-#ifdef Q_OS_IOS
-#include "ios/lockscreen.h"
-#endif
 
-#include "osc.h"
 
 
 bool logs = true;
@@ -114,9 +101,6 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QScopedPointer<QApplication> app(new QApplication(argc, argv));
 
-#ifdef CHARTJS
-    QtWebView::initialize();
-#endif
 
     app->setOrganizationName(QStringLiteral("Roberto Viola"));
     app->setOrganizationDomain(QStringLiteral("robertoviola.cloud"));
@@ -135,11 +119,8 @@ int main(int argc, char *argv[]) {
     noHeartService = settings.value(QZSettings::bike_heartrate_service, !noHeartService).toBool();
 
     // Register custom meta types used in queued invocations
-    qRegisterMetaType<SessionLine>("SessionLine");
-    qRegisterMetaType<QList<SessionLine>>("QList<SessionLine>");
     qRegisterMetaType<BLUETOOTH_TYPE>("BLUETOOTH_TYPE");
     qRegisterMetaType<uint32_t>("uint32_t");
-    qRegisterMetaType<FIT_SPORT>("FIT_SPORT");
 
     qInstallMessageHandler(myMessageOutput);
     qDebug() << QStringLiteral("version ") << app->applicationVersion();
@@ -147,15 +128,7 @@ int main(int argc, char *argv[]) {
                       settings.value(QZSettings::app_opening, QZSettings::default_app_opening).toInt() + 1);
 
 #if defined(Q_OS_ANDROID)
-    auto result = QtAndroid::checkPermission(QString("android.permission.READ_EXTERNAL_STORAGE"));
-    if (result == QtAndroid::PermissionResult::Denied) {
-        QtAndroid::PermissionResultMap resultHash =
-            QtAndroid::requestPermissionsSync(QStringList({"android.permission.READ_EXTERNAL_STORAGE"}));
-        if (resultHash["android.permission.READ_EXTERNAL_STORAGE"] == QtAndroid::PermissionResult::Denied)
-            qDebug() << "READ_EXTERNAL_STORAGE denied!";
-    }
-
-    result = QtAndroid::checkPermission(QString("android.permission.ACCESS_FINE_LOCATION"));
+    auto result = QtAndroid::checkPermission(QString("android.permission.ACCESS_FINE_LOCATION"));
     if (result == QtAndroid::PermissionResult::Denied) {
         QtAndroid::PermissionResultMap resultHash =
             QtAndroid::requestPermissionsSync(QStringList({"android.permission.ACCESS_FINE_LOCATION"}));
@@ -226,33 +199,9 @@ int main(int argc, char *argv[]) {
 
     bluetooth bl(logs, noHeartService);
 
-    QString mqtt_host = settings.value(QZSettings::mqtt_host, QZSettings::default_mqtt_host).toString();
-    int mqtt_port = settings.value(QZSettings::mqtt_port, QZSettings::default_mqtt_port).toInt();
-    QString mqtt_username = settings.value(QZSettings::mqtt_username, QZSettings::default_mqtt_username).toString();
-    QString mqtt_password = settings.value(QZSettings::mqtt_password, QZSettings::default_mqtt_password).toString();
-    if(mqtt_host.length() > 0) {
-        new MQTTPublisher(mqtt_host, mqtt_port, mqtt_username, mqtt_password, &bl, &bl);
-    }
-
-    QString OSC_ip = settings.value(QZSettings::OSC_ip, QZSettings::default_OSC_ip).toString();
-    if(OSC_ip.length() > 0) {
-        OSC* osc = new OSC(&bl);
-    }
-
-#ifdef Q_OS_IOS
-#ifndef IO_UNDER_QT
-    lockscreen h;
-    h.request();
-#endif
-#endif
-
     {
         AndroidStatusBar::registerQmlType();
 
-#ifdef Q_OS_ANDROID
-        FontManager fontManager;
-        fontManager.initializeEmojiFont();
-#endif
 
         QQmlApplicationEngine engine;
         const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -264,24 +213,7 @@ int main(int argc, char *argv[]) {
             },
             Qt::QueuedConnection);
 
-#ifdef Q_OS_ANDROID
         engine.rootContext()->setContextProperty("OS_VERSION", QVariant("Android"));
-#elif defined(Q_OS_IOS)
-        engine.rootContext()->setContextProperty("OS_VERSION", QVariant("iOS"));
-#else
-        engine.rootContext()->setContextProperty("OS_VERSION", QVariant("Other"));
-#endif
-#ifdef CHARTJS
-        engine.rootContext()->setContextProperty("CHARTJS", QVariant(true));
-#else
-        engine.rootContext()->setContextProperty("CHARTJS", QVariant(false));
-#endif
-#ifdef Q_OS_ANDROID
-        engine.rootContext()->setContextProperty("fontManager", &fontManager);
-#endif
-        // Expose FileSearcher for fast recursive file searching
-        FileSearcher fileSearcher;
-        engine.rootContext()->setContextProperty("fileSearcher", &fileSearcher);
 
         engine.load(url);
         if (engine.rootObjects().isEmpty())
@@ -293,20 +225,10 @@ int main(int argc, char *argv[]) {
         {
 #ifdef Q_OS_ANDROID
             KeepAwakeHelper helper;
-#elif defined Q_OS_MACOS
-            lockScreen();
-#elif defined Q_OS_IOS
-#ifndef IO_UNDER_QT
-            lockscreen yc;
-            yc.setTimerDisabled();
-#endif
 #endif
             // screen and CPU will stay awake during this section
             // lock will be released when helper object goes out of scope
             return app->exec();
         }
-#ifdef Q_OS_MACOS
-        unlockScreen();
-#endif
     }
 }

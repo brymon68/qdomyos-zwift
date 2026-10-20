@@ -12,11 +12,7 @@
 #include <QtBluetooth/qlowenergyservice.h>
 #include <QtBluetooth/qlowenergyservicedata.h>
 #include <QtCore/qbytearray.h>
-#ifndef Q_OS_ANDROID
-#include <QtCore/qcoreapplication.h>
-#else
 #include <QtGui/qguiapplication.h>
-#endif
 
 #include <QtCore/qlist.h>
 #include <QtCore/qloggingcategory.h>
@@ -41,10 +37,6 @@ class virtualtreadmill : public virtualdevice {
     QLowEnergyService *serviceDIS = nullptr;
     QLowEnergyService *serviceWahoo = nullptr;
 
-#if defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)    
-    QLowEnergyService *genericAccessServer = nullptr;
-    QLowEnergyService *genericAttributeService = nullptr;
-#endif       
 
     QLowEnergyAdvertisingData advertisingData;
     
@@ -54,10 +46,6 @@ class virtualtreadmill : public virtualdevice {
     QLowEnergyServiceData serviceDataDIS;
     QLowEnergyServiceData serviceDataWahoo;
 
-#if defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)    
-    QLowEnergyServiceData genericAccessServerData;
-    QLowEnergyServiceData genericAttributeServiceData;
-#endif      
     
     QTimer treadmillTimer;
     bluetoothdevice *treadMill;

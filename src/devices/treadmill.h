@@ -27,7 +27,6 @@ class treadmill : public bluetoothdevice {
     metric currentStepCount() { return StepCount; }
     BLUETOOTH_TYPE deviceType() override;
     void clearStats() override;
-    void setLap() override;
     void setPaused(bool p) override;
     double lastRawSpeedRequested() {
         return (m_lastRawSpeedRequested != -1 ? m_lastRawSpeedRequested : currentSpeed().value());

@@ -13,7 +13,6 @@ Page {
 
     property alias start: start
     property alias stop: stop
-    property alias lap: lap
     property alias row: row
 
     Item {
@@ -103,7 +102,7 @@ Page {
                     // VoiceOver accessibility
                     Accessible.role: Accessible.Button
                     Accessible.name: rootItem.startText
-                    Accessible.description: qsTr("Start workout")
+                    Accessible.description: qsTr("Start or pause the treadmill")
                     Accessible.focusable: true
                 }
                 ColorOverlay {
@@ -133,7 +132,7 @@ Page {
                     // VoiceOver accessibility
                     Accessible.role: Accessible.Button
                     Accessible.name: rootItem.stopText
-                    Accessible.description: qsTr("Stop workout")
+                    Accessible.description: qsTr("Stop the treadmill")
                     Accessible.focusable: true
                 }
                 ColorOverlay {
@@ -144,36 +143,7 @@ Page {
                 }
             }
 
-            Rectangle {
-                id: item2
-                width: 50
-                height: row.height
-					 color: "#303030"
-                Accessible.ignored: true
 
-                RoundButton {
-                    anchors.verticalCenter: parent.verticalCenter
-                    id: lap
-                    width: 48
-                    height: row.height - 52
-                    icon.source: "icons/icons/lap.png"
-                    icon.width: 48
-                    icon.height: 48
-                    enabled: rootItem.lap
-                    smooth: true
-
-                    // VoiceOver accessibility
-                    Accessible.role: Accessible.Button
-                    Accessible.name: qsTr("Lap")
-                    Accessible.description: qsTr("Record a new lap")
-                    Accessible.focusable: true
-                }
-                ColorOverlay {
-                    anchors.fill: lap
-                    source: lap
-                    color: lap.enabled ? "#00000000" : "#B0D3d3d3"
-                }
-            }
         }
 
         Row {
