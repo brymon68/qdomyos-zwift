@@ -73,6 +73,40 @@ bash tools/x22i/build_baseline.sh /LOCAL/BASELINE-SOURCE /LOCAL/NEW-BUILD-DIRECT
 
 The output directory must not exist. The script modifies the disposable source defaults, builds and checks the APK, and does not install it. Do not supply private secret headers or owner credentials.
 
+### Docker toolchain
+
+[`docker/x22i/Dockerfile`](../docker/x22i/Dockerfile) packages the Android build tools on Ubuntu 22.04 for a Linux AMD64 host, producing ARM64 APKs. It pins Qt 5.15.0, Temurin Java 17.0.20.1, Android command-line tools 19.0, NDK 21.4.7075529, SDK platform 35, build tools 35.0.0, and the Qt installer versions. Java and command-line tool archives are checksum-checked during image creation. The recipe still runs the same `tools/x22i/build_baseline.sh`.
+
+Use [rootless Docker](https://docs.docker.com/engine/security/rootless/) for the commands below. Container UID 0 then maps to the host user, allowing the build to write the mounted source/output and read owner-only signing files. The image needs a writable Qt installation because the recipe installs QtHttpServer and patches its Bluetooth JAR.
+
+From the repository root:
+
+```sh
+docker info --format '{{json .SecurityOptions}}'
+# Confirm the active daemon reports rootless.
+docker build --platform linux/amd64 -t qz-x22i-toolchain:qt5.15.0 docker/x22i
+```
+
+Prepare a clean, disposable source checkout at the pinned revision with all recursive submodules, as in the local-build instructions above. Create a fresh output parent; its `output` child must not exist. Replace the uppercase paths below with local paths:
+
+```sh
+mkdir -p /LOCAL/NEW-BUILD-PARENT
+docker run --rm --init \
+  --mount "type=bind,src=$PWD,dst=/recipe,readonly" \
+  --mount "type=bind,src=/LOCAL/CLEAN-SOURCE,dst=/source" \
+  --mount "type=bind,src=/LOCAL/NEW-BUILD-PARENT,dst=/build" \
+  --mount "type=bind,src=/PRIVATE/TEST-SIGNING/test.p12,dst=/run/secrets/test.p12,readonly" \
+  --mount "type=bind,src=/PRIVATE/TEST-SIGNING/password,dst=/run/secrets/test-password,readonly" \
+  --env X22I_VARIANT=test \
+  --env X22I_SIGNING_STORE_FILE=/run/secrets/test.p12 \
+  --env X22I_SIGNING_STORE_PASSWORD_FILE=/run/secrets/test-password \
+  qz-x22i-toolchain:qt5.15.0
+```
+
+The signing key and password enter through runtime-only read-only mounts. The entrypoint loads the password into the build process environment without printing it. The image build context contains only `docker/x22i`; application source and private configuration are not image inputs. Artifacts appear in `/LOCAL/NEW-BUILD-PARENT/output/artifacts`. Omitting the test environment variables and secret mounts builds the original-package `baseline` variant.
+
+Container recipe syntax and entrypoint smoke checks passed, including password-file loading and rejection of empty/missing password files. A Docker image build and containerized APK build are pending the workstation's Docker installation and administrator authentication.
+
 ### Installed local toolchain
 
 The development workstation now has a dedicated user-local toolchain at `$HOME/.local/share/qz-x22i-toolchain`. Activate it in a Bash shell:
