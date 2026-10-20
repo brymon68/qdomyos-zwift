@@ -98,10 +98,10 @@ Item {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width * .5
-        text: qsTr("Restore Purchases")
+        text: "Restore Purchases"
         onClicked: {
             console.log("restoring...");
-            toast.show(qsTr("Restoring..."));
+            toast.show("Restoring...");
             iapStore.restorePurchases();
         }
     }

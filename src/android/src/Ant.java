@@ -161,12 +161,12 @@ public class Ant {
 
  public void updateBikeTransmitterExtendedMetrics(long distanceMeters, int heartRate, 
                                                double elapsedTimeSeconds, int resistance, 
-                                               double inclination, int equipmentType, int strokeCount) {
+                                               double inclination) {
     if(mChannelService == null)
        return;
     QLog.v(TAG, "updateBikeTransmitterExtendedMetrics");
     mChannelService.updateBikeTransmitterExtendedMetrics(distanceMeters, heartRate, 
                                                         elapsedTimeSeconds, resistance, 
-                                                        inclination, equipmentType, strokeCount);
+                                                        inclination);
  }
 }

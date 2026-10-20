@@ -60,8 +60,6 @@ class virtualbike : public virtualdevice {
     QLowEnergyService *serviceFIT = nullptr;
     QLowEnergyService *service = nullptr;
     QLowEnergyService *serviceChanged = nullptr;
-    QLowEnergyService *serviceCSC = nullptr;
-    QLowEnergyService *serviceTacxCustom = nullptr;
     QLowEnergyService *serviceWattAtomBike = nullptr;
     QLowEnergyService *serviceZwiftPlayBike = nullptr;
     QLowEnergyAdvertisingData advertisingData;
@@ -70,17 +68,14 @@ class virtualbike : public virtualdevice {
     QLowEnergyServiceData serviceDataFIT;
     QLowEnergyServiceData serviceData;
     QLowEnergyServiceData serviceDataChanged;
-    QLowEnergyServiceData serviceDataCSC;
-    QLowEnergyServiceData serviceDataTacxCustom;
     QLowEnergyServiceData serviceEchelon;
     QLowEnergyServiceData serviceDataWattAtomBike;
     QLowEnergyServiceData serviceDataZwiftPlayBike;
-    QLowEnergyService *serviceDIS = nullptr;
-    QLowEnergyServiceData serviceDataDIS;
     QTimer bikeTimer;
     bluetoothdevice *Bike;
     CharacteristicWriteProcessor2AD9 *writeP2AD9 = 0;
     CharacteristicWriteProcessor0003 *writeP0003 = 0;
+    CharacteristicNotifier2ACD *notif2ACD = 0;
     CharacteristicNotifier2AD2 *notif2AD2 = 0;
     CharacteristicNotifier2AD9 *notif2AD9 = 0;
     CharacteristicNotifier2A63 *notif2A63 = 0;
@@ -92,6 +87,7 @@ class virtualbike : public virtualdevice {
     qint64 lastFTMSFrameReceived = 0;
     qint64 lastDirconFTMSFrameReceived = 0;
 
+    bool sendVirtualTreadmillData = true;
     bool noHeartService = false;
     int8_t bikeResistanceOffset = 4;
     double bikeResistanceGain = 1.0;
@@ -113,17 +109,6 @@ class virtualbike : public virtualdevice {
 
     void writeCharacteristic(QLowEnergyService *service, const QLowEnergyCharacteristic &characteristic,
                              const QByteArray &value);
-    void writeTacxCustomNotification(const QByteArray &value);
-    void broadcastTacxCustomData();
-    void handleTacxCustomWrite(const QByteArray &newValue);
-    QByteArray buildTacxAntResponse(quint8 page) const;
-    QByteArray buildTacxAntBroadcast(quint8 page);
-    static quint8 tacxAntChecksum(const QByteArray &payload);
-    quint8 tacxBroadcastPageToggle = 0;
-    quint8 tacxUpdateEventCount = 0;
-    quint16 tacxAccumulatedPower = 0;
-    qint64 tacxLastBroadcastMs = 0;
-    quint16 tacxLastProprietaryInclineRaw = 0;
     
 #ifdef Q_OS_IOS
     lockscreen *h = 0;

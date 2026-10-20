@@ -79,9 +79,7 @@ Add your translation:
   <translation>&lt;b&gt;Geschwindigkeit&lt;/b&gt;</translation>
   ```
 
-- **Units:** keep km/h, bpm, etc. as they are, unless your language writes them differently
-  (for example `U/min` in German, `ppm` in Spanish, `км/ч` in Russian). Then use your
-  language's symbols consistently in the whole file.
+- **Don't translate units:** km/h, bpm, etc. stay the same
   ```xml
   <source>Heart rate (bpm)</source>
   <translation>Herzfrequenz (bpm)</translation>

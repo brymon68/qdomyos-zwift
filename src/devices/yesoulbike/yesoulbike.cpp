@@ -326,7 +326,7 @@ void yesoulbike::serviceScanDone(void) {
                 qDebug() << "forcing FTMS treadmill for YESOUL device exposing FTMS service";
                 if (homeform::singleton()) {
                     homeform::singleton()->setToastRequested(
-                        QObject::tr("FTMS treadmill found, restart the app to apply the change"));
+                        "FTMS treadmill found, restart the app to apply the change");
                 }
                 delete ftmsService;
             }

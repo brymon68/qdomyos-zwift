@@ -82,7 +82,6 @@ class domyoselliptical : public elliptical {
     QQueue<WriteRequest> writeQueue;
     bool isWriting = false;
     bool currentWriteWaitingForResponse = false;
-    uint8_t initTimeouts = 0;
     QTimer *writeTimeoutTimer = nullptr;
 
     enum _BIKE_TYPE {

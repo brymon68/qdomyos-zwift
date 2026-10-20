@@ -6,8 +6,6 @@ import Qt.labs.settings 1.0
 
 ScrollView {
     contentWidth: -1
-    leftPadding: window.contentSideMargin
-    rightPadding: window.contentSideMargin
     focus: true
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.fill: parent
@@ -98,23 +96,21 @@ ScrollView {
                 text: qsTr("Summary Each Seconds:")
                 Layout.fillWidth: true
             }
-            SettingsNumberField {
+            TextField {
                 id: ttsSummarySecTextField
                 text: settings.tts_summary_sec
-                decimals: 0
-                minimum: 1
                 horizontalAlignment: Text.AlignRight
                 Layout.fillHeight: false
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                onAccepted: if (valid) settings.tts_summary_sec = value
+                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                onAccepted: settings.tts_summary_sec = text
                 onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
             }
             Button {
                 id: okTTSSummarySec
                 text: qsTr("OK")
-                enabled: ttsSummarySecTextField.valid
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                onClicked: { settings.tts_summary_sec = ttsSummarySecTextField.value; toast.show(qsTr("Setting saved!")); }
+                onClicked: { settings.tts_summary_sec = ttsSummarySecTextField.text; toast.show(qsTr("Setting saved!")); }
             }
         }
         SwitchDelegate {

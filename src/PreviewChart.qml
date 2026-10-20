@@ -36,7 +36,7 @@ ColumnLayout {
         id: closeButton
         height: 50
         width: parent.width
-        text: qsTr("Close")
+        text: "Close"
         Layout.alignment: Qt.AlignCenter | Qt.AlignVCenter
         onClicked: {
             popupclose();

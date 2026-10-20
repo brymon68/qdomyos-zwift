@@ -108,9 +108,7 @@ void faketreadmill::update() {
             settings.value(QZSettings::bike_cadence_sensor, QZSettings::default_bike_cadence_sensor).toBool();
         bool ios_peloton_workaround =
             settings.value(QZSettings::ios_peloton_workaround, QZSettings::default_ios_peloton_workaround).toBool();
-        bool virtual_device_echelon =
-            settings.value(QZSettings::virtual_device_echelon, QZSettings::default_virtual_device_echelon).toBool();
-        if (ios_peloton_workaround && cadence && h && firstStateChanged && !virtual_device_echelon) {
+        if (ios_peloton_workaround && cadence && h && firstStateChanged) {
             h->virtualbike_setCadence(currentCrankRevolutions(), lastCrankEventTime());
             h->virtualbike_setHeartRate((uint8_t)metrics_override_heartrate());
         }

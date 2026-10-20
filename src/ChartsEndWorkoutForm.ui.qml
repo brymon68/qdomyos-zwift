@@ -137,7 +137,7 @@ Item {
                 legend.visible: false
                 height: 400
                 width: parent.width
-                title: qsTr("Power")
+                title: "Power"
                 titleFont.pixelSize: 20
 
                 DateTimeAxis {
@@ -183,7 +183,7 @@ Item {
                 antialiasing: true
                 legend.visible: false
                 anchors.top: powerChart.bottom
-                title: qsTr("Heart Rate")
+                title: "Heart Rate"
                 titleFont.pixelSize: 20
 
                 DateTimeAxis {
@@ -229,7 +229,7 @@ Item {
                 antialiasing: true
                 legend.visible: true
                 anchors.top: heartChart.bottom
-                title: qsTr("Cadence")
+                title: "Cadence"
                 titleFont.pixelSize: 20
 
                 DateTimeAxis {
@@ -257,7 +257,7 @@ Item {
                 }
 
                 LineSeries {
-                    name: qsTr("Cadence")
+                    name: "Cadence"
                     id: cadenceSeries
                     visible: true
                     axisX: valueAxisXCadence
@@ -267,7 +267,7 @@ Item {
                 }
 
                 LineSeries {
-                    name: qsTr("Resistance")
+                    name: "Resistance"
                     id: resistanceSeries
                     visible: true
                     axisX: valueAxisXCadence
@@ -277,7 +277,7 @@ Item {
                 }
 
                 LineSeries {
-                    name: qsTr("Peloton Resistance")
+                    name: "Peloton Resistance"
                     id: pelotonResistanceSeries
                     visible: true
                     axisX: valueAxisXCadence

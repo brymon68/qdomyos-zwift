@@ -49,8 +49,6 @@ private:
     void publishOnlineStatus();
     void setupMQTTClient();
     void publishToTopic(const QString& topic, const QVariant& value);
-    void publishMomentaryButtonPress(const QString& topic);
-    void publishDefaultZwiftControllerStates();
     void connectToHost();
     QString getUserNickname() const;
     QString getBaseTopic() const;

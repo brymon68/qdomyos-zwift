@@ -57,23 +57,13 @@ WorkoutModel::WorkoutModel(const QString& dbPath, QObject *parent)
 }
 
 WorkoutModel::~WorkoutModel() {
-    if (m_workerThread) {
-        m_workerThread->quit();
-        m_workerThread->wait();
-    }
+    m_workerThread->quit();
+    m_workerThread->wait();
     QSqlDatabase::removeDatabase(FitDatabaseProcessor::DB_CONNECTION_NAME + "_main");
 }
 
 void WorkoutModel::refresh() {
-    if (!m_worker) {
-        // the database did not open: nothing to load, and nobody would end the loading state
-        return;
-    }
-    if (m_isLoading) {
-        // the running load may have started before the newest workouts reached the database
-        m_refreshPending = true;
-        return;
-    }
+    if (m_isLoading) return;
 
     m_isLoading = true;
     emit loadingStatusChanged();
@@ -98,11 +88,6 @@ void WorkoutModel::onWorkoutsLoaded(const QList<QVariantMap>& workouts) {
 
     m_isLoading = false;
     emit loadingStatusChanged();
-
-    if (m_refreshPending) {
-        m_refreshPending = false;
-        refresh();
-    }
 }
 
 bool WorkoutModel::isLoading() const {
@@ -153,11 +138,10 @@ bool WorkoutModel::deleteWorkout(int workoutId) {
         return false;
     }
 
-    // Delete the underlying FIT file too, otherwise FitDatabaseProcessor::processDirectory()
-    // will find it unindexed on the next app start and re-insert it into the workouts table.
-    if (!filePath.isEmpty()) {
-        QFile::remove(filePath);
-    }
+    // Optionally, you could also delete the FIT file here if desired
+    // if (!filePath.isEmpty()) {
+    //     QFile::remove(filePath);
+    // }
 
     // Refresh the model
     refresh();
@@ -564,45 +548,45 @@ void WorkoutModel::calculateStreaks() {
 
 QString WorkoutModel::getStreakMessage(int streak) const {
     if (streak == 0) {
-        return tr("Let's create a streak!");
+        return "Let's create a streak!";
     } else if (streak == 1) {
-        return tr("Great start! 🚀");
+        return "Great start! 🚀";
     } else if (streak == 2) {
-        return tr("Building momentum! 💪");
+        return "Building momentum! 💪";
     } else if (streak == 3) {
-        return tr("Three days strong! 🎯");
+        return "Three days strong! 🎯";
     } else if (streak >= 4 && streak <= 6) {
-        return tr("Amazing dedication! ⭐");
+        return "Amazing dedication! ⭐";
     } else if (streak == 7) {
-        return tr("One week warrior! 🏆");
+        return "One week warrior! 🏆";
     } else if (streak >= 8 && streak <= 13) {
-        return tr("Unstoppable force! 🔥");
+        return "Unstoppable force! 🔥";
     } else if (streak == 14) {
-        return tr("Two weeks champion! 👑");
+        return "Two weeks champion! 👑";
     } else if (streak >= 15 && streak <= 20) {
-        return tr("Legendary consistency! ⚡");
+        return "Legendary consistency! ⚡";
     } else if (streak >= 21 && streak <= 29) {
-        return tr("Fitness machine! 🤖");
+        return "Fitness machine! 🤖";
     } else if (streak == 30) {
-        return tr("One month master! 🎊");
+        return "One month master! 🎊";
     } else if (streak >= 31 && streak <= 59) {
-        return tr("Discipline incarnate! 💎");
+        return "Discipline incarnate! 💎";
     } else if (streak == 60) {
-        return tr("Two months titan! 🏅");
+        return "Two months titan! 🏅";
     } else if (streak >= 61 && streak <= 89) {
-        return tr("Workout legend! 🌟");
+        return "Workout legend! 🌟";
     } else if (streak == 90) {
-        return tr("Three months beast! 🦁");
+        return "Three months beast! 🦁";
     } else if (streak >= 91 && streak <= 179) {
-        return tr("Fitness deity! ✨");
+        return "Fitness deity! ✨";
     } else if (streak == 180) {
-        return tr("Half-year hero! 🎖️");
+        return "Half-year hero! 🎖️";
     } else if (streak >= 181 && streak <= 364) {
-        return tr("Unstoppable legend! 🔱");
+        return "Unstoppable legend! 🔱";
     } else if (streak == 365) {
-        return tr("FULL YEAR CHAMPION! 👑🔥");
+        return "FULL YEAR CHAMPION! 👑🔥";
     } else {
-        return tr("Beyond legendary! 🌟✨");
+        return "Beyond legendary! 🌟✨";
     }
 }
 

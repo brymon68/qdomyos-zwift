@@ -59,7 +59,7 @@ void coresensor::deviceDiscovered(const QBluetoothDeviceInfo &device) {
                device.address().toString() + ')';
 
     if(homeform::singleton())
-        homeform::singleton()->setToastRequested(QObject::tr("%1 connected!").arg(device.name()));
+        homeform::singleton()->setToastRequested(device.name() + QStringLiteral(" connected!"));
 
     // We might filter the device name if needed
     // For example: if (device.name().contains("CORE") || device.name().contains("CoreTemp"))

@@ -326,7 +326,7 @@ ScrollView {
 
         // Wahoo Options
         GroupBox {
-            title: qsTr("Wahoo Options")
+            title: "Wahoo Options"
             Layout.fillWidth: true
 
             ColumnLayout {
@@ -358,12 +358,12 @@ ScrollView {
 
         // Crankset Size
         GroupBox {
-            title: qsTr("Chainring Size")
+            title: "Chainring Size"
             Layout.fillWidth: true
 
             ColumnLayout {
                 Label {
-                    text: qsTr("Tooth count of your chainring on the bike you are currently riding on your trainer - enter 42 for Zwift Ride")
+                    text: "Tooth count of your chainring on the bike you are currently riding on your trainer - enter 42 for Zwift Ride"
                     wrapMode: Text.WordWrap
                     Layout.fillWidth: true
                     Layout.maximumWidth: chainringColumn.width - 20
@@ -384,12 +384,12 @@ ScrollView {
 
         // Cog Size
         GroupBox {
-            title: qsTr("Cog Size")
+            title: "Cog Size"
             Layout.fillWidth: true
 
             ColumnLayout {
                 Label {
-                    text: qsTr("Tooth count of your rear cog on your trainer - enter 14 if you have the Zwift Cog")
+                    text: "Tooth count of your rear cog on your trainer - enter 14 if you have the Zwift Cog"
                     wrapMode: Text.WordWrap
                     Layout.fillWidth: true
                     Layout.maximumWidth: chainringColumn.width - 20
@@ -409,11 +409,11 @@ ScrollView {
 
         // Wheel Size
         GroupBox {
-            title: qsTr("Virtual Wheel Size")
+            title: "Virtual Wheel Size"
             Layout.fillWidth: true
 
             ColumnLayout {
-                UiComboBox {
+                ComboBox {
                        id: wheelSizeCombo
                        width: parent.width
                        currentIndex: initialWheelSizeIndex
@@ -518,7 +518,7 @@ ScrollView {
 
                 // Restore Default Wheel Diameter Button
                 Button {
-                    text: qsTr("Restore Default Setting to the Trainer")
+                    text: "Restore Default Setting to the Trainer"
                     Layout.fillWidth: true
                     Layout.preferredHeight: 50
                     font.bold: true
@@ -542,14 +542,14 @@ ScrollView {
         }
 
         GroupBox {
-        title: qsTr("Preset Gear Profiles")
+        title: "Preset Gear Profiles"
         Layout.fillWidth: true
 
-            UiComboBox {
+            ComboBox {
                 id: profileCombo
                 width: parent.width
                 textRole: "text"
-                displayText: currentIndex < 0 ? qsTr("Select a profile...") : model.get(currentIndex).text
+                displayText: currentIndex < 0 ? "Select a profile..." : model.get(currentIndex).text
                 model: ListModel {
                  id: profileModel
                 }
@@ -574,7 +574,7 @@ ScrollView {
 
         // Gear Table GroupBox
         GroupBox {
-            title: qsTr("Virtual Gear Table")
+            title: "Virtual Gear Table"
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.preferredHeight: parent.height
@@ -590,14 +590,14 @@ ScrollView {
                     spacing: 10
 
                     Button {
-                        text: qsTr("Add Gear")
+                        text: "Add Gear"
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
                         onClicked: addNewGear()
                     }
 
                     Button {
-                        text: qsTr("Clear Selected Gear and Following")
+                        text: "Clear Selected Gear and Following"
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
                         onClicked: {
@@ -608,7 +608,7 @@ ScrollView {
                     }
 
                     Button {
-                        text: qsTr("Reset All Gears")
+                        text: "Reset All Gears"
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
                         onClicked: initializeGearRows()
@@ -635,7 +635,7 @@ ScrollView {
 
                             Text {
                                 anchors.centerIn: parent
-                                text: qsTr("Gear")
+                                text: "Gear"
                                 font.bold: true
                                 color: "black"
                             }
@@ -650,7 +650,7 @@ ScrollView {
 
                             Text {
                                 anchors.centerIn: parent
-                                text: qsTr("Chainring")
+                                text: "Chainring"
                                 font.bold: true
                                 color: "black"
                             }
@@ -665,7 +665,7 @@ ScrollView {
 
                             Text {
                                 anchors.centerIn: parent
-                                text: qsTr("Rear Cog")
+                                text: "Rear Cog"
                                 font.bold: true
                                 color: "black"
                             }

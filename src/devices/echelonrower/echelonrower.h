@@ -40,7 +40,6 @@ class echelonrower : public rower {
     resistance_t resistanceFromPowerRequest(uint16_t power) override;
     resistance_t maxResistance()  override{ return max_resistance; }
     bool connected() override;
-    void proxyVirtualRowerCommand(const QByteArray &value);
 
   private:
     const resistance_t max_resistance = 32;

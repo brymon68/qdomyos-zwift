@@ -7,22 +7,12 @@ import QtQuick.Dialogs 1.0
 
 ColumnLayout {
     signal loadSettings(url name)
-
-    Connections {
-        target: rootItem
-        function onAndroidDocumentPicked(kind, localUrl) {
-            if (kind === "settings") {
-                loadSettings(localUrl)
-            }
-        }
-    }
-
     Loader {
         id: fileDialogLoader
         active: false
         sourceComponent: Component {
             FileDialog {
-                title: qsTr("Please choose a file")
+                title: "Please choose a file"
                 folder: shortcuts.home
                 visible: true
                 onAccepted: {
@@ -72,7 +62,6 @@ ColumnLayout {
                             color: Material.color(Material.Grey)
                             font.pixelSize: Qt.application.font.pixelSize * 1.6
                             text: fileName.substring(0, fileName.length-4)
-                            leftPadding: window.contentSideMargin
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -123,15 +112,12 @@ ColumnLayout {
         id: searchButton
         height: 50
         width: parent.width
-        text: qsTr("Other folders")
+        text: "Other folders"
         Layout.alignment: Qt.AlignCenter | Qt.AlignVCenter
         onClicked: {
             console.log("folder is " + rootItem.getWritableAppDir() + 'settings')
-            if (Qt.platform.os === "android") {
-                rootItem.openAndroidDocumentPicker("settings")
-            } else {
-                fileDialogLoader.active = true
-            }
+            // Create a fresh FileDialog instance
+            fileDialogLoader.active = true
         }
         anchors {
             bottom: parent.bottom

@@ -41,7 +41,6 @@ class fitplusbike : public bike {
     resistance_t pelotonToBikeResistance(int pelotonResistance) override;
     bool connected() override;
     resistance_t resistanceFromPowerRequest(uint16_t power) override;
-    static double pelotonResistanceFromBikeLevel(double resistance, double maxResistance, double gain, double offset);
 
   private:
     resistance_t max_resistance = 24;
@@ -81,9 +80,6 @@ class fitplusbike : public bike {
 
     bool merach_MRK = false;
     bool H9110_OSAKA = false;
-    bool virtufitEtappe = false;
-    bool virtufitLayoutDetected = false;
-    bool validFrameSeen = false;
 
 #ifdef Q_OS_IOS
     lockscreen *h = 0;

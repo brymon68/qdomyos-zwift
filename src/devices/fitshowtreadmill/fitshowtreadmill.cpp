@@ -153,20 +153,8 @@ void fitshowtreadmill::forceSpeedOrIncline(double requestSpeed, double requestIn
     }
 }
 
-void fitshowtreadmill::cancelPendingStartTarget(const QString &reason) {
-    if (!m_startSpeedGate.waitingForRunning())
-        return;
-
-    emit debug(QStringLiteral("FitShow startup: discarding deferred speed/incline (%1)").arg(reason));
-    requestSpeed = -1;
-    requestInclination = -100;
-    m_runnController.reset();
-    m_startSpeedGate.cancel();
-}
-
 void fitshowtreadmill::update() {
     if (!m_control || m_control->state() == QLowEnergyController::UnconnectedState) {
-        cancelPendingStartTarget(QStringLiteral("disconnected"));
         emit disconnected();
         return;
     }
@@ -199,19 +187,8 @@ void fitshowtreadmill::update() {
 
         update_metrics(true, watts(settings.value(QZSettings::weight, QZSettings::default_weight).toFloat()));
 
-        // The FitShow controller acknowledges speed commands during START
-        // countdown without applying them. Keep the most recent requested
-        // workout speed/incline until physical RUNNING status is confirmed.
-        // Stop always wins over a pending target.
-        if (requestStop != -1) {
-            cancelPendingStartTarget(QStringLiteral("stop or pause requested"));
-            requestSpeed = -1;
-            requestInclination = -100;
-        }
-        const bool canSendTarget = m_startSpeedGate.canSendTarget(requestStart != -1, requestStop != -1);
-
-        if (requestSpeed != -1 && canSendTarget) {
-            if (requestSpeed != rawSpeed.value()) {
+        if (requestSpeed != -1) {
+            if (requestSpeed != currentSpeed().value()) {
                 emit debug(QStringLiteral("writing speed ") + QString::number(requestSpeed));
                 double inc = rawInclination.value();
                 if (requestInclination != -100) {
@@ -225,7 +202,7 @@ void fitshowtreadmill::update() {
             requestSpeed = -1;
         }
 
-        if (requestInclination != -100 && canSendTarget) {
+        if (requestInclination != -100) {
             double inc = rawInclination.value();
             // only 0.5 or 1 changes otherwise it beeps forever
             double a = 1.0 / minStepInclination();
@@ -233,7 +210,7 @@ void fitshowtreadmill::update() {
             if (requestInclination != inc) {
                 emit debug(QStringLiteral("writing incline ") + QString::number(requestInclination));
                 inc = requestInclination;
-                double speed = rawSpeed.value();
+                double speed = currentSpeed().valueRaw();
                 if (requestSpeed != -1) {
                     speed = requestSpeed;
                     requestSpeed = -1;
@@ -260,10 +237,8 @@ void fitshowtreadmill::update() {
                 0x00,
                 0x00 // mode-dependent value (u16le)
             };       // to verify
-            m_startSpeedGate.startSent();
             scheduleWrite(startTape1, sizeof(startTape1), QStringLiteral("init_start"));
             forceSpeedOrIncline(lastSpeed, lastInclination);
-            emit debug(QStringLiteral("FitShow startup: waiting for RUNNING before applying workout speed"));
 
             lastStart = QDateTime::currentMSecsSinceEpoch();
             requestStart = -1;
@@ -329,7 +304,7 @@ void fitshowtreadmill::serviceDiscovered(const QBluetoothUuid &gatt) {
         settings.setValue(QZSettings::ftms_treadmill, bluetoothDevice.name());
         qDebug() << "forcing FTMS treadmill since it has FTMS";
         if(homeform::singleton())
-            homeform::singleton()->setToastRequested(QObject::tr("FTMS treadmill found, restart the app to apply the change"));
+            homeform::singleton()->setToastRequested("FTMS treadmill found, restart the app to apply the change");
     }
 }
 
@@ -480,16 +455,9 @@ void fitshowtreadmill::characteristicChanged(const QLowEnergyCharacteristic &cha
         } else if (par == FITSHOW_STATUS_RUNNING || par == FITSHOW_STATUS_STOP || par == FITSHOW_STATUS_PAUSED ||
                    par == FITSHOW_STATUS_END) {
             if (full_len >= 16) {
-                if (par == FITSHOW_STATUS_RUNNING) {
+                if (par == FITSHOW_STATUS_RUNNING)
                     IS_RUNNING = true;
-                    if (m_startSpeedGate.waitingForRunning()) {
-                        m_startSpeedGate.runningConfirmed();
-                        emit debug(QStringLiteral("FitShow startup: RUNNING confirmed; releasing deferred workout target"));
-                    }
-                } else {
-                    if (par == FITSHOW_STATUS_STOP || par == FITSHOW_STATUS_PAUSED ||
-                        par == FITSHOW_STATUS_END)
-                        cancelPendingStartTarget(QStringLiteral("stopped before RUNNING"));
+                else {
                     IS_STATUS_STUDY = false;
                     IS_STATUS_ERRO = false;
                     IS_STATUS_SAFETY = false;
@@ -559,17 +527,12 @@ void fitshowtreadmill::characteristicChanged(const QLowEnergyCharacteristic &cha
                         .toBool())
                     miles = 1.60934;
 
-                // Always update the treadmill speed used for motor control and corrections.
-                // When a Runn/Stryd sensor is selected, keep its speed in Speed instead.
-                const double machineSpeed = IS_RUNNING ? speed * miles : 0.0;
-                parseSpeed(machineSpeed);
-                if (!IS_RUNNING) {
-                    Speed = 0.0;
-                }
+                if(IS_RUNNING)
+                    Speed = speed * miles;
+                else
+                    Speed = 0;
 
-                if (!settings.value(QZSettings::stryd_speed_instead_treadmill,
-                                    QZSettings::default_stryd_speed_instead_treadmill).toBool() &&
-                    Speed.value() != speed) {
+                if (Speed.value() != speed) {
                     emit speedChanged(speed);
                 }
 
@@ -622,22 +585,18 @@ void fitshowtreadmill::characteristicChanged(const QLowEnergyCharacteristic &cha
             } else if (par == FITSHOW_STATUS_STUDY) {
                 IS_STATUS_STUDY = true;
             } else if (par == FITSHOW_STATUS_ERROR) {
-                cancelPendingStartTarget(QStringLiteral("treadmill error"));
                 if (len > 2) {
                     IS_STATUS_ERRO = true;
                     ERRNO = array[2];
                     sendSportData();
                 }
             } else if (par == FITSHOW_STATUS_SAFETY) {
-                cancelPendingStartTarget(QStringLiteral("safety key removed"));
                 ERRNO = 100;
                 IS_STATUS_SAFETY = true;
                 sendSportData();
             }
-            const bool wasMoving = Speed.value() != 0.0;
-            parseSpeed(0.0);
-            Speed = 0.0;
-            if (wasMoving) {
+            if (Speed.value() != 0.0) {
+                Speed = 0.0;
                 emit speedChanged(0.0);
             }
             if (Inclination.value() != 0.0) {
@@ -774,7 +733,6 @@ void fitshowtreadmill::btinit(bool startTape) {
     }
 
     if (startTape) {
-        m_startSpeedGate.startSent();
         scheduleWrite(startTape1, sizeof(startTape1), QStringLiteral("init_start"));
         forceSpeedOrIncline(lastSpeed, lastInclination);
     }
@@ -992,7 +950,6 @@ void fitshowtreadmill::searchingStop() { searchStopped = true; }
 void fitshowtreadmill::controllerStateChanged(QLowEnergyController::ControllerState state) {
     qDebug() << QStringLiteral("controllerStateChanged") << state;
     if (state == QLowEnergyController::UnconnectedState && m_control) {
-        cancelPendingStartTarget(QStringLiteral("connection lost"));
         qDebug() << QStringLiteral("trying to connect back again...");
         initDone = false;
         m_control->connectToDevice();

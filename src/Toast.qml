@@ -89,8 +89,7 @@ Rectangle {
 
         onRunningChanged: {
             if (!running) {
-                // the toast is a delegate of ToastManager: drop it from the list once faded
-                root.ListView.view.model.remove(index);
++                toastManager.model.remove(index);
             }
         }
     }

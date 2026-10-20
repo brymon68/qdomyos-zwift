@@ -34,13 +34,6 @@ domyoselliptical::domyoselliptical(bool noWriteResistance, bool noHeartService, 
     writeTimeoutTimer = new QTimer(this);
     writeTimeoutTimer->setSingleShot(true);
     connect(writeTimeoutTimer, &QTimer::timeout, this, [this]() {
-        if (!initDone && initTimeouts++ < 16) {
-            gattCommunicationChannelService->writeCharacteristic(gattWriteCharacteristic, *writeBuffer);
-            writeTimeoutTimer->start(300);
-            return;
-        }
-        initDone = true;
-
         emit debug(QStringLiteral("writeCharacteristic timeout - processing next in queue"));
         isWriting = false;
         currentWriteWaitingForResponse = false;
@@ -49,7 +42,6 @@ domyoselliptical::domyoselliptical(bool noWriteResistance, bool noHeartService, 
 
     connect(this, &domyoselliptical::packetReceived, this, [this]() {
         if (currentWriteWaitingForResponse && isWriting) {
-            initDone = true;
             writeTimeoutTimer->stop();
             isWriting = false;
             currentWriteWaitingForResponse = false;
@@ -467,9 +459,6 @@ void domyoselliptical::btinit_changyow(bool startTape) {
 
     uint8_t initDataStart13[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xbd};
 
-    if (!startTape)
-        initTimeouts = 0;
-
     writeCharacteristic(initData1, sizeof(initData1), QStringLiteral("init"), false, true);
     writeCharacteristic(initData2, sizeof(initData2), QStringLiteral("init"), false, true);
     writeCharacteristic(initDataStart, sizeof(initDataStart), QStringLiteral("init"), false, true);
@@ -488,6 +477,7 @@ void domyoselliptical::btinit_changyow(bool startTape) {
         writeCharacteristic(initDataStart13, sizeof(initDataStart13), QStringLiteral("init"), false, true);
     }
 
+    initDone = true;
 }
 
 void domyoselliptical::btinit_telink(bool startTape) {
@@ -579,7 +569,7 @@ void domyoselliptical::serviceScanDone(void) {
         settings.setValue(QZSettings::domyos_elliptical_fmts, true);
 
         if(homeform::singleton())
-            homeform::singleton()->setToastRequested(QObject::tr("Domyos Elliptial it's a FTMS. Restart QZ to apply the fix, thanks."));
+            homeform::singleton()->setToastRequested("Domyos Elliptial it's a FTMS. Restart QZ to apply the fix, thanks.");
         return;
     }
     gattCommunicationChannelService->discoverDetails();
