@@ -61,9 +61,10 @@ if any(line[0] != ' ' for line in subprocess.check_output(
     raise SystemExit('Initialize all submodules at their pinned revisions')
 if (source / 'src/secret.h').exists() or (source / 'src/secrets.h').exists():
     raise SystemExit('Private secret headers are not accepted in baseline builds')
-trial_patch = Path(sys.argv[2]).with_name('remove-trial.patch')
-subprocess.run(['git', '-C', str(source), 'apply', '--check', str(trial_patch)], check=True)
-subprocess.run(['git', '-C', str(source), 'apply', str(trial_patch)], check=True)
+for name in ('remove-trial.patch', 'remove-fan.patch', 'remove-purchasing.patch'):
+    patch = Path(sys.argv[2]).with_name(name)
+    subprocess.run(['git', '-C', str(source), 'apply', '--check', str(patch)], check=True)
+    subprocess.run(['git', '-C', str(source), 'apply', str(patch)], check=True)
 replacements = {
     'src/settings.qml': (
         'property string nordictrack_2950_ip: ""',
@@ -131,6 +132,12 @@ android {
 PY
 
 mkdir -p "$output_dir/httpserver" "$output_dir/native" "$output_dir/android" "$output_dir/artifacts"
+# Capture all intentional source changes before build tools generate or overlay files.
+if [[ "$X22I_VARIANT" == test ]]; then
+    git -C "$source_dir" add --intent-to-add src/x22i_defaults.h
+    cp "$source_dir/src/x22i_defaults.h" "$output_dir/artifacts/"
+fi
+git -C "$source_dir" diff -- src > "$output_dir/artifacts/source.patch"
 cp "$source_dir"/qt-patches/android/5.15.0/jar/* "$QT_ANDROID_DIR/jar/"
 cp "$source_dir"/qHttpServerBin/5.15.2/headers/* "$source_dir/src/qthttpserver/src/3rdparty/http-parser/"
 lrelease "$source_dir/src/qdomyos-zwift.pri"
@@ -182,7 +189,7 @@ PY
 cd "$output_dir/android"
 bash ./gradlew --no-daemon assembleDebug
 apk="$output_dir/android/build/outputs/apk/debug/android-debug.apk"
-python3 "$script_dir/verify_apk.py" --no-trial "$apk"
+python3 "$script_dir/verify_apk.py" --no-trial --no-fan --no-purchasing "$apk"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$apk" > "$output_dir/artifacts/signing.txt"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump badging "$apk" > "$output_dir/artifacts/apk-badging.txt"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump xmltree "$apk" AndroidManifest.xml > "$output_dir/artifacts/manifest-tree.txt"
@@ -193,12 +200,6 @@ else
 fi
 cp "$apk" "$output_dir/artifacts/x22i-$X22I_VARIANT-arm64.apk"
 cp "$source_dir/LICENSE" "$output_dir/artifacts/LICENSE"
-if [[ "$X22I_VARIANT" == test ]]; then
-    # Include the new header in the reproducible source patch without committing it.
-    git -C "$source_dir" add --intent-to-add src/x22i_defaults.h
-    cp "$source_dir/src/x22i_defaults.h" "$output_dir/artifacts/"
-fi
-git -C "$source_dir" diff -- src/homeform.cpp src/homeform.h src/main.qml src/main.cpp src/x22i_defaults.h src/settings.qml src/qzsettings.cpp src/settings-catalog.json src/android/build.gradle src/android/AndroidManifest.xml > "$output_dir/artifacts/source.patch"
 python3 - "$script_dir" "$source_dir" "$output_dir" <<'PY'
 import hashlib
 import json
@@ -209,6 +210,8 @@ from pathlib import Path
 scripts, source, output = map(Path, sys.argv[1:])
 info = json.loads((scripts / 'baseline.json').read_text())
 info['trial_removal_patch_sha256'] = hashlib.sha256((scripts / 'remove-trial.patch').read_bytes()).hexdigest()
+info['fan_removal_patch_sha256'] = hashlib.sha256((scripts / 'remove-fan.patch').read_bytes()).hexdigest()
+info['purchasing_removal_patch_sha256'] = hashlib.sha256((scripts / 'remove-purchasing.patch').read_bytes()).hexdigest()
 info['source_patch_sha256'] = hashlib.sha256((output / 'artifacts/source.patch').read_bytes()).hexdigest()
 info['variant'] = os.environ['X22I_VARIANT']
 if info['variant'] == 'test':

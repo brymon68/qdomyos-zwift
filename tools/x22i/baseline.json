@@ -10,5 +10,7 @@
   "gradle_version": "8.13",
   "abi": "arm64-v8a",
   "package": "org.cagnulen.qdomyoszwift",
-  "trial_enforcement": false
+  "trial_enforcement": false,
+  "fan_support": false,
+  "in_app_purchasing": false
 }

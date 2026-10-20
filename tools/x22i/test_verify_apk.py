@@ -65,8 +65,28 @@ class VerifyApkTests(unittest.TestCase):
         self.assertIn("Missing required APK entry: assets/android_rcc_bundle.rcc", result.stderr)
 
     def test_trial_free_payload(self):
-        result = self.run_verifier("--no-trial")
+        result = self.run_verifier("--no-trial", "--no-fan", "--no-purchasing")
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_removed_features_are_rejected_in_native_code(self):
+        for option, marker in (("--no-fan", "changeFanSpeed"), ("--no-fan", "fitmetria_fanfit"),
+                               ("--no-purchasing", "InAppStore")):
+            for encoding in ("utf-8", "utf-16-le"):
+                with self.subTest(option=option, encoding=encoding):
+                    self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = marker.encode(encoding)
+                    result = self.run_verifier(option)
+                    self.assertEqual(result.returncode, 1)
+                    self.assertIn(marker, result.stderr)
+
+    def test_removed_features_are_rejected_in_every_dex(self):
+        for option, marker in (("--no-fan", "FanStateService"), ("--no-fan", "setFanSpeed"),
+                               ("--no-purchasing", "com/android/billingclient")):
+            with self.subTest(option=option, marker=marker):
+                self.entries["classes2.dex"] = marker.encode()
+                result = self.run_verifier(option)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("classes2.dex", result.stderr)
+                self.assertIn(marker, result.stderr)
 
     def test_trial_code_is_rejected_in_native_and_qt_string_encodings(self):
         for marker in ("http://robertoviola.cloud:4010/?supporter=", "licensePopupVisible", "licenseRequest", "licenseTimeout"):

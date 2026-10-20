@@ -1,0 +1,4314 @@
+diff --git a/src/android/src/GrpcTreadmillService.java b/src/android/src/GrpcTreadmillService.java
+index ddb456bf..5e33dbe4 100644
+--- a/src/android/src/GrpcTreadmillService.java
++++ b/src/android/src/GrpcTreadmillService.java
+@@ -48,9 +48,6 @@ import com.ifit.glassos.workout.CadenceMetric;
+ import com.ifit.glassos.workout.CadenceServiceGrpc;
+ import com.ifit.glassos.workout.RpmMetric;
+ import com.ifit.glassos.workout.RpmServiceGrpc;
+-import com.ifit.glassos.settings.FanState;
+-import com.ifit.glassos.settings.FanStateMessage;
+-import com.ifit.glassos.settings.FanStateServiceGrpc;
+ import com.ifit.glassos.workout.WorkoutServiceGrpc;
+ import com.ifit.glassos.workout.WorkoutResult;
+ import com.ifit.glassos.workout.StartWorkoutResponse;
+@@ -102,7 +99,6 @@ public class GrpcTreadmillService {
+     private ResistanceServiceGrpc.ResistanceServiceBlockingStub resistanceStub;
+     private CadenceServiceGrpc.CadenceServiceBlockingStub cadenceStub;
+     private RpmServiceGrpc.RpmServiceBlockingStub rpmStub;
+-    private FanStateServiceGrpc.FanStateServiceBlockingStub fanStub;
+     private WorkoutServiceGrpc.WorkoutServiceBlockingStub workoutStub;
+     private StrokesServiceGrpc.StrokesServiceBlockingStub strokesStub;
+     private PaceServiceGrpc.PaceServiceBlockingStub paceStub;
+@@ -119,7 +115,6 @@ public class GrpcTreadmillService {
+     private volatile double currentWatts = 0.0;
+     private volatile double currentCadence = 0.0;
+     private volatile double currentRpm = 0.0;
+-    private volatile int currentFanSpeed = 0;
+     private volatile double currentStrokesCount = 0.0;
+     private volatile double currentStrokesLength = 0.0;
+     private volatile int currentPaceSeconds = 0;
+@@ -137,7 +132,6 @@ public class GrpcTreadmillService {
+         void onResistanceUpdated(double resistance);
+         void onCadenceUpdated(double cadence);
+         void onRpmUpdated(double rpm);
+-        void onFanSpeedUpdated(int fanSpeed);
+         void onStrokesUpdated(double strokesCount, double strokesLength);
+         void onPaceUpdated(int paceSeconds, int last500mPaceSeconds);
+         void onHeartRateUpdated(double heartRate);
+@@ -370,49 +364,6 @@ public class GrpcTreadmillService {
+         });
+     }
+ 
+-    private void setFanSpeedInstance(int fanSpeed) {
+-        executorService.execute(() -> {
+-            try {
+-                Metadata headers = createHeaders();
+-                FanStateServiceGrpc.FanStateServiceBlockingStub stubWithHeaders = fanStub.withInterceptors(
+-                        MetadataUtils.newAttachHeadersInterceptor(headers)
+-                );
+-                
+-                FanState fanState;
+-                switch (fanSpeed) {
+-                    case 0:
+-                        fanState = FanState.FAN_STATE_OFF;
+-                        break;
+-                    case 1:
+-                        fanState = FanState.FAN_STATE_LOW;
+-                        break;
+-                    case 2:
+-                        fanState = FanState.FAN_STATE_MEDIUM;
+-                        break;
+-                    case 3:
+-                        fanState = FanState.FAN_STATE_HIGH;
+-                        break;
+-                    case 4:
+-                        fanState = FanState.FAN_STATE_AUTO;
+-                        break;
+-                    default:
+-                        fanState = FanState.FAN_STATE_OFF;
+-                        break;
+-                }
+-                
+-                FanStateMessage request = FanStateMessage.newBuilder().setState(fanState).build();
+-                stubWithHeaders.setFanState(request);
+-                
+-                QLog.d(TAG, String.format("Set fan speed to %d (%s)", fanSpeed, fanState.name()));
+-                
+-            } catch (Exception e) {
+-                QLog.e(TAG, "Failed to set fan speed", e);
+-                if (metricsListener != null) {
+-                    mainHandler.post(() -> metricsListener.onError("fan", e.getMessage()));
+-                }
+-            }
+-        });
+-    }
+ 
+     private void shutdownInstance() {
+         stopMetricsUpdates();
+@@ -496,7 +447,6 @@ public class GrpcTreadmillService {
+         resistanceStub = ResistanceServiceGrpc.newBlockingStub(channel);
+         cadenceStub = CadenceServiceGrpc.newBlockingStub(channel);
+         rpmStub = RpmServiceGrpc.newBlockingStub(channel);
+-        fanStub = FanStateServiceGrpc.newBlockingStub(channel);
+         workoutStub = WorkoutServiceGrpc.newBlockingStub(channel);
+         strokesStub = StrokesServiceGrpc.newBlockingStub(channel);
+         paceStub = PaceServiceGrpc.newBlockingStub(channel);
+@@ -833,57 +783,6 @@ public class GrpcTreadmillService {
+                 }
+             }
+ 
+-            // Fetch fan speed
+-            /*
+-            try {
+-                long fanStartTime = System.currentTimeMillis();
+-                FanStateServiceGrpc.FanStateServiceBlockingStub fanStubWithHeaders = fanStub.withInterceptors(
+-                        MetadataUtils.newAttachHeadersInterceptor(headers)
+-                );
+-                long fanInterceptorTime = System.currentTimeMillis();
+-                QLog.d(TAG, "Fan interceptor setup took: " + (fanInterceptorTime - fanStartTime) + "ms");
+-                
+-                FanStateMessage fanResponse = fanStubWithHeaders.getFanState(request);
+-                long fanCallTime = System.currentTimeMillis();
+-                QLog.d(TAG, "Fan gRPC call took: " + (fanCallTime - fanInterceptorTime) + "ms");
+-                
+-                int fanSpeed;
+-                switch (fanResponse.getState()) {
+-                    case FAN_STATE_OFF:
+-                        fanSpeed = 0;
+-                        break;
+-                    case FAN_STATE_LOW:
+-                        fanSpeed = 1;
+-                        break;
+-                    case FAN_STATE_MEDIUM:
+-                        fanSpeed = 2;
+-                        break;
+-                    case FAN_STATE_HIGH:
+-                        fanSpeed = 3;
+-                        break;
+-                    case FAN_STATE_AUTO:
+-                        fanSpeed = 4;
+-                        break;
+-                    default:
+-                        fanSpeed = 0;
+-                        break;
+-                }
+-                
+-                currentFanSpeed = fanSpeed;
+-                
+-                if (metricsListener != null) {
+-                    mainHandler.post(() -> metricsListener.onFanSpeedUpdated(currentFanSpeed));
+-                }
+-                long fanEndTime = System.currentTimeMillis();
+-                QLog.d(TAG, "Fan total processing took: " + (fanEndTime - fanStartTime) + "ms");
+-            } catch (Exception e) {
+-                QLog.w(TAG, "Failed to fetch fan speed", e);
+-                if (metricsListener != null) {
+-                    mainHandler.post(() -> metricsListener.onError("fan", "Error"));
+-                }
+-            }
+-            */
+-
+             long totalEndTime = System.currentTimeMillis();
+             long totalTime = totalEndTime - startTime;
+             QLog.d(TAG, "=== TIMING SUMMARY ===");
+@@ -986,12 +885,6 @@ public class GrpcTreadmillService {
+         return 0.0;
+     }
+     
+-    public static int getCurrentFanSpeed() {
+-        if (instance != null) {
+-            return instance.currentFanSpeed;
+-        }
+-        return 0;
+-    }
+     
+     public static double getCurrentResistance() {
+         if (instance != null) {
+@@ -1075,13 +968,6 @@ public class GrpcTreadmillService {
+         }
+     }
+     
+-    public static void setFanSpeed(int fanSpeed) {
+-        if (instance != null) {
+-            instance.setFanSpeedInstance(fanSpeed);
+-        } else {
+-            QLog.e(TAG, "Service not initialized. Call initialize() first.");
+-        }
+-    }
+     
+     private void startWorkoutInstance() {
+         executorService.execute(() -> {
+diff --git a/src/android/src/main/proto/settings/FanStateService.proto b/src/android/src/main/proto/settings/FanStateService.proto
+deleted file mode 100644
+index 7102ba22..00000000
+--- a/src/android/src/main/proto/settings/FanStateService.proto
++++ /dev/null
+@@ -1,29 +0,0 @@
+-syntax = "proto3";
+-package com.ifit.glassos;
+-import "util/Util.proto";
+-option java_package = "com.ifit.glassos.settings";
+-option java_outer_classname = "FanStateServiceProto";
+-option java_multiple_files = true;
+-option swift_prefix = "IFit";
+-
+-enum FanState {
+-  FAN_STATE_OFF = 0;
+-  FAN_STATE_LOW = 1;
+-  FAN_STATE_MEDIUM = 2;
+-  FAN_STATE_HIGH = 3;
+-  FAN_STATE_AUTO = 4;
+-  FAN_STATE_UNKNOWN = 5;
+-}
+-
+-message FanStateMessage {
+-  FanState state = 1;
+-}
+-
+-service FanStateService {
+-  rpc CanRead(Empty) returns (AvailabilityResponse) {}
+-  rpc CanWrite(Empty) returns (AvailabilityResponse) {}
+-  rpc GetFanState(Empty) returns (FanStateMessage) {}
+-  rpc FanStateChanged(Empty) returns (stream FanStateMessage) {}
+-  rpc SetFanState(FanStateMessage) returns (Empty) {}
+-  rpc IsAutoFanStateSupported(Empty) returns (AvailabilityResponse) {}
+-}
+diff --git a/src/devices/activiotreadmill/activiotreadmill.cpp b/src/devices/activiotreadmill/activiotreadmill.cpp
+index dd9109d5..6caabf2c 100644
+--- a/src/devices/activiotreadmill/activiotreadmill.cpp
++++ b/src/devices/activiotreadmill/activiotreadmill.cpp
+@@ -281,23 +281,7 @@ void activiotreadmill::update() {
+ 
+                 requestStop = -1;
+             }
+-            /*if (requestFanSpeed != -1) {
+-                emit debug(QStringLiteral("changing fan speed..."));
+ 
+-                sendChangeFanSpeed(requestFanSpeed);
+-                requestFanSpeed = -1;
+-            }
+-            if (requestIncreaseFan != -1) {
+-                emit debug(QStringLiteral("increasing fan speed..."));
+-
+-                sendChangeFanSpeed(FanSpeed + 1);
+-                requestIncreaseFan = -1;
+-            } else if (requestDecreaseFan != -1) {
+-                emit debug(QStringLiteral("decreasing fan speed..."));
+-
+-                sendChangeFanSpeed(FanSpeed - 1);
+-                requestDecreaseFan = -1;
+-            }*/
+         }
+     }
+ }
+diff --git a/src/devices/bike.cpp b/src/devices/bike.cpp
+index 9f563945..7f699ae8 100644
+--- a/src/devices/bike.cpp
++++ b/src/devices/bike.cpp
+@@ -299,7 +299,6 @@ metric bike::lastRequestedPelotonResistance() { return RequestedPelotonResistanc
+ metric bike::lastRequestedCadence() { return RequestedCadence; }
+ metric bike::lastRequestedPower() { return RequestedPower; }
+ metric bike::currentResistance() { return Resistance; }
+-uint8_t bike::fanSpeed() { return FanSpeed; }
+ bool bike::connected() { return false; }
+ uint16_t bike::watts() { return 0; }
+ metric bike::pelotonResistance() { return m_pelotonResistance; }
+@@ -431,9 +430,6 @@ int bike::metricValueForSetting(const QString &setting) {
+     } else if (!setting.compare(QStringLiteral("FTP"))) {
+ 
+         return 0;
+-    } else if (!setting.compare(QStringLiteral("Fan"))) {
+-
+-        return FanSpeed;
+     } else if (!setting.compare(QStringLiteral("Jouls"))) {
+ 
+         return qRound(jouls().value());
+diff --git a/src/devices/bike.h b/src/devices/bike.h
+index a5bd0113..3b5511a4 100644
+--- a/src/devices/bike.h
++++ b/src/devices/bike.h
+@@ -22,7 +22,6 @@ class bike : public bluetoothdevice {
+     metric lastRequestedCadence();
+     metric lastRequestedPower();
+     metric currentResistance() override;
+-    uint8_t fanSpeed() override;
+     double currentCrankRevolutions() override;
+     uint16_t lastCrankEventTime() override;
+     bool connected() override;
+diff --git a/src/devices/bluetooth.cpp b/src/devices/bluetooth.cpp
+index 27e626f6..5ffa59a3 100644
+--- a/src/devices/bluetooth.cpp
++++ b/src/devices/bluetooth.cpp
+@@ -289,10 +289,6 @@ void bluetooth::finished() {
+     if (ss2k_peloton)
+         ftmsAccessoryFound = true;
+ 
+-    // since i can have multiple fanfit i can't wait more because i don't have the full list of the fanfit
+-    // devices connected to QZ. edit: let's wait at the last one item
+-    bool fitmetriaFanfitFound =
+-        !settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable).toBool();
+ 
+     bool zwiftDeviceFound =
+         !settings.value(QZSettings::zwift_click, QZSettings::default_zwift_click).toBool() && !settings.value(QZSettings::zwift_play, QZSettings::default_zwift_play).toBool();
+@@ -307,7 +303,6 @@ void bluetooth::finished() {
+     if ((!heartRateBeltFound && !heartRateBeltAvaiable()) || (!ftmsAccessoryFound && !ftmsAccessoryAvaiable()) ||
+         (!cscFound && !cscSensorAvaiable()) || (!powerSensorFound && !powerSensorAvaiable()) ||
+         (!eliteRizerFound && !eliteRizerAvaiable()) || (!eliteSterzoSmartFound && !eliteSterzoSmartAvaiable()) ||
+-        (!fitmetriaFanfitFound && !fitmetriaFanfitAvaiable()) ||
+         (!zwiftDeviceFound && !zwiftDeviceAvaiable()) ||
+         (!sramDeviceFound && !sramDeviceAvaiable()) ||
+         (!cycplusBC2DeviceFound && !cycplusBC2DeviceAvaiable()) ||
+@@ -418,17 +413,6 @@ bool bluetooth::ftmsAccessoryAvaiable() {
+     return false;
+ }
+ 
+-bool bluetooth::fitmetriaFanfitAvaiable() {
+-
+-    Q_FOREACH (QBluetoothDeviceInfo b, devices) {
+-        if (!b.name().compare("FITFAN-", Qt::CaseInsensitive)) {
+-            return true;
+-        } else if (b.name().toUpper().startsWith("HEADWIND ")) {
+-            return true;
+-        }
+-    }
+-    return false;
+-}
+ 
+ bool bluetooth::zwiftDeviceAvaiable() {
+ 
+@@ -578,8 +562,6 @@ void bluetooth::deviceDiscovered(const QBluetoothDeviceInfo &device) {
+     bool cycplusBC2DeviceFound =
+         !settings.value(QZSettings::cycplus_bc2_controller, QZSettings::default_cycplus_bc2_controller).toBool();
+     bool thinkriderDeviceFound = !settings.value(QZSettings::thinkrider_controller, QZSettings::default_thinkrider_controller).toBool();
+-    bool fitmetriaFanfitFound =
+-        !settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable).toBool();
+     bool toorx_ftms = settings.value(QZSettings::toorx_ftms, QZSettings::default_toorx_ftms).toBool();
+     bool toorx_ftms_treadmill =
+         settings.value(QZSettings::toorx_ftms_treadmill, QZSettings::default_toorx_ftms_treadmill).toBool();
+@@ -682,10 +664,6 @@ void bluetooth::deviceDiscovered(const QBluetoothDeviceInfo &device) {
+ 
+         heartRateBeltFound = heartRateBeltAvaiable();
+     }
+-    if (!fitmetriaFanfitFound) {
+-
+-        fitmetriaFanfitFound = fitmetriaFanfitAvaiable();
+-    }
+     if (!zwiftDeviceFound) {
+ 
+         zwiftDeviceFound = zwiftDeviceAvaiable();
+@@ -829,7 +807,7 @@ void bluetooth::deviceDiscovered(const QBluetoothDeviceInfo &device) {
+ #endif
+ 
+     bool searchDevices = (heartRateBeltFound && ftmsAccessoryFound && cscFound && powerSensorFound && eliteRizerFound &&
+-                          eliteSterzoSmartFound && fitmetriaFanfitFound && zwiftDeviceFound && sramDeviceFound &&
++                          eliteSterzoSmartFound && zwiftDeviceFound && sramDeviceFound &&
+                           cycplusBC2DeviceFound && thinkriderDeviceFound) ||
+                          forceHeartBeltOffForTimeout;
+ 
+@@ -3074,8 +3052,6 @@ void bluetooth::connectedAndDiscovered() {
+         settings.value(QZSettings::elite_rizer_name, QZSettings::default_elite_rizer_name).toString();
+     QString eliteSterzoSmartName =
+         settings.value(QZSettings::elite_sterzo_smart_name, QZSettings::default_elite_sterzo_smart_name).toString();
+-    bool fitmetriaFanfitEnabled =
+-        settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable).toBool();
+ 
+     // only at the first very connection, setting the user default resistance
+     if (device() && firstConnected && device()->deviceType() == BIKE &&
+@@ -3179,41 +3155,6 @@ void bluetooth::connectedAndDiscovered() {
+             }
+         }
+ 
+-        if (fitmetriaFanfitEnabled) {
+-            for (const QBluetoothDeviceInfo &b : qAsConst(devices)) {
+-                if (((b.name().startsWith("FITFAN-"))) && !fitmetria_fanfit_isconnected(b)) {
+-                    fitmetria_fanfit *f = new fitmetria_fanfit(this->device());
+-
+-                    connect(f, &fitmetria_fanfit::debug, this, &bluetooth::debug);
+-
+-                    connect(this->device(), SIGNAL(fanSpeedChanged(uint8_t)), f, SLOT(fanSpeedRequest(uint8_t)));
+-
+-                    f->deviceDiscovered(b);
+-                    fitmetriaFanfit.append(f);
+-                    break;
+-                } else if (((b.name().toUpper().startsWith("HEADWIND "))) && !fitmetria_fanfit_isconnected(b)) {
+-                    wahookickrheadwind *f = new wahookickrheadwind(this->device());
+-
+-                    connect(f, &wahookickrheadwind::debug, this, &bluetooth::debug);
+-
+-                    connect(this->device(), SIGNAL(fanSpeedChanged(uint8_t)), f, SLOT(fanSpeedRequest(uint8_t)));
+-
+-                    f->deviceDiscovered(b);
+-                    wahookickrHeadWind.append(f);
+-                    continue;
+-                } else if (((b.name().toUpper().startsWith("ARIA")) && b.name().length() == 4) && !fitmetria_fanfit_isconnected(b)) {
+-                    eliteariafan *f = new eliteariafan(this->device());
+-
+-                    connect(f, &eliteariafan::debug, this, &bluetooth::debug);
+-
+-                    connect(this->device(), SIGNAL(fanSpeedChanged(uint8_t)), f, SLOT(fanSpeedRequest(uint8_t)));
+-
+-                    f->deviceDiscovered(b);
+-                    eliteAriaFan.append(f);
+-                    break;
+-                }
+-            }
+-        }
+ 
+         if (!csc_as_bike && !csc_as_treadmill) {
+             for (const QBluetoothDeviceInfo &b : qAsConst(devices)) {
+@@ -4234,30 +4175,6 @@ void bluetooth::restart() {
+         delete ftmsAccessory;
+         ftmsAccessory = nullptr;
+     }
+-    if (fitmetriaFanfit.length()) {
+-
+-        foreach (fitmetria_fanfit *f, fitmetriaFanfit) {
+-            delete f;
+-            f = nullptr;
+-        }
+-        fitmetriaFanfit.clear();
+-    }
+-    if (wahookickrHeadWind.length()) {
+-
+-        foreach (wahookickrheadwind *f, wahookickrHeadWind) {
+-            delete f;
+-            f = nullptr;
+-        }
+-        wahookickrHeadWind.clear();
+-    }
+-    if (eliteAriaFan.length()) {
+-
+-        foreach (eliteariafan *f, eliteAriaFan) {
+-            delete f;
+-            f = nullptr;
+-        }
+-        eliteAriaFan.clear();
+-    }
+     if (cadenceSensor) {
+ 
+         // heartRateBelt->disconnectBluetooth(); // to test
+@@ -4629,21 +4546,6 @@ void bluetooth::inclinationChanged(double grade, double inclination) {
+     stateFileUpdate();
+ }
+ 
+-bool bluetooth::fitmetria_fanfit_isconnected(const QBluetoothDeviceInfo &device) {
+-    foreach (fitmetria_fanfit *f, fitmetriaFanfit) {
+-        if (SAME_BLUETOOTH_DEVICE(device, f->bluetoothDevice))
+-            return true;
+-    }
+-    foreach (wahookickrheadwind *f, wahookickrHeadWind) {
+-        if (SAME_BLUETOOTH_DEVICE(device, f->bluetoothDevice))
+-            return true;
+-    }
+-    foreach (eliteariafan *f, eliteAriaFan) {
+-        if (SAME_BLUETOOTH_DEVICE(device, f->bluetoothDevice))
+-            return true;
+-    }
+-    return false;
+-}
+ 
+ #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+ void bluetooth::deviceUpdated(const QBluetoothDeviceInfo &device, QBluetoothDeviceInfo::Fields updateFields) {
+diff --git a/src/devices/bluetooth.h b/src/devices/bluetooth.h
+index 9cd6e7d5..d89bbeaa 100644
+--- a/src/devices/bluetooth.h
++++ b/src/devices/bluetooth.h
+@@ -52,7 +52,6 @@
+ #include "devices/echelonconnectsport/echelonconnectsport.h"
+ #include "devices/echelonrower/echelonrower.h"
+ #include "devices/echelonstairclimber/echelonstairclimber.h"
+-#include "devices/eliteariafan/eliteariafan.h"
+ #include "devices/eliterizer/eliterizer.h"
+ #include "devices/elitesquarecontroller/elitesquarecontroller.h"
+ #include "devices/elitesterzosmart/elitesterzosmart.h"
+@@ -61,7 +60,6 @@
+ #include "devices/fakeelliptical/fakeelliptical.h"
+ #include "devices/fakerower/fakerower.h"
+ #include "devices/faketreadmill/faketreadmill.h"
+-#include "devices/fitmetria_fanfit/fitmetria_fanfit.h"
+ #include "devices/fitplusbike/fitplusbike.h"
+ 
+ #include "devices/fitshowtreadmill/fitshowtreadmill.h"
+@@ -151,7 +149,6 @@
+ #include "devices/trxappgateusbrower/trxappgateusbrower.h"
+ #include "devices/trxappgateusbtreadmill/trxappgateusbtreadmill.h"
+ #include "devices/ultrasportbike/ultrasportbike.h"
+-#include "devices/wahookickrheadwind/wahookickrheadwind.h"
+ #include "devices/wahookickrsnapbike/wahookickrsnapbike.h"
+ #include "devices/yesoulbike/yesoulbike.h"
+ #include "devices/ypooelliptical/ypooelliptical.h"
+@@ -313,9 +310,6 @@ class bluetooth : public QObject, public SignalHandler {
+     fakeelliptical *fakeElliptical = nullptr;
+     fakerower *fakeRower = nullptr;
+     faketreadmill *fakeTreadmill = nullptr;
+-    QList<fitmetria_fanfit *> fitmetriaFanfit;
+-    QList<wahookickrheadwind *> wahookickrHeadWind;
+-    QList<eliteariafan *> eliteAriaFan;
+     QList<zwiftclickremote* > zwiftPlayDevice;
+     zwiftclickremote* zwiftClickRemote = nullptr;
+     cycplusbc2controller* cycplusBC2Controller = nullptr;
+@@ -355,12 +349,10 @@ class bluetooth : public QObject, public SignalHandler {
+     bool powerSensorAvaiable();
+     bool eliteRizerAvaiable();
+     bool eliteSterzoSmartAvaiable();
+-    bool fitmetriaFanfitAvaiable();
+     bool zwiftDeviceAvaiable();
+     bool sramDeviceAvaiable();
+     bool cycplusBC2DeviceAvaiable();
+     bool thinkriderDeviceAvaiable();
+-    bool fitmetria_fanfit_isconnected(const QBluetoothDeviceInfo &device);
+     bool gymModeEnabled() const;
+ 
+     QTimer discoveryTimeout;
+diff --git a/src/devices/bluetoothdevice.cpp b/src/devices/bluetoothdevice.cpp
+index ffa7cbd2..ebe0dc99 100644
+--- a/src/devices/bluetoothdevice.cpp
++++ b/src/devices/bluetoothdevice.cpp
+@@ -161,25 +161,6 @@ metric bluetoothdevice::hrCalories() {
+ }
+ 
+ metric bluetoothdevice::jouls() { return m_jouls; }
+-uint8_t bluetoothdevice::fanSpeed() { return FanSpeed; };
+-bool bluetoothdevice::changeFanSpeed(uint8_t speed) {
+-    // managing underflow
+-    if (speed > 230 && FanSpeed < 20) {
+-        speed = 0;
+-    } else if (speed < 20 && FanSpeed > 230) {
+-        // managing overflow
+-        speed = 100;
+-    }
+-    if (speed > 100)
+-        speed = 100;
+-    // this is useful when there is a fitmetria fanfit in order to set the current
+-    // value to the last requested
+-    FanSpeed = speed;
+-
+-    requestFanSpeed = speed;
+-    emit fanSpeedChanged(speed);
+-    return false;
+-}
+ bool bluetoothdevice::connected() { return false; }
+ metric bluetoothdevice::elevationGain() { return elevationAcc; }
+ metric bluetoothdevice::negativeElevationGain() { return negativeElevationAcc; }
+@@ -517,7 +498,6 @@ QStringList bluetoothdevice::metrics() {
+     r.append(QStringLiteral("AVG Watt"));
+     r.append(QStringLiteral("FTP"));
+     r.append(QStringLiteral("Heart Rate"));
+-    r.append(QStringLiteral("Fan"));
+     r.append(QStringLiteral("Jouls"));
+     r.append(QStringLiteral("Lap Elapsed"));
+     r.append(QStringLiteral("Elapsed"));
+@@ -573,8 +553,6 @@ int bluetoothdevice::metricValueForSetting(const QString &setting) {
+         return qRound(wattsMetric().average());
+     } else if (!setting.compare(QStringLiteral("FTP"))) {
+         return 0;
+-    } else if (!setting.compare(QStringLiteral("Fan"))) {
+-        return 0;
+     } else if (!setting.compare(QStringLiteral("Jouls"))) {
+         return qRound(jouls().value());
+     } else if (!setting.compare(QStringLiteral("Lap Elapsed"))) {
+diff --git a/src/devices/bluetoothdevice.h b/src/devices/bluetoothdevice.h
+index 669bdb80..81443d48 100644
+--- a/src/devices/bluetoothdevice.h
++++ b/src/devices/bluetoothdevice.h
+@@ -128,10 +128,6 @@ class bluetoothdevice : public QObject {
+      */
+     metric jouls();
+ 
+-    /**
+-     * @brief fanSpeed Gets the current fan speed. Units: depends on device
+-     */
+-    virtual uint8_t fanSpeed();
+ 
+     /**
+      * @brief elapsedTime The elapsed time for the session(?).
+@@ -245,11 +241,6 @@ class bluetoothdevice : public QObject {
+             return wattsMetric().value();
+     }
+ 
+-    /**
+-     * @brief changeFanSpeed Tries to change the fan speed.
+-     * @param speed The requested fan speed. Units: depends on device
+-     */
+-    virtual bool changeFanSpeed(uint8_t speed);
+ 
+     /**
+      * @brief elevationGain Gets a metric object to get and set the elevation gain. Units: ?
+@@ -537,7 +528,6 @@ class bluetoothdevice : public QObject {
+     void cadenceChanged(uint8_t cadence);
+     void powerChanged(uint16_t power);
+     void inclinationChanged(double grade, double percentage);
+-    void fanSpeedChanged(uint8_t speed);
+     void instantaneousStrideLengthChanged(double length);
+     void groundContactChanged(double groundContact);
+     void verticalOscillationChanged(double verticalOscillation);
+@@ -604,10 +594,6 @@ class bluetoothdevice : public QObject {
+     metric Distance;
+     metric Distance1s; // used to populate the distance on the FIT file. Since Strava is using the distance to graph it, it has to have 1s trigger.
+ 
+-    /**
+-     * @brief FanSpeed The currently requested fan speed. Units: revolutions per second
+-     */
+-    uint8_t FanSpeed = 0;
+ 
+     /**
+      * @brief Heart rate. Unit: beats per minute
+@@ -633,9 +619,6 @@ class bluetoothdevice : public QObject {
+     int8_t requestStart = -1;
+     int8_t requestStop = -1;
+     int8_t requestPause = -1;
+-    int8_t requestIncreaseFan = -1;
+-    int8_t requestDecreaseFan = -1;
+-    double requestFanSpeed = -1;
+ 
+     int64_t lastStart = 0;
+     int64_t lastStop = 0;
+diff --git a/src/devices/deeruntreadmill/deerruntreadmill.cpp b/src/devices/deeruntreadmill/deerruntreadmill.cpp
+index b6918cbf..2ef9989e 100644
+--- a/src/devices/deeruntreadmill/deerruntreadmill.cpp
++++ b/src/devices/deeruntreadmill/deerruntreadmill.cpp
+@@ -342,23 +342,7 @@ void deerruntreadmill::update() {
+             }
+ 
+             pollCounter++;
+-            /*if (requestFanSpeed != -1) {
+-                emit debug(QStringLiteral("changing fan speed..."));
+ 
+-                sendChangeFanSpeed(requestFanSpeed);
+-                requestFanSpeed = -1;
+-            }
+-            if (requestIncreaseFan != -1) {
+-                emit debug(QStringLiteral("increasing fan speed..."));
+-
+-                sendChangeFanSpeed(FanSpeed + 1);
+-                requestIncreaseFan = -1;
+-            } else if (requestDecreaseFan != -1) {
+-                emit debug(QStringLiteral("decreasing fan speed..."));
+-
+-                sendChangeFanSpeed(FanSpeed - 1);
+-                requestDecreaseFan = -1;
+-            }*/
+         }
+     }
+ }
+diff --git a/src/devices/domyostreadmill/domyostreadmill.cpp b/src/devices/domyostreadmill/domyostreadmill.cpp
+index 99339128..92d9f111 100644
+--- a/src/devices/domyostreadmill/domyostreadmill.cpp
++++ b/src/devices/domyostreadmill/domyostreadmill.cpp
+@@ -272,32 +272,7 @@ void domyostreadmill::forceSpeedOrIncline(double requestSpeed, double requestInc
+                         false, true);
+ }
+ 
+-bool domyostreadmill::sendChangeFanSpeed(uint8_t speed) {
+ 
+-    uint8_t fanSpeed[] = {0xf0, 0xca, 0x00, 0x00};
+-
+-    if (speed > 5) {
+-        return false;
+-    }
+-
+-    fanSpeed[2] = speed;
+-
+-    for (uint8_t i = 0; i < sizeof(fanSpeed) - 1; i++) {
+-
+-        fanSpeed[3] += fanSpeed[i]; // the last byte is a sort of a checksum
+-    }
+-
+-    writeCharacteristic(fanSpeed, 4, QStringLiteral("changeFanSpeed speed=") + QString::number(speed), false, true);
+-
+-    return true;
+-}
+-
+-bool domyostreadmill::changeFanSpeed(uint8_t speed) {
+-
+-    requestFanSpeed = speed;
+-
+-    return true;
+-}
+ 
+ void domyostreadmill::changeInclinationRequested(double grade, double percentage) {
+     if (percentage < 0)
+@@ -423,23 +398,8 @@ void domyostreadmill::update() {
+                                     true);
+                 requestStop = -1;
+             }
+-            if (requestFanSpeed != -1) {
+-                emit debug(QStringLiteral("changing fan speed..."));
+ 
+-                sendChangeFanSpeed(requestFanSpeed);
+-                requestFanSpeed = -1;
+-            }
+-            if (requestIncreaseFan != -1) {
+-                emit debug(QStringLiteral("increasing fan speed..."));
+ 
+-                sendChangeFanSpeed(FanSpeed + 1);
+-                requestIncreaseFan = -1;
+-            } else if (requestDecreaseFan != -1) {
+-                emit debug(QStringLiteral("decreasing fan speed..."));
+-
+-                sendChangeFanSpeed(FanSpeed - 1);
+-                requestDecreaseFan = -1;
+-            }
+         }
+     }
+ }
+@@ -518,14 +478,6 @@ void domyostreadmill::characteristicChanged(const QLowEnergyCharacteristic &char
+         emit debug(QStringLiteral("stop button pressed!"));
+ 
+         requestStop = 1;
+-    } else if (value.at(22) == 0x0b) {
+-        emit debug(QStringLiteral("increase speed fan pressed!"));
+-
+-        requestIncreaseFan = 1;
+-    } else if (value.at(22) == 0x0a) {
+-        emit debug(QStringLiteral("decrease speed fan pressed!"));
+-
+-        requestDecreaseFan = 1;
+     } else if (value.at(22) == 0x08) {
+         emit debug(QStringLiteral("increase speed button on console pressed!"));
+         if (domyos_treadmill_buttons) {
+@@ -725,7 +677,6 @@ void domyostreadmill::characteristicChanged(const QLowEnergyCharacteristic &char
+ 
+     cadenceFromAppleWatch();
+ 
+-    FanSpeed = value.at(23);
+ 
+     if (!firstCharacteristicChanged) {
+         if (watts(settings.value(QZSettings::weight, QZSettings::default_weight).toFloat()))
+diff --git a/src/devices/domyostreadmill/domyostreadmill.h b/src/devices/domyostreadmill/domyostreadmill.h
+index a35bbdef..3337a5ee 100644
+--- a/src/devices/domyostreadmill/domyostreadmill.h
++++ b/src/devices/domyostreadmill/domyostreadmill.h
+@@ -41,7 +41,6 @@ class domyostreadmill : public treadmill {
+     domyostreadmill(uint32_t poolDeviceTime = 200, bool noConsole = false, bool noHeartService = false,
+                     double forceInitSpeed = 0.0, double forceInitInclination = 0.0);
+     bool connected() override;
+-    bool changeFanSpeed(uint8_t speed) override;
+     double minStepSpeed() override;
+ 
+   private:
+@@ -52,7 +51,6 @@ class domyostreadmill : public treadmill {
+         bool disable_log;
+         bool wait_for_response;
+     };
+-    bool sendChangeFanSpeed(uint8_t speed);
+     double GetSpeedFromPacket(const QByteArray &packet);
+     double GetInclinationFromPacket(const QByteArray &packet);
+     double GetKcalFromPacket(const QByteArray &packet);
+diff --git a/src/devices/echelonstairclimber/echelonstairclimber.cpp b/src/devices/echelonstairclimber/echelonstairclimber.cpp
+index 2a90499e..33d5ac09 100644
+--- a/src/devices/echelonstairclimber/echelonstairclimber.cpp
++++ b/src/devices/echelonstairclimber/echelonstairclimber.cpp
+@@ -215,20 +215,8 @@ void echelonstairclimber::update() {
+             requestStop = -1;
+             lastStop = QDateTime::currentMSecsSinceEpoch();
+         }
+-        if (requestFanSpeed != -1) {
+-            emit debug(QStringLiteral("changing fan speed..."));
+-            // sendChangeFanSpeed(requestFanSpeed);
+-            requestFanSpeed = -1;
+-        }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+-            // sendChangeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+-            // sendChangeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }*/
++
++*/
+     }
+ }
+ 
+diff --git a/src/devices/echelonstride/echelonstride.cpp b/src/devices/echelonstride/echelonstride.cpp
+index 52e2e0cb..78ee65a3 100644
+--- a/src/devices/echelonstride/echelonstride.cpp
++++ b/src/devices/echelonstride/echelonstride.cpp
+@@ -223,20 +223,8 @@ void echelonstride::update() {
+             requestStop = -1;
+             lastStop = QDateTime::currentMSecsSinceEpoch();
+         }
+-        if (requestFanSpeed != -1) {
+-            emit debug(QStringLiteral("changing fan speed..."));
+-            // sendChangeFanSpeed(requestFanSpeed);
+-            requestFanSpeed = -1;
+-        }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+-            // sendChangeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+-            // sendChangeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }
++
++
+     }
+ }
+ 
+diff --git a/src/devices/eliteariafan/eliteariafan.cpp b/src/devices/eliteariafan/eliteariafan.cpp
+deleted file mode 100644
+index 759b6181..00000000
+--- a/src/devices/eliteariafan/eliteariafan.cpp
++++ /dev/null
+@@ -1,334 +0,0 @@
+-#include "eliteariafan.h"
+-#include <QBluetoothLocalDevice>
+-#include <QDateTime>
+-#include <QEventLoop>
+-#include <QFile>
+-#include <QMetaEnum>
+-#include <QSettings>
+-#include <QThread>
+-
+-using namespace std::chrono_literals;
+-
+-#ifdef Q_OS_IOS
+-extern quint8 QZ_EnableDiscoveryCharsAndDescripttors;
+-#endif
+-
+-// this module on iOS is completely handled from the ObjectiveC module in order to test if it's more stable than the Qt Bluetooth Implementation (crash midride)
+-
+-eliteariafan::eliteariafan(bluetoothdevice *parentDevice) {
+-#ifdef Q_OS_IOS
+-    QZ_EnableDiscoveryCharsAndDescripttors = true;
+-#endif
+-    this->parentDevice = parentDevice;
+-
+-#ifndef Q_OS_IOS
+-    refresh = new QTimer(this);
+-    connect(refresh, &QTimer::timeout, this, &eliteariafan::update);
+-    refresh->start(1000ms);
+-#endif
+-}
+-
+-void eliteariafan::update() {
+-    if (initRequest) {
+-        initRequest = false;
+-
+-        uint8_t init1[] = {0x02, 0x00, 0x00, 0x3d, 0x00};
+-        writeCharacteristic(gattWrite1Service, &gattWrite1Characteristic, init1, sizeof(init1), "init", false, true);
+-
+-        uint8_t init2[] = {0x05, 0x00};
+-        writeCharacteristic(gattWrite1Service, &gattWrite2Characteristic, init2, sizeof(init2), "init", false, true);
+-
+-        initDone = true;
+-    }
+-}
+-
+-void eliteariafan::serviceDiscovered(const QBluetoothUuid &gatt) {
+-    emit debug(QStringLiteral("serviceDiscovered ") + gatt.toString());
+-}
+-
+-void eliteariafan::disconnectBluetooth() {
+-    qDebug() << QStringLiteral("eliteariafan::disconnect") << m_control;
+-
+-    if (m_control) {
+-        m_control->disconnectFromDevice();
+-    }
+-}
+-
+-void eliteariafan::characteristicChanged(const QLowEnergyCharacteristic &characteristic,
+-                                               const QByteArray &newValue) {
+-    Q_UNUSED(characteristic);
+-    emit packetReceived();
+-
+-    qDebug() << QStringLiteral(" << ") << newValue.toHex(' ');
+-}
+-
+-void eliteariafan::fanSpeedRequest(uint8_t speed) {
+-    QSettings settings;
+-    if (speed > 100)
+-        speed = 100;
+-    double max = settings.value(QZSettings::fitmetria_fanfit_max, QZSettings::default_fitmetria_fanfit_max).toDouble();
+-    double min = settings.value(QZSettings::fitmetria_fanfit_min, QZSettings::default_fitmetria_fanfit_min).toDouble();
+-
+-    uint16_t speed8 = (uint8_t)((double)speed * (max - min) / 100.0 + min);
+-
+-#ifdef Q_OS_IOS
+-#ifndef IO_UNDER_QT
+-    iOS_EliteAriaFan->eliteAriaFan_fanSpeedRequest(speed8);
+-#endif
+-#else
+-    uint8_t init10[] = {0x03, 0x01, 0x0e};
+-    init10[2] = speed8;
+-    writeCharacteristic(gattWrite1Service, &gattWrite2Characteristic, init10, sizeof(init10),
+-                        "forcing fan" + QString::number(speed));
+-#endif                        
+-}
+-
+-void eliteariafan::writeCharacteristic(QLowEnergyService *service, QLowEnergyCharacteristic *writeChar,
+-                                             uint8_t *data, uint8_t data_len, const QString &info, bool disable_log,
+-                                             bool wait_for_response) {
+-    QEventLoop loop;
+-    QTimer timeout;
+-
+-    if (service == nullptr || writeChar->isValid() == false) {
+-        qDebug() << QStringLiteral(
+-            "eliteariafan trying to change the fan speed before the connection is estabilished");
+-        return;
+-    }
+-
+-           // if there are some crash here, maybe it's better to use 2 separate event for the characteristicChanged.
+-           // one for the resistance changed event (spontaneous), and one for the other ones.
+-    if (wait_for_response) {
+-        connect(service, &QLowEnergyService::characteristicChanged, &loop, &QEventLoop::quit);
+-        timeout.singleShot(300ms, &loop, &QEventLoop::quit);
+-    } else {
+-        connect(service, &QLowEnergyService::characteristicWritten, &loop, &QEventLoop::quit);
+-        timeout.singleShot(300ms, &loop, &QEventLoop::quit);
+-    }
+-
+-    if (service->state() != QLowEnergyService::ServiceState::ServiceDiscovered ||
+-        m_control->state() == QLowEnergyController::UnconnectedState) {
+-        qDebug() << QStringLiteral("writeCharacteristic error because the connection is closed");
+-        return;
+-    }
+-
+-    if (!writeChar->isValid()) {
+-        qDebug() << QStringLiteral("gattWriteCharacteristic is invalid");
+-        return;
+-    }
+-
+-    if (writeBuffer) {
+-        delete writeBuffer;
+-    }
+-    writeBuffer = new QByteArray((const char *)data, data_len);
+-
+-    service->writeCharacteristic(*writeChar, *writeBuffer, QLowEnergyService::WriteWithoutResponse);
+-
+-    if (!disable_log) {
+-        qDebug() << QStringLiteral(" >> ") + writeBuffer->toHex(' ') + QStringLiteral(" // ") + info;
+-    }
+-
+-    loop.exec();
+-}
+-
+-void eliteariafan::stateChanged(QLowEnergyService::ServiceState state) {
+-    QBluetoothUuid _gattWriteCharacteristicId1(QStringLiteral("347b0012-7635-408b-8918-8ff3949ce592")); // handle 0x1d
+-    QBluetoothUuid _gattWriteCharacteristicId2(QStringLiteral("347b0040-7635-408b-8918-8ff3949ce592")); // handle 0x27
+-
+-    QMetaEnum metaEnum = QMetaEnum::fromType<QLowEnergyService::ServiceState>();
+-    emit debug(QStringLiteral("BTLE stateChanged ") + QString::fromLocal8Bit(metaEnum.valueToKey(state)));
+-
+-    for (QLowEnergyService *s : qAsConst(gattCommunicationChannelService)) {
+-        qDebug() << QStringLiteral("stateChanged") << s->serviceUuid() << s->state();
+-        if (s->state() != QLowEnergyService::ServiceDiscovered && s->state() != QLowEnergyService::InvalidService) {
+-            qDebug() << QStringLiteral("not all services discovered");
+-            return;
+-        }
+-    }
+-
+-    if (state != QLowEnergyService::ServiceState::ServiceDiscovered) {
+-        qDebug() << QStringLiteral("ignoring this state");
+-        return;
+-    }
+-
+-    qDebug() << QStringLiteral("all services discovered!");
+-
+-    for (QLowEnergyService *s : qAsConst(gattCommunicationChannelService)) {
+-        if (s->state() == QLowEnergyService::ServiceDiscovered) {
+-            // establish hook into notifications
+-            connect(s, &QLowEnergyService::characteristicChanged, this, &eliteariafan::characteristicChanged);
+-            connect(s, &QLowEnergyService::characteristicWritten, this, &eliteariafan::characteristicWritten);
+-            connect(
+-                s, static_cast<void (QLowEnergyService::*)(QLowEnergyService::ServiceError)>(&QLowEnergyService::error),
+-                this, &eliteariafan::errorService);
+-            connect(s, &QLowEnergyService::descriptorWritten, this, &eliteariafan::descriptorWritten);
+-
+-            qDebug() << s->serviceUuid() << QStringLiteral("connected!");
+-
+-            auto characteristics_list = s->characteristics();
+-            for (const QLowEnergyCharacteristic &c : qAsConst(characteristics_list)) {
+-                qDebug() << QStringLiteral("char uuid") << c.uuid() << QStringLiteral("handle") << c.handle();
+-                auto descriptors_list = c.descriptors();
+-                for (const QLowEnergyDescriptor &d : qAsConst(descriptors_list)) {
+-                    qDebug() << QStringLiteral("descriptor uuid") << d.uuid() << QStringLiteral("handle") << d.handle();
+-                }
+-
+-                if ((c.properties() & QLowEnergyCharacteristic::Notify) == QLowEnergyCharacteristic::Notify) {
+-                    QByteArray descriptor;
+-                    descriptor.append((char)0x01);
+-                    descriptor.append((char)0x00);
+-                    if (c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).isValid()) {
+-                        s->writeDescriptor(c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration), descriptor);
+-                    } else {
+-                        qDebug() << QStringLiteral("ClientCharacteristicConfiguration") << c.uuid()
+-                                 << c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).uuid()
+-                                 << c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).handle()
+-                                 << QStringLiteral(" is not valid");
+-                    }
+-
+-                    qDebug() << s->serviceUuid() << c.uuid() << QStringLiteral("notification subscribed!");
+-                } else if ((c.properties() & QLowEnergyCharacteristic::Indicate) ==
+-                           QLowEnergyCharacteristic::Indicate) {
+-                    QByteArray descriptor;
+-                    descriptor.append((char)0x02);
+-                    descriptor.append((char)0x00);
+-                    if (c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).isValid()) {
+-                        s->writeDescriptor(c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration), descriptor);
+-                    } else {
+-                        qDebug() << QStringLiteral("ClientCharacteristicConfiguration") << c.uuid()
+-                                 << c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).uuid()
+-                                 << c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).handle()
+-                                 << QStringLiteral(" is not valid");
+-                    }
+-
+-                    qDebug() << s->serviceUuid() << c.uuid() << QStringLiteral("indication subscribed!");
+-                } else if ((c.properties() & QLowEnergyCharacteristic::Read) == QLowEnergyCharacteristic::Read) {
+-                    // s->readCharacteristic(c);
+-                    // qDebug() << s->serviceUuid() << c.uuid() << "reading!";
+-                }
+-
+-                if (c.uuid() == _gattWriteCharacteristicId1) {
+-                    qDebug() << QStringLiteral("_gattWriteCharacteristicId1 found");
+-                    gattWrite1Characteristic = c;
+-                    gattWrite1Service = s;
+-                } else if (c.uuid() == _gattWriteCharacteristicId2) {
+-                    qDebug() << QStringLiteral("_gattWriteCharacteristicId2 found");
+-                    gattWrite2Characteristic = c;
+-                }
+-            }
+-        }
+-    }
+-}
+-
+-void eliteariafan::descriptorWritten(const QLowEnergyDescriptor &descriptor, const QByteArray &newValue) {
+-    emit debug(QStringLiteral("descriptorWritten ") + descriptor.name() + " " + newValue.toHex(' '));
+-    initRequest = true;
+-}
+-
+-void eliteariafan::characteristicWritten(const QLowEnergyCharacteristic &characteristic,
+-                                               const QByteArray &newValue) {
+-    Q_UNUSED(characteristic);
+-    emit debug(QStringLiteral("characteristicWritten ") + newValue.toHex(' '));
+-}
+-
+-void eliteariafan::serviceScanDone(void) {
+-    emit debug(QStringLiteral("serviceScanDone"));
+-
+-    initRequest = false;
+-
+-    auto services_list = m_control->services();
+-    for (const QBluetoothUuid &s : qAsConst(services_list)) {
+-        gattCommunicationChannelService.append(m_control->createServiceObject(s));
+-        if (gattCommunicationChannelService.constLast()) {
+-            connect(gattCommunicationChannelService.constLast(), &QLowEnergyService::stateChanged, this,
+-                    &eliteariafan::stateChanged);
+-            gattCommunicationChannelService.constLast()->discoverDetails();
+-        } else {
+-            m_control->disconnectFromDevice();
+-        }
+-    }
+-}
+-
+-void eliteariafan::errorService(QLowEnergyService::ServiceError err) {
+-    QMetaEnum metaEnum = QMetaEnum::fromType<QLowEnergyService::ServiceError>();
+-    emit debug(QStringLiteral("eliteariafan::errorService") + QString::fromLocal8Bit(metaEnum.valueToKey(err)) +
+-               m_control->errorString());
+-}
+-
+-void eliteariafan::error(QLowEnergyController::Error err) {
+-    QMetaEnum metaEnum = QMetaEnum::fromType<QLowEnergyController::Error>();
+-    emit debug(QStringLiteral("eliteariafan::error") + QString::fromLocal8Bit(metaEnum.valueToKey(err)) +
+-               m_control->errorString());
+-}
+-
+-void eliteariafan::deviceDiscovered(const QBluetoothDeviceInfo &device) {
+-    QSettings settings;
+-    emit debug(QStringLiteral("Found new device: ") + device.name() + QStringLiteral(" (") +
+-               device.address().toString() + ')');
+-
+-#ifdef Q_OS_IOS
+-#ifndef IO_UNDER_QT
+-    iOS_EliteAriaFan = new lockscreen();
+-    iOS_EliteAriaFan->eliteAriaFan();
+-    return;
+-#endif
+-#endif
+-    {
+-        bluetoothDevice = device;
+-        m_control = QLowEnergyController::createCentral(bluetoothDevice, this);
+-        connect(m_control, &QLowEnergyController::serviceDiscovered, this, &eliteariafan::serviceDiscovered);
+-        connect(m_control, &QLowEnergyController::discoveryFinished, this, &eliteariafan::serviceScanDone);
+-        connect(m_control,
+-                static_cast<void (QLowEnergyController::*)(QLowEnergyController::Error)>(&QLowEnergyController::error),
+-                this, &eliteariafan::error);
+-        connect(m_control, &QLowEnergyController::stateChanged, this, &eliteariafan::controllerStateChanged);
+-
+-        connect(m_control,
+-                static_cast<void (QLowEnergyController::*)(QLowEnergyController::Error)>(&QLowEnergyController::error),
+-                this, [this](QLowEnergyController::Error error) {
+-                    Q_UNUSED(error);
+-                    Q_UNUSED(this);
+-                    emit debug(QStringLiteral("Cannot connect to remote device."));
+-                    emit disconnected();
+-                });
+-        connect(m_control, &QLowEnergyController::connected, this, [this]() {
+-            Q_UNUSED(this);
+-            emit debug(QStringLiteral("Controller connected. Search services..."));
+-            m_control->discoverServices();
+-        });
+-        connect(m_control, &QLowEnergyController::disconnected, this, [this]() {
+-            Q_UNUSED(this);
+-            emit debug(QStringLiteral("LowEnergy controller disconnected"));
+-            emit disconnected();
+-        });
+-
+-               // Connect
+-        m_control->connectToDevice();
+-        return;
+-    }
+-}
+-
+-bool eliteariafan::connected() {
+-#ifdef Q_OS_IOS
+-    return true;
+-#endif               
+-
+-    if (!m_control) {
+-        return false;
+-    }
+-    return m_control->state() == QLowEnergyController::DiscoveredState;
+-}
+-
+-void eliteariafan::controllerStateChanged(QLowEnergyController::ControllerState state) {
+-#ifdef Q_OS_IOS
+-    return;
+-#endif     
+-    
+-    qDebug() << QStringLiteral("controllerStateChanged") << state;
+-    if (state == QLowEnergyController::UnconnectedState && m_control) {
+-        qDebug() << QStringLiteral("trying to connect back again...");
+-        initRequest = false;
+-        initDone = false;
+-
+-        m_control->connectToDevice();
+-    }
+-}
+diff --git a/src/devices/eliteariafan/eliteariafan.h b/src/devices/eliteariafan/eliteariafan.h
+deleted file mode 100644
+index 288c3ab5..00000000
+--- a/src/devices/eliteariafan/eliteariafan.h
++++ /dev/null
+@@ -1,90 +0,0 @@
+-#ifndef ELITEARIAFAN_H
+-#define ELITEARIAFAN_H
+-
+-#include <QBluetoothDeviceDiscoveryAgent>
+-#include <QtBluetooth/qlowenergyadvertisingdata.h>
+-#include <QtBluetooth/qlowenergyadvertisingparameters.h>
+-#include <QtBluetooth/qlowenergycharacteristic.h>
+-#include <QtBluetooth/qlowenergycharacteristicdata.h>
+-#include <QtBluetooth/qlowenergycontroller.h>
+-#include <QtBluetooth/qlowenergydescriptordata.h>
+-#include <QtBluetooth/qlowenergyservice.h>
+-#include <QtBluetooth/qlowenergyservicedata.h>
+-#include <QtCore/qbytearray.h>
+-
+-#ifndef Q_OS_ANDROID
+-#include <QtCore/qcoreapplication.h>
+-#else
+-#include <QtGui/qguiapplication.h>
+-#endif
+-
+-#ifdef Q_OS_IOS
+-#include "ios/lockscreen.h"
+-#endif
+-
+-#include <QtCore/qlist.h>
+-#include <QtCore/qmutex.h>
+-#include <QtCore/qscopedpointer.h>
+-#include <QtCore/qtimer.h>
+-
+-#include <QObject>
+-#include <QTime>
+-
+-#include "devices/bluetoothdevice.h"
+-
+-class eliteariafan : public bluetoothdevice {
+-    Q_OBJECT
+-  public:
+-    eliteariafan(bluetoothdevice *parentDevice);
+-    bool connected() override;
+-
+-  private:
+-    QList<QLowEnergyService *> gattCommunicationChannelService;
+-    QLowEnergyCharacteristic gattNotify1Characteristic;
+-    QLowEnergyCharacteristic gattNotify2Characteristic;
+-    QLowEnergyCharacteristic gattWrite1Characteristic;
+-    QLowEnergyService *gattWrite1Service;
+-    QLowEnergyCharacteristic gattWrite2Characteristic;
+-
+-    void writeCharacteristic(QLowEnergyService *service, QLowEnergyCharacteristic *writeChar, uint8_t *data,
+-                             uint8_t data_len, const QString &info, bool disable_log = false,
+-                             bool wait_for_response = false);
+-
+-    bluetoothdevice *parentDevice = nullptr;
+-
+-    bool initDone = false;
+-    bool initRequest = false;
+-
+-    QTimer *refresh;
+-
+-#ifdef Q_OS_IOS
+-    lockscreen* iOS_EliteAriaFan = nullptr;
+-#endif
+-
+-
+-  signals:
+-    void disconnected();
+-    void debug(QString string);
+-    void packetReceived();
+-
+-  public slots:
+-    void deviceDiscovered(const QBluetoothDeviceInfo &device);
+-    void disconnectBluetooth();
+-    void fanSpeedRequest(uint8_t value);
+-
+-  private slots:
+-
+-    void characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
+-    void characteristicWritten(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
+-    void descriptorWritten(const QLowEnergyDescriptor &descriptor, const QByteArray &newValue);
+-    void stateChanged(QLowEnergyService::ServiceState state);
+-    void controllerStateChanged(QLowEnergyController::ControllerState state);
+-
+-    void serviceDiscovered(const QBluetoothUuid &gatt);
+-    void serviceScanDone(void);
+-    void update();
+-    void error(QLowEnergyController::Error err);
+-    void errorService(QLowEnergyService::ServiceError);
+-};
+-
+-#endif // ELITEARIAFAN_H
+diff --git a/src/devices/elliptical.cpp b/src/devices/elliptical.cpp
+index 24080cbe..076aee60 100644
+--- a/src/devices/elliptical.cpp
++++ b/src/devices/elliptical.cpp
+@@ -141,7 +141,6 @@ double elliptical::currentCrankRevolutions() { return CrankRevs; }
+ uint16_t elliptical::lastCrankEventTime() { return LastCrankEventTime; }
+ metric elliptical::currentResistance() { return Resistance; }
+ metric elliptical::currentInclination() { return Inclination; }
+-uint8_t elliptical::fanSpeed() { return FanSpeed; }
+ bool elliptical::connected() { return false; }
+ 
+ BLUETOOTH_TYPE elliptical::deviceType() { return ELLIPTICAL; }
+diff --git a/src/devices/elliptical.h b/src/devices/elliptical.h
+index dd449498..66a25081 100644
+--- a/src/devices/elliptical.h
++++ b/src/devices/elliptical.h
+@@ -16,7 +16,6 @@ class elliptical : public bluetoothdevice {
+     metric currentInclination() override;
+     metric currentResistance() override;
+     virtual double requestedSpeed();
+-    uint8_t fanSpeed() override;
+     double currentCrankRevolutions() override;
+     uint16_t lastCrankEventTime() override;
+     bool connected() override;
+diff --git a/src/devices/fitmetria_fanfit/fitmetria_fanfit.cpp b/src/devices/fitmetria_fanfit/fitmetria_fanfit.cpp
+deleted file mode 100644
+index 198de9bf..00000000
+--- a/src/devices/fitmetria_fanfit/fitmetria_fanfit.cpp
++++ /dev/null
+@@ -1,351 +0,0 @@
+-#include "fitmetria_fanfit.h"
+-#include <QBluetoothLocalDevice>
+-#include <QDateTime>
+-#include <QEventLoop>
+-#include <QFile>
+-#include <QMetaEnum>
+-#include <QSettings>
+-#include <QThread>
+-
+-using namespace std::chrono_literals;
+-
+-#ifdef Q_OS_IOS
+-extern quint8 QZ_EnableDiscoveryCharsAndDescripttors;
+-#endif
+-
+-fitmetria_fanfit::fitmetria_fanfit(bluetoothdevice *parentDevice) {
+-#ifdef Q_OS_IOS
+-    QZ_EnableDiscoveryCharsAndDescripttors = true;
+-#endif
+-    this->parentDevice = parentDevice;
+-}
+-
+-void fitmetria_fanfit::update() {}
+-
+-void fitmetria_fanfit::serviceDiscovered(const QBluetoothUuid &gatt) {
+-    emit debug(QStringLiteral("serviceDiscovered ") + gatt.toString());
+-}
+-
+-void fitmetria_fanfit::disconnectBluetooth() {
+-    qDebug() << QStringLiteral("fitmetria_fanfit::disconnect") << m_control;
+-
+-    if (m_control) {
+-        m_control->disconnectFromDevice();
+-    }
+-}
+-
+-void fitmetria_fanfit::characteristicChanged(const QLowEnergyCharacteristic &characteristic,
+-                                             const QByteArray &newValue) {
+-    // qDebug() << "characteristicChanged" << characteristic.uuid() << newValue << newValue.length();
+-    Q_UNUSED(characteristic);
+-    emit packetReceived();
+-
+-    emit debug(QStringLiteral(" << ") + newValue.toHex(' '));
+-}
+-
+-void fitmetria_fanfit::fanSpeedRequest(uint8_t speed) {
+-    QSettings settings;
+-    if (speed > 102)
+-        speed = 102;
+-    double max = settings.value(QZSettings::fitmetria_fanfit_max, QZSettings::default_fitmetria_fanfit_max).toDouble();
+-    double min = settings.value(QZSettings::fitmetria_fanfit_min, QZSettings::default_fitmetria_fanfit_min).toDouble();
+-
+-    uint16_t speed16 = (uint16_t)((double)speed * ((max * 10.0) - (min * 10.0)) / 100.0 + (min * 10.0));
+-    const uint8_t brightness = 5;
+-    const uint8_t leds_max = 15;
+-
+-    uint8_t leds[leds_max] = {30, 30, 30, 15, 15, 15, 13, 24, 24, 8, 27, 27, 27, 26, 26};
+-    // 0~5~30~30~30~15~15~15~13~24~24~8~27~27~27~26~26
+-    // 0 - fans peed
+-    // 1 - brightness
+-    // all the rest - colors
+-    /*
+-        myCollorDict = {}
+-        myCollorDict['Black'] = 0
+-        myCollorDict['Blue'] = 1
+-        myCollorDict['Brown'] = 2
+-        myCollorDict['Cyan'] = 3
+-        myCollorDict['DarkBlue'] = 4
+-        myCollorDict['DarkCyan'] = 5
+-        myCollorDict['DarkGrey'] = 6
+-        myCollorDict['DarkGreen'] = 7
+-        myCollorDict['DarkOrange'] = 8
+-        myCollorDict['DarkRed'] = 9
+-        myCollorDict['DarkViolet'] = 10
+-        myCollorDict['DeepPink'] = 11
+-        myCollorDict['DimGrey'] = 12
+-        myCollorDict['Gold'] = 13
+-        myCollorDict['Grey'] = 14
+-        myCollorDict['Green'] = 15
+-        myCollorDict['LightBlue'] = 16
+-        myCollorDict['LightCyan'] = 17
+-        myCollorDict['LightGreen'] = 18
+-        myCollorDict['LightGrey'] = 19
+-        myCollorDict['LightPink'] = 20
+-        myCollorDict['LightYellow'] = 21
+-        myCollorDict['MediumBlue'] = 22
+-        myCollorDict['MediumPurple'] = 23
+-        myCollorDict['Orange'] = 24
+-        myCollorDict['Pink'] = 25
+-        myCollorDict['Purple'] = 26
+-        myCollorDict['Red'] = 27
+-        myCollorDict['Silver'] = 28
+-        myCollorDict['Violet'] = 29
+-        myCollorDict['White'] = 30
+-        myCollorDict['Yellow'] = 31
+-    */
+-
+-    QString s = QString::number((speed16)) + "~" + QString::number(brightness);
+-
+-    if (!settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
+-             .toString()
+-             .compare(QStringLiteral("Power")) &&
+-        parentDevice) {
+-        double ftp = parentDevice->currentPowerZone().value();
+-        if (ftp < 1.3)
+-            memset(&leds[1], 0, leds_max - 1);
+-        else if (ftp < 1.6)
+-            memset(&leds[2], 0, leds_max - 2);
+-        else if (ftp < 2)
+-            memset(&leds[3], 0, leds_max - 3);
+-        else if (ftp < 2.4)
+-            memset(&leds[4], 0, leds_max - 4);
+-        else if (ftp < 3)
+-            memset(&leds[5], 0, leds_max - 5);
+-        else if (ftp < 3.3)
+-            memset(&leds[6], 0, leds_max - 6);
+-        else if (ftp < 3.6)
+-            memset(&leds[7], 0, leds_max - 7);
+-        else if (ftp < 4)
+-            memset(&leds[8], 0, leds_max - 8);
+-        else if (ftp < 5)
+-            memset(&leds[9], 0, leds_max - 9);
+-        else if (ftp < 5.6)
+-            memset(&leds[10], 0, leds_max - 10);
+-        else if (ftp < 6)
+-            memset(&leds[11], 0, leds_max - 11);
+-        else if (ftp < 6.6)
+-            memset(&leds[12], 0, leds_max - 12);
+-        else if (ftp < 7)
+-            memset(&leds[13], 0, leds_max - 13);
+-        else if (ftp < 7.1)
+-            memset(&leds[14], 0, leds_max - 14);
+-    } else if (!settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
+-                    .toString()
+-                    .compare(QStringLiteral("Heart")) &&
+-               parentDevice) {
+-        double ftp = parentDevice->currentHeartZone().value();
+-        if (ftp < 1.3)
+-            memset(&leds[1], 0, leds_max - 1);
+-        else if (ftp < 1.6)
+-            memset(&leds[2], 0, leds_max - 2);
+-        else if (ftp < 1.9)
+-            memset(&leds[3], 0, leds_max - 3);
+-        else if (ftp < 2)
+-            memset(&leds[4], 0, leds_max - 4);
+-        else if (ftp < 2.3)
+-            memset(&leds[5], 0, leds_max - 5);
+-        else if (ftp < 2.6)
+-            memset(&leds[6], 0, leds_max - 6);
+-        else if (ftp < 2.9)
+-            memset(&leds[7], 0, leds_max - 7);
+-        else if (ftp < 3.3)
+-            memset(&leds[8], 0, leds_max - 8);
+-        else if (ftp < 3.6)
+-            memset(&leds[9], 0, leds_max - 9);
+-        else if (ftp < 4)
+-            memset(&leds[10], 0, leds_max - 10);
+-        else if (ftp < 4.3)
+-            memset(&leds[11], 0, leds_max - 11);
+-        else if (ftp < 4.9)
+-            memset(&leds[12], 0, leds_max - 12);
+-        else if (ftp < 5)
+-            memset(&leds[13], 0, leds_max - 13);
+-        else if (ftp < 5.1)
+-            memset(&leds[14], 0, leds_max - 14);
+-    } else {
+-        memset(&leds, 0, leds_max);
+-    }
+-    for (int i = 0; i < leds_max; i++)
+-        s += "~" + QString::number(leds[i]);
+-
+-    // only if the string differs i update the value over bluetooth
+-    if (lastValueSent != s)
+-        writeCharacteristic((uint8_t *)s.toLocal8Bit().data(), s.length(), QStringLiteral("forcing fan ") + s, false,
+-                            true);
+-    lastValueSent = s;
+-}
+-
+-void fitmetria_fanfit::writeCharacteristic(uint8_t *data, uint8_t data_len, const QString &info, bool disable_log,
+-                                           bool wait_for_response) {
+-    QEventLoop loop;
+-    QTimer timeout;
+-
+-    if (gattCommunicationChannelService == nullptr || gattWriteCharacteristic.isValid() == false) {
+-        qDebug() << QStringLiteral(
+-            "fitmetria_fanfit trying to change the fan speed before the connection is estabilished");
+-        return;
+-    }
+-
+-    // if there are some crash here, maybe it's better to use 2 separate event for the characteristicChanged.
+-    // one for the resistance changed event (spontaneous), and one for the other ones.
+-    if (wait_for_response) {
+-        connect(gattCommunicationChannelService, &QLowEnergyService::characteristicChanged, &loop, &QEventLoop::quit);
+-        timeout.singleShot(300ms, &loop, &QEventLoop::quit);
+-    } else {
+-        connect(gattCommunicationChannelService, &QLowEnergyService::characteristicWritten, &loop, &QEventLoop::quit);
+-        timeout.singleShot(300ms, &loop, &QEventLoop::quit);
+-    }
+-
+-    if (gattCommunicationChannelService->state() != QLowEnergyService::ServiceState::ServiceDiscovered ||
+-        m_control->state() == QLowEnergyController::UnconnectedState) {
+-        qDebug() << QStringLiteral("writeCharacteristic error because the connection is closed");
+-        return;
+-    }
+-
+-    if (!gattWriteCharacteristic.isValid()) {
+-        qDebug() << QStringLiteral("gattWriteCharacteristic is invalid");
+-        return;
+-    }
+-
+-    if (writeBuffer) {
+-        delete writeBuffer;
+-    }
+-    writeBuffer = new QByteArray((const char *)data, data_len);
+-
+-    gattCommunicationChannelService->writeCharacteristic(gattWriteCharacteristic, *writeBuffer);
+-
+-    if (!disable_log) {
+-        qDebug() << QStringLiteral(" >> ") + writeBuffer->toHex(' ') +
+-                        QStringLiteral(" // ") + info;
+-    }
+-
+-    loop.exec();
+-}
+-
+-void fitmetria_fanfit::stateChanged(QLowEnergyService::ServiceState state) {
+-    QBluetoothUuid _gattWriteCharacteristicId(QStringLiteral("19c95d4e-f9ec-4528-8313-f8f92c147cd8"));
+-
+-    QMetaEnum metaEnum = QMetaEnum::fromType<QLowEnergyService::ServiceState>();
+-    emit debug(QStringLiteral("BTLE stateChanged ") + QString::fromLocal8Bit(metaEnum.valueToKey(state)));
+-
+-    if (state == QLowEnergyService::ServiceDiscovered) {
+-        auto characteristics_list = gattCommunicationChannelService->characteristics();
+-        for (const QLowEnergyCharacteristic &c : qAsConst(characteristics_list)) {
+-            emit debug(QStringLiteral("characteristic ") + c.uuid().toString());
+-        }
+-
+-        /*
+-        gattNotifyCharacteristic =
+-            gattCommunicationChannelService->characteristic(QBluetoothUuid(QBluetoothUuid::HeartRateMeasurement));
+-        Q_ASSERT(gattNotifyCharacteristic.isValid());*/
+-
+-        gattWriteCharacteristic = gattCommunicationChannelService->characteristic(_gattWriteCharacteristicId);
+-        Q_ASSERT(gattWriteCharacteristic.isValid());
+-
+-        // establish hook into notifications
+-        connect(gattCommunicationChannelService, &QLowEnergyService::characteristicChanged, this,
+-                &fitmetria_fanfit::characteristicChanged);
+-        connect(gattCommunicationChannelService, &QLowEnergyService::characteristicWritten, this,
+-                &fitmetria_fanfit::characteristicWritten);
+-        connect(gattCommunicationChannelService,
+-                static_cast<void (QLowEnergyService::*)(QLowEnergyService::ServiceError)>(&QLowEnergyService::error),
+-                this, &fitmetria_fanfit::errorService);
+-        connect(gattCommunicationChannelService, &QLowEnergyService::descriptorWritten, this,
+-                &fitmetria_fanfit::descriptorWritten);
+-
+-        /*
+-        QByteArray descriptor;
+-        descriptor.append((char)0x01);
+-        descriptor.append((char)0x00);
+-        gattCommunicationChannelService->writeDescriptor(
+-            gattNotifyCharacteristic.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration), descriptor);*/
+-    }
+-}
+-
+-void fitmetria_fanfit::descriptorWritten(const QLowEnergyDescriptor &descriptor, const QByteArray &newValue) {
+-    emit debug(QStringLiteral("descriptorWritten ") + descriptor.name() + " " + newValue.toHex(' '));
+-}
+-
+-void fitmetria_fanfit::characteristicWritten(const QLowEnergyCharacteristic &characteristic,
+-                                             const QByteArray &newValue) {
+-    Q_UNUSED(characteristic);
+-    emit debug(QStringLiteral("characteristicWritten ") + newValue.toHex(' '));
+-}
+-
+-void fitmetria_fanfit::serviceScanDone(void) {
+-    emit debug(QStringLiteral("serviceScanDone"));
+-
+-    QBluetoothUuid _gattCommunicationChannelServiceId(QStringLiteral("5b3c6a8f-4d54-400e-82db-b7b083d3c5c3"));
+-    gattCommunicationChannelService = m_control->createServiceObject(_gattCommunicationChannelServiceId);
+-    connect(gattCommunicationChannelService, &QLowEnergyService::stateChanged, this, &fitmetria_fanfit::stateChanged);
+-    gattCommunicationChannelService->discoverDetails();
+-
+-    lastValueSent = "";
+-}
+-
+-void fitmetria_fanfit::errorService(QLowEnergyService::ServiceError err) {
+-    QMetaEnum metaEnum = QMetaEnum::fromType<QLowEnergyService::ServiceError>();
+-    emit debug(QStringLiteral("fitmetria_fanfit::errorService") + QString::fromLocal8Bit(metaEnum.valueToKey(err)) +
+-               m_control->errorString());
+-}
+-
+-void fitmetria_fanfit::error(QLowEnergyController::Error err) {
+-    QMetaEnum metaEnum = QMetaEnum::fromType<QLowEnergyController::Error>();
+-    emit debug(QStringLiteral("fitmetria_fanfit::error") + QString::fromLocal8Bit(metaEnum.valueToKey(err)) +
+-               m_control->errorString());
+-}
+-
+-void fitmetria_fanfit::deviceDiscovered(const QBluetoothDeviceInfo &device) {
+-    QSettings settings;
+-    emit debug(QStringLiteral("Found new device: ") + device.name() + QStringLiteral(" (") +
+-               device.address().toString() + ')');
+-    {
+-        bluetoothDevice = device;
+-        m_control = QLowEnergyController::createCentral(bluetoothDevice, this);
+-        connect(m_control, &QLowEnergyController::serviceDiscovered, this, &fitmetria_fanfit::serviceDiscovered);
+-        connect(m_control, &QLowEnergyController::discoveryFinished, this, &fitmetria_fanfit::serviceScanDone);
+-        connect(m_control,
+-                static_cast<void (QLowEnergyController::*)(QLowEnergyController::Error)>(&QLowEnergyController::error),
+-                this, &fitmetria_fanfit::error);
+-        connect(m_control, &QLowEnergyController::stateChanged, this, &fitmetria_fanfit::controllerStateChanged);
+-
+-        connect(m_control,
+-                static_cast<void (QLowEnergyController::*)(QLowEnergyController::Error)>(&QLowEnergyController::error),
+-                this, [this](QLowEnergyController::Error error) {
+-                    Q_UNUSED(error);
+-                    Q_UNUSED(this);
+-                    emit debug(QStringLiteral("Cannot connect to remote device."));
+-                    emit disconnected();
+-                });
+-        connect(m_control, &QLowEnergyController::connected, this, [this]() {
+-            Q_UNUSED(this);
+-            emit debug(QStringLiteral("Controller connected. Search services..."));
+-            m_control->discoverServices();
+-        });
+-        connect(m_control, &QLowEnergyController::disconnected, this, [this]() {
+-            Q_UNUSED(this);
+-            emit debug(QStringLiteral("LowEnergy controller disconnected"));
+-            emit disconnected();
+-        });
+-
+-        // Connect
+-        m_control->connectToDevice();
+-        return;
+-    }
+-}
+-
+-bool fitmetria_fanfit::connected() {
+-    if (!m_control) {
+-        return false;
+-    }
+-    return m_control->state() == QLowEnergyController::DiscoveredState;
+-}
+-
+-void fitmetria_fanfit::controllerStateChanged(QLowEnergyController::ControllerState state) {
+-    qDebug() << QStringLiteral("controllerStateChanged") << state;
+-    if (state == QLowEnergyController::UnconnectedState && m_control) {
+-        qDebug() << QStringLiteral("trying to connect back again...");
+-        m_control->connectToDevice();
+-    }
+-}
+diff --git a/src/devices/fitmetria_fanfit/fitmetria_fanfit.h b/src/devices/fitmetria_fanfit/fitmetria_fanfit.h
+deleted file mode 100644
+index 8b76b86a..00000000
+--- a/src/devices/fitmetria_fanfit/fitmetria_fanfit.h
++++ /dev/null
+@@ -1,71 +0,0 @@
+-#ifndef FITMETRIA_FANFIT_H
+-#define FITMETRIA_FANFIT_H
+-
+-#include <QBluetoothDeviceDiscoveryAgent>
+-#include <QtBluetooth/qlowenergyadvertisingdata.h>
+-#include <QtBluetooth/qlowenergyadvertisingparameters.h>
+-#include <QtBluetooth/qlowenergycharacteristic.h>
+-#include <QtBluetooth/qlowenergycharacteristicdata.h>
+-#include <QtBluetooth/qlowenergycontroller.h>
+-#include <QtBluetooth/qlowenergydescriptordata.h>
+-#include <QtBluetooth/qlowenergyservice.h>
+-#include <QtBluetooth/qlowenergyservicedata.h>
+-#include <QtCore/qbytearray.h>
+-
+-#ifndef Q_OS_ANDROID
+-#include <QtCore/qcoreapplication.h>
+-#else
+-#include <QtGui/qguiapplication.h>
+-#endif
+-#include <QtCore/qlist.h>
+-#include <QtCore/qmutex.h>
+-#include <QtCore/qscopedpointer.h>
+-#include <QtCore/qtimer.h>
+-
+-#include <QObject>
+-#include <QTime>
+-
+-#include "devices/bluetoothdevice.h"
+-
+-class fitmetria_fanfit : public bluetoothdevice {
+-    Q_OBJECT
+-  public:
+-    fitmetria_fanfit(bluetoothdevice *parentDevice);
+-    bool connected() override;
+-
+-  private:
+-    QLowEnergyService *gattCommunicationChannelService = nullptr;
+-    // QLowEnergyCharacteristic gattNotifyCharacteristic;
+-    QLowEnergyCharacteristic gattWriteCharacteristic;
+-
+-    void writeCharacteristic(uint8_t *data, uint8_t data_len, const QString &info, bool disable_log = false,
+-                             bool wait_for_response = false);
+-
+-    bluetoothdevice *parentDevice = nullptr;
+-    QString lastValueSent = "";
+-
+-  signals:
+-    void disconnected();
+-    void debug(QString string);
+-    void packetReceived();
+-
+-  public slots:
+-    void deviceDiscovered(const QBluetoothDeviceInfo &device);
+-    void disconnectBluetooth();
+-    void fanSpeedRequest(uint8_t value);
+-
+-  private slots:
+-
+-    void characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
+-    void characteristicWritten(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
+-    void descriptorWritten(const QLowEnergyDescriptor &descriptor, const QByteArray &newValue);
+-    void stateChanged(QLowEnergyService::ServiceState state);
+-    void controllerStateChanged(QLowEnergyController::ControllerState state);
+-
+-    void serviceDiscovered(const QBluetoothUuid &gatt);
+-    void serviceScanDone(void);
+-    void update();
+-    void error(QLowEnergyController::Error err);
+-    void errorService(QLowEnergyService::ServiceError);
+-};
+-#endif // FITMETRIA_FANFIT_H
+diff --git a/src/devices/horizontreadmill/horizontreadmill.cpp b/src/devices/horizontreadmill/horizontreadmill.cpp
+index 409308f6..d289250e 100644
+--- a/src/devices/horizontreadmill/horizontreadmill.cpp
++++ b/src/devices/horizontreadmill/horizontreadmill.cpp
+@@ -1176,17 +1176,7 @@ void horizontreadmill::update() {
+ 
+             requestStop = -1;
+         }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+ 
+-            // sendChangeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+-
+-            // sendChangeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }
+     }
+ }
+ 
+diff --git a/src/devices/kingsmithr1protreadmill/kingsmithr1protreadmill.cpp b/src/devices/kingsmithr1protreadmill/kingsmithr1protreadmill.cpp
+index 39aa230d..3e64334e 100644
+--- a/src/devices/kingsmithr1protreadmill/kingsmithr1protreadmill.cpp
++++ b/src/devices/kingsmithr1protreadmill/kingsmithr1protreadmill.cpp
+@@ -216,23 +216,8 @@ void kingsmithr1protreadmill::update() {
+ 
+             requestStop = -1;
+         }
+-        if (requestFanSpeed != -1) {
+-            emit debug(QStringLiteral("changing fan speed..."));
+ 
+-            // sendChangeFanSpeed(requestFanSpeed);
+-            requestFanSpeed = -1;
+-        }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+-
+-            // sendChangeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+ 
+-            // sendChangeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }
+     }
+ }
+ 
+diff --git a/src/devices/kingsmithr2treadmill/kingsmithr2treadmill.cpp b/src/devices/kingsmithr2treadmill/kingsmithr2treadmill.cpp
+index cb97b8d5..2527b9e2 100644
+--- a/src/devices/kingsmithr2treadmill/kingsmithr2treadmill.cpp
++++ b/src/devices/kingsmithr2treadmill/kingsmithr2treadmill.cpp
+@@ -234,23 +234,8 @@ void kingsmithr2treadmill::update() {
+             // don't go to standby mode automatically
+             requestStop = -1;
+         }
+-        if (requestFanSpeed != -1) {
+-            emit debug(QStringLiteral("changing fan speed..."));
+ 
+-            // sendChangeFanSpeed(requestFanSpeed);
+-            requestFanSpeed = -1;
+-        }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+-
+-            // sendChangeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+ 
+-            // sendChangeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }
+     }
+ }
+ 
+diff --git a/src/devices/lifefitnesstreadmill/lifefitnesstreadmill.cpp b/src/devices/lifefitnesstreadmill/lifefitnesstreadmill.cpp
+index 504aee68..37a5d292 100644
+--- a/src/devices/lifefitnesstreadmill/lifefitnesstreadmill.cpp
++++ b/src/devices/lifefitnesstreadmill/lifefitnesstreadmill.cpp
+@@ -314,17 +314,7 @@ void lifefitnesstreadmill::update() {
+ 
+             requestStop = -1;
+         }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+ 
+-            // sendChangeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+-
+-            // sendChangeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }
+     }
+ }
+ 
+diff --git a/src/devices/nordictrackifitadbbike/nordictrackifitadbbike.cpp b/src/devices/nordictrackifitadbbike/nordictrackifitadbbike.cpp
+index 762678c0..1a02cf97 100644
+--- a/src/devices/nordictrackifitadbbike/nordictrackifitadbbike.cpp
++++ b/src/devices/nordictrackifitadbbike/nordictrackifitadbbike.cpp
+@@ -745,11 +745,6 @@ void nordictrackifitadbbike::update() {
+             emit debug(QString("gRPC Resistance: %1").arg(currentResistance));
+         }
+         
+-        int currentFanSpeed = getGrpcFanSpeed();
+-        if (currentFanSpeed != FanSpeed) {
+-            FanSpeed = currentFanSpeed;
+-            emit debug(QString("gRPC Fan Speed: %1").arg(currentFanSpeed));
+-        }
+ 
+         // Read heart rate from gRPC if heart rate belt is disabled
+         QString heartRateBeltName = settings.value(QZSettings::heart_rate_belt_name, QZSettings::default_heart_rate_belt_name).toString();
+@@ -1241,49 +1236,3 @@ void nordictrackifitadbbike::changePower(int32_t power) {
+     emit debug(QString("changePower: Power request %1W (Android gRPC not available)").arg(power));
+ #endif
+ }
+-
+-bool nordictrackifitadbbike::changeFanSpeed(uint8_t speed) {
+-#ifdef Q_OS_ANDROID
+-    if (grpcInitialized) {
+-        setGrpcFanSpeed(static_cast<int>(speed));
+-        FanSpeed = speed;
+-        emit debug(QString("changeFanSpeed: Set fan speed to %1 via gRPC").arg(speed));
+-        return true;
+-    } else {
+-        emit debug(QString("changeFanSpeed: Fan speed request %1 (gRPC not available)").arg(speed));
+-        return false;
+-    }
+-#else
+-    emit debug(QString("changeFanSpeed: Fan speed request %1 (Android gRPC not available)").arg(speed));
+-    return false;
+-#endif
+-}
+-
+-void nordictrackifitadbbike::setGrpcFanSpeed(int fanSpeed) {
+-#ifdef Q_OS_ANDROID
+-    if (grpcInitialized) {
+-        QAndroidJniObject::callStaticMethod<void>(
+-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+-            "setFanSpeed",
+-            "(I)V",
+-            fanSpeed
+-        );
+-        emit debug(QString("Set gRPC fan speed to: %1").arg(fanSpeed));
+-    }
+-#endif
+-}
+-
+-int nordictrackifitadbbike::getGrpcFanSpeed() {
+-#ifdef Q_OS_ANDROID
+-    if (grpcInitialized) {
+-        int fanSpeed = QAndroidJniObject::callStaticMethod<jint>(
+-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+-            "getCurrentFanSpeed",
+-            "()I"
+-        );
+-        qDebug() << "getGrpcFanSpeed() returned:" << fanSpeed;
+-        return fanSpeed;
+-    }
+-#endif
+-    return 0;
+-}
+diff --git a/src/devices/nordictrackifitadbbike/nordictrackifitadbbike.h b/src/devices/nordictrackifitadbbike/nordictrackifitadbbike.h
+index 885b9eba..aeb447a8 100644
+--- a/src/devices/nordictrackifitadbbike/nordictrackifitadbbike.h
++++ b/src/devices/nordictrackifitadbbike/nordictrackifitadbbike.h
+@@ -76,7 +76,6 @@ class nordictrackifitadbbike : public bike {
+     resistance_t resistanceFromPowerRequest(uint16_t power) override;
+     bool ifitCompatible() override;
+     void changePower(int32_t power) override;
+-    bool changeFanSpeed(uint8_t speed) override;
+ 
+   private:
+     const resistance_t max_resistance = 20; // max inclination for s22i
+@@ -100,8 +99,6 @@ class nordictrackifitadbbike : public bike {
+     void setGrpcIncline(double inclination);
+     void setGrpcWatts(double watts);
+     void disableGrpcWatts();
+-    void setGrpcFanSpeed(int fanSpeed);
+-    int getGrpcFanSpeed();
+     
+     // Gear change debouncing
+     void processPendingGearChange();
+diff --git a/src/devices/nordictrackifitadbrower/nordictrackifitadbrower.cpp b/src/devices/nordictrackifitadbrower/nordictrackifitadbrower.cpp
+index 7a00bbc4..c3f5619b 100644
+--- a/src/devices/nordictrackifitadbrower/nordictrackifitadbrower.cpp
++++ b/src/devices/nordictrackifitadbrower/nordictrackifitadbrower.cpp
+@@ -698,20 +698,6 @@ int nordictrackifitadbrower::getGrpcLast500mPaceSeconds() {
+     return 0;
+ }
+ 
+-int nordictrackifitadbrower::getGrpcFanSpeed() {
+-#ifdef Q_OS_ANDROID
+-    if (grpcInitialized) {
+-        int fanSpeed = QAndroidJniObject::callStaticMethod<jint>(
+-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+-            "getCurrentFanSpeed",
+-            "()I"
+-        );
+-        qDebug() << "getGrpcFanSpeed() returned:" << fanSpeed;
+-        return fanSpeed;
+-    }
+-#endif
+-    return 0;
+-}
+ 
+ // ============================= gRPC Control Setters =============================
+ 
+@@ -728,17 +714,3 @@ void nordictrackifitadbrower::setGrpcResistance(double resistance) {
+     }
+ #endif
+ }
+-
+-void nordictrackifitadbrower::setGrpcFanSpeed(int fanSpeed) {
+-#ifdef Q_OS_ANDROID
+-    if (grpcInitialized) {
+-        QAndroidJniObject::callStaticMethod<void>(
+-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+-            "setFanSpeed",
+-            "(I)V",
+-            fanSpeed
+-        );
+-        emit debug(QString("Set gRPC fan speed to: %1").arg(fanSpeed));
+-    }
+-#endif
+-}
+diff --git a/src/devices/nordictrackifitadbrower/nordictrackifitadbrower.h b/src/devices/nordictrackifitadbrower/nordictrackifitadbrower.h
+index dd1d948b..ec8189e5 100644
+--- a/src/devices/nordictrackifitadbrower/nordictrackifitadbrower.h
++++ b/src/devices/nordictrackifitadbrower/nordictrackifitadbrower.h
+@@ -118,11 +118,9 @@ class nordictrackifitadbrower : public rower {
+     double getGrpcStrokesLength();
+     int getGrpcPaceSeconds();
+     int getGrpcLast500mPaceSeconds();
+-    int getGrpcFanSpeed();
+ 
+     // gRPC control setters
+     void setGrpcResistance(double resistance);
+-    void setGrpcFanSpeed(int fanSpeed);
+ 
+ #ifdef Q_OS_IOS
+     lockscreen *h = 0;
+@@ -144,4 +142,4 @@ class nordictrackifitadbrower : public rower {
+     void update();
+ };
+ 
+-#endif // NORDICTRACKIFITADBROWER_H
+\ No newline at end of file
++#endif // NORDICTRACKIFITADBROWER_H
+diff --git a/src/devices/nordictrackifitadbtreadmill/nordictrackifitadbtreadmill.cpp b/src/devices/nordictrackifitadbtreadmill/nordictrackifitadbtreadmill.cpp
+index 5cbb30a4..ac4293b7 100644
+--- a/src/devices/nordictrackifitadbtreadmill/nordictrackifitadbtreadmill.cpp
++++ b/src/devices/nordictrackifitadbtreadmill/nordictrackifitadbtreadmill.cpp
+@@ -767,7 +767,6 @@ void nordictrackifitadbtreadmill::update() {
+         double currentIncline = getGrpcIncline();
+         double currentWatts = getGrpcWatts();
+         double currentCadence = getGrpcCadence();
+-        int currentFanSpeed = getGrpcFanSpeed();
+         
+         // Update the metrics if they've changed
+         if (currentSpeed != Speed.value()) {
+@@ -792,10 +791,6 @@ void nordictrackifitadbtreadmill::update() {
+             emit debug(QString("gRPC Cadence: %1").arg(currentCadence));
+         }
+         
+-        if (currentFanSpeed != FanSpeed) {
+-            FanSpeed = currentFanSpeed;
+-            emit debug(QString("gRPC Fan Speed: %1").arg(currentFanSpeed));
+-        }
+ 
+         if (!firstDataReceived) {
+             Distance += ((Speed.value() / (double)3600.0) /
+@@ -1337,47 +1332,3 @@ int nordictrackifitadbtreadmill::getGrpcWorkoutState() {
+ #endif
+     return 1; // WORKOUT_STATE_IDLE
+ }
+-
+-bool nordictrackifitadbtreadmill::changeFanSpeed(uint8_t speed) {
+-#ifdef Q_OS_ANDROID
+-    if (grpcInitialized) {
+-        setGrpcFanSpeed(static_cast<int>(speed));
+-        FanSpeed = speed;
+-        emit debug(QString("changeFanSpeed: Set fan speed to %1 via gRPC").arg(speed));
+-        return true;
+-    } else {
+-        emit debug(QString("changeFanSpeed: Fan speed request %1 (gRPC not available)").arg(speed));
+-        return false;
+-    }
+-#else
+-    emit debug(QString("changeFanSpeed: Fan speed request %1 (Android gRPC not available)").arg(speed));
+-    return false;
+-#endif
+-}
+-
+-void nordictrackifitadbtreadmill::setGrpcFanSpeed(int fanSpeed) {
+-#ifdef Q_OS_ANDROID
+-    if (grpcInitialized) {
+-        QAndroidJniObject::callStaticMethod<void>(
+-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+-            "setFanSpeed",
+-            "(I)V",
+-            fanSpeed
+-        );
+-        emit debug(QString("Set gRPC fan speed to: %1").arg(fanSpeed));
+-    }
+-#endif
+-}
+-
+-int nordictrackifitadbtreadmill::getGrpcFanSpeed() {
+-#ifdef Q_OS_ANDROID
+-    if (grpcInitialized) {
+-        return QAndroidJniObject::callStaticMethod<jint>(
+-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
+-            "getCurrentFanSpeed",
+-            "()I"
+-        );
+-    }
+-#endif
+-    return 0;
+-}
+diff --git a/src/devices/nordictrackifitadbtreadmill/nordictrackifitadbtreadmill.h b/src/devices/nordictrackifitadbtreadmill/nordictrackifitadbtreadmill.h
+index 95537688..755ec336 100644
+--- a/src/devices/nordictrackifitadbtreadmill/nordictrackifitadbtreadmill.h
++++ b/src/devices/nordictrackifitadbtreadmill/nordictrackifitadbtreadmill.h
+@@ -76,7 +76,6 @@ class nordictrackifitadbtreadmill : public treadmill {
+     bool connected() override;
+     bool canStartStop() override;
+     double minStepSpeed() override { return 0.1; }
+-    bool changeFanSpeed(uint8_t speed) override;
+ 
+   private:
+     struct DisplayValue {
+@@ -100,8 +99,6 @@ class nordictrackifitadbtreadmill : public treadmill {
+     double getGrpcCadence();
+     double getGrpcHeartRate();
+     void setGrpcSpeed(double speed);
+-    void setGrpcFanSpeed(int fanSpeed);
+-    int getGrpcFanSpeed();
+     void setGrpcIncline(double incline);
+     void startGrpcWorkoutStateMonitoring();
+     int getGrpcWorkoutState();
+diff --git a/src/devices/rower.cpp b/src/devices/rower.cpp
+index e664f0f3..4071d418 100644
+--- a/src/devices/rower.cpp
++++ b/src/devices/rower.cpp
+@@ -47,7 +47,6 @@ metric rower::lastRequestedPower() { return RequestedPower; }
+ metric rower::currentResistance() { return Resistance; }
+ metric rower::currentStrokesCount() { return StrokesCount; }
+ metric rower::currentStrokesLength() { return StrokesLength; }
+-uint8_t rower::fanSpeed() { return FanSpeed; }
+ bool rower::connected() { return false; }
+ uint16_t rower::watts() { return 0; }
+ metric rower::pelotonResistance() { return m_pelotonResistance; }
+diff --git a/src/devices/rower.h b/src/devices/rower.h
+index 7164ceb0..6add559a 100644
+--- a/src/devices/rower.h
++++ b/src/devices/rower.h
+@@ -23,7 +23,6 @@ class rower : public bluetoothdevice {
+     QTime averagePace() override;
+     QTime maxPace() override;
+     virtual double requestedSpeed();
+-    uint8_t fanSpeed() override;
+     double currentCrankRevolutions() override;
+     uint16_t lastCrankEventTime() override;
+     bool connected() override;
+diff --git a/src/devices/shuaa5treadmill/shuaa5treadmill.cpp b/src/devices/shuaa5treadmill/shuaa5treadmill.cpp
+index 13b7fce7..950fbb42 100644
+--- a/src/devices/shuaa5treadmill/shuaa5treadmill.cpp
++++ b/src/devices/shuaa5treadmill/shuaa5treadmill.cpp
+@@ -135,17 +135,7 @@ void shuaa5treadmill::update() {
+ 
+             requestStop = -1;
+         }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+ 
+-            // sendChangeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+-
+-            // sendChangeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }
+     }
+ }
+ 
+diff --git a/src/devices/solef80treadmill/solef80treadmill.cpp b/src/devices/solef80treadmill/solef80treadmill.cpp
+index b251e2db..3bc5898c 100644
+--- a/src/devices/solef80treadmill/solef80treadmill.cpp
++++ b/src/devices/solef80treadmill/solef80treadmill.cpp
+@@ -403,17 +403,7 @@ void solef80treadmill::update() {
+ 
+             requestStop = -1;
+         }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+ 
+-            // sendChangeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+-
+-            // sendChangeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }
+     }
+ }
+ 
+diff --git a/src/devices/speraxtreadmill/speraxtreadmill.cpp b/src/devices/speraxtreadmill/speraxtreadmill.cpp
+index 84a919dc..84ae5f03 100644
+--- a/src/devices/speraxtreadmill/speraxtreadmill.cpp
++++ b/src/devices/speraxtreadmill/speraxtreadmill.cpp
+@@ -620,23 +620,7 @@ void speraxtreadmill::update() {
+                 writeCharacteristic(gattWriteCharacteristic, noop, sizeof(noop), QStringLiteral("noop"), false, false);
+ 
+             }
+-            /*if (requestFanSpeed != -1) {
+-                emit debug(QStringLiteral("changing fan speed..."));
+ 
+-                sendChangeFanSpeed(requestFanSpeed);
+-                requestFanSpeed = -1;
+-            }
+-            if (requestIncreaseFan != -1) {
+-                emit debug(QStringLiteral("increasing fan speed..."));
+-
+-                sendChangeFanSpeed(FanSpeed + 1);
+-                requestIncreaseFan = -1;
+-            } else if (requestDecreaseFan != -1) {
+-                emit debug(QStringLiteral("decreasing fan speed..."));
+-
+-                sendChangeFanSpeed(FanSpeed - 1);
+-                requestDecreaseFan = -1;
+-            }*/
+         }
+     }
+ }
+diff --git a/src/devices/spirittreadmill/spirittreadmill.cpp b/src/devices/spirittreadmill/spirittreadmill.cpp
+index 59784e5a..20ca935a 100644
+--- a/src/devices/spirittreadmill/spirittreadmill.cpp
++++ b/src/devices/spirittreadmill/spirittreadmill.cpp
+@@ -219,15 +219,7 @@ void spirittreadmill::update() {
+                 writeCharacteristic(stop, sizeof(stop), QStringLiteral("stop"), false, true);
+             }
+         }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+-            changeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+-            changeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }
++
+     }
+ }
+ 
+diff --git a/src/devices/sportsplusbike/sportsplusbike.cpp b/src/devices/sportsplusbike/sportsplusbike.cpp
+index cafcabf8..a7d2eaef 100644
+--- a/src/devices/sportsplusbike/sportsplusbike.cpp
++++ b/src/devices/sportsplusbike/sportsplusbike.cpp
+@@ -304,7 +304,6 @@ void sportsplusbike::characteristicChanged(const QLowEnergyCharacteristic &chara
+             Heart = ((uint8_t)newValue.at(8));
+         }
+     }
+-    FanSpeed = 0;
+ 
+     emit debug(QStringLiteral("Current cadence: ") + QString::number(cadence));
+     // emit debug(QStringLiteral("Current resistance: ") + QString::number(resistance));
+diff --git a/src/devices/sportsplusrower/sportsplusrower.cpp b/src/devices/sportsplusrower/sportsplusrower.cpp
+index 2f17c793..84d234b9 100644
+--- a/src/devices/sportsplusrower/sportsplusrower.cpp
++++ b/src/devices/sportsplusrower/sportsplusrower.cpp
+@@ -171,7 +171,6 @@ void sportsplusrower::characteristicChanged(const QLowEnergyCharacteristic &char
+             Heart = ((uint8_t)newValue.at(8));
+         }
+     }
+-    FanSpeed = 0;
+ 
+     emit debug(QStringLiteral("Current cadence: ") + QString::number(Cadence.value()));
+     // emit debug(QStringLiteral("Current resistance: ") + QString::number(resistance));
+diff --git a/src/devices/technogymmyruntreadmill/technogymmyruntreadmill.cpp b/src/devices/technogymmyruntreadmill/technogymmyruntreadmill.cpp
+index 8e52674b..8dbb0adc 100644
+--- a/src/devices/technogymmyruntreadmill/technogymmyruntreadmill.cpp
++++ b/src/devices/technogymmyruntreadmill/technogymmyruntreadmill.cpp
+@@ -215,17 +215,7 @@ void technogymmyruntreadmill::update() {
+ 
+             requestStop = -1;
+         }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+ 
+-            // sendChangeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+-
+-            // sendChangeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }
+     }
+ }
+ 
+diff --git a/src/devices/truetreadmill/truetreadmill.cpp b/src/devices/truetreadmill/truetreadmill.cpp
+index e70f1776..78fde1b8 100644
+--- a/src/devices/truetreadmill/truetreadmill.cpp
++++ b/src/devices/truetreadmill/truetreadmill.cpp
+@@ -119,17 +119,8 @@ void truetreadmill::update() {
+                 emit debug(QStringLiteral("stopping..."));
+                 requestStop = -1;
+             }
+-            if (requestFanSpeed != -1) {
+-                emit debug(QStringLiteral("changing fan speed..."));
+-                requestFanSpeed = -1;
+-            }
+-            if (requestIncreaseFan != -1) {
+-                emit debug(QStringLiteral("increasing fan speed..."));
+-                requestIncreaseFan = -1;
+-            } else if (requestDecreaseFan != -1) {
+-                emit debug(QStringLiteral("decreasing fan speed..."));
+-                requestDecreaseFan = -1;
+-            }
++
++
+         }
+     }
+ }
+diff --git a/src/devices/trxappgateusbtreadmill/trxappgateusbtreadmill.cpp b/src/devices/trxappgateusbtreadmill/trxappgateusbtreadmill.cpp
+index cbae5c50..2b2d1dfd 100644
+--- a/src/devices/trxappgateusbtreadmill/trxappgateusbtreadmill.cpp
++++ b/src/devices/trxappgateusbtreadmill/trxappgateusbtreadmill.cpp
+@@ -196,15 +196,7 @@ void trxappgateusbtreadmill::update() {
+ 
+             requestStop = -1;
+         }
+-        if (requestIncreaseFan != -1) {
+-            emit debug(QStringLiteral("increasing fan speed..."));
+-            // changeFanSpeed(FanSpeed + 1);
+-            requestIncreaseFan = -1;
+-        } else if (requestDecreaseFan != -1) {
+-            emit debug(QStringLiteral("decreasing fan speed..."));
+-            // changeFanSpeed(FanSpeed - 1);
+-            requestDecreaseFan = -1;
+-        }
++
+     }
+ }
+ 
+@@ -273,7 +265,6 @@ void trxappgateusbtreadmill::characteristicChanged(const QLowEnergyCharacteristi
+             Heart = GetHeartFromPacket(lastPacket);
+         }
+     }
+-    FanSpeed = 0;
+ 
+     QTime now = QTime::currentTime();
+     if (!firstCharChanged) {
+diff --git a/src/devices/wahookickrheadwind/wahookickrheadwind.cpp b/src/devices/wahookickrheadwind/wahookickrheadwind.cpp
+deleted file mode 100644
+index f87b40a7..00000000
+--- a/src/devices/wahookickrheadwind/wahookickrheadwind.cpp
++++ /dev/null
+@@ -1,378 +0,0 @@
+-#include "homeform.h"
+-#include "wahookickrheadwind.h"
+-#include <QBluetoothLocalDevice>
+-#include <QDateTime>
+-#include <QFile>
+-#include <QMetaEnum>
+-#include <QSettings>
+-#include <QThread>
+-
+-using namespace std::chrono_literals;
+-
+-#ifdef Q_OS_IOS
+-extern quint8 QZ_EnableDiscoveryCharsAndDescripttors;
+-#endif
+-
+-wahookickrheadwind::wahookickrheadwind(bluetoothdevice *parentDevice) {
+-#ifdef Q_OS_IOS
+-    QZ_EnableDiscoveryCharsAndDescripttors = true;
+-#endif
+-    this->parentDevice = parentDevice;
+-
+-    refresh = new QTimer(this);
+-    connect(refresh, &QTimer::timeout, this, &wahookickrheadwind::update);
+-    refresh->start(1000ms);
+-
+-    writeTimeoutTimer = new QTimer(this);
+-    writeTimeoutTimer->setSingleShot(true);
+-    connect(writeTimeoutTimer, &QTimer::timeout, this, [this]() {
+-        qDebug() << QStringLiteral("writeCharacteristic timeout - processing next in queue");
+-        isWriting = false;
+-        currentWriteWaitingForResponse = false;
+-        processWriteQueue();
+-    });
+-
+-    connect(this, &wahookickrheadwind::packetReceived, this, [this]() {
+-        if (currentWriteWaitingForResponse && isWriting) {
+-            writeTimeoutTimer->stop();
+-            isWriting = false;
+-            currentWriteWaitingForResponse = false;
+-            processWriteQueue();
+-        }
+-    });
+-}
+-
+-void wahookickrheadwind::update() {
+-    if (initRequest) {
+-        initRequest = false;
+-
+-        uint8_t init1[] = {0x01};
+-        writeCharacteristic(gattWrite1Service, &gattWrite1Characteristic, init1, sizeof(init1), "init");
+-
+-        uint8_t init2[] = {0x03};
+-        writeCharacteristic(gattWrite1Service, &gattWrite1Characteristic, init2, sizeof(init2), "init");
+-
+-        uint8_t init3[] = {0x05};
+-        writeCharacteristic(gattWrite1Service, &gattWrite1Characteristic, init3, sizeof(init3), "init");
+-
+-        uint8_t init4[] = {0x06, 0x00, 0x00, 0x00, 0x03, 0xbb, 0x08, 0x00, 0x00};
+-        writeCharacteristic(gattWrite1Service, &gattWrite1Characteristic, init4, sizeof(init4), "init");
+-
+-        uint8_t init5[] = {0x04, 0x02};
+-        writeCharacteristic(gattWrite1Service, &gattWrite1Characteristic, init5, sizeof(init5), "init");
+-
+-        uint8_t init6[] = {0x20, 0xee, 0xfc};
+-        writeCharacteristic(gattWrite2Service, &gattWrite2Characteristic, init6, sizeof(init6), "init");
+-
+-        uint8_t init7[] = {0x23};
+-        writeCharacteristic(gattWrite2Service, &gattWrite2Characteristic, init7, sizeof(init7), "init");
+-
+-        uint8_t init8[] = {0x04, 0x03};
+-        writeCharacteristic(gattWrite1Service, &gattWrite1Characteristic, init8, sizeof(init8), "init");
+-
+-        uint8_t init9[] = {0x04, 0x04};
+-        writeCharacteristic(gattWrite1Service, &gattWrite1Characteristic, init9, sizeof(init9), "init");
+-
+-        uint8_t init10[] = {0x02, 0x00};
+-        writeCharacteristic(gattWrite1Service, &gattWrite1Characteristic, init10, sizeof(init10), "init");
+-
+-        initDone = true;
+-    }
+-}
+-
+-void wahookickrheadwind::serviceDiscovered(const QBluetoothUuid &gatt) {
+-    emit debug(QStringLiteral("serviceDiscovered ") + gatt.toString());
+-}
+-
+-void wahookickrheadwind::disconnectBluetooth() {
+-    qDebug() << QStringLiteral("wahookickrheadwind::disconnect") << m_control;
+-
+-    if (m_control) {
+-        m_control->disconnectFromDevice();
+-    }
+-}
+-
+-void wahookickrheadwind::characteristicChanged(const QLowEnergyCharacteristic &characteristic,
+-                                               const QByteArray &newValue) {
+-    Q_UNUSED(characteristic);
+-    emit packetReceived();
+-
+-    qDebug() << QStringLiteral(" << ") << newValue.toHex(' ');
+-}
+-
+-void wahookickrheadwind::fanSpeedRequest(uint8_t speed) {
+-    QSettings settings;
+-    if (speed > 100)
+-        speed = 100;
+-    double max = settings.value(QZSettings::fitmetria_fanfit_max, QZSettings::default_fitmetria_fanfit_max).toDouble();
+-    double min = settings.value(QZSettings::fitmetria_fanfit_min, QZSettings::default_fitmetria_fanfit_min).toDouble();
+-
+-    uint16_t speed8 = (uint8_t)((double)speed * (max - min) / 100.0 + min);
+-
+-    uint8_t init10[] = {0x02, 0x00};
+-    init10[1] = speed8;
+-    writeCharacteristic(gattWrite1Service, &gattWrite1Characteristic, init10, sizeof(init10),
+-                        "forcing fan" + QString::number(speed));
+-}
+-
+-void wahookickrheadwind::writeCharacteristic(QLowEnergyService *service, QLowEnergyCharacteristic *writeChar,
+-                                             uint8_t *data, uint8_t data_len, const QString &info, bool disable_log,
+-                                             bool wait_for_response) {
+-    WriteRequest request;
+-    request.service = service;
+-    if (writeChar) {
+-        request.writeChar = *writeChar;
+-    }
+-    request.data = QByteArray((const char *)data, data_len);
+-    request.info = info;
+-    request.disable_log = disable_log;
+-    request.wait_for_response = wait_for_response;
+-
+-    writeQueue.enqueue(request);
+-    processWriteQueue();
+-}
+-
+-void wahookickrheadwind::processWriteQueue() {
+-    if (isWriting || writeQueue.isEmpty()) {
+-        return;
+-    }
+-
+-    WriteRequest request = writeQueue.dequeue();
+-
+-    if (request.service == nullptr || request.writeChar.isValid() == false) {
+-        qDebug() << QStringLiteral(
+-            "wahookickrheadwind trying to change the fan speed before the connection is estabilished");
+-        writeQueue.clear();
+-        isWriting = false;
+-        return;
+-    }
+-
+-    if (!m_control || request.service->state() != QLowEnergyService::ServiceState::ServiceDiscovered ||
+-        m_control->state() == QLowEnergyController::UnconnectedState) {
+-        qDebug() << QStringLiteral("writeCharacteristic error because the connection is closed");
+-        writeQueue.clear();
+-        isWriting = false;
+-        return;
+-    }
+-
+-    if (!request.writeChar.isValid()) {
+-        qDebug() << QStringLiteral("gattWriteCharacteristic is invalid");
+-        writeQueue.clear();
+-        isWriting = false;
+-        return;
+-    }
+-
+-    isWriting = true;
+-    currentWriteWaitingForResponse = request.wait_for_response;
+-
+-    if (writeBuffer) {
+-        delete writeBuffer;
+-    }
+-    writeBuffer = new QByteArray(request.data);
+-
+-    request.service->writeCharacteristic(request.writeChar, *writeBuffer, QLowEnergyService::WriteWithoutResponse);
+-
+-    if (!request.disable_log) {
+-        qDebug() << QStringLiteral(" >> ") + writeBuffer->toHex(' ') + QStringLiteral(" // ") + request.info;
+-    }
+-
+-    writeTimeoutTimer->start(300);
+-}
+-
+-void wahookickrheadwind::stateChanged(QLowEnergyService::ServiceState state) {
+-    QBluetoothUuid _gattWriteCharacteristicId1(QStringLiteral("a026e038-0a7d-4ab3-97fa-f1500f9feb8b")); // handle 0x20
+-    QBluetoothUuid _gattWriteCharacteristicId2(QStringLiteral("a026e002-0a7d-4ab3-97fa-f1500f9feb8b")); // handle 0x19
+-
+-    QMetaEnum metaEnum = QMetaEnum::fromType<QLowEnergyService::ServiceState>();
+-    emit debug(QStringLiteral("BTLE stateChanged ") + QString::fromLocal8Bit(metaEnum.valueToKey(state)));
+-
+-    for (QLowEnergyService *s : qAsConst(gattCommunicationChannelService)) {
+-        qDebug() << QStringLiteral("stateChanged") << s->serviceUuid() << s->state();
+-        if (s->state() != QLowEnergyService::ServiceDiscovered && s->state() != QLowEnergyService::InvalidService) {
+-            qDebug() << QStringLiteral("not all services discovered");
+-            return;
+-        }
+-    }
+-
+-    if (state != QLowEnergyService::ServiceState::ServiceDiscovered) {
+-        qDebug() << QStringLiteral("ignoring this state");
+-        return;
+-    }
+-
+-    qDebug() << QStringLiteral("all services discovered!");
+-
+-    for (QLowEnergyService *s : qAsConst(gattCommunicationChannelService)) {
+-        if (s->state() == QLowEnergyService::ServiceDiscovered) {
+-            // establish hook into notifications
+-            connect(s, &QLowEnergyService::characteristicChanged, this, &wahookickrheadwind::characteristicChanged);
+-            connect(s, &QLowEnergyService::characteristicWritten, this, &wahookickrheadwind::characteristicWritten);
+-            connect(
+-                s, static_cast<void (QLowEnergyService::*)(QLowEnergyService::ServiceError)>(&QLowEnergyService::error),
+-                this, &wahookickrheadwind::errorService);
+-            connect(s, &QLowEnergyService::descriptorWritten, this, &wahookickrheadwind::descriptorWritten);
+-
+-            qDebug() << s->serviceUuid() << QStringLiteral("connected!");
+-
+-            auto characteristics_list = s->characteristics();
+-            for (const QLowEnergyCharacteristic &c : qAsConst(characteristics_list)) {
+-                qDebug() << QStringLiteral("char uuid") << c.uuid() << QStringLiteral("handle") << c.handle();
+-                auto descriptors_list = c.descriptors();
+-                for (const QLowEnergyDescriptor &d : qAsConst(descriptors_list)) {
+-                    qDebug() << QStringLiteral("descriptor uuid") << d.uuid() << QStringLiteral("handle") << d.handle();
+-                }
+-
+-                if ((c.properties() & QLowEnergyCharacteristic::Notify) == QLowEnergyCharacteristic::Notify) {
+-                    QByteArray descriptor;
+-                    descriptor.append((char)0x01);
+-                    descriptor.append((char)0x00);
+-                    if (c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).isValid()) {
+-                        s->writeDescriptor(c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration), descriptor);
+-                    } else {
+-                        qDebug() << QStringLiteral("ClientCharacteristicConfiguration") << c.uuid()
+-                                 << c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).uuid()
+-                                 << c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).handle()
+-                                 << QStringLiteral(" is not valid");
+-                    }
+-
+-                    qDebug() << s->serviceUuid() << c.uuid() << QStringLiteral("notification subscribed!");
+-                } else if ((c.properties() & QLowEnergyCharacteristic::Indicate) ==
+-                           QLowEnergyCharacteristic::Indicate) {
+-                    QByteArray descriptor;
+-                    descriptor.append((char)0x02);
+-                    descriptor.append((char)0x00);
+-                    if (c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).isValid()) {
+-                        s->writeDescriptor(c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration), descriptor);
+-                    } else {
+-                        qDebug() << QStringLiteral("ClientCharacteristicConfiguration") << c.uuid()
+-                                 << c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).uuid()
+-                                 << c.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration).handle()
+-                                 << QStringLiteral(" is not valid");
+-                    }
+-
+-                    qDebug() << s->serviceUuid() << c.uuid() << QStringLiteral("indication subscribed!");
+-                } else if ((c.properties() & QLowEnergyCharacteristic::Read) == QLowEnergyCharacteristic::Read) {
+-                    // s->readCharacteristic(c);
+-                    // qDebug() << s->serviceUuid() << c.uuid() << "reading!";
+-                }
+-
+-                if (c.uuid() == _gattWriteCharacteristicId1) {
+-                    qDebug() << QStringLiteral("_gattWriteCharacteristicId1 found");
+-                    gattWrite1Characteristic = c;
+-                    gattWrite1Service = s;
+-                } else if (c.uuid() == _gattWriteCharacteristicId2) {
+-                    qDebug() << QStringLiteral("_gattWriteCharacteristicId2 found");
+-                    gattWrite2Characteristic = c;
+-                    gattWrite2Service = s;
+-                }
+-            }
+-        }
+-    }
+-}
+-
+-void wahookickrheadwind::descriptorWritten(const QLowEnergyDescriptor &descriptor, const QByteArray &newValue) {
+-    emit debug(QStringLiteral("descriptorWritten ") + descriptor.name() + " " + newValue.toHex(' '));
+-    initRequest = true;
+-}
+-
+-void wahookickrheadwind::characteristicWritten(const QLowEnergyCharacteristic &characteristic,
+-                                               const QByteArray &newValue) {
+-    Q_UNUSED(characteristic);
+-    emit debug(QStringLiteral("characteristicWritten ") + newValue.toHex(' '));
+-
+-    if (!currentWriteWaitingForResponse && isWriting) {
+-        writeTimeoutTimer->stop();
+-        isWriting = false;
+-        processWriteQueue();
+-    }
+-}
+-
+-void wahookickrheadwind::serviceScanDone(void) {
+-    emit debug(QStringLiteral("serviceScanDone"));
+-
+-    initRequest = false;
+-
+-    auto services_list = m_control->services();
+-    for (const QBluetoothUuid &s : qAsConst(services_list)) {
+-        gattCommunicationChannelService.append(m_control->createServiceObject(s));
+-        if (gattCommunicationChannelService.constLast()) {
+-            connect(gattCommunicationChannelService.constLast(), &QLowEnergyService::stateChanged, this,
+-                    &wahookickrheadwind::stateChanged);
+-            gattCommunicationChannelService.constLast()->discoverDetails();
+-        } else {
+-            m_control->disconnectFromDevice();
+-        }
+-    }
+-}
+-
+-void wahookickrheadwind::errorService(QLowEnergyService::ServiceError err) {
+-    QMetaEnum metaEnum = QMetaEnum::fromType<QLowEnergyService::ServiceError>();
+-    emit debug(QStringLiteral("wahookickrheadwind::errorService") + QString::fromLocal8Bit(metaEnum.valueToKey(err)) +
+-               m_control->errorString());
+-}
+-
+-void wahookickrheadwind::error(QLowEnergyController::Error err) {
+-    QMetaEnum metaEnum = QMetaEnum::fromType<QLowEnergyController::Error>();
+-    emit debug(QStringLiteral("wahookickrheadwind::error") + QString::fromLocal8Bit(metaEnum.valueToKey(err)) +
+-               m_control->errorString());
+-}
+-
+-void wahookickrheadwind::deviceDiscovered(const QBluetoothDeviceInfo &device) {
+-    QSettings settings;
+-    emit debug(QStringLiteral("Found new device: ") + device.name() + QStringLiteral(" (") +
+-               device.address().toString() + ')');
+-
+-    if(homeform::singleton())
+-        homeform::singleton()->setToastRequested(device.name() + QStringLiteral(" connected!"));
+-
+-    {
+-        bluetoothDevice = device;
+-        m_control = QLowEnergyController::createCentral(bluetoothDevice, this);
+-        connect(m_control, &QLowEnergyController::serviceDiscovered, this, &wahookickrheadwind::serviceDiscovered);
+-        connect(m_control, &QLowEnergyController::discoveryFinished, this, &wahookickrheadwind::serviceScanDone);
+-        connect(m_control,
+-                static_cast<void (QLowEnergyController::*)(QLowEnergyController::Error)>(&QLowEnergyController::error),
+-                this, &wahookickrheadwind::error);
+-        connect(m_control, &QLowEnergyController::stateChanged, this, &wahookickrheadwind::controllerStateChanged);
+-
+-        connect(m_control,
+-                static_cast<void (QLowEnergyController::*)(QLowEnergyController::Error)>(&QLowEnergyController::error),
+-                this, [this](QLowEnergyController::Error error) {
+-                    Q_UNUSED(error);
+-                    Q_UNUSED(this);
+-                    emit debug(QStringLiteral("Cannot connect to remote device."));
+-                    emit disconnected();
+-                });
+-        connect(m_control, &QLowEnergyController::connected, this, [this]() {
+-            Q_UNUSED(this);
+-            emit debug(QStringLiteral("Controller connected. Search services..."));
+-            m_control->discoverServices();
+-        });
+-        connect(m_control, &QLowEnergyController::disconnected, this, [this]() {
+-            Q_UNUSED(this);
+-            emit debug(QStringLiteral("LowEnergy controller disconnected"));
+-            emit disconnected();
+-        });
+-
+-        // Connect
+-        m_control->connectToDevice();
+-        return;
+-    }
+-}
+-
+-bool wahookickrheadwind::connected() {
+-    if (!m_control) {
+-        return false;
+-    }
+-    return m_control->state() == QLowEnergyController::DiscoveredState;
+-}
+-
+-void wahookickrheadwind::controllerStateChanged(QLowEnergyController::ControllerState state) {
+-    qDebug() << QStringLiteral("controllerStateChanged") << state;
+-    if (state == QLowEnergyController::UnconnectedState && m_control) {
+-        qDebug() << QStringLiteral("trying to connect back again...");
+-        initRequest = false;
+-        initDone = false;
+-
+-        m_control->connectToDevice();
+-    }
+-}
+diff --git a/src/devices/wahookickrheadwind/wahookickrheadwind.h b/src/devices/wahookickrheadwind/wahookickrheadwind.h
+deleted file mode 100644
+index bd571d2d..00000000
+--- a/src/devices/wahookickrheadwind/wahookickrheadwind.h
++++ /dev/null
+@@ -1,96 +0,0 @@
+-#ifndef WAHOOKICKRHEADWIND_H
+-#define WAHOOKICKRHEADWIND_H
+-
+-#include <QBluetoothDeviceDiscoveryAgent>
+-#include <QtBluetooth/qlowenergyadvertisingdata.h>
+-#include <QtBluetooth/qlowenergyadvertisingparameters.h>
+-#include <QtBluetooth/qlowenergycharacteristic.h>
+-#include <QtBluetooth/qlowenergycharacteristicdata.h>
+-#include <QtBluetooth/qlowenergycontroller.h>
+-#include <QtBluetooth/qlowenergydescriptordata.h>
+-#include <QtBluetooth/qlowenergyservice.h>
+-#include <QtBluetooth/qlowenergyservicedata.h>
+-#include <QtCore/qbytearray.h>
+-
+-#ifndef Q_OS_ANDROID
+-#include <QtCore/qcoreapplication.h>
+-#else
+-#include <QtGui/qguiapplication.h>
+-#endif
+-#include <QtCore/qlist.h>
+-#include <QtCore/qmutex.h>
+-#include <QtCore/qqueue.h>
+-#include <QtCore/qscopedpointer.h>
+-#include <QtCore/qtimer.h>
+-
+-#include <QObject>
+-#include <QTime>
+-
+-#include "devices/bluetoothdevice.h"
+-
+-class wahookickrheadwind : public bluetoothdevice {
+-    Q_OBJECT
+-  public:
+-    wahookickrheadwind(bluetoothdevice *parentDevice);
+-    bool connected() override;
+-
+-  private:
+-    struct WriteRequest {
+-        QLowEnergyService *service;
+-        QLowEnergyCharacteristic writeChar;
+-        QByteArray data;
+-        QString info;
+-        bool disable_log;
+-        bool wait_for_response;
+-    };
+-
+-    QList<QLowEnergyService *> gattCommunicationChannelService;
+-    QLowEnergyCharacteristic gattNotify1Characteristic;
+-    QLowEnergyCharacteristic gattNotify2Characteristic;
+-    QLowEnergyCharacteristic gattWrite1Characteristic;
+-    QLowEnergyService *gattWrite1Service;
+-    QLowEnergyCharacteristic gattWrite2Characteristic;
+-    QLowEnergyService *gattWrite2Service;
+-
+-    void writeCharacteristic(QLowEnergyService *service, QLowEnergyCharacteristic *writeChar, uint8_t *data,
+-                             uint8_t data_len, const QString &info, bool disable_log = false,
+-                             bool wait_for_response = false);
+-    void processWriteQueue();
+-
+-    bluetoothdevice *parentDevice = nullptr;
+-
+-    bool initDone = false;
+-    bool initRequest = false;
+-
+-    QTimer *refresh;
+-    QQueue<WriteRequest> writeQueue;
+-    bool isWriting = false;
+-    bool currentWriteWaitingForResponse = false;
+-    QTimer *writeTimeoutTimer = nullptr;
+-
+-  signals:
+-    void disconnected();
+-    void debug(QString string);
+-    void packetReceived();
+-
+-  public slots:
+-    void deviceDiscovered(const QBluetoothDeviceInfo &device);
+-    void disconnectBluetooth();
+-    void fanSpeedRequest(uint8_t value);
+-
+-  private slots:
+-
+-    void characteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
+-    void characteristicWritten(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
+-    void descriptorWritten(const QLowEnergyDescriptor &descriptor, const QByteArray &newValue);
+-    void stateChanged(QLowEnergyService::ServiceState state);
+-    void controllerStateChanged(QLowEnergyController::ControllerState state);
+-
+-    void serviceDiscovered(const QBluetoothUuid &gatt);
+-    void serviceScanDone(void);
+-    void update();
+-    void error(QLowEnergyController::Error err);
+-    void errorService(QLowEnergyService::ServiceError);
+-};
+-
+-#endif // WAHOOKICKRHEADWIND_H
+diff --git a/src/homeform.cpp b/src/homeform.cpp
+index 7fc1ace8..d66ad1a6 100644
+--- a/src/homeform.cpp
++++ b/src/homeform.cpp
+@@ -567,8 +567,6 @@ homeform::homeform(QQmlApplicationEngine *engine, bluetooth *bl) {
+                          QStringLiteral("ftp"), 48, labelFontSize);
+     heart = new DataObject(tr("Heart (bpm)"), QStringLiteral("icons/icons/heart_red.png"),
+                            QStringLiteral("0"), false, QStringLiteral("heart"), 48, labelFontSize);
+-    fan = new DataObject(tr("Fan Speed"), QStringLiteral("icons/icons/fan.png"), QStringLiteral("0"), true,
+-                         QStringLiteral("fan"), 48, labelFontSize);
+     jouls = new DataObject(tr("KJouls"), QStringLiteral("icons/icons/joul.png"), QStringLiteral("0"), false,
+                            QStringLiteral("joul"), 48, labelFontSize);
+     elapsed =
+@@ -1810,8 +1808,6 @@ void homeform::trainProgramSignals() {
+                    &bluetoothdevice::changeNextInclination300Meters);
+         disconnect(trainProgram, &trainprogram::changeInclination, ((bike *)bluetoothManager->device()),
+                    &bike::changeInclination);
+-        disconnect(trainProgram, &trainprogram::changeFanSpeed, ((treadmill *)bluetoothManager->device()),
+-                   &treadmill::changeFanSpeed);
+         disconnect(trainProgram, &trainprogram::changeSpeedAndInclination, ((treadmill *)bluetoothManager->device()),
+                    &treadmill::changeSpeedAndInclination);
+         disconnect(trainProgram, &trainprogram::changeResistance, ((bike *)bluetoothManager->device()),
+@@ -1871,8 +1867,6 @@ void homeform::trainProgramSignals() {
+         if (bluetoothManager->device()->deviceType() == TREADMILL) {
+             connect(trainProgram, &trainprogram::changeSpeed, ((treadmill *)bluetoothManager->device()),
+                     &treadmill::changeSpeed);
+-            connect(trainProgram, &trainprogram::changeFanSpeed, ((treadmill *)bluetoothManager->device()),
+-                    &treadmill::changeFanSpeed);
+             connect(trainProgram, &trainprogram::changeInclination, ((treadmill *)bluetoothManager->device()),
+                     &treadmill::changeInclination);
+             connect(trainProgram, &trainprogram::changeSpeedAndInclination, ((treadmill *)bluetoothManager->device()),
+@@ -2173,11 +2167,6 @@ void homeform::sortTiles() {
+                 dataList.append(hrv);
+             }
+ 
+-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
+-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
+-                fan->setGridId(i);
+-                dataList.append(fan);
+-            }
+ 
+             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
+                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
+@@ -2568,11 +2557,6 @@ void homeform::sortTiles() {
+                 dataList.append(hrv);
+             }
+ 
+-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
+-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
+-                fan->setGridId(i);
+-                dataList.append(fan);
+-            }
+ 
+             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
+                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
+@@ -2963,11 +2947,6 @@ void homeform::sortTiles() {
+                 dataList.append(hrv);
+             }
+ 
+-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
+-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
+-                fan->setGridId(i);
+-                dataList.append(fan);
+-            }
+ 
+             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
+                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
+@@ -3443,11 +3422,6 @@ void homeform::sortTiles() {
+                 dataList.append(hrv);
+             }
+ 
+-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
+-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
+-                fan->setGridId(i);
+-                dataList.append(fan);
+-            }
+ 
+             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
+                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
+@@ -3815,11 +3789,6 @@ void homeform::sortTiles() {
+                 dataList.append(hrv);
+             }
+ 
+-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
+-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
+-                fan->setGridId(i);
+-                dataList.append(fan);
+-            }
+ 
+             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
+                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
+@@ -4184,11 +4153,6 @@ void homeform::sortTiles() {
+                 dataList.append(hrv);
+             }
+ 
+-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
+-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
+-                fan->setGridId(i);
+-                dataList.append(fan);
+-            }
+ 
+             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
+                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
+@@ -4949,10 +4913,6 @@ bool homeform::handleKeyboardShortcut(const QString &sequence) {
+     } else if (matches(QZSettings::shortcut_target_incline_minus,
+                        QZSettings::default_shortcut_target_incline_minus)) {
+         Minus(QStringLiteral("target_inclination"));
+-    } else if (matches(QZSettings::shortcut_fan_plus, QZSettings::default_shortcut_fan_plus)) {
+-        Plus(QStringLiteral("fan"));
+-    } else if (matches(QZSettings::shortcut_fan_minus, QZSettings::default_shortcut_fan_minus)) {
+-        Minus(QStringLiteral("fan"));
+     } else if (matches(QZSettings::shortcut_peloton_offset_plus,
+                        QZSettings::default_shortcut_peloton_offset_plus)) {
+         Plus(QStringLiteral("peloton_offset"));
+@@ -5319,21 +5279,6 @@ void homeform::Plus(const QString &name) {
+                 }
+             }
+         }
+-    } else if (name.contains(QStringLiteral("fan"))) {
+-        QSettings settings;
+-        if (bluetoothManager->device()) {
+-            if (settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable)
+-                    .toBool() &&
+-                settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
+-                    .toString()
+-                    .compare(QStringLiteral("Manual"))) {
+-                fanOverride += 10;
+-            } else if (settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable)
+-                           .toBool()) {
+-                bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() + 10);
+-            } else
+-                bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() + 1);
+-        }
+     } else if (name.contains(QStringLiteral("remainingtimetrainprogramrow"))) {
+         if (bluetoothManager->device() && trainProgram) {
+             trainProgram->increaseElapsedTime(QTime(0, 0, 0).secsTo(trainProgram->currentRowRemainingTime()));
+@@ -5622,22 +5567,6 @@ void homeform::Minus(const QString &name) {
+                 }
+             }
+         }
+-    } else if (name.contains(QStringLiteral("fan"))) {
+-
+-        if (bluetoothManager->device()) {
+-            QSettings settings;
+-            if (settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable)
+-                    .toBool() &&
+-                settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
+-                    .toString()
+-                    .compare(QStringLiteral("Manual"))) {
+-                fanOverride -= 10;
+-            } else if (settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable)
+-                           .toBool()) {
+-                bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() - 10);
+-            } else
+-                bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() - 1);
+-        }
+     } else if (name.contains(QStringLiteral("remainingtimetrainprogramrow"))) {
+         if (bluetoothManager->device() && trainProgram) {
+             trainProgram->goToPreviousRow();
+@@ -6192,10 +6121,6 @@ void homeform::update() {
+         calories->setValue(QString::number(bluetoothManager->device()->calories().value(), 'f', 0));
+         calories->setSecondLine(QString::number((activeOnly ? bluetoothManager->device()->activeCalories().rate1s() : bluetoothManager->device()->calories().rate1s()) * 60.0, 'f', 1) +
+                                 " /min");
+-        if (!settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable).toBool())
+-            fan->setValue(QString::number(bluetoothManager->device()->fanSpeed()));
+-        else
+-            fan->setValue(QString::number(qRound(((double)bluetoothManager->device()->fanSpeed()) / 10.0) * 10.0));
+         jouls->setValue(QString::number(bluetoothManager->device()->jouls().value() / 1000.0, 'f', 1));
+         jouls->setSecondLine(QString::number(bluetoothManager->device()->jouls().rate1s() / 1000.0 * 60.0, 'f', 1) +
+                              " /min");
+@@ -8085,50 +8010,6 @@ void homeform::update() {
+             }
+         }
+ 
+-        if (settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable).toBool()) {
+-            if (!settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
+-                     .toString()
+-                     .compare(QStringLiteral("Manual"))) {
+-                // do nothing here, the user change the fan value with the tile
+-            } else if (paused || stopped) {
+-                qDebug() << QStringLiteral("fitmetria_fanfit paused or stopped mode");
+-                bluetoothManager->device()->changeFanSpeed(0);
+-            }
+-            // Heart Mode
+-            else if (!settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
+-                          .toString()
+-                          .compare(QStringLiteral("Heart"))) {
+-                qDebug() << QStringLiteral("fitmetria_fanfit heart mode")
+-                         << bluetoothManager->device()->currentHeart().value();
+-                const uint8_t min = 80;
+-                uint8_t v = 0;
+-                if (bluetoothManager->device()->currentHeart().value() > min && maxHeartRate > min)
+-                    v = ((bluetoothManager->device()->currentHeart().value() - min) * 100.0) /
+-                        (double)(maxHeartRate - min);
+-                bluetoothManager->device()->changeFanSpeed(v + fanOverride);
+-            }
+-            // Power Mode
+-            else if (!settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
+-                          .toString()
+-                          .compare(QStringLiteral("Power"))) {
+-                qDebug() << QStringLiteral("fitmetria_fanfit power mode") << watts;
+-                const double percOverFtp = 1.20;
+-                const double min = 50;
+-                uint8_t v = 0;
+-                double a = (double)(((ftpSetting * percOverFtp) - min));
+-                if (watts >= min && a > 0)
+-                    v = ((watts - min) * 100.0) / a;
+-                bluetoothManager->device()->changeFanSpeed(v + fanOverride);
+-            }
+-            // Wind mode
+-            else if (!settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
+-                          .toString()
+-                          .compare(QStringLiteral("Wind"))) {
+-                // Todo
+-                qDebug() << QStringLiteral("fitmetria_fanfit wind mode");
+-                // bluetoothManager->device()->changeFanSpeed((ftpZone - 1) * 1.5);
+-            }
+-        }
+ 
+         if (!stopped && !paused) {
+             if(settings.value(QZSettings::autolap_distance, QZSettings::default_autolap_distance).toDouble() != 0) {
+diff --git a/src/homeform.h b/src/homeform.h
+index e9f21635..fac13a1e 100644
+--- a/src/homeform.h
++++ b/src/homeform.h
+@@ -871,7 +871,6 @@ public:
+     DataObject *avgWatt;
+     DataObject *avgWattLap;
+     DataObject *heart;
+-    DataObject *fan;
+     DataObject *jouls;
+     DataObject *peloton_offset;
+     DataObject *peloton_remaining;
+@@ -1090,7 +1089,6 @@ public:
+     static QString copyAndroidContentsURI(QUrl file, QString subfolder);
+     static QString getFileNameFromContentUri(const QString &uriString);
+ 
+-    int16_t fanOverride = 0;
+ 
+     void update();
+     void ten_hz();
+diff --git a/src/inner_templates/workouteditor/workout-editor-app.js b/src/inner_templates/workouteditor/workout-editor-app.js
+index 7f871c33..c354e1a6 100644
+--- a/src/inner_templates/workouteditor/workout-editor-app.js
++++ b/src/inner_templates/workouteditor/workout-editor-app.js
+@@ -32,7 +32,6 @@
+         { key: 'cadence', labelKey: 'workoutEditor.cadence', label: 'Cadence', type: 'number', unitSuffix: 'rpm', min: 0, max: 240, group: 'basic', devices: ['bike', 'elliptical', 'rower'], defaultValue: 80 },
+         { key: 'power', labelKey: 'workoutEditor.power', label: 'Power', type: 'number', unitSuffix: 'W', min: 0, max: 2000, group: 'basic', devices: ['bike', 'rower'], defaultValue: 150 },
+         { key: 'forcespeed', labelKey: 'workoutEditor.forceSpeed', label: 'Force Speed', type: 'bool', group: 'basic', devices: ['treadmill'], linkedTo: 'speed' },
+-        { key: 'fanspeed', labelKey: 'workoutEditor.fan', label: 'Fan', type: 'number', min: 0, max: 8, group: 'advanced', devices: 'all', defaultValue: 0 },
+         { key: 'requested_peloton_resistance', labelKey: 'workoutEditor.pelotonResistance', label: 'Peloton Res.', type: 'number', min: -1, max: 100, group: 'advanced', devices: ['bike'] },
+         { key: 'loopTimeHR', labelKey: 'workoutEditor.hrLoop', label: 'HR Loop (s)', type: 'number', min: 1, max: 60, group: 'advanced', devices: 'all' },
+         { key: 'zoneHR', labelKey: 'workoutEditor.hrZone', label: 'HR Zone', type: 'number', min: -1, max: 5, group: 'advanced', devices: 'all' },
+diff --git a/src/ios/ios_eliteariafan.h b/src/ios/ios_eliteariafan.h
+deleted file mode 100644
+index 0684e9aa..00000000
+--- a/src/ios/ios_eliteariafan.h
++++ /dev/null
+@@ -1,20 +0,0 @@
+-#ifndef IOSELITEARIAFAN_H
+-#define IOSELITEARIAFAN_H
+-
+-#import <Foundation/Foundation.h>
+-#import <CoreBluetooth/CoreBluetooth.h>
+-
+-@interface ios_eliteariafan : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
+-
+-@property (strong, nonatomic) CBCentralManager *centralManager;
+-@property (strong, nonatomic) CBPeripheral *connectedPeripheral;
+-@property (strong, nonatomic) NSString *targetDeviceName;
+-@property (strong, nonatomic) CBCharacteristic *characteristicUUID1;
+-@property (strong, nonatomic) CBCharacteristic *characteristicUUID2;
+-
+-- (instancetype)init;
+-- (void)fanSpeedRequest:(uint8_t)speed;
+-
+-@end
+-
+-#endif // IOSELITEARIAFAN_H
+diff --git a/src/ios/ios_eliteariafan.mm b/src/ios/ios_eliteariafan.mm
+deleted file mode 100644
+index d6ccd77c..00000000
+--- a/src/ios/ios_eliteariafan.mm
++++ /dev/null
+@@ -1,91 +0,0 @@
+-#import <CoreBluetooth/CoreBluetooth.h>
+-#import "ios_eliteariafan.h"
+-
+-@implementation ios_eliteariafan
+-
+-- (instancetype)init {
+-    self = [super init];
+-    if (self) {
+-        _centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+-        _targetDeviceName = @"ARIA";  // Nome del dispositivo Bluetooth
+-    }
+-    return self;
+-}
+-
+-- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
+-    if (central.state == CBManagerStatePoweredOn) {
+-        [self.centralManager scanForPeripheralsWithServices:nil options:nil];
+-    }
+-}
+-
+-- (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
+-    if ([peripheral.name isEqualToString:self.targetDeviceName]) {
+-        self.connectedPeripheral = peripheral;
+-        [self.centralManager stopScan];
+-        [self.centralManager connectPeripheral:peripheral options:nil];
+-    }
+-}
+-
+-- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
+-    peripheral.delegate = self;
+-    [peripheral discoverServices:nil];
+-}
+-
+-- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
+-    NSLog(@"Peripheral disconnected: %@. Error: %@", peripheral, error);
+-    if ([peripheral.name isEqualToString:self.targetDeviceName]) {
+-        NSLog(@"Attempting to reconnect to %@", self.targetDeviceName);
+-        [self.centralManager connectPeripheral:peripheral options:nil];
+-    }
+-}
+-
+-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
+-    for (CBService *service in peripheral.services) {
+-        [peripheral discoverCharacteristics:nil forService:service];
+-    }
+-}
+-
+-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
+-    CBUUID *uuid1 = [CBUUID UUIDWithString:@"347b0012-7635-408b-8918-8ff3949ce592"];
+-    CBUUID *uuid2 = [CBUUID UUIDWithString:@"347b0040-7635-408b-8918-8ff3949ce592"];
+-
+-    for (CBCharacteristic *characteristic in service.characteristics) {
+-        if ([characteristic.UUID isEqual:uuid1]) {
+-            self.characteristicUUID1 = characteristic;
+-        } else if ([characteristic.UUID isEqual:uuid2]) {
+-            self.characteristicUUID2 = characteristic;
+-        }
+-    }
+-
+-    // Verifica se entrambe le caratteristiche sono state trovate
+-    if (self.characteristicUUID1 && self.characteristicUUID2) {
+-        // Invia init1
+-        uint8_t init1[] = {0x02, 0x00, 0x00, 0x3d, 0x00};
+-        NSData *dataToSend1 = [NSData dataWithBytes:init1 length:sizeof(init1)];
+-        [peripheral writeValue:dataToSend1 forCharacteristic:self.characteristicUUID1 type:CBCharacteristicWriteWithResponse];
+-
+-        // Invia init2
+-        uint8_t init2[] = {0x05, 0x00};
+-        NSData *dataToSend2 = [NSData dataWithBytes:init2 length:sizeof(init2)];
+-        [peripheral writeValue:dataToSend2 forCharacteristic:self.characteristicUUID2 type:CBCharacteristicWriteWithResponse];
+-        
+-        [self fanSpeedRequest:0];
+-    }
+-}
+-
+-- (void)fanSpeedRequest:(uint8_t)speed {
+-    if (self.connectedPeripheral.state != CBPeripheralStateConnected) {
+-        NSLog(@"Cannot send fan speed request: Peripheral is not connected.");
+-        return;
+-    }
+-    
+-    uint8_t init10[] = {0x03, 0x01, 0x0e};
+-    init10[2] = speed;
+-    NSData *dataToSend = [NSData dataWithBytes:init10 length:sizeof(init10)];
+-    
+-    if (self.characteristicUUID2) {
+-        [self.connectedPeripheral writeValue:dataToSend forCharacteristic:self.characteristicUUID2 type:CBCharacteristicWriteWithResponse];
+-    }
+-}
+-
+-@end
+diff --git a/src/ios/lockscreen.h b/src/ios/lockscreen.h
+index 9fc995d3..e0b14b21 100644
+--- a/src/ios/lockscreen.h
++++ b/src/ios/lockscreen.h
+@@ -85,9 +85,6 @@ class lockscreen {
+     void adb_connect(const char* IP);
+     void adb_sendcommand(const char* command);
+     
+-    // Elite Aria Fan
+-    void eliteAriaFan();
+-    void eliteAriaFan_fanSpeedRequest(unsigned char speed);
+ 
+     // Echelon Connect Sport
+     void echelonConnectSport(const char*  Name, void* deviceClass);
+diff --git a/src/ios/lockscreen.mm b/src/ios/lockscreen.mm
+index 9473850a..8d1fb16e 100644
+--- a/src/ios/lockscreen.mm
++++ b/src/ios/lockscreen.mm
+@@ -13,7 +13,6 @@
+ #include "devices/bluetoothdevice.h"
+ #include <QDebug>
+ #include "ios/AdbClient.h"
+-#include "ios/ios_eliteariafan.h"
+ #include "ios/ios_echelonconnectsport.h"
+ #include "ios/ios_zwiftclickremote.h"
+ #include "ios/ios_liveactivity.h"
+@@ -50,7 +49,6 @@ static NSString *LockscreenStringFromCString(const char *message)
+     return string;
+ }
+ 
+-static ios_eliteariafan* ios_eliteAriaFan = nil;
+ static ios_echelonconnectsport* ios_echelonConnectSport = nil;
+ 
+ static zwift_protobuf_layer* zwiftProtobufLayer = nil;
+@@ -524,15 +522,7 @@ void lockscreen::adb_sendcommand(const char* command) {
+     }];
+ }
+ 
+-void lockscreen::eliteAriaFan() {
+-    ios_eliteAriaFan = [[ios_eliteariafan alloc] init];
+-}
+ 
+-void lockscreen::eliteAriaFan_fanSpeedRequest(unsigned char speed) {
+-    if(ios_eliteAriaFan) {
+-        [ios_eliteAriaFan fanSpeedRequest:speed];
+-    }
+-}
+ 
+ void lockscreen::echelonConnectSport(const char*  Name, void* deviceClass) {
+     NSString *deviceName = [NSString stringWithCString:Name encoding:NSASCIIStringEncoding];
+diff --git a/src/main.qml b/src/main.qml
+index 3a0ccb74..4e5cd138 100644
+--- a/src/main.qml
++++ b/src/main.qml
+@@ -162,8 +162,6 @@ ApplicationWindow {
+         property string shortcut_target_speed_minus: ""
+         property string shortcut_target_incline_plus: ""
+         property string shortcut_target_incline_minus: ""
+-        property string shortcut_fan_plus: ""
+-        property string shortcut_fan_minus: ""
+         property string shortcut_peloton_offset_plus: ""
+         property string shortcut_peloton_offset_minus: ""
+         property string shortcut_peloton_remaining_plus: ""
+@@ -1493,8 +1491,6 @@ ApplicationWindow {
+             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_speed_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("target_speed") }
+             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_incline_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("target_inclination") }
+             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_incline_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("target_inclination") }
+-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_fan_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("fan") }
+-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_fan_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("fan") }
+             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_offset_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("peloton_offset") }
+             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_offset_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("peloton_offset") }
+             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_remaining_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("peloton_remaining") }
+diff --git a/src/mainwindow.cpp b/src/mainwindow.cpp
+index 67b0fbb9..081434d6 100644
+--- a/src/mainwindow.cpp
++++ b/src/mainwindow.cpp
+@@ -20,9 +20,6 @@ void MainWindow::load(bluetooth *b) {
+ 
+ #ifdef Q_OS_ANDROID
+     ui->groupTrain->setVisible(false);
+-    ui->fanBar->setVisible(false);
+-    ui->fanSpeedMinus->setVisible(false);
+-    ui->fanSpeedPlus->setVisible(false);
+     ui->weight->setVisible(false);
+     ui->weightDescription->setVisible(false);
+     ui->weightIcon->setVisible(false);
+@@ -73,7 +70,6 @@ void MainWindow::update() {
+         ui->heartrate->setText(QString::number(bluetoothManager->device()->currentHeart().value()));
+         ui->odometer->setText(QString::number(bluetoothManager->device()->odometer(), 'f', 2));
+         ui->calories->setText(QString::number(bluetoothManager->device()->calories().value(), 'f', 0));
+-        ui->fanBar->setValue(bluetoothManager->device()->fanSpeed());
+ 
+         if (bluetoothManager->device()->deviceType() == TREADMILL) {
+             if (bluetoothManager->device()->currentSpeed().value()) {
+@@ -489,19 +485,7 @@ void MainWindow::on_groupTrain_clicked() {
+     trainProgram->enabled = ui->groupTrain->isChecked();
+ }
+ 
+-void MainWindow::on_fanSpeedMinus_clicked() {
+-    if (bluetoothManager->device()) {
+-
+-        bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() - 1);
+-    }
+-}
+ 
+-void MainWindow::on_fanSpeedPlus_clicked() {
+-    if (bluetoothManager->device()) {
+-
+-        bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() + 1);
+-    }
+-}
+ 
+ void MainWindow::on_difficulty_valueChanged(int value) {
+     if (editing) {
+diff --git a/src/mainwindow.h b/src/mainwindow.h
+index 0589b664..385b10b5 100644
+--- a/src/mainwindow.h
++++ b/src/mainwindow.h
+@@ -46,8 +46,6 @@ class MainWindow : public QDialog {
+     void on_stop_clicked();
+     void on_start_clicked();
+     void on_groupTrain_clicked();
+-    void on_fanSpeedMinus_clicked();
+-    void on_fanSpeedPlus_clicked();
+     void on_difficulty_valueChanged(int value);
+     void trainProgramSignals();
+     void on_speedMinus_clicked();
+diff --git a/src/mainwindow.ui b/src/mainwindow.ui
+index c751a423..7792a0d7 100644
+--- a/src/mainwindow.ui
++++ b/src/mainwindow.ui
+@@ -759,96 +759,6 @@
+           </item>
+          </layout>
+         </item>
+-        <item>
+-         <layout class="QHBoxLayout" name="horizontalLayout_13">
+-          <property name="spacing">
+-           <number>6</number>
+-          </property>
+-          <property name="topMargin">
+-           <number>0</number>
+-          </property>
+-          <item>
+-           <widget class="QPushButton" name="fanSpeedMinus">
+-            <property name="minimumSize">
+-             <size>
+-              <width>0</width>
+-              <height>40</height>
+-             </size>
+-            </property>
+-            <property name="text">
+-             <string>-</string>
+-            </property>
+-           </widget>
+-          </item>
+-          <item>
+-           <layout class="QHBoxLayout" name="horizontalLayout_14">
+-            <property name="sizeConstraint">
+-             <enum>QLayout::SetMinimumSize</enum>
+-            </property>
+-            <property name="topMargin">
+-             <number>0</number>
+-            </property>
+-            <item>
+-             <widget class="QProgressBar" name="fanBar">
+-              <property name="maximum">
+-               <number>5</number>
+-              </property>
+-              <property name="value">
+-               <number>0</number>
+-              </property>
+-             </widget>
+-            </item>
+-            <item>
+-             <widget class="QLabel" name="label_21">
+-              <property name="sizePolicy">
+-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+-                <horstretch>0</horstretch>
+-                <verstretch>0</verstretch>
+-               </sizepolicy>
+-              </property>
+-              <property name="minimumSize">
+-               <size>
+-                <width>0</width>
+-                <height>32</height>
+-               </size>
+-              </property>
+-              <property name="maximumSize">
+-               <size>
+-                <width>32</width>
+-                <height>32</height>
+-               </size>
+-              </property>
+-              <property name="text">
+-               <string/>
+-              </property>
+-              <property name="pixmap">
+-               <pixmap resource="icons.qrc">:/icons/icons/fan.png</pixmap>
+-              </property>
+-              <property name="scaledContents">
+-               <bool>true</bool>
+-              </property>
+-              <property name="alignment">
+-               <set>Qt::AlignCenter</set>
+-              </property>
+-             </widget>
+-            </item>
+-           </layout>
+-          </item>
+-          <item>
+-           <widget class="QPushButton" name="fanSpeedPlus">
+-            <property name="minimumSize">
+-             <size>
+-              <width>0</width>
+-              <height>40</height>
+-             </size>
+-            </property>
+-            <property name="text">
+-             <string>+</string>
+-            </property>
+-           </widget>
+-          </item>
+-         </layout>
+-        </item>
+        </layout>
+       </item>
+      </layout>
+diff --git a/src/mqttpublisher.cpp b/src/mqttpublisher.cpp
+index ba0bdc6c..26e66296 100644
+--- a/src/mqttpublisher.cpp
++++ b/src/mqttpublisher.cpp
+@@ -268,8 +268,6 @@ void MQTTPublisher::handleControlCommand(const QString& command, const QVariant&
+         m_device->changeResistance(value.toInt());
+     } else if(mainCommand == "power") {
+         m_device->changePower(value.toInt());
+-    } else if(mainCommand == "fan" || mainCommand == "fan_speed") {
+-        m_device->changeFanSpeed(value.toInt());
+     } else if(mainCommand == "inclination") {
+         m_device->changeInclination(value.toDouble(), value.toDouble());
+     }
+@@ -335,8 +333,6 @@ void MQTTPublisher::processDeviceCommand(const QString& deviceType, const QStrin
+         } else if(command == "cadence") {
+             ellipticalDevice->changeCadence(value.toInt());
+         }
+-    } else if(command == "fan" || command == "fan_speed") {
+-        m_device->changeFanSpeed(value.toInt());
+     }
+ }
+ 
+@@ -453,7 +449,7 @@ void MQTTPublisher::removeDiscoveryConfig() {
+     QStringList entities = {
+         "speed_current", "speed_avg", "distance", "calories", "elapsed_time", "elapsed_total_seconds", "heart_current", "heart_avg",
+         "watts_current", "watts_avg", "connected", "paused", "resistance", "cadence", "inclination",
+-        "power", "fan_speed", "start", "stop", "pause"
++        "power", "start", "stop", "pause"
+     };
+     
+     for (const QString& component : components) {
+@@ -481,7 +477,6 @@ void MQTTPublisher::publishWorkoutData() {
+     publishToTopic("device/type", static_cast<int>(m_device->deviceType()));
+     publishToTopic("device/connected", m_device->connected());
+     publishToTopic("device/paused", m_device->isPaused());
+-    publishToTopic("device/fan_speed", m_device->fanSpeed());
+ 
+     // Time Metrics
+     QTime elapsedTime = m_device->elapsedTime();
+@@ -740,7 +735,6 @@ void MQTTPublisher::publishDiscoveryConfig() {
+     }
+     
+     // Common control entities
+-    publishNumberDiscovery("fan_speed", "Fan Speed", statusBaseTopic + "device/fan_speed", controlTopic + "fan_speed", 0, 100, 1, "%", "mdi:fan");
+     
+     // Control buttons
+     QJsonObject startConfig;
+diff --git a/src/osc.cpp b/src/osc.cpp
+index fc14e2c1..b929decc 100644
+--- a/src/osc.cpp
++++ b/src/osc.cpp
+@@ -90,10 +90,6 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
+         .float32(bluetoothManager->device()->jouls().value())
+         .closeMessage()
+ 
+-        .openMessage("/QZ/FanSpeed", 1)
+-        .int32(bluetoothManager->device()->fanSpeed())
+-        .closeMessage()
+-
+         .openMessage("/QZ/ElapsedTime", 1)
+         .string(bluetoothManager->device()->elapsedTime().toString(QStringLiteral("m:ss")).toLatin1())
+         .closeMessage()
+diff --git a/src/qdomyos-zwift.pri b/src/qdomyos-zwift.pri
+index 71cd7c52..cbb2b71f 100644
+--- a/src/qdomyos-zwift.pri
++++ b/src/qdomyos-zwift.pri
+@@ -143,7 +143,6 @@ devices/csafe/netserial.cpp \
+ devices/csafe/kalmanfilter.cpp \
+ devices/csafeelliptical/csafeelliptical.cpp \
+ devices/csaferower/csaferower.cpp \
+-devices/eliteariafan/eliteariafan.cpp \
+ devices/fakerower/fakerower.cpp \
+ devices/proformtelnetbike/proformtelnetbike.cpp \
+ virtualdevices/virtualdevice.cpp \
+@@ -156,7 +155,6 @@ devices/iconceptelliptical/iconceptelliptical.cpp \
+ localipaddress.cpp \
+ devices/pelotonbike/pelotonbike.cpp \
+ devices/schwinn170bike/schwinn170bike.cpp \
+-devices/wahookickrheadwind/wahookickrheadwind.cpp \
+ windows_zwift_workout_paddleocr_thread.cpp \
+ devices/ypooelliptical/ypooelliptical.cpp \
+ devices/ziprotreadmill/ziprotreadmill.cpp \
+@@ -231,7 +229,6 @@ devices/elliptical.cpp \
+ devices/eslinkertreadmill/eslinkertreadmill.cpp \
+ devices/fakebike/fakebike.cpp \
+ filedownloader.cpp \
+-devices/fitmetria_fanfit/fitmetria_fanfit.cpp \
+ devices/fitplusbike/fitplusbike.cpp \
+ devices/fitshowtreadmill/fitshowtreadmill.cpp \
+ fit-sdk/fit.cpp \
+@@ -447,7 +444,6 @@ devices/csafe/netserial.h \
+ devices/csafe/kalmanfilter.h \
+ devices/csafeelliptical/csafeelliptical.h \
+ devices/csaferower/csaferower.h \
+-devices/eliteariafan/eliteariafan.h \
+ devices/proformtelnetbike/proformtelnetbike.h \
+ windows_zwift_workout_paddleocr_thread.h \
+ devices/fakerower/fakerower.h \
+@@ -469,7 +465,6 @@ devices/iconceptelliptical/iconceptelliptical.h \
+ localipaddress.h \
+ devices/pelotonbike/pelotonbike.h \
+ devices/schwinn170bike/schwinn170bike.h \
+-devices/wahookickrheadwind/wahookickrheadwind.h \
+ devices/ypooelliptical/ypooelliptical.h \
+ devices/ziprotreadmill/ziprotreadmill.h \
+ devices/computrainerbike/Computrainer.h \
+@@ -556,7 +551,6 @@ devices/elliptical.h \
+ devices/eslinkertreadmill/eslinkertreadmill.h \
+ devices/fakebike/fakebike.h \
+ filedownloader.h \
+-devices/fitmetria_fanfit/fitmetria_fanfit.h \
+ devices/fitplusbike/fitplusbike.h \
+ devices/ftmsrower/ftmsrower.h \
+ homefitnessbuddy.h \
+@@ -1016,7 +1010,6 @@ DISTFILES += \
+     $$PWD/android/proto/google/protobuf/wrappers.proto \
+     $$PWD/android/proto/settings/BrightnessService.proto \
+     $$PWD/android/proto/settings/DemoModeService.proto \
+-    $$PWD/android/proto/settings/FanStateService.proto \
+     $$PWD/android/proto/settings/MaxSpeedService.proto \
+     $$PWD/android/proto/settings/Settings.proto \
+     $$PWD/android/proto/settings/SystemUnitsService.proto \
+@@ -1195,7 +1188,6 @@ ios {
+ 
+ ios {
+     OBJECTIVE_SOURCES += ios/lockscreen.mm \
+-    ios/ios_eliteariafan.mm \
+     ios/ios_app_delegate.mm \
+     ios/ios_liveactivity.mm \
+ 	 fit-sdk/FitDecode.mm \
+diff --git a/src/qzsettings.cpp b/src/qzsettings.cpp
+index d0eeedb0..f98a5d38 100644
+--- a/src/qzsettings.cpp
++++ b/src/qzsettings.cpp
+@@ -166,8 +166,6 @@ const QString QZSettings::tile_ftp_order = QStringLiteral("tile_ftp_order");
+ const QString QZSettings::tile_heart_enabled = QStringLiteral("tile_heart_enabled");
+ const QString QZSettings::tile_heart_order = QStringLiteral("tile_heart_order");
+ const QString QZSettings::tile_heart_show_as_percent = QStringLiteral("tile_heart_show_as_percent");
+-const QString QZSettings::tile_fan_enabled = QStringLiteral("tile_fan_enabled");
+-const QString QZSettings::tile_fan_order = QStringLiteral("tile_fan_order");
+ const QString QZSettings::tile_jouls_enabled = QStringLiteral("tile_jouls_enabled");
+ const QString QZSettings::tile_jouls_order = QStringLiteral("tile_jouls_order");
+ const QString QZSettings::tile_elapsed_enabled = QStringLiteral("tile_elapsed_enabled");
+@@ -363,11 +361,6 @@ const QString QZSettings::default_elite_sterzo_smart_name = QStringLiteral("Disa
+ const QString QZSettings::ftms_accessory_name = QStringLiteral("ftms_accessory_name");
+ const QString QZSettings::default_ftms_accessory_name = QStringLiteral("Disabled");
+ const QString QZSettings::ss2k_shift_step = QStringLiteral("ss2k_shift_step");
+-const QString QZSettings::fitmetria_fanfit_enable = QStringLiteral("fitmetria_fanfit_enable");
+-const QString QZSettings::fitmetria_fanfit_mode = QStringLiteral("fitmetria_fanfit_mode");
+-const QString QZSettings::default_fitmetria_fanfit_mode = QStringLiteral("Heart");
+-const QString QZSettings::fitmetria_fanfit_min = QStringLiteral("fitmetria_fanfit_min");
+-const QString QZSettings::fitmetria_fanfit_max = QStringLiteral("fitmetria_fanfit_max");
+ const QString QZSettings::virtualbike_forceresistance = QStringLiteral("virtualbike_forceresistance");
+ const QString QZSettings::bluetooth_relaxed = QStringLiteral("bluetooth_relaxed");
+ const QString QZSettings::bluetooth_30m_hangs = QStringLiteral("bluetooth_30m_hangs");
+@@ -1153,10 +1146,6 @@ const QString QZSettings::shortcut_target_incline_plus = QStringLiteral("shortcu
+ const QString QZSettings::default_shortcut_target_incline_plus = QStringLiteral("");
+ const QString QZSettings::shortcut_target_incline_minus = QStringLiteral("shortcut_target_incline_minus");
+ const QString QZSettings::default_shortcut_target_incline_minus = QStringLiteral("");
+-const QString QZSettings::shortcut_fan_plus = QStringLiteral("shortcut_fan_plus");
+-const QString QZSettings::default_shortcut_fan_plus = QStringLiteral("");
+-const QString QZSettings::shortcut_fan_minus = QStringLiteral("shortcut_fan_minus");
+-const QString QZSettings::default_shortcut_fan_minus = QStringLiteral("");
+ const QString QZSettings::shortcut_peloton_offset_plus = QStringLiteral("shortcut_peloton_offset_plus");
+ const QString QZSettings::default_shortcut_peloton_offset_plus = QStringLiteral("");
+ const QString QZSettings::shortcut_peloton_offset_minus = QStringLiteral("shortcut_peloton_offset_minus");
+@@ -1248,7 +1237,7 @@ const QString QZSettings::default_shortcut_start_stop = QStringLiteral("");
+ const QString QZSettings::shortcut_stop = QStringLiteral("shortcut_stop");
+ const QString QZSettings::default_shortcut_stop = QStringLiteral("");
+ 
+-const uint32_t allSettingsCount = 975;
++const uint32_t allSettingsCount = 967;
+ 
+ QVariant allSettings[allSettingsCount][2] = {
+     {QZSettings::cryptoKeySettingsProfiles, QZSettings::default_cryptoKeySettingsProfiles},
+@@ -1367,8 +1356,6 @@ QVariant allSettings[allSettingsCount][2] = {
+     {QZSettings::tile_heart_enabled, QZSettings::default_tile_heart_enabled},
+     {QZSettings::tile_heart_order, QZSettings::default_tile_heart_order},
+     {QZSettings::tile_heart_show_as_percent, QZSettings::default_tile_heart_show_as_percent},
+-    {QZSettings::tile_fan_enabled, QZSettings::default_tile_fan_enabled},
+-    {QZSettings::tile_fan_order, QZSettings::default_tile_fan_order},
+     {QZSettings::tile_jouls_enabled, QZSettings::default_tile_jouls_enabled},
+     {QZSettings::tile_jouls_order, QZSettings::default_tile_jouls_order},
+     {QZSettings::tile_elapsed_enabled, QZSettings::default_tile_elapsed_enabled},
+@@ -1544,10 +1531,6 @@ QVariant allSettings[allSettingsCount][2] = {
+     {QZSettings::elite_sterzo_smart_name, QZSettings::default_elite_sterzo_smart_name},
+     {QZSettings::ftms_accessory_name, QZSettings::default_ftms_accessory_name},
+     {QZSettings::ss2k_shift_step, QZSettings::default_ss2k_shift_step},
+-    {QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable},
+-    {QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode},
+-    {QZSettings::fitmetria_fanfit_min, QZSettings::default_fitmetria_fanfit_min},
+-    {QZSettings::fitmetria_fanfit_max, QZSettings::default_fitmetria_fanfit_max},
+     {QZSettings::virtualbike_forceresistance, QZSettings::default_virtualbike_forceresistance},
+     {QZSettings::bluetooth_relaxed, QZSettings::default_bluetooth_relaxed},
+     {QZSettings::bluetooth_30m_hangs, QZSettings::default_bluetooth_30m_hangs},
+@@ -2193,8 +2176,6 @@ QVariant allSettings[allSettingsCount][2] = {
+     {QZSettings::shortcut_target_speed_minus, QZSettings::default_shortcut_target_speed_minus},
+     {QZSettings::shortcut_target_incline_plus, QZSettings::default_shortcut_target_incline_plus},
+     {QZSettings::shortcut_target_incline_minus, QZSettings::default_shortcut_target_incline_minus},
+-    {QZSettings::shortcut_fan_plus, QZSettings::default_shortcut_fan_plus},
+-    {QZSettings::shortcut_fan_minus, QZSettings::default_shortcut_fan_minus},
+     {QZSettings::shortcut_peloton_offset_plus, QZSettings::default_shortcut_peloton_offset_plus},
+     {QZSettings::shortcut_peloton_offset_minus, QZSettings::default_shortcut_peloton_offset_minus},
+     {QZSettings::shortcut_peloton_remaining_plus, QZSettings::default_shortcut_peloton_remaining_plus},
+diff --git a/src/qzsettings.h b/src/qzsettings.h
+index 16eac760..6a56d799 100644
+--- a/src/qzsettings.h
++++ b/src/qzsettings.h
+@@ -481,11 +481,7 @@ class QZSettings {
+     static const QString tile_heart_show_as_percent;
+     static constexpr bool default_tile_heart_show_as_percent = false;
+ 
+-    static const QString tile_fan_enabled;
+-    static constexpr bool default_tile_fan_enabled = true;
+ 
+-    static const QString tile_fan_order;
+-    static constexpr int default_tile_fan_order = 12;
+ 
+     static const QString tile_jouls_enabled;
+     static constexpr bool default_tile_jouls_enabled = true;
+@@ -1050,17 +1046,9 @@ class QZSettings {
+     static const QString ss2k_shift_step;
+     static constexpr float default_ss2k_shift_step = 900;
+ 
+-    static const QString fitmetria_fanfit_enable;
+-    static constexpr bool default_fitmetria_fanfit_enable = false;
+ 
+-    static const QString fitmetria_fanfit_mode;
+-    static const QString default_fitmetria_fanfit_mode;
+ 
+-    static const QString fitmetria_fanfit_min;
+-    static constexpr float default_fitmetria_fanfit_min = 0;
+ 
+-    static const QString fitmetria_fanfit_max;
+-    static constexpr float default_fitmetria_fanfit_max = 100;
+     /**
+      *@brief Indicates if the virtual device should send resistance requests to the bike.
+      */
+@@ -3084,10 +3072,6 @@ class QZSettings {
+     static const QString shortcut_target_incline_minus;
+     static const QString default_shortcut_target_incline_minus;
+ 
+-    static const QString shortcut_fan_plus;
+-    static const QString default_shortcut_fan_plus;
+-    static const QString shortcut_fan_minus;
+-    static const QString default_shortcut_fan_minus;
+ 
+     static const QString shortcut_peloton_offset_plus;
+     static const QString default_shortcut_peloton_offset_plus;
+diff --git a/src/settings-catalog.json b/src/settings-catalog.json
+index 7b6e38fe..196ada96 100644
+--- a/src/settings-catalog.json
++++ b/src/settings-catalog.json
+@@ -2,7 +2,7 @@
+   "$schema": "https://qdomyos-zwift.local/settings-catalog.schema.json",
+   "schemaVersion": 1,
+   "format": "qdomyos-zwift-settings-catalog",
+-  "settingCount": 961,
++  "settingCount": 953,
+   "pages": [
+     {
+       "key": "page_custom_gear_table",
+@@ -1375,35 +1375,6 @@
+         "expression": "rootItem.tile_order"
+       }
+     },
+-    {
+-      "key": "tile_fan_enabled",
+-      "name": "Fan",
+-      "description": null,
+-      "parent": "Tiles",
+-      "type": "boolean",
+-      "qmlType": "bool",
+-      "control": "switch",
+-      "visible": true,
+-      "defaultValue": true,
+-      "defaultExpression": "true",
+-      "options": null
+-    },
+-    {
+-      "key": "tile_fan_order",
+-      "name": "order index",
+-      "description": "Built-in treadmill fan speed (Treadmill only)",
+-      "parent": "tile_fan_enabled",
+-      "type": "integer",
+-      "qmlType": "int",
+-      "control": "select",
+-      "visible": true,
+-      "defaultValue": 12,
+-      "defaultExpression": "12",
+-      "options": {
+-        "source": "expression",
+-        "expression": "rootItem.tile_order"
+-      }
+-    },
+     {
+       "key": "tile_jouls_enabled",
+       "name": "Jouls",
+@@ -3468,65 +3439,6 @@
+       "defaultExpression": "900",
+       "options": null
+     },
+-    {
+-      "key": "fitmetria_fanfit_enable",
+-      "name": "Enable",
+-      "description": null,
+-      "parent": "Fitmetria Fitfan™ Options",
+-      "type": "boolean",
+-      "qmlType": "bool",
+-      "control": "switch",
+-      "visible": true,
+-      "defaultValue": false,
+-      "defaultExpression": "false",
+-      "options": null
+-    },
+-    {
+-      "key": "fitmetria_fanfit_mode",
+-      "name": "Mode",
+-      "description": null,
+-      "parent": "Fitmetria Fitfan™ Options",
+-      "type": "string",
+-      "qmlType": "string",
+-      "control": "select",
+-      "visible": true,
+-      "defaultValue": "Heart",
+-      "defaultExpression": "\"Heart\"",
+-      "options": {
+-        "source": "inline",
+-        "values": [
+-          "Heart",
+-          "Power",
+-          "Manual"
+-        ]
+-      }
+-    },
+-    {
+-      "key": "fitmetria_fanfit_min",
+-      "name": "Min. value (0-100)",
+-      "description": null,
+-      "parent": "Fitmetria Fitfan™ Options",
+-      "type": "number",
+-      "qmlType": "real",
+-      "control": "text",
+-      "visible": true,
+-      "defaultValue": 0.0,
+-      "defaultExpression": "0",
+-      "options": null
+-    },
+-    {
+-      "key": "fitmetria_fanfit_max",
+-      "name": "Max value (0-100)",
+-      "description": null,
+-      "parent": "Fitmetria Fitfan™ Options",
+-      "type": "number",
+-      "qmlType": "real",
+-      "control": "text",
+-      "visible": true,
+-      "defaultValue": 100.0,
+-      "defaultExpression": "100",
+-      "options": null
+-    },
+     {
+       "key": "virtualbike_forceresistance",
+       "name": "Zwift Force Resistance",
+@@ -12885,32 +12797,6 @@
+       "defaultExpression": "\"\"",
+       "options": null
+     },
+-    {
+-      "key": "shortcut_fan_plus",
+-      "name": "Fan Speed + / -",
+-      "description": null,
+-      "parent": "Keyboard Shortcuts",
+-      "type": "string",
+-      "qmlType": "string",
+-      "control": "text",
+-      "visible": true,
+-      "defaultValue": "",
+-      "defaultExpression": "\"\"",
+-      "options": null
+-    },
+-    {
+-      "key": "shortcut_fan_minus",
+-      "name": "Fan Speed + / -",
+-      "description": null,
+-      "parent": "Keyboard Shortcuts",
+-      "type": "string",
+-      "qmlType": "string",
+-      "control": "text",
+-      "visible": true,
+-      "defaultValue": "",
+-      "defaultExpression": "\"\"",
+-      "options": null
+-    },
+     {
+       "key": "shortcut_peloton_offset_plus",
+       "name": "Peloton Offset + / -",
+diff --git a/src/settings-shortcuts.qml b/src/settings-shortcuts.qml
+index 1c54e871..8b81e757 100644
+--- a/src/settings-shortcuts.qml
++++ b/src/settings-shortcuts.qml
+@@ -45,8 +45,6 @@ ScrollView {
+         property string shortcut_target_speed_minus: ""
+         property string shortcut_target_incline_plus: ""
+         property string shortcut_target_incline_minus: ""
+-        property string shortcut_fan_plus: ""
+-        property string shortcut_fan_minus: ""
+         property string shortcut_peloton_offset_plus: ""
+         property string shortcut_peloton_offset_minus: ""
+         property string shortcut_peloton_remaining_plus: ""
+@@ -285,11 +283,6 @@ ScrollView {
+                     ShortcutField { text: settings.shortcut_remaining_time_plus; settingName: "shortcut_remaining_time_plus" }
+                     ShortcutField { text: settings.shortcut_remaining_time_minus; settingName: "shortcut_remaining_time_minus" }
+                 }
+-                RowLayout {
+-                    Label { text: qsTr("Fan Speed + / -"); Layout.fillWidth: true }
+-                    ShortcutField { text: settings.shortcut_fan_plus; settingName: "shortcut_fan_plus" }
+-                    ShortcutField { text: settings.shortcut_fan_minus; settingName: "shortcut_fan_minus" }
+-                }
+                 RowLayout {
+                     Label { text: qsTr("PID Heart Rate + / -"); Layout.fillWidth: true }
+                     ShortcutField { text: settings.shortcut_pid_hr_plus; settingName: "shortcut_pid_hr_plus" }
+diff --git a/src/settings-tiles.qml b/src/settings-tiles.qml
+index f7ab93da..2a1a95b5 100644
+--- a/src/settings-tiles.qml
++++ b/src/settings-tiles.qml
+@@ -57,8 +57,6 @@ ScrollView {
+         property int  tile_ftp_order: 10
+         property bool tile_heart_enabled: true
+         property int  tile_heart_order: 11
+-        property bool tile_fan_enabled: true
+-        property int  tile_fan_order: 12
+         property bool tile_jouls_enabled: true
+         property int  tile_jouls_order: 13
+         property bool tile_elapsed_enabled: true
+@@ -319,8 +317,6 @@ ScrollView {
+         property string shortcut_target_speed_minus: ""
+         property string shortcut_target_incline_plus: ""
+         property string shortcut_target_incline_minus: ""
+-        property string shortcut_fan_plus: ""
+-        property string shortcut_fan_minus: ""
+         property string shortcut_peloton_offset_plus: ""
+         property string shortcut_peloton_offset_minus: ""
+         property string shortcut_peloton_remaining_plus: ""
+@@ -1177,51 +1173,6 @@ ScrollView {
+             }
+         }
+ 
+-        AccordionCheckElement {
+-            id: fanEnabledAccordion
+-            title: qsTr("Fan")
+-            linkedBoolSetting: "tile_fan_enabled"
+-            settings: settings
+-            accordionContent: RowLayout {
+-                spacing: 10
+-                Label {
+-                    id: labelfanOrder
+-                    text: qsTr("order index:")
+-                    Layout.fillWidth: true
+-                    horizontalAlignment: Text.AlignRight
+-                }
+-                ComboBox {
+-                    id: fanOrderTextField
+-                    model: rootItem.tile_order
+-                    displayText: settings.tile_fan_order
+-                    Layout.fillHeight: false
+-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                    onActivated: {
+-                        displayText = fanOrderTextField.currentValue
+-                     }
+-                }
+-                Button {
+-                    id: okfanOrderButton
+-                    text: qsTr("OK")
+-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                    onClicked: {settings.tile_fan_order = fanOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
+-                }
+-            }
+-        }
+-
+-        Label {
+-            text: qsTr("Built-in treadmill fan speed (Treadmill only)")
+-            font.bold: true
+-            font.italic: true
+-            font.pixelSize: Qt.application.font.pixelSize - 2
+-            textFormat: Text.PlainText
+-            wrapMode: Text.WordWrap
+-            verticalAlignment: Text.AlignVCenter
+-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+-            Layout.fillWidth: true
+-            color: Material.color(Material.Lime)
+-        }
+-
+         AccordionCheckElement {
+             id: joulsEnabledAccordion
+             title: qsTr("Jouls")
+diff --git a/src/settings.qml b/src/settings.qml
+index 306eb286..5ecfbcf5 100644
+--- a/src/settings.qml
++++ b/src/settings.qml
+@@ -404,8 +404,6 @@ import AndroidStatusBar 1.0
+             property int  tile_ftp_order: 10
+             property bool tile_heart_enabled: true
+             property int  tile_heart_order: 11
+-            property bool tile_fan_enabled: true
+-            property int  tile_fan_order: 12
+             property bool tile_jouls_enabled: true
+             property int  tile_jouls_order: 13
+             property bool tile_elapsed_enabled: true
+@@ -588,10 +586,6 @@ import AndroidStatusBar 1.0
+             property string ftms_accessory_name: "Disabled"
+             property real ss2k_shift_step: 900
+ 
+-            property bool fitmetria_fanfit_enable: false
+-            property string fitmetria_fanfit_mode: "Heart"
+-            property real fitmetria_fanfit_min: 0
+-            property real fitmetria_fanfit_max: 100
+ 
+             property bool virtualbike_forceresistance: true
+             property bool bluetooth_relaxed: false
+@@ -1646,8 +1640,6 @@ import AndroidStatusBar 1.0
+             property string shortcut_target_speed_minus: ""
+             property string shortcut_target_incline_plus: ""
+             property string shortcut_target_incline_minus: ""
+-            property string shortcut_fan_plus: ""
+-            property string shortcut_fan_minus: ""
+             property string shortcut_peloton_offset_plus: ""
+             property string shortcut_peloton_offset_minus: ""
+             property string shortcut_peloton_remaining_plus: ""
+@@ -13958,293 +13950,6 @@ import AndroidStatusBar 1.0
+                         }
+                     }
+ 
+-                    AccordionElement {
+-                        id: fitmetriaFanFitOptionsAccordion
+-                        title: qsTr("Fitmetria Fitfan™ Options")
+-                        indicatRectColor: Material.color(Material.Grey)
+-                        textColor: Material.color(Material.Yellow)
+-                        color: Material.backgroundColor
+-
+-                        accordionContent: ColumnLayout {
+-                            spacing: 0
+-                            IndicatorOnlySwitch {
+-                                id: fitmetriaFanFitDelegate
+-                                text: qsTr("Enable")
+-                                spacing: 0
+-                                bottomPadding: 0
+-                                topPadding: 0
+-                                rightPadding: 0
+-                                leftPadding: 0
+-                                clip: false
+-                                checked: settings.fitmetria_fanfit_enable
+-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+-                                Layout.fillWidth: true
+-                                onClicked: { settings.fitmetria_fanfit_enable = checked; window.settings_restart_to_apply = true; }
+-                            }
+-
+-                            RowLayout {
+-                                spacing: 10
+-                                Label {
+-                                    id: labelFitmetriaFanFitMode
+-                                    text: qsTr("Mode:")
+-                                    Layout.fillWidth: true
+-                                }
+-                                ComboBox {
+-                                    id: fitmetriaFanFitModeTextField
+-                                    model: [ "Heart", "Power", "Manual" ]
+-                                    displayText: settings.fitmetria_fanfit_mode
+-                                    Layout.fillHeight: false
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onActivated: {
+-                                        console.log("combomodel activated" + fitmetriaFanFitModeTextField.currentIndex)
+-                                        displayText = fitmetriaFanFitModeTextField.currentValue
+-                                    }
+-
+-                                }
+-                                Button {
+-                                    id: okFitmetriaFanFitModeTextField
+-                                    text: qsTr("OK")
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onClicked: { settings.fitmetria_fanfit_mode = fitmetriaFanFitModeTextField.displayText; toast.show(qsTr("Setting saved!")); }
+-                                }
+-                            }
+-                            RowLayout {
+-                                spacing: 10
+-                                Label {
+-                                    id: labelFitmetriaFanFitMin
+-                                    text: qsTr("Min. value (0-100):")
+-                                    Layout.fillWidth: true
+-                                }
+-                                TextField {
+-                                    id: fitmetriaFanFitMinTextField
+-                                    text: settings.fitmetria_fanfit_min
+-                                    horizontalAlignment: Text.AlignRight
+-                                    Layout.fillHeight: false
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    inputMethodHints: Qt.ImhDigitsOnly
+-                                    onAccepted: settings.fitmetria_fanfit_min = text
+-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
+-                                }
+-                                Button {
+-                                    id: okFitmetriaFanFitMin
+-                                    text: qsTr("OK")
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onClicked: { settings.fitmetria_fanfit_min = fitmetriaFanFitMinTextField.text; toast.show(qsTr("Setting saved!")); }
+-                                }
+-                            }
+-                            RowLayout {
+-                                spacing: 10
+-                                Label {
+-                                    id: labelFitmetriaFanFitMax
+-                                    text: qsTr("Max value (0-100):")
+-                                    Layout.fillWidth: true
+-                                }
+-                                TextField {
+-                                    id: fitmetriaFanFitMaxTextField
+-                                    text: settings.fitmetria_fanfit_max
+-                                    horizontalAlignment: Text.AlignRight
+-                                    Layout.fillHeight: false
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    inputMethodHints: Qt.ImhDigitsOnly
+-                                    onAccepted: settings.fitmetria_fanfit_max = text
+-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
+-                                }
+-                                Button {
+-                                    id: okFitmetriaFanFitMax
+-                                    text: qsTr("OK")
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onClicked: { settings.fitmetria_fanfit_max = fitmetriaFanFitMaxTextField.text; toast.show(qsTr("Setting saved!")); }
+-                                }
+-                            }
+-                        }
+-                    }
+-
+-                    AccordionElement {
+-                        title: qsTr("Wahoo Kickr HeadWind Options")
+-                        indicatRectColor: Material.color(Material.Grey)
+-                        textColor: Material.color(Material.Yellow)
+-                        color: Material.backgroundColor
+-
+-                        accordionContent: ColumnLayout {
+-                            spacing: 0
+-                            IndicatorOnlySwitch {
+-                                text: qsTr("Enable")
+-                                spacing: 0
+-                                bottomPadding: 0
+-                                topPadding: 0
+-                                rightPadding: 0
+-                                leftPadding: 0
+-                                clip: false
+-                                checked: settings.fitmetria_fanfit_enable
+-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+-                                Layout.fillWidth: true
+-                                onClicked: { settings.fitmetria_fanfit_enable = checked; window.settings_restart_to_apply = true; }
+-                            }
+-
+-                            RowLayout {
+-                                spacing: 10
+-                                Label {
+-                                    text: qsTr("Mode:")
+-                                    Layout.fillWidth: true
+-                                }
+-                                ComboBox {
+-                                    id: headWindModeTextField
+-                                    model: [ "Heart", "Power", "Manual" ]
+-                                    displayText: settings.fitmetria_fanfit_mode
+-                                    Layout.fillHeight: false
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onActivated: {
+-                                        console.log("combomodel activated" + headWindModeTextField.currentIndex)
+-                                        displayText = headWindModeTextField.currentValue
+-                                    }
+-
+-                                }
+-                                Button {
+-                                    text: qsTr("OK")
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onClicked: { settings.fitmetria_fanfit_mode = headWindModeTextField.displayText; toast.show(qsTr("Setting saved!")); }
+-                                }
+-                            }
+-                            RowLayout {
+-                                spacing: 10
+-                                Label {
+-                                    text: qsTr("Min. value (0-100):")
+-                                    Layout.fillWidth: true
+-                                }
+-                                TextField {
+-                                    id: headWindMinTextField
+-                                    text: settings.fitmetria_fanfit_min
+-                                    horizontalAlignment: Text.AlignRight
+-                                    Layout.fillHeight: false
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    inputMethodHints: Qt.ImhDigitsOnly
+-                                    onAccepted: settings.fitmetria_fanfit_min = text
+-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
+-                                }
+-                                Button {
+-                                    text: qsTr("OK")
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onClicked: { settings.fitmetria_fanfit_min = headWindMinTextField.text; toast.show(qsTr("Setting saved!")); }
+-                                }
+-                            }
+-                            RowLayout {
+-                                spacing: 10
+-                                Label {
+-                                    text: qsTr("Max value (0-100):")
+-                                    Layout.fillWidth: true
+-                                }
+-                                TextField {
+-                                    id: headWindMaxTextField
+-                                    text: settings.fitmetria_fanfit_max
+-                                    horizontalAlignment: Text.AlignRight
+-                                    Layout.fillHeight: false
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    inputMethodHints: Qt.ImhDigitsOnly
+-                                    onAccepted: settings.fitmetria_fanfit_max = text
+-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
+-                                }
+-                                Button {
+-                                    text: qsTr("OK")
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onClicked: { settings.fitmetria_fanfit_max = headWindMaxTextField.text; toast.show(qsTr("Setting saved!")); }
+-                                }
+-                            }
+-                        }
+-                    }
+-
+-                    AccordionElement {
+-                        title: qsTr("Elite Aria Options")
+-                        indicatRectColor: Material.color(Material.Grey)
+-                        textColor: Material.color(Material.Yellow)
+-                        color: Material.backgroundColor
+-
+-                        accordionContent: ColumnLayout {
+-                            spacing: 0
+-                            IndicatorOnlySwitch {
+-                                text: qsTr("Enable")
+-                                spacing: 0
+-                                bottomPadding: 0
+-                                topPadding: 0
+-                                rightPadding: 0
+-                                leftPadding: 0
+-                                clip: false
+-                                checked: settings.fitmetria_fanfit_enable
+-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+-                                Layout.fillWidth: true
+-                                onClicked: { settings.fitmetria_fanfit_enable = checked; window.settings_restart_to_apply = true; }
+-                            }
+-
+-                            RowLayout {
+-                                spacing: 10
+-                                Label {
+-                                    text: qsTr("Mode:")
+-                                    Layout.fillWidth: true
+-                                }
+-                                ComboBox {
+-                                    id: eliteAriaModeTextField
+-                                    model: [ "Heart", "Power", "Manual" ]
+-                                    displayText: settings.fitmetria_fanfit_mode
+-                                    Layout.fillHeight: false
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onActivated: {
+-                                        console.log("combomodel activated" + eliteAriaModeTextField.currentIndex)
+-                                        displayText = eliteAriaModeTextField.currentValue
+-                                    }
+-
+-                                }
+-                                Button {
+-                                    text: qsTr("OK")
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onClicked: { settings.fitmetria_fanfit_mode = eliteAriaModeTextField.displayText; toast.show(qsTr("Setting saved!")); }
+-                                }
+-                            }
+-                            RowLayout {
+-                                spacing: 10
+-                                Label {
+-                                    text: qsTr("Min. value (0-100):")
+-                                    Layout.fillWidth: true
+-                                }
+-                                TextField {
+-                                    id: eliteAriaMinTextField
+-                                    text: settings.fitmetria_fanfit_min
+-                                    horizontalAlignment: Text.AlignRight
+-                                    Layout.fillHeight: false
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    inputMethodHints: Qt.ImhDigitsOnly
+-                                    onAccepted: settings.fitmetria_fanfit_min = text
+-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
+-                                }
+-                                Button {
+-                                    text: qsTr("OK")
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onClicked: { settings.fitmetria_fanfit_min = eliteAriaMinTextField.text; toast.show(qsTr("Setting saved!")); }
+-                                }
+-                            }
+-                            RowLayout {
+-                                spacing: 10
+-                                Label {
+-                                    text: qsTr("Max value (0-100):")
+-                                    Layout.fillWidth: true
+-                                }
+-                                TextField {
+-                                    id: eliteAriaMaxTextField
+-                                    text: settings.fitmetria_fanfit_max
+-                                    horizontalAlignment: Text.AlignRight
+-                                    Layout.fillHeight: false
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    inputMethodHints: Qt.ImhDigitsOnly
+-                                    onAccepted: settings.fitmetria_fanfit_max = text
+-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
+-                                }
+-                                Button {
+-                                    text: qsTr("OK")
+-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+-                                    onClicked: { settings.fitmetria_fanfit_max = eliteAriaMaxTextField.text; toast.show(qsTr("Setting saved!")); }
+-                                }
+-                            }
+-                        }
+-                    }
+-
+ /*
+                 AccordionElement {
+                         title: qsTr("SRAM Devices Options")
+diff --git a/src/templateinfosenderbuilder.cpp b/src/templateinfosenderbuilder.cpp
+index 3c8e670b..21ad3210 100644
+--- a/src/templateinfosenderbuilder.cpp
++++ b/src/templateinfosenderbuilder.cpp
+@@ -67,7 +67,6 @@ QString openEndedRowLabel(const trainrow &row) {
+     item[QStringLiteral("speed")] = row.speed;                                                              \
+     item[QStringLiteral("minSpeed")] = row.minSpeed;                                                        \
+     item[QStringLiteral("maxSpeed")] = row.maxSpeed;                                                        \
+-    item[QStringLiteral("fanspeed")] = row.fanspeed;                                                        \
+     if (row.inclination >= -50) {\
+         item[QStringLiteral("inclination")] = row.inclination;\
+     }\
+@@ -386,22 +385,6 @@ void TemplateInfoSenderBuilder::onSetResistance(const QJsonValue &msgContent, Te
+     tempSender->send(out.toJson());
+ }
+ 
+-void TemplateInfoSenderBuilder::onSetFanSpeed(const QJsonValue &msgContent, TemplateInfoSender *tempSender) {
+-    QJsonObject obj, outObj;
+-    QJsonValue resVal;
+-    int res;
+-    outObj[QStringLiteral("value")] = QJsonValue(QJsonValue::Null);
+-    if (device && msgContent.isObject() && (obj = msgContent.toObject()).contains(QStringLiteral("value")) &&
+-        (resVal = msgContent[QStringLiteral("value")]).isDouble() && (res = resVal.toInt()) >= 0 && res < 255) {
+-        outObj[QStringLiteral("value")] = res;
+-        ((bike *)device)->changeFanSpeed((uint8_t)res);
+-    }
+-    QJsonObject main;
+-    main[QStringLiteral("msg")] = QStringLiteral("R_setfanspeed");
+-    main[QStringLiteral("content")] = outObj;
+-    QJsonDocument out(main);
+-    tempSender->send(out.toJson());
+-}
+ 
+ void TemplateInfoSenderBuilder::onSetPower(const QJsonValue &msgContent, TemplateInfoSender *tempSender) {
+     QJsonObject obj, outObj;
+@@ -1096,9 +1079,6 @@ void TemplateInfoSenderBuilder::onSaveTrainingProgram(const QJsonValue &msgConte
+             if (row.contains(QStringLiteral("maxSpeed"))) {
+                 tR.maxSpeed = row[QStringLiteral("maxSpeed")].toDouble();
+             }
+-            if (row.contains(QStringLiteral("fanspeed"))) {
+-                tR.fanspeed = row[QStringLiteral("fanspeed")].toInt();
+-            }
+             if (row.contains(QStringLiteral("inclination"))) {
+                 tR.inclination = row[QStringLiteral("inclination")].toDouble();
+             }
+@@ -1520,9 +1500,6 @@ void TemplateInfoSenderBuilder::onDataReceived(const QByteArray &data) {
+                 } else if (msg == QStringLiteral("setspeed")) {
+                     onSetSpeed(jsonObject[QStringLiteral("content")], sender);
+                     return;
+-                } else if (msg == QStringLiteral("setfanspeed")) {
+-                    onSetFanSpeed(jsonObject[QStringLiteral("content")], sender);
+-                    return;
+                 } else if (msg == QStringLiteral("setsettings")) {
+                     onSetSettings(jsonObject[QStringLiteral("content")], sender);
+                     return;
+diff --git a/src/templateinfosenderbuilder.h b/src/templateinfosenderbuilder.h
+index 0cc86f23..45871ed3 100644
+--- a/src/templateinfosenderbuilder.h
++++ b/src/templateinfosenderbuilder.h
+@@ -73,7 +73,6 @@ class TemplateInfoSenderBuilder : public QObject {
+     void onSetSettings(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
+     void onGetSettings(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
+     void onSetResistance(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
+-    void onSetFanSpeed(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
+     void onSetPower(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
+     void onSetCadence(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
+     void onSetSpeed(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
+diff --git a/src/trainprogram.cpp b/src/trainprogram.cpp
+index fc689d89..8aa3bb39 100644
+--- a/src/trainprogram.cpp
++++ b/src/trainprogram.cpp
+@@ -91,7 +91,6 @@ QString trainrow::toString() const {
+     rv += QStringLiteral(" lower_speed = %1").arg(lower_speed);     // used for peloton
+     rv += QStringLiteral(" average_speed = %1").arg(average_speed); // used for peloton
+     rv += QStringLiteral(" upper_speed = %1").arg(upper_speed);     // used for peloton
+-    rv += QStringLiteral(" fanspeed = %1").arg(fanspeed);
+     rv += QStringLiteral(" inclination = %1").arg(inclination);
+     rv += QStringLiteral(" lower_inclination = %1").arg(lower_inclination);     // used for peloton
+     rv += QStringLiteral(" average_inclination = %1").arg(average_inclination); // used for peloton
+@@ -1034,10 +1033,6 @@ void trainprogram::scheduler() {
+             }
+         }
+ 
+-        if (rows.at(0).fanspeed != -1) {
+-            qDebug() << QStringLiteral("trainprogram change fanspeed") + QString::number(rows.at(0).fanspeed);
+-            emit changeFanSpeed(rows.at(0).fanspeed);
+-        }
+ 
+         if (!isnan(rows.at(0).latitude) || !isnan(rows.at(0).longitude) || !isnan(rows.at(0).altitude)) {
+             qDebug() << qSetRealNumberPrecision(10) << QStringLiteral("trainprogram change GEO position")
+@@ -1545,11 +1540,6 @@ void trainprogram::applyCurrentStepSettings() {
+         }
+     }
+ 
+-    if (rows.at(currentStep).fanspeed != -1) {
+-        qDebug() << QStringLiteral("trainprogram change fanspeed ") +
+-                        QString::number(rows.at(currentStep).fanspeed);
+-        emit changeFanSpeed(rows.at(currentStep).fanspeed);
+-    }
+ 
+     if (!isnan(rows.at(currentStep).latitude) || !isnan(rows.at(currentStep).longitude) ||
+         !isnan(rows.at(currentStep).altitude)) {
+@@ -1758,9 +1748,6 @@ bool trainprogram::saveXML(const QString &filename, const QList<trainrow> &rows,
+             }
+             stream.writeAttribute(QStringLiteral("forcespeed"),
+                                   row.forcespeed ? QStringLiteral("1") : QStringLiteral("0"));
+-            if (row.fanspeed >= 0) {
+-                stream.writeAttribute(QStringLiteral("fanspeed"), QString::number(row.fanspeed));
+-            }
+             if (row.maxSpeed >= 0) {
+                 stream.writeAttribute(QStringLiteral("maxspeed"), QString::number(row.maxSpeed));
+             }
+@@ -1921,9 +1908,6 @@ QList<trainrow> trainprogram::loadXML(const QString &filename, BLUETOOTH_TYPE de
+             if (atts.hasAttribute(QStringLiteral("minspeed"))) {
+                 row.minSpeed = atts.value(QStringLiteral("minspeed")).toDouble();
+             }
+-            if (atts.hasAttribute(QStringLiteral("fanspeed"))) {
+-                row.fanspeed = atts.value(QStringLiteral("fanspeed")).toDouble();
+-            }
+             if (atts.hasAttribute(QStringLiteral("inclination"))) {
+                 row.inclination = atts.value(QStringLiteral("inclination")).toDouble();
+             }
+diff --git a/src/trainprogram.h b/src/trainprogram.h
+index 59773558..7b18ff90 100644
+--- a/src/trainprogram.h
++++ b/src/trainprogram.h
+@@ -29,7 +29,6 @@ class trainrow {
+     double lower_speed = -1;   // used for peloton
+     double average_speed = -1; // used for peloton
+     double upper_speed = -1;   // used for peloton
+-    double fanspeed = -1;
+     double inclination = -200;
+     double lower_inclination = -200;   // used for peloton
+     double average_inclination = -200; // used for peloton
+@@ -170,7 +169,6 @@ private slots:
+     void stop(bool paused);
+     void lap();
+     void changeSpeed(double speed);
+-    bool changeFanSpeed(uint8_t speed);
+     void changeInclination(double grade, double inclination);
+     void changeNextInclination300Meters(QList<MetersByInclination>);
+     void changeResistance(resistance_t resistance);
+diff --git a/src/webtranslation.cpp b/src/webtranslation.cpp
+index 73f3c4da..6de3c1e3 100644
+--- a/src/webtranslation.cpp
++++ b/src/webtranslation.cpp
+@@ -62,7 +62,6 @@ const WebTranslationEntry entries[] = {
+     {"workoutEditor.cadence", QT_TRANSLATE_NOOP("WebTranslations", "Cadence")},
+     {"workoutEditor.power", QT_TRANSLATE_NOOP("WebTranslations", "Power")},
+     {"workoutEditor.forceSpeed", QT_TRANSLATE_NOOP("WebTranslations", "Force Speed")},
+-    {"workoutEditor.fan", QT_TRANSLATE_NOOP("WebTranslations", "Fan")},
+     {"workoutEditor.pelotonResistance", QT_TRANSLATE_NOOP("WebTranslations", "Peloton Res.")},
+     {"workoutEditor.hrLoop", QT_TRANSLATE_NOOP("WebTranslations", "HR Loop (s)")},
+     {"workoutEditor.hrZone", QT_TRANSLATE_NOOP("WebTranslations", "HR Zone")},
