@@ -425,19 +425,6 @@ Voulez-vous le faire maintenant ?</translation>
     </message>
 </context>
 <context>
-    <name>SwagBagView</name>
-    <message>
-        <location filename="../SwagBagView.qml" line="66"/>
-        <source>Hi! Do you know that QZ is just an Open Source Indie App?&lt;br&gt;&lt;br&gt;No Big Companies are running this!&lt;br&gt;The &quot;Swag Bag&quot; is a way to support the ongoing development, maintenance and support of QZ Fitness!</source>
-        <translation>Salut ! Saviez-vous que QZ est juste une application indépendante open source ?&lt;br&gt;&lt;br&gt;Ce n&apos;est pas de grandes entreprises qui gèrent cela !&lt;br&gt;Le &quot;Swag Bag&quot; est un moyen de soutenir le développement, la maintenance et le support continus de QZ Fitness !</translation>
-    </message>
-    <message>
-        <location filename="../SwagBagView.qml" line="92"/>
-        <source>&lt;html&gt;&lt;style type=&apos;text/css&apos;&gt;&lt;/style&gt;Swag bag feature:&lt;br&gt;• an auto-renewable subscription&lt;br&gt;• 1 month ($1.99)&lt;br&gt;• Your subscription will be charged to your iTunes account at confirmation of purchase and will automatically renew (at the duration selected) unless auto-renew is turned off at least 24 hours before the end of the current period.&lt;br&gt;• Current subscription may not be cancelled during the active subscription period; however, you can manage your subscription and/or turn off auto-renewal by visiting your iTunes Account Settings after purchase.&lt;br&gt;• Privacy policy: &lt;a href=&apos;https://robertoviola.cloud/privacy-policy-qdomyos-zwift/&apos;&gt;https://robertoviola.cloud/privacy-policy-qdomyos-zwift/&lt;/a&gt;&lt;br&gt;• Licensed Application end user license agreement: &lt;a href=&apos;https://www.apple.com/legal/internet-services/itunes/dev/stdeula/&apos;&gt;https://www.apple.com/legal/internet-services/itunes/dev/stdeula/&lt;/a&gt;&lt;br&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;style type=&apos;text/css&apos;&gt;&lt;/style&gt;Fonctionnalité du sac de bienvenue :&lt;br&gt;• un abonnement auto-renouvelable&lt;br&gt;• 1 mois (1,99 $)&lt;br&gt;• Votre abonnement sera débité sur votre compte iTunes lors de la confirmation de l&apos;achat et sera automatiquement renouvelé (pour la durée sélectionnée) à moins que le renouvellement automatique ne soit désactivé au moins 24 heures avant la fin de la période en cours.&lt;br&gt;• L&apos;abonnement actuel ne peut pas être annulé pendant la période d&apos;abonnement active ; cependant, vous pouvez gérer votre abonnement et/ou désactiver le renouvellement automatique en visitant les réglages de votre compte iTunes après l&apos;achat.&lt;br&gt;• Politique de confidentialité : &lt;a href=&apos;https://robertoviola.cloud/privacy-policy-qdomyos-zwift/&apos;&gt;https://robertoviola.cloud/privacy-policy-qdomyos-zwift/&lt;/a&gt;&lt;br&gt;• Contrat de licence utilisateur final de l&apos;application agréée : &lt;a href=&apos;https://www.apple.com/legal/internet-services/itunes/dev/stdeula/&apos;&gt;https://www.apple.com/legal/internet-services/itunes/dev/stdeula/&lt;/a&gt;&lt;br&gt;&lt;/html&gt;</translation>
-    </message>
-</context>
-<context>
     <name>TemplateWebServer</name>
     <message>
         <location filename="../TemplateWebServer.qml" line="14"/>
@@ -2372,11 +2359,6 @@ redémarrez l&apos;application.</translation>
         <translation>Votre compte Peloton est maintenant connecté !&lt;br&gt;&lt;br&gt;Redémarrez l&apos;application pour appliquer ce changement !</translation>
     </message>
     <message>
-        <location filename="../main.qml" line="696"/>
-        <source>Trial time expired!&lt;br&gt;&lt;br&gt;Please join the QZ Patreon Membership to unlock the full license!&lt;br&gt;https://www.patreon.com/bePatron?u=45290147&lt;br&gt;&lt;br&gt;Then add your patreon email in the email field in the general settings.&lt;br&gt;The App will now close.</source>
-        <translation>Le temps d&apos;essai a expiré !&lt;br&gt;&lt;br&gt;Veuillez adhérer à l&apos;abonnement QZ Patreon pour débloquer la licence complète !&lt;br&gt;https://www.patreon.com/bePatron?u=45290147&lt;br&gt;&lt;br&gt;Ajoutez ensuite votre email patreon dans le champ email des paramètres généraux.&lt;br&gt;L&apos;application va maintenant se fermer.</translation>
-    </message>
-    <message>
         <location filename="../main.qml" line="703"/>
         <source>Settings changed</source>
         <translation>Paramètres modifiés</translation>
@@ -2477,11 +2459,6 @@ Do you want to start it now?</source>
         <location filename="../main.qml" line="1148"/>
         <source>Workouts History</source>
         <translation>Historique des entraînements</translation>
-    </message>
-    <message>
-        <location filename="../main.qml" line="1157"/>
-        <source>Swag Bag</source>
-        <translation>Sac de bienvenue</translation>
     </message>
     <message>
         <location filename="../main.qml" line="1166"/>
@@ -5935,11 +5912,6 @@ Veuillez le saisir ci-dessous :</translation>
         <location filename="../settings.qml" line="12051"/>
         <source>Suffix activity:</source>
         <translation>Activité suffixe :</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12072"/>
-        <source>Default is “QZ.” Please leave this set to default so that other Strava users will see the QZ; a tiny bit of advertising that helps promote the app and support its development. If you choose to remove it, please consider contributing to the developer’s Patreon or Buy Me a Coffee accounts or just subscribe to the Swag bag in the left side bar to allow me to continue developing and supporting the app.</source>
-        <translation>Le défaut est « QZ ». Veuillez le laisser par défaut afin que les autres utilisateurs de Strava voient le QZ ; une petite publicité qui aide à promouvoir l&apos;application et à soutenir son développement. Si vous choisissez de le supprimer, veuillez envisager de contribuer aux comptes Patreon ou Buy Me a Coffee du développeur, ou de vous abonner au Swag bag dans la barre latérale gauche pour me permettre de continuer à développer et à soutenir l&apos;application.</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="12085"/>

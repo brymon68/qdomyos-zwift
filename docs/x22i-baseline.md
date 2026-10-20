@@ -2,12 +2,11 @@
 
 This fork owns the application source in `src/` and builds it directly. GitHub Actions checks out this repository once, including its pinned dependency submodules. Application source is no longer downloaded from a separate upstream checkout, and the three feature-removal patches have been deleted.
 
-The source was aligned with the already tested NordicTrack gRPC revision `8b78e9464c55572b9eaf816128bac905c7150a26` in commit `1f48d493`. This alignment is a separate commit because the fork previously contained a different application revision. The next commit applies trial, fan, and purchasing removal as ordinary source edits and deletions. The upstream revision in [`baseline.json`](../tools/x22i/baseline.json) records historical provenance; the build uses the current fork commit.
+The source was aligned with the already tested NordicTrack gRPC revision `8b78e9464c55572b9eaf816128bac905c7150a26` in commit `1f48d493`. This alignment is a separate commit because the fork previously contained a different application revision. Subsequent cleanup uses ordinary source edits and deletions. The upstream revision in [`baseline.json`](../tools/x22i/baseline.json) records historical provenance; the build uses the current fork commit.
 
 ## Current scope
 
-- Trial enforcement is removed: supporter lookup, timer, license-status plumbing, expiry dialog, Patreon redirect, and forced exit. The GPL license remains.
-- Fan UI/settings, shortcuts, automatic rules, workout fields, MQTT/OSC/template commands, generic API, three external drivers, and fan-only JNI/Java/protobuf operations are deleted. Eight unique settings were removed; the catalog has 953 entries and C++ has 967 settings. Existing obsolete saved keys can remain inert. Shared key-code enum values and the icon reused by heat-zone tiles are retained.
+- Fan UI/settings, shortcuts, automatic rules, workout fields, MQTT/OSC/template commands, generic API, three external drivers, and fan-only JNI/Java/protobuf operations are deleted. Eight unique settings were removed; the catalog covers all 961 remaining QML settings and C++ has 967 settings. Existing obsolete saved keys can remain inert. Shared key-code enum values and the icon reused by heat-zone tiles are retained.
 - Purchasing UI, store/product objects, native and Android purchasing classes, billing dependency, and billing permission are deleted.
 - Zwift authentication and terrain polling, local iFIT gRPC, required TLS/protobuf assets, incline calibration and limits, manual controls, Bluetooth, DIRCON, and the missing-key settings preset are retained.
 
@@ -36,14 +35,14 @@ The single argument is a new output directory, which must not already exist. Com
 
 `X22I_VARIANT=test` is the default. It builds **X22i Test**, package `org.cagnulen.qdomyoszwift.x22ibaseline`, using the persistent private PKCS12 key with alias `x22i-test`. Set `X22I_SIGNING_STORE_FILE` to its path and load `X22I_SIGNING_STORE_PASSWORD` through your local secret mechanism; never put the password in arguments, logs, or committed files. The expected signing certificate SHA-256 is `38a1ec468bd45b37b20e7477613b9951aae24c3171673a5a6186abe7f3c7167d`.
 
-The compatibility variant `X22I_VARIANT=baseline` uses the original package `org.cagnulen.qdomyoszwift`, QZ launcher label, and ordinary debug signing. It omits the X22i settings preset. It contains the same feature removals; it is not a build of the old trial-enabled application. Its signer does not match the original installed QZ and it must not be treated as an in-place replacement.
+The compatibility variant `X22I_VARIANT=baseline` uses the original package `org.cagnulen.qdomyoszwift`, QZ launcher label, and ordinary debug signing. It omits the X22i settings preset. It contains the same application source. Its signer does not match the original installed QZ and it must not be treated as an in-place replacement.
 
 ### GitHub Actions
 
-The [X22i workflow](../.github/workflows/x22i-baseline.yml) builds this fork on pushes to `codex/x22i-no-trial` and on manual dispatch. Test signing uses repository secrets `X22I_TEST_KEYSTORE_BASE64` and `X22I_TEST_KEYSTORE_PASSWORD`; CI removes the temporary key afterward.
+The [X22i workflow](../.github/workflows/x22i-baseline.yml) is the application's build workflow. It runs on pushes to `master` and `codex/**` branches and on manual dispatch. The inherited platform/release workflows have been deleted. Test signing uses repository secrets `X22I_TEST_KEYSTORE_BASE64` and `X22I_TEST_KEYSTORE_PASSWORD`; CI removes the temporary key afterward.
 
 ```sh
-gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref codex/x22i-no-trial -f variant=test
+gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref "$(git branch --show-current)" -f variant=test
 gh run download RUN_ID --repo brymon68/qdomyos-zwift --name x22i-test-arm64 --dir /LOCAL/ARTIFACTS
 ```
 
@@ -71,7 +70,7 @@ Initialize submodules and commit changes in the mounted fork first. `/LOCAL/BUIL
 
 `artifacts/` contains the APK, `build-info.json`, signing report, package badging, merged manifest, GPL license, and (for `test`) the bundled defaults header. `source_revision` and `build_recipe_revision` identify the same fork commit. Provenance also records dependency revisions, toolchain versions, APK hash/size, and removed-feature flags. No source patch is required to reconstruct the application.
 
-The build verifies ARM64 Qt/OpenSSL/C++ payloads, QML resources, gRPC assets, package/component/provider identities, and the absence of trial/fan/purchasing markers in the native app and all DEX files. APK signatures are verified separately. These checks establish packaging and source removal; they do not establish runtime connectivity or physical incline behavior.
+The build verifies ARM64 Qt/OpenSSL/C++ payloads, QML resources, gRPC assets, package/component/provider identities, and removed-code markers in the native app and all DEX files. APK signatures are verified separately. These checks establish packaging and source removal; they do not establish runtime connectivity or physical incline behavior.
 
 ## Settings and installation
 
@@ -91,7 +90,7 @@ The resulting APK is **50,665,826 bytes**, SHA-256 **`4615f4bb88f754ef5852739be7
 
 On October 20, 2026, the separate baseline was installed from [CI run 39365509040, attempt 2](https://github.com/brymon68/qdomyos-zwift/actions/runs/39365509040/attempts/2). All **861 saved settings** were migrated with exact readback. The owner then confirmed auto-incline and the overall app were working. The original QZ installation and private rollback backup remain available.
 
-The trial-only APK was subsequently installed in place with authorization. All **929 saved settings** were preserved before launch; afterward only the launch counter, internal web-server port, and template-ID ordering changed. Its SHA-256 is `a4b5707a1fb99523e53ef52dc00b0091c7d09bd0ec9573eeefec1dc7881d4211`. No new physical incline regression result was claimed.
+An earlier update was subsequently installed in place with authorization. All **929 saved settings** were preserved before launch; afterward only the launch counter, internal web-server port, and template-ID ordering changed. Its SHA-256 is `a4b5707a1fb99523e53ef52dc00b0091c7d09bd0ec9573eeefec1dc7881d4211`. No new physical incline regression result was claimed.
 
 The prior patch-based stripped build at recipe `a807b591fd2d12844e11da97c657d0d73afe908a` passed a full native/Java/protobuf build, 40 Python tests, QML syntax checks, payload/manifest checks, removed-feature checks, and v1/v2 signatures. Size: **50,665,957 bytes**; SHA-256: `c46229cd57c0302de1e20212a4ac5dc85fdc18b5ee0b198ac32094c6a1b3b46a`. It was not installed. This is the comparison artifact for the direct-source build.
 

@@ -425,19 +425,6 @@ Deseja fazer isso agora?</translation>
     </message>
 </context>
 <context>
-    <name>SwagBagView</name>
-    <message>
-        <location filename="../SwagBagView.qml" line="66"/>
-        <source>Hi! Do you know that QZ is just an Open Source Indie App?&lt;br&gt;&lt;br&gt;No Big Companies are running this!&lt;br&gt;The "Swag Bag" is a way to support the ongoing development, maintenance and support of QZ Fitness!</source>
-        <translation>Oi! Você sabia que o QZ é apenas um App Indie de Código Aberto?&lt;br&gt;&lt;br&gt;Nenhuma Grande Empresa está por trás disso!&lt;br&gt;O "Swag Bag" é uma forma de apoiar o desenvolvimento, manutenção e suporte contínuos do QZ Fitness!</translation>
-    </message>
-    <message>
-        <location filename="../SwagBagView.qml" line="92"/>
-        <source>&lt;html&gt;&lt;style type='text/css'&gt;&lt;/style&gt;Swag bag feature:&lt;br&gt;• an auto-renewable subscription&lt;br&gt;• 1 month ($1.99)&lt;br&gt;• Your subscription will be charged to your iTunes account at confirmation of purchase and will automatically renew (at the duration selected) unless auto-renew is turned off at least 24 hours before the end of the current period.&lt;br&gt;• Current subscription may not be cancelled during the active subscription period; however, you can manage your subscription and/or turn off auto-renewal by visiting your iTunes Account Settings after purchase.&lt;br&gt;• Privacy policy: &lt;a href='https://robertoviola.cloud/privacy-policy-qdomyos-zwift/'&gt;https://robertoviola.cloud/privacy-policy-qdomyos-zwift/&lt;/a&gt;&lt;br&gt;• Licensed Application end user license agreement: &lt;a href='https://www.apple.com/legal/internet-services/itunes/dev/stdeula/'&gt;https://www.apple.com/legal/internet-services/itunes/dev/stdeula/&lt;/a&gt;&lt;br&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;style type='text/css'&gt;&lt;/style&gt;Recurso Swag bag:&lt;br&gt;• uma assinatura auto-renovável&lt;br&gt;• 1 month ($1.99)&lt;br&gt;• Sua assinatura será cobrada em sua conta iTunes na confirmação da compra e será renovada automaticamente (pela duração selecionada), a menos que a renovação automática seja desativada pelo menos 24 horas antes do final do período atual.&lt;br&gt;• A assinatura atual não pode ser cancelada durante o período de assinatura ativo; no entanto, você pode gerenciar sua assinatura e/ou desativar a renovação automática visitando as Configurações da Conta iTunes após a compra.&lt;br&gt;• Política de privacidade: &lt;a href='https://robertoviola.cloud/privacy-policy-qdomyos-zwift/'&gt;https://robertoviola.cloud/privacy-policy-qdomyos-zwift/&lt;/a&gt;&lt;br&gt;• Acordo de licença de usuário final de aplicativo licenciado: &lt;a href='https://www.apple.com/legal/internet-services/itunes/dev/stdeula/'&gt;https://www.apple.com/legal/internet-services/itunes/dev/stdeula/&lt;/a&gt;&lt;br&gt;&lt;/html&gt;</translation>
-    </message>
-</context>
-<context>
     <name>TemplateWebServer</name>
     <message>
         <location filename="../TemplateWebServer.qml" line="14"/>
@@ -2372,11 +2359,6 @@ reinicie o aplicativo.</translation>
         <translation>Sua conta Peloton está agora conectada!&lt;br&gt;&lt;br&gt;Reinicie o aplicativo para aplicar esta mudança!</translation>
     </message>
     <message>
-        <location filename="../main.qml" line="696"/>
-        <source>Trial time expired!&lt;br&gt;&lt;br&gt;Please join the QZ Patreon Membership to unlock the full license!&lt;br&gt;https://www.patreon.com/bePatron?u=45290147&lt;br&gt;&lt;br&gt;Then add your patreon email in the email field in the general settings.&lt;br&gt;The App will now close.</source>
-        <translation>Período de teste expirado!&lt;br&gt;&lt;br&gt;Por favor, junte-se à QZ Patreon Membership para desbloquear a licença completa!&lt;br&gt;https://www.patreon.com/bePatron?u=45290147&lt;br&gt;&lt;br&gt;Em seguida, adicione seu e-mail do patreon no campo de e-mail nas configurações gerais.&lt;br&gt;O aplicativo será fechado agora.</translation>
-    </message>
-    <message>
         <location filename="../main.qml" line="703"/>
         <source>Settings changed</source>
         <translation>Configurações alteradas</translation>
@@ -2477,11 +2459,6 @@ Do you want to start it now?</source>
         <location filename="../main.qml" line="1148"/>
         <source>Workouts History</source>
         <translation>Histórico de Treinos</translation>
-    </message>
-    <message>
-        <location filename="../main.qml" line="1157"/>
-        <source>Swag Bag</source>
-        <translation>Saco de brindes</translation>
     </message>
     <message>
         <location filename="../main.qml" line="1166"/>
@@ -5931,11 +5908,6 @@ Por favor, insira abaixo:</translation>
         <location filename="../settings.qml" line="12051"/>
         <source>Suffix activity:</source>
         <translation>Sufixo de atividade:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12072"/>
-        <source>Default is “QZ.” Please leave this set to default so that other Strava users will see the QZ; a tiny bit of advertising that helps promote the app and support its development. If you choose to remove it, please consider contributing to the developer’s Patreon or Buy Me a Coffee accounts or just subscribe to the Swag bag in the left side bar to allow me to continue developing and supporting the app.</source>
-        <translation>O padrão é “QZ.” Por favor, deixe no padrão para que outros usuários do Strava vejam o QZ; um pequeno anúncio que ajuda a promover o aplicativo e apoiar seu desenvolvimento. Se você optar por removê-lo, considere contribuir para as contas Patreon ou Buy Me a Coffee do desenvolvedor ou apenas assinar a sacola de brindes (Swag bag) na barra lateral esquerda para que eu possa continuar desenvolvendo e apoiando o aplicativo.</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="12085"/>

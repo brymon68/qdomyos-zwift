@@ -2,7 +2,7 @@
 
 An Android fork of [QDomyos-Zwift](https://github.com/cagnulein/qdomyos-zwift) for a NordicTrack X22i console, with Zwift running on a Mac. It reads treadmill telemetry through the local iFIT gRPC service and preserves automatic incline following Zwift terrain. iFIT remains required.
 
-The application source lives in this repository's `src/`. The Android build compiles this checkout directly. Trial enforcement, fan support, and in-app purchasing have been removed from the source. Further device/integration pruning, a smaller dashboard, and a new package namespace remain work in [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1).
+The application source lives in this repository's `src/`. The Android build compiles this checkout directly. Further device/integration pruning, a smaller dashboard, and a new package namespace remain work in [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1).
 
 ## Build
 

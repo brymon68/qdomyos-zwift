@@ -425,19 +425,6 @@ Möchten Sie das jetzt tun?</translation>
     </message>
 </context>
 <context>
-    <name>SwagBagView</name>
-    <message>
-        <location filename="../SwagBagView.qml" line="66"/>
-        <source>Hi! Do you know that QZ is just an Open Source Indie App?&lt;br&gt;&lt;br&gt;No Big Companies are running this!&lt;br&gt;The &quot;Swag Bag&quot; is a way to support the ongoing development, maintenance and support of QZ Fitness!</source>
-        <translation>Hallo! Wussten Sie, dass QZ nur eine Open Source Indie App ist?&lt;br&gt;&lt;br&gt;Das betreiben keine großen Firmen!&lt;br&gt;Der &quot;Swag Bag&quot; ist eine Möglichkeit, die laufende Entwicklung, Wartung und Unterstützung von QZ Fitness zu unterstützen!</translation>
-    </message>
-    <message>
-        <location filename="../SwagBagView.qml" line="92"/>
-        <source>&lt;html&gt;&lt;style type=&apos;text/css&apos;&gt;&lt;/style&gt;Swag bag feature:&lt;br&gt;• an auto-renewable subscription&lt;br&gt;• 1 month ($1.99)&lt;br&gt;• Your subscription will be charged to your iTunes account at confirmation of purchase and will automatically renew (at the duration selected) unless auto-renew is turned off at least 24 hours before the end of the current period.&lt;br&gt;• Current subscription may not be cancelled during the active subscription period; however, you can manage your subscription and/or turn off auto-renewal by visiting your iTunes Account Settings after purchase.&lt;br&gt;• Privacy policy: &lt;a href=&apos;https://robertoviola.cloud/privacy-policy-qdomyos-zwift/&apos;&gt;https://robertoviola.cloud/privacy-policy-qdomyos-zwift/&lt;/a&gt;&lt;br&gt;• Licensed Application end user license agreement: &lt;a href=&apos;https://www.apple.com/legal/internet-services/itunes/dev/stdeula/&apos;&gt;https://www.apple.com/legal/internet-services/itunes/dev/stdeula/&lt;/a&gt;&lt;br&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;style type=&apos;text/css&apos;&gt;&lt;/style&gt;Swag-Bag-Funktion:&lt;br&gt;• ein automatisch verlängerbares Abonnement&lt;br&gt;• 1 month ($1.99)&lt;br&gt;• Ihr Abonnement wird bei Kaufbestätigung auf Ihrem iTunes-Konto belastet und verlängert sich automatisch (für die ausgewählte Dauer), es sei denn, Sie deaktivieren die automatische Verlängerung mindestens 24 Stunden vor Ablauf der aktuellen Periode.&lt;br&gt;• Das aktuelle Abonnement kann während der aktiven Abonnementdauer nicht gekündigt werden; Sie können jedoch nach dem Kauf Ihre Abonnement-Einstellungen verwalten und/oder die automatische Verlängerung in den iTunes-Kontoeinstellungen deaktivieren.&lt;br&gt;• Datenschutzrichtlinie: &lt;a href=&apos;https://robertoviola.cloud/privacy-policy-qdomyos-zwift/&apos;&gt;https://robertoviola.cloud/privacy-policy-qdomyos-zwift/&lt;/a&gt;&lt;br&gt;• Lizenzvereinbarung für Endbenutzer der App: &lt;a href=&apos;https://www.apple.com/legal/internet-services/itunes/dev/stdeula/&apos;&gt;https://www.apple.com/legal/internet-services/itunes/dev/stdeula/&lt;/a&gt;&lt;br&gt;&lt;/html&gt;</translation>
-    </message>
-</context>
-<context>
     <name>TemplateWebServer</name>
     <message>
         <location filename="../TemplateWebServer.qml" line="14"/>
@@ -2372,11 +2359,6 @@ starten Sie die App neu.</translation>
         <translation>Dein Peloton-Konto ist jetzt verbunden!&lt;br&gt;&lt;br&gt;Starte die App neu, um diese Änderung zu übernehmen!</translation>
     </message>
     <message>
-        <location filename="../main.qml" line="696"/>
-        <source>Trial time expired!&lt;br&gt;&lt;br&gt;Please join the QZ Patreon Membership to unlock the full license!&lt;br&gt;https://www.patreon.com/bePatron?u=45290147&lt;br&gt;&lt;br&gt;Then add your patreon email in the email field in the general settings.&lt;br&gt;The App will now close.</source>
-        <translation>Die Testzeit ist abgelaufen!&lt;br&gt;&lt;br&gt;Bitte treten Sie der QZ Patreon Membership bei, um die volle Lizenz freizuschalten!&lt;br&gt;https://www.patreon.com/bePatron?u=45290147&lt;br&gt;&lt;br&gt;Fügen Sie dann Ihre patreon E-Mail-Adresse im Feld E-Mail in den allgemeinen Einstellungen hinzu.&lt;br&gt;Die App wird nun geschlossen.</translation>
-    </message>
-    <message>
         <location filename="../main.qml" line="703"/>
         <source>Settings changed</source>
         <translation>Einstellungen geändert</translation>
@@ -2477,11 +2459,6 @@ Do you want to start it now?</source>
         <location filename="../main.qml" line="1148"/>
         <source>Workouts History</source>
         <translation>Trainingsverlauf</translation>
-    </message>
-    <message>
-        <location filename="../main.qml" line="1157"/>
-        <source>Swag Bag</source>
-        <translation>Goodiepaket</translation>
     </message>
     <message>
         <location filename="../main.qml" line="1166"/>
@@ -5923,11 +5900,6 @@ Bitte geben Sie ihn unten ein:</translation>
         <location filename="../settings.qml" line="12051"/>
         <source>Suffix activity:</source>
         <translation>Aktivität-Suffix:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12072"/>
-        <source>Default is “QZ.” Please leave this set to default so that other Strava users will see the QZ; a tiny bit of advertising that helps promote the app and support its development. If you choose to remove it, please consider contributing to the developer’s Patreon or Buy Me a Coffee accounts or just subscribe to the Swag bag in the left side bar to allow me to continue developing and supporting the app.</source>
-        <translation>Standard ist „QZ.“ Bitte lassen Sie dies auf Standard, damit andere Strava-Nutzer das QZ sehen; ein kleines Stück Werbung, das hilft, die App zu bewerben und ihre Entwicklung zu unterstützen. Wenn Sie es entfernen möchten, denken Sie bitte daran, den Entwickler über Patreon oder Buy Me a Coffee zu unterstützen oder abonnieren Sie einfach die Swag bag in der linken Seitenleiste, damit ich die Entwicklung und Unterstützung der App fortsetzen kann.</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="12085"/>

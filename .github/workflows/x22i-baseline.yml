@@ -12,7 +12,7 @@ on:
           - test
           - baseline
   push:
-    branches: [codex/x22i-no-trial]
+    branches: [master, 'codex/**']
 
 permissions:
   contents: read

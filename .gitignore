@@ -63,6 +63,7 @@ src/android/local.properties
 src/translations/*.qm
 /tools/__pycache__
 *.qm
+/aqtinstall.log
 
 # macOS
 *.DS_Store

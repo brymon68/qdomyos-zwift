@@ -122,7 +122,7 @@ PY
 cd "$output_dir/android"
 bash ./gradlew --no-daemon assembleDebug
 apk="$output_dir/android/build/outputs/apk/debug/android-debug.apk"
-python3 "$script_dir/verify_apk.py" --no-trial --no-fan --no-purchasing "$apk"
+python3 "$script_dir/verify_apk.py" --no-fan --no-purchasing "$apk"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$apk" > "$output_dir/artifacts/signing.txt"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump badging "$apk" > "$output_dir/artifacts/apk-badging.txt"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump xmltree "$apk" AndroidManifest.xml > "$output_dir/artifacts/manifest-tree.txt"

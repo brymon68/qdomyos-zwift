@@ -1472,8 +1472,6 @@ import AndroidStatusBar 1.0
             property bool tile_hr_time_in_zone_individual_mode: false
             property bool wahoo_without_wheel_diameter: false
 
-            property bool nordictrackadbbike_gear_resistance_mode: false
-            property int nordictrackadbbike_gear_debounce_ms: 100
 
             // 2.20.3
             property bool technogym_group_cycle: false
@@ -1702,6 +1700,8 @@ import AndroidStatusBar 1.0
             property bool treadmill_force_running_activity: false
             property bool proform_treadmill_105_cst: false
             property bool virtual_device_treadmill_data: true
+            property bool nordictrackadbbike_gear_resistance_mode: false
+            property int nordictrackadbbike_gear_debounce_ms: 100
         }
 
 
@@ -12248,7 +12248,7 @@ import AndroidStatusBar 1.0
                     }
 
                     Label {
-                        text: qsTr("Default is “QZ.” Please leave this set to default so that other Strava users will see the QZ; a tiny bit of advertising that helps promote the app and support its development. If you choose to remove it, please consider contributing to the developer’s Patreon or Buy Me a Coffee accounts or just subscribe to the Swag bag in the left side bar to allow me to continue developing and supporting the app.")
+                        text: qsTr("Text appended to Strava activity titles. Default: #QZ.")
                         font.bold: true
                         font.italic: true
                         font.pixelSize: Qt.application.font.pixelSize - 2

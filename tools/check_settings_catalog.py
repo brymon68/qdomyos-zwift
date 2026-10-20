@@ -97,10 +97,9 @@ def validate_entry(entry: object, location: str, kind: str, errors: list[str]) -
             "defaultValue",
             "defaultExpression",
             "options",
-            "restartRequired",
         ]
     elif kind == "virtual":
-        common_fields += ["defaultValue", "options", "restartRequired"]
+        common_fields += ["defaultValue", "options"]
         # The two legacy model selectors predate the complete catalog format.
         if entry.get("type") != "enum":
             common_fields += ["defaultExpression", "visible"]
@@ -130,7 +129,7 @@ def validate_entry(entry: object, location: str, kind: str, errors: list[str]) -
 
     if kind == "setting" and not isinstance(entry.get("defaultExpression"), str):
         errors.append(f"{location}: 'defaultExpression' must be a string")
-    if kind in ("setting", "virtual") and not isinstance(entry.get("restartRequired"), bool):
+    if kind in ("setting", "virtual") and "restartRequired" in entry and not isinstance(entry["restartRequired"], bool):
         errors.append(f"{location}: 'restartRequired' must be boolean")
     if kind == "setting" and not isinstance(entry.get("visible"), bool):
         errors.append(f"{location}: 'visible' must be boolean")
@@ -156,32 +155,36 @@ def validate_catalog(catalog: dict, qml_text: str) -> tuple[list[str], set[str]]
     if catalog.get("format") != EXPECTED_FORMAT:
         errors.append(f"top level: 'format' must be {EXPECTED_FORMAT!r}")
 
-    hierarchy = catalog.get("legacyHierarchy")
-    if not isinstance(hierarchy, dict):
-        errors.append("top level: 'legacyHierarchy' must be an object")
-    else:
-        for field in ("nodes", "settingNodeByKey", "virtualNodeByKey", "pageNodeByKey"):
-            expected_type = list if field == "nodes" else dict
-            if not isinstance(hierarchy.get(field), expected_type):
-                errors.append(f"legacyHierarchy: '{field}' has the wrong type")
+    # These extensions belong to the later catalog layout UI. The current
+    # settings search uses the core catalog, but supplied extensions must be valid.
+    if "legacyHierarchy" in catalog:
+        hierarchy = catalog["legacyHierarchy"]
+        if not isinstance(hierarchy, dict):
+            errors.append("top level: 'legacyHierarchy' must be an object")
+        else:
+            for field in ("nodes", "settingNodeByKey", "virtualNodeByKey", "pageNodeByKey"):
+                expected_type = list if field == "nodes" else dict
+                if not isinstance(hierarchy.get(field), expected_type):
+                    errors.append(f"legacyHierarchy: '{field}' has the wrong type")
 
-    layout = catalog.get("legacyLayout")
-    if not isinstance(layout, dict):
-        errors.append("top level: 'legacyLayout' must be an object")
-    else:
-        for field in ("rootPages",):
-            if not isinstance(layout.get(field), list):
-                errors.append(f"legacyLayout: '{field}' has the wrong type")
-        for field in (
-            "sourceFileByKey",
-            "itemOrderByKey",
-            "pageOrderByKey",
-            "pageParentTargetByKey",
-            "pageNodeByKey",
-            "externalEntryOrderByKey",
-        ):
-            if not isinstance(layout.get(field), dict):
-                errors.append(f"legacyLayout: '{field}' has the wrong type")
+    if "legacyLayout" in catalog:
+        layout = catalog["legacyLayout"]
+        if not isinstance(layout, dict):
+            errors.append("top level: 'legacyLayout' must be an object")
+        else:
+            for field in ("rootPages",):
+                if not isinstance(layout.get(field), list):
+                    errors.append(f"legacyLayout: '{field}' has the wrong type")
+            for field in (
+                "sourceFileByKey",
+                "itemOrderByKey",
+                "pageOrderByKey",
+                "pageParentTargetByKey",
+                "pageNodeByKey",
+                "externalEntryOrderByKey",
+            ):
+                if not isinstance(layout.get(field), dict):
+                    errors.append(f"legacyLayout: '{field}' has the wrong type")
 
     for collection_name in ("settings", "virtualSettings", "pages"):
         if not isinstance(catalog.get(collection_name), list):

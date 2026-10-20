@@ -43,7 +43,7 @@ possible future improvement.
 **Q: Is my [bike/treadmill/rower] compatible with QZ / Zwift via QZ?**
 
 Most FTMS-compatible and many proprietary BLE trainers/treadmills/rowers are
-supported. You can try the trial version first. If your device isn't
+supported. If your device isn't
 recognized, send a debug log so support for it can be added or fixed.
 
 ### 19. Kinomap-compatible bikes (Kettler, Merach, and others)
@@ -55,7 +55,7 @@ Kettler bikes and other brands such as Merach that use the same Kinomap
 BLE stack. Once QZ is connected, apps like Zwift, MyWhoosh and Rouvy can
 control resistance automatically through QZ.
 
-Try the trial first; if your bike isn't detected or resistance doesn't
+If your bike isn't detected or resistance doesn't
 behave correctly, send a debug log.
 
 ### 21. Speed shown in training app differs from bike console

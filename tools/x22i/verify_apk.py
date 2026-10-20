@@ -29,7 +29,7 @@ REQUIRED_FILES = (
 ) + tuple(f"lib/arm64-v8a/libQt5{module}_arm64-v8a.so" for module in QT_MODULES)
 
 
-def verify_apk(path, no_trial=False, no_fan=False, no_purchasing=False):
+def verify_apk(path, no_fan=False, no_purchasing=False):
     with zipfile.ZipFile(path) as apk:
         entries = {entry.filename: entry for entry in apk.infolist() if not entry.is_dir()}
         native_files = [name for name in entries if name.startswith("lib/")]
@@ -46,12 +46,10 @@ def verify_apk(path, no_trial=False, no_fan=False, no_purchasing=False):
             if name.endswith(".so") and name not in REQUIRED_FILES and entries[name].file_size == 0:
                 errors.append(f"Empty native library: {name}")
         app_library = "lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"
-        if (no_trial or no_fan or no_purchasing) and app_library in entries:
+        if app_library in entries:
             payload = apk.read(app_library)
-            checks = []
-            if no_trial:
-                checks.append(("Trial enforcement", (
-                    "robertoviola.cloud:4010", "licensePopupVisible", "licenseRequest", "licenseTimeout")))
+            checks = [("Removed licensing code", (
+                "robertoviola.cloud:4010", "licensePopupVisible", "licenseRequest", "licenseTimeout"))]
             if no_fan:
                 checks.append(("Fan support", (
                     "changeFanSpeed", "fanSpeedChanged", "fitmetria_fanfit", "wahookickrheadwind",
@@ -87,12 +85,11 @@ def verify_apk(path, no_trial=False, no_fan=False, no_purchasing=False):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("apk", type=Path, help="APK to check; no assets are extracted")
-    parser.add_argument("--no-trial", action="store_true", help="Reject known trial code in the application library")
     parser.add_argument("--no-fan", action="store_true", help="Reject fan controls, drivers and Java gRPC methods")
     parser.add_argument("--no-purchasing", action="store_true", help="Reject purchasing code and Android billing classes")
     args = parser.parse_args(argv)
     try:
-        result = verify_apk(args.apk, no_trial=args.no_trial, no_fan=args.no_fan, no_purchasing=args.no_purchasing)
+        result = verify_apk(args.apk, no_fan=args.no_fan, no_purchasing=args.no_purchasing)
     except ValueError as error:
         print(error, file=sys.stderr)
         return 1

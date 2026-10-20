@@ -106,33 +106,41 @@ def main() -> int:
     base_properties = settings_properties(base_text)
     current_properties = settings_properties(current_text)
 
-    prefix = current_properties[: len(base_properties)]
-    if prefix == base_properties:
-        added = current_properties[len(base_properties) :]
+    current_names = set(current_properties)
+    if len(current_names) != len(current_properties):
+        print("ERROR: duplicate persistent settings properties", file=sys.stderr)
+        return 1
+
+    retained = [name for name in base_properties if name in current_names]
+    removed = [name for name in base_properties if name not in current_names]
+    prefix = current_properties[: len(retained)]
+    if prefix == retained:
+        if removed:
+            print(f"OK: {len(removed)} removed settings; retained properties keep their order")
+        added = current_properties[len(retained) :]
         if added:
             print("OK: new settings properties were appended at the end:")
             for name in added:
                 print(f"  + {name}")
         else:
-            print("OK: persistent settings property order is unchanged")
+            print("OK: retained settings property order is unchanged")
         return 0
 
     mismatch = next(
         (
             i
-            for i, (old, new) in enumerate(zip(base_properties, prefix))
+            for i, (old, new) in enumerate(zip(retained, prefix))
             if old != new
         ),
-        min(len(base_properties), len(prefix)),
+        min(len(retained), len(prefix)),
     )
 
-    expected = base_properties[mismatch] if mismatch < len(base_properties) else "<end>"
+    expected = retained[mismatch] if mismatch < len(retained) else "<end>"
     actual = current_properties[mismatch] if mismatch < len(current_properties) else "<missing>"
 
     print(
-        "ERROR: persistent settings properties in src/settings.qml must never be "
-        "inserted, removed, renamed, or reordered. New properties must be appended "
-        "after all existing properties.",
+        "ERROR: retained persistent settings properties in src/settings.qml must keep "
+        "their relative order. New properties must be appended after all retained properties.",
         file=sys.stderr,
     )
     print(
