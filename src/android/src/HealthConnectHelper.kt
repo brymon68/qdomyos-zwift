@@ -12,7 +12,6 @@ import androidx.health.connect.client.records.ElevationGainedRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.HeartRateVariabilityRmssdRecord
-import androidx.health.connect.client.records.PowerRecord
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.SpeedRecord
 import androidx.health.connect.client.records.StepsCadenceRecord
@@ -21,7 +20,6 @@ import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.records.metadata.Metadata
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
-import androidx.health.connect.client.units.Power
 import androidx.health.connect.client.units.Velocity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -128,7 +126,6 @@ class HealthConnectHelper {
                 HealthPermission.getWritePermission(DistanceRecord::class),
                 HealthPermission.getWritePermission(TotalCaloriesBurnedRecord::class),
                 HealthPermission.getWritePermission(HeartRateRecord::class),
-                HealthPermission.getWritePermission(PowerRecord::class),
                 HealthPermission.getWritePermission(SpeedRecord::class),
                 HealthPermission.getWritePermission(CyclingPedalingCadenceRecord::class),
                 HealthPermission.getWritePermission(ElevationGainedRecord::class),
@@ -217,7 +214,6 @@ class HealthConnectHelper {
             val hasDistance = grantedPermissions.contains(HealthPermission.getWritePermission(DistanceRecord::class))
             val hasCalories = grantedPermissions.contains(HealthPermission.getWritePermission(TotalCaloriesBurnedRecord::class))
             val hasHeartRate = grantedPermissions.contains(HealthPermission.getWritePermission(HeartRateRecord::class))
-            val hasPower = grantedPermissions.contains(HealthPermission.getWritePermission(PowerRecord::class))
             val hasSpeed = grantedPermissions.contains(HealthPermission.getWritePermission(SpeedRecord::class))
             val hasCadence = grantedPermissions.contains(HealthPermission.getWritePermission(CyclingPedalingCadenceRecord::class))
             val hasElevation = grantedPermissions.contains(HealthPermission.getWritePermission(ElevationGainedRecord::class))
@@ -279,7 +275,6 @@ class HealthConnectHelper {
 
             val isTreadmill = deviceType == 1
             val heartSamples = mutableListOf<HeartRateRecord.Sample>()
-            val powerSamples = mutableListOf<PowerRecord.Sample>()
             val speedSamples = mutableListOf<SpeedRecord.Sample>()
             val cadenceSamples = mutableListOf<CyclingPedalingCadenceRecord.Sample>()
             val stepsCadenceSamples = mutableListOf<StepsCadenceRecord.Sample>()
@@ -289,16 +284,12 @@ class HealthConnectHelper {
                 val sample = samples.getJSONObject(i)
                 val time = Instant.ofEpochMilli(sample.getLong("time"))
                 val heart = sample.optInt("heart", 0)
-                val watts = sample.optDouble("watt", 0.0)
                 val speed = sample.optDouble("speed", 0.0)
                 val cadence = sample.optDouble("cadence", 0.0)
                 val hrv = sample.optDouble("hrv", 0.0)
 
                 if (hasHeartRate && heart > 0) {
                     heartSamples += HeartRateRecord.Sample(time = time, beatsPerMinute = heart.toLong())
-                }
-                if (hasPower && watts > 0.0) {
-                    powerSamples += PowerRecord.Sample(time = time, power = Power.watts(watts))
                 }
                 if (hasSpeed && speed > 0.0) {
                     speedSamples += SpeedRecord.Sample(time = time, speed = Velocity.kilometersPerHour(speed))
@@ -322,9 +313,6 @@ class HealthConnectHelper {
 
             if (heartSamples.isNotEmpty()) {
                 records += HeartRateRecord(start, zoneOffset, end, zoneOffset, heartSamples)
-            }
-            if (powerSamples.isNotEmpty()) {
-                records += PowerRecord(start, zoneOffset, end, zoneOffset, powerSamples)
             }
             if (speedSamples.isNotEmpty()) {
                 records += SpeedRecord(start, zoneOffset, end, zoneOffset, speedSamples)

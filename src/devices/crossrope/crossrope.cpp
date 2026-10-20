@@ -1,7 +1,6 @@
 // THIS MODULE IS UNUSED RIGHT NOW
 
 #include "crossrope.h"
-#include "keepawakehelper.h"
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>
 #include <QDateTime>
@@ -159,11 +158,6 @@ void crossrope::characteristicChanged(const QLowEnergyCharacteristic &characteri
                                      //* 3.5) / 200 ) / 60
 
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
             update_hr_from_external();

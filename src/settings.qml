@@ -333,20 +333,15 @@ import AndroidStatusBar 1.0
             property bool bike_heartrate_service: false
             property int bike_resistance_offset: 4
             property real bike_resistance_gain_f: 1.0
-            property bool zwift_erg: false
-            property real zwift_erg_filter: 10.0
-            property real zwift_erg_filter_down: 10.0
             property bool zwift_negative_inclination_x2: false
             property real zwift_inclination_offset: 0
             property real zwift_inclination_gain: 1.0
             property real echelon_resistance_offset: 0
             property real echelon_resistance_gain: 1.0
 
-            property bool speed_power_based: false
             property int bike_resistance_start: 1
             property int age: 35.0
             property real weight: 75.0
-            property real ftp: 200.0
             property string user_email: ""
             property string user_nickname: ""
             property bool miles_unit: false
@@ -356,14 +351,10 @@ import AndroidStatusBar 1.0
             property bool continuous_moving: false
             property bool bike_cadence_sensor: false
             property bool run_cadence_sensor: false
-            property bool bike_power_sensor: false
             property string heart_rate_belt_name: "Disabled"
             property bool heart_ignore_builtin: false
             property bool kcal_ignore_builtin: false
 
-            property bool ant_cadence: false
-            property bool ant_heart: false
-            property bool ant_garmin: false
 
             property bool top_bar_enabled: true
 
@@ -375,8 +366,6 @@ import AndroidStatusBar 1.0
             property string peloton_date: "Before Title"
             property bool peloton_description_link: true
 
-            property string pzp_username: "username"
-            property string pzp_password: "username"
 
             property bool tile_speed_enabled: true
             property int  tile_speed_order: 0
@@ -394,18 +383,10 @@ import AndroidStatusBar 1.0
             property int  tile_pace_order: 6
             property bool tile_resistance_enabled: true
             property int  tile_resistance_order: 7
-            property bool tile_watt_enabled: true
-            property int  tile_watt_order: 8
             property bool tile_weight_loss_enabled: false
             property int  tile_weight_loss_order: 24
-            property bool tile_avgwatt_enabled: true
-            property int  tile_avgwatt_order: 9
-            property bool tile_ftp_enabled: true
-            property int  tile_ftp_order: 10
             property bool tile_heart_enabled: true
             property int  tile_heart_order: 11
-            property bool tile_jouls_enabled: true
-            property int  tile_jouls_order: 13
             property bool tile_elapsed_enabled: true
             property int  tile_elapsed_order: 14
             property bool tile_lapelapsed_enabled: false
@@ -426,10 +407,6 @@ import AndroidStatusBar 1.0
             property int  tile_target_peloton_resistance_order: 21
             property bool tile_target_cadence_enabled: false
             property int  tile_target_cadence_order: 19
-            property bool tile_target_power_enabled: false
-            property int  tile_target_power_order: 20
-            property bool tile_target_zone_enabled: false
-            property int  tile_target_zone_order: 24
             property bool tile_target_speed_enabled: false
             property int  tile_target_speed_order: 27
             property bool tile_target_incline_enabled: false
@@ -438,18 +415,12 @@ import AndroidStatusBar 1.0
             property int  tile_strokes_count_order: 22
             property bool tile_strokes_length_enabled: false
             property int  tile_strokes_length_order: 23
-            property bool tile_watt_kg_enabled: false
-            property int  tile_watt_kg_order: 25
             property bool tile_gears_enabled: false
             property int  tile_gears_order: 26
             property bool tile_remainingtimetrainprogramrow_enabled: false
             property int  tile_remainingtimetrainprogramrow_order: 27
             property bool tile_nextrowstrainprogram_enabled: false
             property int  tile_nextrowstrainprogram_order: 31
-            property bool tile_mets_enabled: false
-            property int  tile_mets_order: 28
-            property bool tile_targetmets_enabled: false
-            property int  tile_targetmets_order: 29
             property bool tile_steering_angle_enabled: false
             property int  tile_steering_angle_order: 30
             property bool tile_pid_hr_enabled: false
@@ -485,11 +456,9 @@ import AndroidStatusBar 1.0
 
             property bool eslinker_cadenza: true
 
-            property string echelon_watttable: "Echelon"
 
             property real proform_wheel_ratio: 0.33
             property bool proform_tour_de_france_clc: false
-            property bool proform_tdf_jonseed_watt: false
             property bool proform_studio: false
             property bool proform_tdf_10: false
 
@@ -556,10 +525,6 @@ import AndroidStatusBar 1.0
             property real trainprogram_resistance_min: 1
             property real trainprogram_resistance_max: 32
 
-            property real watt_offset: 0
-            property real watt_gain: 1
-            property bool power_avg_5s: false
-            property bool instant_power_on_pause: false
 
             property real speed_offset: 0
             property real speed_gain: 1
@@ -570,15 +535,7 @@ import AndroidStatusBar 1.0
             property string cadence_sensor_name: "Disabled"
             property bool cadence_sensor_as_bike: false
             property real cadence_sensor_speed_ratio: 0.33
-            property real power_hr_pwr1: 200
-            property real power_hr_hr1: 150
-            property real power_hr_pwr2: 230
-            property real power_hr_hr2: 170
 
-            property string power_sensor_name: "Disabled"
-            property bool power_sensor_as_bike: false
-            property bool power_sensor_as_treadmill: false
-            property bool powr_sensor_running_cadence_double: false
 
             property string elite_rizer_name: "Disabled"
             property string elite_sterzo_smart_name: "Disabled"
@@ -606,8 +563,6 @@ import AndroidStatusBar 1.0
             property bool applewatch_fakedevice: false
 
             // from version 2.10.15
-            property real zwift_erg_resistance_down: 0.0
-            property real zwift_erg_resistance_up: 999.0
 
             // from version 2.10.16
             property bool horizon_paragon_x: false
@@ -712,29 +667,17 @@ import AndroidStatusBar 1.0
             property bool tts_act_resistance: true
             property bool tts_avg_resistance: true
             property bool tts_max_resistance: false
-            property bool tts_act_watt: false
-            property bool tts_avg_watt: true
-            property bool tts_max_watt: true
-            property bool tts_act_ftp: false
-            property bool tts_avg_ftp: true
-            property bool tts_max_ftp: false
             property bool tts_act_heart: true
             property bool tts_avg_heart: true
             property bool tts_max_heart: false
-            property bool tts_act_jouls: true
             property bool tts_act_elapsed: true
             property bool tts_act_peloton_resistance: false
             property bool tts_avg_peloton_resistance: false
             property bool tts_max_peloton_resistance: false
             property bool tts_act_target_peloton_resistance: true
             property bool tts_act_target_cadence: true
-            property bool tts_act_target_power: true
-            property bool tts_act_target_zone: true
             property bool tts_act_target_speed: true
             property bool tts_act_target_incline: true
-            property bool tts_act_watt_kg: false
-            property bool tts_avg_watt_kg: false
-            property bool tts_max_watt_kg: false
 
             // from version 2.10.96
             property bool fakedevice_elliptical: false
@@ -877,8 +820,6 @@ import AndroidStatusBar 1.0
 				property string tile_preset_inclination_4_color: "grey"
 				property string tile_preset_inclination_5_color: "grey"
 
-            property bool tile_avg_watt_lap_enabled: false
-				property int tile_avg_watt_lap_order: 48
 
             // from version 2.11.87
             property bool nordictrack_t70_treadmill: false
@@ -907,7 +848,6 @@ import AndroidStatusBar 1.0
             property bool horizon_treadmill_disable_pause: false
 
             // from version 2.12.13
-            property bool domyos_bike_500_profile_v1: false
 
             // from version 2.12.14
             property bool ss2k_peloton: false
@@ -919,7 +859,6 @@ import AndroidStatusBar 1.0
             property bool strava_virtual_activity: true
 
             // from version 2.12.29
-            property bool powr_sensor_running_cadence_half_on_strava: false
             property bool nordictrack_ifit_adb_remote: false
             property int floating_height: 210
             property int floating_width: 370
@@ -1028,7 +967,6 @@ import AndroidStatusBar 1.0
             property bool gears_from_bike: false
 
             // from version 2.13.4
-            property bool peloton_spinups_autoresistance: true
 
             // from version 2.13.10
             property bool eslinker_costaway: false
@@ -1038,7 +976,6 @@ import AndroidStatusBar 1.0
             property double treadmill_inclination_ovveride_offset: 0.0
 
             // from version 2.13.15
-            property bool bh_spada_2_watt: false
             property bool tacx_neo2_peloton: false
 
             // from version 2.13.16
@@ -1051,7 +988,6 @@ import AndroidStatusBar 1.0
             property bool gem_module_inclination: false
 
             // from version 2.13.19
-            property bool treadmill_simulate_inclination_with_speed: false
 
             // from version 2.13.26
             property bool garmin_companion: false
@@ -1120,7 +1056,6 @@ import AndroidStatusBar 1.0
             property bool schwinn_bike_resistance_v3: false
 
             // from version 2.15.2
-            property bool watt_ignore_builtin: true
 
             // from version 2.16.4
             property bool proform_treadmill_z1300i: false
@@ -1130,8 +1065,6 @@ import AndroidStatusBar 1.0
             property string ftms_treadmill: "Disabled"
 
             // from version 2.16.6
-            property real ant_speed_offset: 0
-            property real ant_speed_gain: 1
 
             // from version 2.16.12
             property bool proform_rower_sport_rl: false
@@ -1217,15 +1150,12 @@ import AndroidStatusBar 1.0
             property int  tile_step_count_order: 51            
 
             // from version 2.16.44
-            property bool tile_erg_mode_enabled: false
-            property int  tile_erg_mode_order: 52
 
             // from version 2.16.45
             property bool toorx_srx_3500: false  
             property real inclination_delay_seconds: 3.0
 
             // from version 2.16.47
-            property string ergDataPoints: ""
             property bool proform_tdf_10_0: false
             property bool proform_carbon_tl: false
             property bool proform_proshox2: false            
@@ -1234,14 +1164,9 @@ import AndroidStatusBar 1.0
             property bool nordictrack_GX4_5_bike: false            
 
             // from version 2.16.52
-            property real ftp_run: 200.0
-            property bool tile_rss_enabled: false
-            property int  tile_rss_order: 53
-            property string treadmillDataPoints: ""
 
             // from version 2.16.54
             property bool nordictrack_s20i_treadmill: false
-            property bool stryd_speed_instead_treadmill: false
             property bool proform_595i_proshox2: false
 
             // from version 2.16.55
@@ -1257,7 +1182,6 @@ import AndroidStatusBar 1.0
             property bool proform_treadmill_705_cst_V78_239: false
 
             // from version 2.16.62
-            property bool stryd_add_inclination_gain: false
             property bool toorx_bike_srx_500: false
 
             // from version 2.16.66
@@ -1272,7 +1196,6 @@ import AndroidStatusBar 1.0
             property string proform_elliptical_ip: ""
 
             // from version 2.16.69
-            property bool antbike: false
             property bool domyosbike_notfmts: false
 
             // from version 2.16.70
@@ -1282,7 +1205,6 @@ import AndroidStatusBar 1.0
             property bool domyostreadmill_notfmts: false
             property bool zwiftplay_swap: false
             property bool gears_zwift_ratio: false
-            property bool domyos_bike_500_profile_v2: false
             property double gears_offset: 0.0
 
             property bool proform_carbon_tl_PFTL59720: false
@@ -1303,7 +1225,6 @@ import AndroidStatusBar 1.0
             property string gear_wheel_size: "700 x 18C"
             property real gear_circumference: 2070
 
-            property bool watt_bike_emulator: false
 
             property bool restore_specific_gear: false
             property bool skipLocationServicesDialog: false
@@ -1354,7 +1275,6 @@ import AndroidStatusBar 1.0
 
             // from version 2.18.18
             property bool tile_biggears_swap: false
-            property bool treadmill_follow_wattage: false
             property bool fit_file_garmin_device_training_effect: false
             property bool proform_treadmill_705_cst_V80_44: false
 
@@ -1367,51 +1287,9 @@ import AndroidStatusBar 1.0
 
             property bool nordictrack_treadmill_1750_adb: false
 
-            property bool tile_preset_powerzone_1_enabled: false
-            property int tile_preset_powerzone_1_order: 55
-            property real tile_preset_powerzone_1_value: 1.0
-            property string tile_preset_powerzone_1_label: "Zone 1"
-            property string tile_preset_powerzone_1_color: "white"
-
-            property bool tile_preset_powerzone_2_enabled: false
-            property int tile_preset_powerzone_2_order: 56
-            property real tile_preset_powerzone_2_value: 2.0
-            property string tile_preset_powerzone_2_label: "Zone 2"
-            property string tile_preset_powerzone_2_color: "limegreen"
-
-            property bool tile_preset_powerzone_3_enabled: false
-            property int tile_preset_powerzone_3_order: 57
-            property real tile_preset_powerzone_3_value: 3.0
-            property string tile_preset_powerzone_3_label: "Zone 3"
-            property string tile_preset_powerzone_3_color: "gold"
-
-            property bool tile_preset_powerzone_4_enabled: false
-            property int tile_preset_powerzone_4_order: 58
-            property real tile_preset_powerzone_4_value: 4.0
-            property string tile_preset_powerzone_4_label: "Zone 4"
-            property string tile_preset_powerzone_4_color: "orange"
-
-            property bool tile_preset_powerzone_5_enabled: false
-            property int tile_preset_powerzone_5_order: 59
-            property real tile_preset_powerzone_5_value: 5.0
-            property string tile_preset_powerzone_5_label: "Zone 5"
-            property string tile_preset_powerzone_5_color: "darkorange"
-
-            property bool tile_preset_powerzone_6_enabled: false
-            property int tile_preset_powerzone_6_order: 60
-            property real tile_preset_powerzone_6_value: 6.0
-            property string tile_preset_powerzone_6_label: "Zone 6"
-            property string tile_preset_powerzone_6_color: "orangered"
-
-            property bool tile_preset_powerzone_7_enabled: false
-            property int tile_preset_powerzone_7_order: 61
-            property real tile_preset_powerzone_7_value: 7.0
-            property string tile_preset_powerzone_7_label: "Zone 7"
-            property string tile_preset_powerzone_7_color: "red"  
 
             property bool proform_bike_PFEVEX71316_0: false
             property bool real_inclination_to_virtual_treamill_bridge: false
-            property bool stryd_inclination_instead_treadmill: false
 
             // 2.18.20
             property bool domyos_elliptical_fmts: false
@@ -1438,7 +1316,6 @@ import AndroidStatusBar 1.0
 
             // 2.18.26
             property bool proform_performance_300i: false
-            property bool android_antbike: false
 
             property bool tile_coretemperature_enabled: false
             property int  tile_coretemperature_order: 67
@@ -1465,7 +1342,6 @@ import AndroidStatusBar 1.0
             
             // 2.19.1            
             property bool proform_treadmill_995i: false
-            property bool rogue_echo_bike: false
             property int fit_file_garmin_device_training_effect_device: 3122            
 
             // 2.19.2
@@ -1474,11 +1350,7 @@ import AndroidStatusBar 1.0
 
 
             // 2.20.3
-            property bool technogym_group_cycle: false
-            property int ant_bike_device_number: 0
-            property int ant_heart_device_number: 0
             property int peloton_treadmill_walk_level: 1
-            property int pid_heart_zone_erg_mode_watt_step: 5            
             
             // Automatic Virtual Shifting settings
             property bool automatic_virtual_shifting_enabled: false
@@ -1506,8 +1378,6 @@ import AndroidStatusBar 1.0
             property bool calories_active_only: false
             property real height: 175.0
             property bool calories_from_hr: false
-            property int bike_power_offset: 0
-            property int chart_display_mode: 0
             property bool zwift_play_vibration: true
             property bool toorxtreadmill_discovery_completed: false
             property bool taurua_ic90: false
@@ -1551,7 +1421,6 @@ import AndroidStatusBar 1.0
             property string garmin_domain: "garmin.com"
             property string garmin_last_refresh: ""
             
-            property bool power_sensor_cadence_instead_treadmill: false            
             
             property string garmin_oauth1_token: ""
             property string garmin_oauth1_token_secret: ""
@@ -1563,9 +1432,6 @@ import AndroidStatusBar 1.0
 			property real peloton_treadmill_running_min_speed: 0.0
 			property bool trainprogram_auto_lap_on_segment: false
             
-			property bool power_avg_3s: false
-			property bool tile_power_avg_enabled: false
-			property int tile_power_avg_order: 77
 			property bool life_fitness_ic5: false
 			property bool technogym_bike: false
             
@@ -1588,12 +1454,10 @@ import AndroidStatusBar 1.0
                     
             property bool nordictrack_vr21: false
             property bool gymstick_gx6_0_elliptical: false
-            property bool cadence_sensor_as_treadmill: false
             property bool proform_trainer_8_0_pftl59721_int_0: false
             property bool proform_carbon_tl_PFTL59723_6: false
-            property bool toputure_teb1: false
             property string ios_live_activity_compact_leading_metric: "Heart Rate"
-            property string ios_live_activity_compact_trailing_metric: "Watt"
+            property string ios_live_activity_compact_trailing_metric: "Speed"
             property bool nordictrack_treadmill_commercial_le: false
 
             property bool umay_s100_treadmill: false
@@ -1603,15 +1467,8 @@ import AndroidStatusBar 1.0
             property bool cycplus_bc2_controller: false
       		property bool lifespan_bike: false
       
-            property double power_sensor_speed_inclination_coeff_a: 0.0
-            property double power_sensor_speed_inclination_coeff_b: 0.0
             
             property bool proform_carbon_tlx_v84_314_treadmill: false            
-            property bool cscbike_custom_resistance_power_table: false
-            property real cscbike_custom_resistance_level_1: 1
-            property real cscbike_custom_watt_1: 100
-            property real cscbike_custom_resistance_level_2: 15
-            property real cscbike_custom_watt_2: 300
             property bool applewatch_as_treadmill_speed: false
             property bool gears_custom_table_enabled: false
             property string gears_custom_table: "1|1\n2|2\n3|3\n4|4\n5|5\n6|6\n7|7\n8|8\n9|9\n10|10\n11|11\n12|12\n13|13\n14|14\n15|15\n16|16\n17|17\n18|18\n19|19\n20|20\n21|21\n22|22\n23|23\n24|24"                        
@@ -1630,10 +1487,6 @@ import AndroidStatusBar 1.0
             property string shortcut_peloton_resistance_minus: ""
             property string shortcut_target_resistance_plus: ""
             property string shortcut_target_resistance_minus: ""
-            property string shortcut_target_power_plus: ""
-            property string shortcut_target_power_minus: ""
-            property string shortcut_target_zone_plus: ""
-            property string shortcut_target_zone_minus: ""
             property string shortcut_target_speed_plus: ""
             property string shortcut_target_speed_minus: ""
             property string shortcut_target_incline_plus: ""
@@ -1655,8 +1508,6 @@ import AndroidStatusBar 1.0
             property string shortcut_avs_cruise: ""
             property string shortcut_avs_climb: ""
             property string shortcut_avs_sprint: ""
-            property string shortcut_power_avg: ""
-            property string shortcut_erg_mode: ""
             property string shortcut_auto_resistance: ""
             property string shortcut_preset_resistance_1: ""
             property string shortcut_preset_resistance_2: ""
@@ -1673,17 +1524,8 @@ import AndroidStatusBar 1.0
             property string shortcut_preset_inclination_3: ""
             property string shortcut_preset_inclination_4: ""
             property string shortcut_preset_inclination_5: ""
-            property string shortcut_preset_powerzone_1: ""
-            property string shortcut_preset_powerzone_2: ""
-            property string shortcut_preset_powerzone_3: ""
-            property string shortcut_preset_powerzone_4: ""
-            property string shortcut_preset_powerzone_5: ""
-            property string shortcut_preset_powerzone_6: ""
-            property string shortcut_preset_powerzone_7: ""
             property string shortcut_lap: ""
             property string shortcut_start_stop: ""
-            property string garmin_last_seen_cycling_ftp_create_time: ""
-            property string garmin_last_seen_running_ftp_create_time: ""
             property bool horizon_treadmill_omega_z: false
 
             property string app_language: "auto"
@@ -1695,7 +1537,6 @@ import AndroidStatusBar 1.0
             property real trainprogram_cooldown_speed: 420
             property real trainprogram_rest_speed: 420
             property bool trainprogram_sound_on_segment: false
-            property bool tile_watt_color_enabled: true
             property bool tile_pace_color_enabled: true                        
             property bool treadmill_force_running_activity: false
             property bool proform_treadmill_105_cst: false
@@ -2314,80 +2155,6 @@ import AndroidStatusBar 1.0
                     RowLayout {
                         spacing: 10
                         Label {
-                            id: labelFTP
-                            text: qsTr("FTP value:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: ftpTextField
-                            text: settings.ftp
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhDigitsOnly
-                            onAccepted: settings.ftp = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okFTPButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.ftp = ftpTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("If you train to specific output (or watts) levels, for example in Peloton Power Zone classes,and have taken an FTP test (Functional Threshold Power), enter your FTP here. This number is used to calculate your Power Zones (Zones 1 to 7 for Peloton and 1 to 6 for Zwift).")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            text: qsTr("Critical Power Run value:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: ftpRunTextField
-                            text: settings.ftp_run
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhDigitsOnly
-                            onAccepted: settings.ftp_run = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.ftp_run = ftpRunTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("If you train to specific output (or watts) levels, for example with Stryd,and have taken an CP test (Critical Power Test), enter your CP here. This number is used to calculate your RSS.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    RowLayout {
-                        spacing: 10
-                        Label {
                             id: labelNickname
                             text: qsTr("Nickname:")
                             Layout.fillWidth: true
@@ -2722,7 +2489,7 @@ import AndroidStatusBar 1.0
                     }
 
                     Label {
-                        text: qsTr("Enable to calculate calories based on heart rate data instead of power. Requires heart rate sensor connection for accurate calorie estimation.")
+                        text: qsTr("Calculate calories using heart rate data. Requires a connected heart rate sensor.")
                         font.bold: true
                         font.italic: true
                         font.pixelSize: Qt.application.font.pixelSize - 2
@@ -3017,127 +2784,6 @@ import AndroidStatusBar 1.0
                                 }
                             }
 
-                            AccordionElement {
-                                id: powerFromHeartRateAccordion
-                                title: qsTr("Power from Heart Rate Options")
-                                indicatRectColor: Material.color(Material.Grey)
-                                textColor: Material.color(Material.Yellow)
-                                color: Material.backgroundColor
-                                accordionContent: ColumnLayout {
-                                    spacing: 0
-                                    RowLayout {
-                                        spacing: 10
-                                        Label {
-                                            id: labelPowerFromHeartPWR1
-                                            text: qsTr("Session 1 Watt:")
-                                            Layout.fillWidth: true
-                                        }
-                                        TextField {
-                                            id: powerFromHeartPWR1TextField
-                                            text: settings.power_hr_pwr1
-                                            horizontalAlignment: Text.AlignRight
-                                            Layout.fillHeight: false
-                                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                            inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                            onAccepted: settings.power_hr_pwr1 = text
-                                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                        }
-                                        Button {
-                                            id: okPowerFromHeartPWR1
-                                            text: qsTr("OK")
-                                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                            onClicked: { settings.power_hr_pwr1 = powerFromHeartPWR1TextField.text; toast.show(qsTr("Setting saved!")); }
-                                        }
-                                    }
-
-                                    RowLayout {
-                                        spacing: 10
-                                        Label {
-                                            id: labelPowerFromHeartHR1
-                                            text: qsTr("Session 1 HR:")
-                                            Layout.fillWidth: true
-                                        }
-                                        TextField {
-                                            id: powerFromHeartHR1TextField
-                                            text: settings.power_hr_hr1
-                                            horizontalAlignment: Text.AlignRight
-                                            Layout.fillHeight: false
-                                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                            inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                            onAccepted: settings.power_hr_hr1 = text
-                                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                        }
-                                        Button {
-                                            id: okPowerFromHeartHR1
-                                            text: qsTr("OK")
-                                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                            onClicked: { settings.power_hr_hr1 = powerFromHeartHR1TextField.text; toast.show(qsTr("Setting saved!")); }
-                                        }
-                                    }
-
-                                    RowLayout {
-                                        spacing: 10
-                                        Label {
-                                            id: labelPowerFromHeartPWR2
-                                            text: qsTr("Session 2 Watt:")
-                                            Layout.fillWidth: true
-                                        }
-                                        TextField {
-                                            id: powerFromHeartPWR2TextField
-                                            text: settings.power_hr_pwr2
-                                            horizontalAlignment: Text.AlignRight
-                                            Layout.fillHeight: false
-                                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                            inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                            onAccepted: settings.power_hr_pwr2 = text
-                                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                        }
-                                        Button {
-                                            id: okPowerFromHeartPWR2
-                                            text: qsTr("OK")
-                                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                            onClicked: { settings.power_hr_pwr2 = powerFromHeartPWR2TextField.text; toast.show(qsTr("Setting saved!")); }
-                                        }
-                                    }
-
-                                    RowLayout {
-                                        spacing: 10
-                                        Label {
-                                            id: labelPowerFromHeartHR2
-                                            text: qsTr("Session 2 HR:")
-                                            Layout.fillWidth: true
-                                        }
-                                        TextField {
-                                            id: powerFromHeartHR2TextField
-                                            text: settings.power_hr_hr2
-                                            horizontalAlignment: Text.AlignRight
-                                            Layout.fillHeight: false
-                                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                            inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                            onAccepted: settings.power_hr_hr2 = text
-                                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                        }
-                                        Button {
-                                            id: okPowerFromHeartHR2
-                                            text: qsTr("OK")
-                                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                            onClicked: { settings.power_hr_hr2 = powerFromHeartHR2TextField.text; toast.show(qsTr("Setting saved!")); }
-                                        }
-                                    }
-                                }
-                            }
-                            Label {
-                                text: qsTr("Expand the bars to the right to display the options under this setting. These settings are used to calculate power (watts) for bikes that do not have power meters. Instead QZ estimates power from your cadence and heart rate. You can calibrate how QZ calculates your power from heart rate as follows: If you know that at a stable pace you produce 100W of power at a heart rate of 150 BPM and 150W at 170 BPM, you can add these values under Sessions 1 and 2 Watt and HR and QZ will calculate your power based on that trend line.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
                         }
                     }               
                 }
@@ -3154,32 +2800,6 @@ import AndroidStatusBar 1.0
                 //anchors.topMargin: 10
                 accordionContent: ColumnLayout {
                     spacing: 0
-                    IndicatorOnlySwitch {
-                        id: speedPowerBasedDelegate
-                        text: qsTr("Speed calculates on Power")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.speed_power_based
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: settings.speed_power_based = checked
-                    }
-                    Label {
-                        text: qsTr("QZ calculates speed based on your pedal cadence (RPMs). Enable this setting if you want your speed to be calculated based on your power output (watts), as Zwift and some other apps do. Default is off.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     IndicatorOnlySwitch {
                         id: gearsRestoreDelegate
@@ -3391,33 +3011,6 @@ import AndroidStatusBar 1.0
                             onClicked: { settings.cwGain = cwGainTextField.text; toast.show(qsTr("Setting saved!")); }
                         }
                     }
-                    IndicatorOnlySwitch {
-                        id: zwiftErgDelegate
-                        text: qsTr("Zwift Workout/Erg Mode")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.zwift_erg
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: settings.zwift_erg = checked
-                    }
-
-                    Label {
-                        text: qsTr("Enable this setting ONLY when using Zwift in ERG (workout) Mode. QZ will communicate the target resistance (or automatically adjust your resistance if your bike has this capability) to match the target watts based on your cadence (RPM). In ERG Mode, the changes in road slope will not affect target resistance, as is the case in Simulation Mode. Default is off.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }                    
 
                     RowLayout {
                         spacing: 10
@@ -3457,43 +3050,6 @@ import AndroidStatusBar 1.0
                         color: Material.color(Material.Lime)
                     }
 
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelBikePowerOffset
-                            text: qsTr("Zwift Power Offset (W):")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: bikePowerOffsetTextField
-                            text: settings.bike_power_offset
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhDigitsOnly
-                            onAccepted: settings.bike_power_offset = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okBikePowerOffsetButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.bike_power_offset = bikePowerOffsetTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("Add an offset in watts to the requested power from apps like Zwift. Positive values increase power, negative values decrease it. Default is 0.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     RowLayout {
                         spacing: 10
@@ -3533,157 +3089,6 @@ import AndroidStatusBar 1.0
                         color: Material.color(Material.Lime)
                     }
 
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelZwiftErgFilter
-                            text: qsTr("Zwift ERG Watt Up Filter:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: zwiftErgFilterTextField
-                            text: settings.zwift_erg_filter
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhFormattedNumbersOnly
-                            onAccepted: settings.zwift_erg_filter = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okzwiftErgFilterButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.zwift_erg_filter = zwiftErgFilterTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("In ERG Mode or during a Power Zone workout on Peloton, the app sends a “target output” request. If the output requested doesn’t match your current output (calculated using cadence and resistance level), your target resistance will change to help you get closer to the target output. If the filter is set to higher values, you will get less adjustment of the target resistance and you will have to increase your cadence to match the target output. The Up and Down Watt Filter settings are the upper and lower margin before the adjustment of resistance is communicated. Example: if the up and down filters are set to 10 and the target output is 100 watts, a change of your resistance will only be communicated if your bike produces less than 90 watts or more than 110 watts. Default is 10.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelZwiftErgDownFilter
-                            text: qsTr("Zwift ERG Watt Down Filter:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: zwiftErgDownFilterTextField
-                            text: settings.zwift_erg_filter_down
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhFormattedNumbersOnly
-                            onAccepted: settings.zwift_erg_filter_down = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okzwiftErgDownFilterButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.zwift_erg_filter_down = zwiftErgDownFilterTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("See above. Default is 10.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelZwiftErgResistanceDown
-                            text: qsTr("Min. Resistance:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: zwiftErgResistanceDownTextField
-                            text: settings.zwift_erg_resistance_down
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhFormattedNumbersOnly
-                            onAccepted: settings.zwift_erg_resistance_down = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okzwiftErgResistanceDownButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.zwift_erg_resistance_down = zwiftErgResistanceDownTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("Use this setting to set a minimum target resistance. For example, if you do not want to ride at a resistance below 25, enter a value of 25 and QZ will not set a target resistance below 25. Default is 0.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelZwiftErgResistanceUp
-                            text: qsTr("Max. Resistance:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: zwiftErgResistanceUpTextField
-                            text: settings.zwift_erg_resistance_up
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhFormattedNumbersOnly
-                            onAccepted: settings.zwift_erg_resistance_up = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okzwiftErgResistanceUpButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.zwift_erg_resistance_up = zwiftErgResistanceUpTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("Similar to the above, but sets a maximum target resistance. Default is 999.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     RowLayout {
                         spacing: 10
@@ -4373,32 +3778,6 @@ import AndroidStatusBar 1.0
                             RowLayout {
                                 spacing: 10
                                 Label {
-                                    id: labelEchelonWattTable
-                                    text: qsTr("Watt Profile:")
-                                    Layout.fillWidth: true
-                                }
-                                ComboBox {
-                                    id: echelonWattTableTextField
-                                    model: [ "Echelon", "mgarcea" ]
-                                    displayText: settings.echelon_watttable
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onActivated: {
-                                        console.log("combomodel activated" + echelonWattTableTextField.currentIndex)
-                                        displayText = echelonWattTableTextField.currentValue
-                                    }
-
-                                }
-                                Button {
-                                    id: okEchelonWattTable
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.echelon_watttable = echelonWattTableTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
-                            RowLayout {
-                                spacing: 10
-                                Label {
                                     id: labelEchelonResistanceGain
                                     text: qsTr("Resistance Gain:")
                                     Layout.fillWidth: true
@@ -4890,32 +4269,6 @@ import AndroidStatusBar 1.0
                                 Layout.fillWidth: true
                                 onClicked: settings.domyos_bike_display_calories = checked
                             }
-                            IndicatorOnlySwitch {
-                                text: qsTr("Bike 500 wattage profile")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.domyos_bike_500_profile_v1
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: { settings.domyos_bike_500_profile_v1 = checked; settings.domyos_bike_500_profile_v2 = false; }
-                            }
-                            IndicatorOnlySwitch {
-                                text: qsTr("Bike 500 wattage profile v2")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.domyos_bike_500_profile_v2
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: { settings.domyos_bike_500_profile_v2 = checked; settings.domyos_bike_500_profile_v1 = false; }
-                            }
                         }
                     }                
                     AccordionElement {
@@ -5137,20 +4490,6 @@ import AndroidStatusBar 1.0
                                 }
                             }
 
-                            IndicatorOnlySwitch {
-                                id: proformTdfJonseedWattdelegate
-                                text: qsTr("TDF CBC Jonseed watt table")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.proform_tdf_jonseed_watt
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: settings.proform_tdf_jonseed_watt = checked
-                            }
 
                             RowLayout {
                                 spacing: 10
@@ -5518,314 +4857,13 @@ import AndroidStatusBar 1.0
                                 Layout.fillWidth: true
                                 onClicked: { settings.technogym_bike = checked; window.settings_restart_to_apply = true; }
                             }
-                            IndicatorOnlySwitch {
-                                id: technogymGroupCycleDelegate
-                                text: qsTr("Group Cycle")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.technogym_group_cycle
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: { 
-                                    settings.technogym_group_cycle = checked; 
-                                    if (checked) {
-                                        settings.android_antbike = true;
-                                    }
-                                    window.settings_restart_to_apply = true; 
-                                }
-                            }
                             
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("ANT+ Bike Device Number (0=Auto):")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: antBikeDeviceNumberTextField
-                                    text: settings.ant_bike_device_number
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhDigitsOnly
-                                    onAccepted: settings.ant_bike_device_number = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    id: okAntBikeDeviceNumberButton
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.ant_bike_device_number = antBikeDeviceNumberTextField.text; window.settings_restart_to_apply = true; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
                         }
                     }
 
-                    AccordionElement {
-                        id: toputureBikeAccordion
-                        title: "Toputure Bikes"
-                        indicatRectColor: Material.color(Material.Grey)
-                        textColor: Material.color(Material.Yellow)
-                        color: Material.backgroundColor
-                        accordionContent: ColumnLayout {
-                            spacing: 0
-                            IndicatorOnlySwitch {
-                                id: toputureTeb1Delegate
-                                text: "Toputure TEB1"
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.toputure_teb1
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: settings.toputure_teb1 = checked
-                            }
-
-                            Label {
-                                text: qsTr("Enable the special SPORT01 instant power formula only for the Toputure TEB1 bike. Leave disabled to use the standard FTMS instant power reported by the device.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-                        }
-                    }
                 }                
             }
 
-            AccordionElement {
-                id: uiAntOptionsAccordion
-                title: qsTr("Ant+ Options (only for some Android)")
-                indicatRectColor: Material.color(Material.Grey)
-                textColor: Material.color(Material.Grey)
-                color: Material.backgroundColor
-                //width: 640
-                //anchors.top: acc1.bottom
-                //anchors.topMargin: 10
-                accordionContent:  ColumnLayout {
-                    spacing: 0
-
-                    Label {
-                        id: antSpeedLabel
-                        text: qsTr("Set 100mm as wheel circumference in settings of ant+ speed sensor")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        color: Material.color(Material.Red)
-                        Layout.fillWidth: true
-                    }
-
-                    IndicatorOnlySwitch {
-                        id: antCadenceDelegate
-                        text: qsTr("Ant+ Cadence")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.ant_cadence
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: { settings.ant_cadence = checked; window.settings_restart_to_apply = true; }
-                    }
-
-                    Label {
-                        text: qsTr("Turn this on if you need to use ANT+ along with Bluetooth. Power is also sent.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            text: qsTr("ANT+ Speed Offset")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: antspeedOffsetTextField
-                            text: settings.ant_speed_offset
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhDigitsOnly
-                            onAccepted: settings.ant_speed_offset = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.ant_speed_offset = antspeedOffsetTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("You can increase/decrease your speed sent over ANT+. The number you enter as an Offset adds that amount to your speed.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            text: qsTr("ANT+ Speed Gain:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: antspeedGainTextField
-                            text: settings.ant_speed_gain
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            //inputMethodHints: Qt.ImhFormattedNumbersOnly
-                            onAccepted: settings.ant_speed_gain = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.ant_speed_gain = antspeedGainTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("You can increase/decrease your speed output sent over ANT+. For example, to use a rower to cycle in Zwift, you could double your speed output to better match your cycling speed. The number you enter is a multiplier applied to your actual speed.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    IndicatorOnlySwitch {
-                        id: antHeartDelegate
-                        text: qsTr("Ant+ Heart")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.ant_heart
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: { settings.ant_heart = checked; window.settings_restart_to_apply = true; }
-                    }
-
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            text: qsTr("ANT+ Heart Device Number (0=Auto):")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: antHeartDeviceNumberTextField
-                            text: settings.ant_heart_device_number
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhDigitsOnly
-                            onAccepted: settings.ant_heart_device_number = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okAntHeartDeviceNumberButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.ant_heart_device_number = antHeartDeviceNumberTextField.text; window.settings_restart_to_apply = true; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("This setting enables receiving the heart rate from an external HRM over ANT+ instead of from QZ.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    IndicatorOnlySwitch {
-                        text: qsTr("Ant+ Bike")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.android_antbike
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: { settings.android_antbike = checked; window.settings_restart_to_apply = true; }
-                    }
-
-                    Label {
-                        text: qsTr("Use this to connect to your bike using ANT+ instead of Bluetooth. Default: Disabled")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-                }
-            }
-/*
-            IndicatorOnlySwitch {
-                id: antGarminDelegate
-                text: qsTr("Ant+ Garmin Compatibility")
-                spacing: 0
-                bottomPadding: 0
-                topPadding: 0
-                rightPadding: 0
-                leftPadding: 0
-                clip: false
-                checked: settings.ant_garmin
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                Layout.fillWidth: true
-                onClicked: settings.ant_garmin = checked
-            }*/
 
             NewPageElement {
                 id: tileOptionsAccordion
@@ -6058,43 +5096,6 @@ import AndroidStatusBar 1.0
                         onClicked: openFloatingWindowBrowser();
                     }
 
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelChartDisplayMode
-                            text: qsTr("Chart Display Mode:")
-                            Layout.fillWidth: true
-                        }
-                        ComboBox {
-                            id: chartDisplayModeComboBox
-                            model: ["Both Charts", "Heart Rate Only", "Power Only"]
-                            currentIndex: settings.chart_display_mode
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onActivated: {
-                                console.log("chart_display_mode activated" + chartDisplayModeComboBox.currentIndex)
-                            }
-                        }
-                        Button {
-                            id: okChartDisplayModeButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.chart_display_mode = chartDisplayModeComboBox.currentIndex; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("Choose which charts to display in the footer: both heart rate and power charts, only heart rate chart, or only power chart.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     RowLayout {
                         spacing: 10
@@ -6139,7 +5140,7 @@ import AndroidStatusBar 1.0
                     }
 
                     Label {
-                        text: qsTr("iOS only: choose which two metrics are shown in the compact Dynamic Island bar for Live Activities. Default is Heart Rate on the left and Watt on the right.")
+                        text: qsTr("iOS only: choose which two metrics are shown in the compact Dynamic Island bar for Live Activities. Default is Heart Rate on the left and Speed on the right.")
                         font.bold: true
                         font.italic: true
                         font.pixelSize: Qt.application.font.pixelSize - 2
@@ -6672,81 +5673,6 @@ import AndroidStatusBar 1.0
                         color: Material.color(Material.Lime)
                     }
 
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelPZPUsername
-                            text: qsTr("PZP Username:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: pzpUsernameTextField
-                            text: settings.pzp_username
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onAccepted: settings.pzp_username = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okPZPUsernameButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.pzp_username = pzpUsernameTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("As of 4/1/2022, this feature is broken due to a Power Zone Pack (PZP) website change. Leave (or change back to) the default of “username” (without quotation marks, all lowercase and all one word) until further notice.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelPZPPassword
-                            text: qsTr("PZP Password:") + ((rootItem.pzpLogin===-1)?"":(rootItem.pzpLogin===1?"\u2705":"\u274c"))
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: pzpPasswordTextField
-                            text: settings.pzp_password
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhHiddenText
-                            echoMode: TextInput.PasswordEchoOnEdit
-                            onAccepted: settings.pzp_password = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okPZPPasswordButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.pzp_password = pzpPasswordTextField.text; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("As of 4/1/2022, this feature is broken due to a Power Zone Pack (PZP) website change. Leave this setting blank until further notice.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     RowLayout {
                         spacing: 10
@@ -7067,32 +5993,6 @@ import AndroidStatusBar 1.0
                         color: Material.color(Material.Lime)
                     }
 
-                    IndicatorOnlySwitch {
-                        text: qsTr("Spinups Autoresistance")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.peloton_spinups_autoresistance
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: settings.peloton_spinups_autoresistance = checked
-                    }
-
-                    Label {
-                        text: qsTr("By default, QZ treats Spin-UPS in Power Zone rides as an increasing ramp to warm you up. You can disable this, to leave the resistance up to you.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     IndicatorOnlySwitch {
                         id: pelotonWorkoutOCRDelegate
@@ -7278,69 +6178,6 @@ import AndroidStatusBar 1.0
                         visible: false
                     }
 
-                    IndicatorOnlySwitch {
-                        text: qsTr("Get Gears from Zwift")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.zwift_play_emulator
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: {
-                             if (checked && !settings.zwift_play_emulator) {  // Only show dialog when enabling
-                                 if (settings.zwift_play || settings.zwift_click) {
-                                     zwiftPlaySettingsDialog.visible = true;
-                                 }
-                                 settings.watt_bike_emulator = false;
-                             }
-                             window.settings_restart_to_apply = true;
-                             settings.zwift_play_emulator = checked;
-                         }
-                    }
-
-                    Label {
-                        text: qsTr("This setting bring virtual gearing from zwift to all the bikes directly from the Zwift interface. You have to configure Zwift: Wahoo virtual device from QZ as for power and cadence, and your QZ device as resistance. MUST be disabled for Mywhoosh app. Default: disabled.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-/*
-                    IndicatorOnlySwitch {
-                        text: qsTr("Show Gears to Zwift Only")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.watt_bike_emulator
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: { settings.watt_bike_emulator = checked; if(checked) { settings.zwift_play_emulator = false; } window.settings_restart_to_apply = true; }
-                    }
-
-                    Label {
-                        text: qsTr("This setting shows the actual gear from QZ to Zwift. Negative values are not displayed on Zwift and it could have also limitation to higher gain value. Default: disabled.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-*/
 
                     IndicatorOnlySwitch {
                         text: qsTr("Align Gear Value on Both Zwift and QZ")
@@ -7602,32 +6439,6 @@ import AndroidStatusBar 1.0
                         color: Material.color(Material.Lime)
                     }
 
-                    IndicatorOnlySwitch {
-                        text: qsTr("Ant+ Bike Over Garmin Watch")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.antbike
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: { settings.antbike = checked; window.settings_restart_to_apply = true; }
-                    }
-
-                    Label {
-                        text: qsTr("Use your garmin watch to get the ANT+ metrics from a bike")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     Label {
                         id: garminConnectLabel
@@ -8459,32 +7270,6 @@ import AndroidStatusBar 1.0
                         color: Material.color(Material.Lime)
                     }
 
-                    IndicatorOnlySwitch {
-                        text: qsTr("Treadmill Auto-adjust speed by power")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.treadmill_follow_wattage
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: settings.treadmill_follow_wattage = checked
-                    }
-
-                    Label {
-                        text: qsTr("Treadmill only: Automatically adjusts speed to maintain consistent power output. Speed adjustments occur on incline changes and adapt to manual speed modifications.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     RowLayout {
                         spacing: 10
@@ -8931,42 +7716,6 @@ import AndroidStatusBar 1.0
                         color: Material.color(Material.Lime)
                     }
 
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelPidHeartZoneErgModeWattStep
-                            text: qsTr("ERG Mode Watt Step:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: pidHeartZoneErgModeWattStepTextField
-                            text: settings.pid_heart_zone_erg_mode_watt_step.toString()
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhDigitsOnly
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okPidHeartZoneErgModeWattStep
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.pid_heart_zone_erg_mode_watt_step = parseInt(pidHeartZoneErgModeWattStepTextField.text); toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("Set the wattage step increment for ERG mode heart rate zone training. Default: 5 watts.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     IndicatorOnlySwitch {
                         id: trainprogramRandomDelegate
@@ -9611,32 +8360,6 @@ import AndroidStatusBar 1.0
                         color: Material.color(Material.Lime)
                     }
 
-                    IndicatorOnlySwitch {
-                        text: qsTr("Simulate Inclination with Speed")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.treadmill_simulate_inclination_with_speed
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: settings.treadmill_simulate_inclination_with_speed = checked
-                    }
-
-                    Label {
-                        text: qsTr("For treadmills without inclination: turning this on and QZ will transform inclination requests into speed changes.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     Label {
                         text: qsTr("FTMS Treadmill:")
@@ -11120,19 +9843,6 @@ import AndroidStatusBar 1.0
                         onClicked: { settings.bh_spada_2 = checked; window.settings_restart_to_apply = true; }
                     }
 
-                    IndicatorOnlySwitch {
-                        text: qsTr("BH SPADA wattage")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.bh_spada_2_watt
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: { settings.bh_spada_2_watt = checked; window.settings_restart_to_apply = true; }
-                    }                    
 
                     IndicatorOnlySwitch {
                         text: "Toorx SRX 500"
@@ -11961,81 +10671,6 @@ import AndroidStatusBar 1.0
                         color: Material.color(Material.Lime)
                     }
 
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelwattOffset
-                            text: qsTr("Watt Offset:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: wattOffsetTextField
-                            text: settings.watt_offset
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            inputMethodHints: Qt.ImhDigitsOnly
-                            onAccepted: settings.watt_offset = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okwattOffsetButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.watt_offset = wattOffsetTextField.text; settings.treadmillDataPoints = ""; settings.ergDataPoints = ""; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("You can increase/decrease your watt output for moving your avatar faster/slower in Zwift or other similar apps as a way of calibrating your equipment. The number you enter as an Offset adds that amount to your watts.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelwattGain
-                            text: qsTr("Watt Gain:")
-                            Layout.fillWidth: true
-                        }
-                        TextField {
-                            id: wattGainTextField
-                            text: settings.watt_gain
-                            horizontalAlignment: Text.AlignRight
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            //inputMethodHints: Qt.ImhFormattedNumbersOnly
-                            onAccepted: settings.watt_gain = text
-                            onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        }
-                        Button {
-                            id: okWattGainButton
-                            text: qsTr("OK")
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            onClicked: { settings.watt_gain = wattGainTextField.text; settings.treadmillDataPoints = ""; settings.ergDataPoints = ""; toast.show(qsTr("Setting saved!")); }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("You can increase/decrease your watt output for moving your avatar faster/slower in Zwift or other similar apps as a way of calibrating your equipment. For example, to use a rower to cycle in Zwift, you could double your watt output to better match your cycling speed by entering 2. The number you enter is a multiplier applied to your actual watts.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     RowLayout {
                         spacing: 10
@@ -12063,7 +10698,7 @@ import AndroidStatusBar 1.0
                     }
 
                     Label {
-                        text: qsTr("You can increase/decrease your speed for moving your avatar faster/slower in Zwift if your equipment outputs speed but not watts. The number you enter as an Offset adds that amount to your speed.")
+                        text: qsTr("Add this offset to the speed reported by your equipment.")
                         font.bold: true
                         font.italic: true
                         font.pixelSize: Qt.application.font.pixelSize - 2
@@ -12102,7 +10737,7 @@ import AndroidStatusBar 1.0
                     }
 
                     Label {
-                        text: qsTr("You can increase/decrease your speed output for moving your avatar faster/slower in Zwift or other apps as a way of calibrating your equipment if your equipment outputs speed but not watts. For example, to use a rower to cycle in Zwift, you could double your speed output to better match your cycling speed. The number you enter is a multiplier applied to your actual speed.")
+                        text: qsTr("Multiply the speed reported by your equipment by this value to calibrate it.")
                         font.bold: true
                         font.italic: true
                         font.pixelSize: Qt.application.font.pixelSize - 2
@@ -12178,7 +10813,7 @@ import AndroidStatusBar 1.0
                     }
 
                     Label {
-                        text: qsTr("You can increase/decrease your cadence output as a way of calibrating your equipment if your equipment outputs cadence but not watts. The number you enter is a multiplier applied to your actual cadence.")
+                        text: qsTr("Multiply the cadence reported by your equipment by this value to calibrate it.")
                         font.bold: true
                         font.italic: true
                         font.pixelSize: Qt.application.font.pixelSize - 2
@@ -12424,78 +11059,6 @@ import AndroidStatusBar 1.0
                         color: Material.color(Material.Lime)
                     }
 
-                    RowLayout {
-                        spacing: 10
-                        Label {
-                            id: labelPowerAvg
-                            text: qsTr("Power Averaging Mode:")
-                            Layout.fillWidth: true
-                        }
-                        ComboBox {
-                            id: powerAvgCombo
-                            model: ["Off", "3 seconds", "5 seconds"]
-                            Layout.fillHeight: false
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            currentIndex: {
-                                if (settings.power_avg_3s) return 1;
-                                if (settings.power_avg_5s) return 2;
-                                return 0;
-                            }
-                            onActivated: {
-                                if (currentIndex === 0) {
-                                    settings.power_avg_3s = false;
-                                    settings.power_avg_5s = false;
-                                } else if (currentIndex === 1) {
-                                    settings.power_avg_3s = true;
-                                    settings.power_avg_5s = false;
-                                } else if (currentIndex === 2) {
-                                    settings.power_avg_3s = false;
-                                    settings.power_avg_5s = true;
-                                }
-                            }
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("If the power output/watts your equipment sends to QZ is quite variable, this setting will result in smoother Power Zone graphs. This is also helpful for use with Power Meter Pedals. Uses harmonic averaging which smooths power spikes better than arithmetic averaging. If any reading is 0, power immediately becomes 0. Default is Off.\n\nIMPORTANT NOTES:\n- No Average/smooth in Hometrainer config for standard home trainers which work at 1hz (No race mode available)\n- Disable Average on 3rd party apps (Rouvy/Zwift/MyWhoosh etc) or select 1sec in the app!\n- Need to use QZ in bridge mode!\n- For Elite home trainers or those who have a race mode (10hz), if it's not sufficient for some users, using Elite/Hometrainer smoothing in addition to QZ smoothing will improve it.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    IndicatorOnlySwitch {
-                        id: instantPowerOnPause
-                        text: qsTr("Instant Power on Pause")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.instant_power_on_pause
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: settings.instant_power_on_pause = checked
-                    }
-
-                    Label {
-                        text: qsTr("Enables the calculation of watts, even while in Pause mode. Default is off.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
 
                     IndicatorOnlySwitch {
                         id: zwiftNegativeIncliantionX2Delegate
@@ -12704,33 +11267,6 @@ import AndroidStatusBar 1.0
 
 
                     IndicatorOnlySwitch {
-                        text: qsTr("Disable wattage from machinery")
-                        spacing: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        rightPadding: 0
-                        leftPadding: 0
-                        clip: false
-                        checked: settings.watt_ignore_builtin
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        onClicked: settings.watt_ignore_builtin = checked
-                    }
-
-                    Label {
-                        text: qsTr("This prevents your fitness device from sending its wattage calculation to QZ and defaults to QZ’s more accurate calculation.")
-                        font.bold: true
-                        font.italic: true
-                        font.pixelSize: Qt.application.font.pixelSize - 2
-                        textFormat: Text.PlainText
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.fillWidth: true
-                        color: Material.color(Material.Lime)
-                    }
-
-                    IndicatorOnlySwitch {
                         text: qsTr("Use Resistance instead of Inclination")
                         spacing: 0
                         bottomPadding: 0
@@ -12827,7 +11363,7 @@ import AndroidStatusBar 1.0
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         Layout.fillWidth: true
                         color: Material.color(Material.Lime)
-                    }                    
+                    }
                 }
             }
 
@@ -12876,44 +11412,10 @@ import AndroidStatusBar 1.0
                                 Layout.fillWidth: true
                                 onClicked: {
                                     settings.cadence_sensor_as_bike = checked;
-                                    if (checked)
-                                        settings.cadence_sensor_as_treadmill = false;
                                     window.settings_restart_to_apply = true;
                                 }
                             }
 
-                            IndicatorOnlySwitch {
-                                id: cadenceSensorAsTreadmillDelegate
-                                text: qsTr("Cadence Sensor as a Treadmill")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.cadence_sensor_as_treadmill
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: {
-                                    settings.cadence_sensor_as_treadmill = checked;
-                                    if (checked)
-                                        settings.cadence_sensor_as_bike = false;
-                                    window.settings_restart_to_apply = true;
-                                }
-                            }
-
-                            Label {
-                                text: qsTr("If your equipment doesn’t have Bluetooth, these settings allow you to use a cadence sensor so it will work with QZ as a bike or treadmill. Default is off.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
 
                             Label {
                                 id: labelCadenceSensorName
@@ -13001,499 +11503,10 @@ import AndroidStatusBar 1.0
                                 color: Material.color(Material.Lime)
                             }
 
-                            IndicatorOnlySwitch {
-                                text: "Rogue Echo Bike"
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.rogue_echo_bike
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: { settings.rogue_echo_bike = checked; window.settings_restart_to_apply = true; }
-                            }
 
-                            Label {
-                                text: qsTr("Enable special wattage calculation for Rogue Echo Bike: m_watt = 0.000602337 * pow(rpm, 3.11762) + 32.6404. Default is off.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            IndicatorOnlySwitch {
-                                text: qsTr("Custom CSC Resistance/Watt Table")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.cscbike_custom_resistance_power_table
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: { settings.cscbike_custom_resistance_power_table = checked; window.settings_restart_to_apply = true; }
-                            }
-
-                            Label {
-                                text: qsTr("Enable a custom linear resistance/watt table for CSC bikes. Joroto bikes keep using their dedicated resistance power profile. Resistance is clamped using the existing Min. Resistance and Max. Resistance settings.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("Resistance Level 1:")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: cscBikeCustomResistanceLevel1TextField
-                                    text: settings.cscbike_custom_resistance_level_1
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                    onAccepted: settings.cscbike_custom_resistance_level_1 = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    text: "OK"
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.cscbike_custom_resistance_level_1 = cscBikeCustomResistanceLevel1TextField.text; toast.show("Setting saved!"); }
-                                }
-                            }
-
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("Watt 1:")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: cscBikeCustomWatt1TextField
-                                    text: settings.cscbike_custom_watt_1
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                    onAccepted: settings.cscbike_custom_watt_1 = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    text: "OK"
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.cscbike_custom_watt_1 = cscBikeCustomWatt1TextField.text; toast.show("Setting saved!"); }
-                                }
-                            }
-
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("Resistance Level 2:")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: cscBikeCustomResistanceLevel2TextField
-                                    text: settings.cscbike_custom_resistance_level_2
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                    onAccepted: settings.cscbike_custom_resistance_level_2 = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    text: "OK"
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.cscbike_custom_resistance_level_2 = cscBikeCustomResistanceLevel2TextField.text; toast.show("Setting saved!"); }
-                                }
-                            }
-
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("Watt 2:")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: cscBikeCustomWatt2TextField
-                                    text: settings.cscbike_custom_watt_2
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                    onAccepted: settings.cscbike_custom_watt_2 = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    text: "OK"
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.cscbike_custom_watt_2 = cscBikeCustomWatt2TextField.text; toast.show("Setting saved!"); }
-                                }
-                            }
-
-                            Label {
-                                text: qsTr("QZ will build a linear equation from the two resistance/watt points and clamp the effective resistance using the existing Min. Resistance and Max. Resistance settings.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
                         }
                     }
 
-                    AccordionElement {
-                        id: powerSensorOptionsAccordion
-                        title: qsTr("Power Sensor Options")
-                        indicatRectColor: Material.color(Material.Grey)
-                        textColor: Material.color(Material.Yellow)
-                        color: Material.backgroundColor
-                        accordionContent: ColumnLayout {
-                            spacing: 0
-                            IndicatorOnlySwitch {
-                                id: powerSensorAsBikeDelegate
-                                text: qsTr("Power Sensor as a Bike")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.power_sensor_as_bike
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: { settings.power_sensor_as_bike = checked; window.settings_restart_to_apply = true; }
-                            }
-
-                            Label {
-                                text: qsTr("If your bike doesn’t have Bluetooth, this setting allows you to use a power meter pedal sensor so your bike will work with QZ. Default is off.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            IndicatorOnlySwitch {
-                                id: powerSensorAsTreadmillDelegate
-                                text: qsTr("Power Sensor as a Treadmill")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.power_sensor_as_treadmill
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: { settings.power_sensor_as_treadmill = checked; window.settings_restart_to_apply = true; }
-                            }
-
-                            Label {
-                                text: qsTr("If your treadmill doesn’t have Bluetooth, this setting allows you to use a Stryde sensor (or similar) so your treadmill will work with QZ. Default is off.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            IndicatorOnlySwitch {
-                                id: powerSensorRunCadenceDoubleDelegate
-                                text: qsTr("Doubling Cadence for Run")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.powr_sensor_running_cadence_double
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: settings.powr_sensor_running_cadence_double = checked
-                            }
-
-                            Label {
-                                text: qsTr("Some power sensors send cadence divided by 2. This setting will fix this behavior.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            IndicatorOnlySwitch {
-                                id: powerSensorRunCadenceHalfStravaDelegate
-                                text: qsTr("Half Cadence on Strava")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.powr_sensor_running_cadence_half_on_strava
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: settings.powr_sensor_running_cadence_half_on_strava = checked
-                            }
-
-                            Label {
-                                text: qsTr("Divide the cadence sent to Strava by 2.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            IndicatorOnlySwitch {
-                                text: qsTr("Use speed from the power sensor")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.stryd_speed_instead_treadmill
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: settings.stryd_speed_instead_treadmill = checked
-                            }
-
-                            Label {
-                                text: qsTr("If you have a Bluetooth treadmill and also a Stryd device connected to QZ and you want to use the speed from the stryd instead of the speed of the treadmill, enable this. Default: disabled.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            IndicatorOnlySwitch {
-                                text: qsTr("Use inclination from the power sensor")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.stryd_inclination_instead_treadmill
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: settings.stryd_inclination_instead_treadmill = checked
-                            }
-
-                            Label {
-                                text: qsTr("If you have a Bluetooth treadmill and also a Runn device connected to QZ and you want to use the inclination from the RUNN instead of the inclination of the treadmill, enable this. Default: disabled.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            IndicatorOnlySwitch {
-                                text: qsTr("Use cadence from the power sensor")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.power_sensor_cadence_instead_treadmill
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: settings.power_sensor_cadence_instead_treadmill = checked
-                            }
-
-                            Label {
-                                text: qsTr("If you have a Bluetooth treadmill and also a power sensor (like Stryd) connected to QZ and you want to use the cadence from the power sensor instead of the cadence of the treadmill, enable this. This is useful when the treadmill cadence sensor is unreliable at low speeds (walking/jogging). Default: disabled.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            IndicatorOnlySwitch {
-                                text: qsTr("Add inclination gain factor to the power")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.stryd_add_inclination_gain
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: settings.stryd_add_inclination_gain = checked
-                            }
-
-                            Label {
-                                text: qsTr("If you have a Bluetooth treadmill and also a Stryd device connected to QZ, by default Stryd can't get the inclination from the treadmill. Enabling this and QZ will add an inclination gain to the power read from the Stryd. Default: disabled.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            Label {
-                                text: qsTr("Power Sensor Speed/Incline Coefficient A:")
-                                Layout.fillWidth: true
-                            }
-                            RowLayout {
-                                spacing: 10
-                                TextField {
-                                    id: powerSensorSpeedInclinationCoeffATextField
-                                    text: settings.power_sensor_speed_inclination_coeff_a
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                }
-                                Button {
-                                    text: "OK"
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.power_sensor_speed_inclination_coeff_a = powerSensorSpeedInclinationCoeffATextField.text; toast.show("Setting saved!"); }
-                                }
-                            }
-
-                            Label {
-                                text: qsTr("Power Sensor Speed/Incline Coefficient B:")
-                                Layout.fillWidth: true
-                            }
-                            RowLayout {
-                                spacing: 10
-                                TextField {
-                                    id: powerSensorSpeedInclinationCoeffBTextField
-                                    text: settings.power_sensor_speed_inclination_coeff_b
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                }
-                                Button {
-                                    text: "OK"
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.power_sensor_speed_inclination_coeff_b = powerSensorSpeedInclinationCoeffBTextField.text; toast.show("Setting saved!"); }
-                                }
-                            }
-
-                            Label {
-                                text: qsTr("Custom coefficients for power sensor inclination calculation using formula: vwatts = (A + B × speed) × inclination.\n\nFor Stryd sensors use: A = -0.96, B = 1.33\n\nExamples with these values:\n• 8 km/h, 10% incline: (-0.96 + 1.33×8) × 10 = 97W added\n• 11 km/h, 10% incline: (-0.96 + 1.33×11) × 10 = 137W added\n\nIf both A and B are 0, QZ will use the default formula: 9.8 × weight × (inclination/100).\n\nDefault: A = -0.96, B = 1.33")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-
-                            Label {
-                                id: labelPowerSensorName
-                                text: qsTr("Power Sensor:")
-                                Layout.fillWidth: true
-                            }
-                            RowLayout {
-                                spacing: 10
-                                ComboBox {
-                                    id: powerSensorNameTextField
-                                    model: rootItem.bluetoothDevices
-                                    displayText: settings.power_sensor_name
-                                    Layout.fillHeight: false
-                                    Layout.fillWidth: true
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onActivated: {
-                                        console.log("combomodel activated" + powerSensorNameTextField.currentIndex)
-                                        displayText = powerSensorNameTextField.currentValue
-                                    }
-
-                                }
-                                Button {
-                                    id: okPowerSensorNameButton
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.power_sensor_name = stripRssi(powerSensorNameTextField.displayText); settings.treadmillDataPoints = ""; settings.ergDataPoints = ""; window.settings_restart_to_apply = true; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
-
-                            Button {
-                                id: refreshPowerSensorNameButton
-                                text: qsTr("Refresh Devices List")
-                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                onClicked: refresh_bluetooth_devices_clicked();
-                            }
-
-                            Label {
-                                text: qsTr("Leave on Disabled or select from list of found Bluetooth devices.")
-                                font.bold: true
-                                font.italic: true
-                                font.pixelSize: Qt.application.font.pixelSize - 2
-                                textFormat: Text.PlainText
-                                wrapMode: Text.WordWrap
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                color: Material.color(Material.Lime)
-                            }
-                        }
-                    }
 
                     AccordionElement {
                         id: eliteAccesoriesAccordion
@@ -14722,34 +12735,6 @@ import AndroidStatusBar 1.0
                                         color: Material.color(Material.Lime)
                                     }
 
-
-                                    IndicatorOnlySwitch {
-                                        id: bikePowerSensorDelegate
-                                        text: qsTr("Bike Power Sensor")
-                                        spacing: 0
-                                        bottomPadding: 0
-                                        topPadding: 0
-                                        rightPadding: 0
-                                        leftPadding: 0
-                                        clip: false
-                                        checked: settings.bike_power_sensor
-                                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                        Layout.fillWidth: true
-                                        onClicked: { settings.bike_power_sensor = checked; window.settings_restart_to_apply = true; }
-                                    }
-
-                                    Label {
-                                        text: qsTr("This changes the virtual Bluetooth bridge from the standard FMTS to the Power Sensor interface. Default is off.")
-                                        font.bold: true
-                                        font.italic: true
-                                        font.pixelSize: Qt.application.font.pixelSize - 2
-                                        textFormat: Text.PlainText
-                                        wrapMode: Text.WordWrap
-                                        verticalAlignment: Text.AlignVCenter
-                                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                        Layout.fillWidth: true
-                                        color: Material.color(Material.Lime)
-                                    }
 
                                     IndicatorOnlySwitch {
                                         id: virtualDeviceIfitDelegate

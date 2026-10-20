@@ -1,7 +1,4 @@
 #include "trxappgateusbrower.h"
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include "virtualdevices/virtualrower.h"
 #include "virtualdevices/virtualtreadmill.h"
@@ -232,11 +229,6 @@ void trxappgateusbrower::characteristicChanged(const QLowEnergyCharacteristic &c
 
     lastRefreshCharacteristicChanged = QDateTime::currentDateTime();
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
             // Update from external sources only if device HR is 0 or ignoring builtin

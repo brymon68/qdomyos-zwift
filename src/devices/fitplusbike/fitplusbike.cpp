@@ -9,9 +9,6 @@
 #include <chrono>
 #include <math.h>
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 
 using namespace std::chrono_literals;
 
@@ -558,11 +555,6 @@ void fitplusbike::characteristicChanged(const QLowEnergyCharacteristic &characte
 
         qDebug() << (QStringLiteral("Current KCal: ") + QString::number(KCal.value()));
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (Flags.heartRate && !disable_hr_frommachinery && newValue.length() > index) {
                 Heart = ((double)(((uint8_t)newValue.at(index))));
@@ -700,11 +692,6 @@ void fitplusbike::characteristicChanged(const QLowEnergyCharacteristic &characte
 
     lastRefreshCharacteristicChanged = now;
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
             update_hr_from_external();

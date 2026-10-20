@@ -34,15 +34,12 @@ static QStringList expectedKeys() {
         "continuous_moving",
         "speed_gain",
         "speed_offset",
-        "speed_power_based",
         "treadmill_force_speed",
-        "treadmill_simulate_inclination_with_speed",
         "zwift_ocr",
         "zwift_workout_ocr",
         "zwift_ocr_climb_portal",
         "heart_rate_belt_name",
         "cadence_sensor_name",
-        "power_sensor_name",
         "treadmill_inclination_ovveride_gain",
         "treadmill_inclination_ovveride_offset",
         "treadmill_step_incline",
@@ -73,8 +70,8 @@ static void requireNumber(QSettings &settings, const char *key, double expected)
 static void checkFreshSettings(QSettings &settings) {
     QStringList actualKeys = settings.allKeys();
     actualKeys.sort();
-    require(actualKeys == expectedKeys() && actualKeys.size() == 70,
-            "Fresh settings do not match the exact 70-key public allowlist.");
+    require(actualKeys == expectedKeys() && actualKeys.size() == 67,
+            "Fresh settings do not match the exact 67-key public allowlist.");
     require(settings.value("nordictrack_2950_ip").toString() == QStringLiteral("localhost"),
             "The fresh treadmill connection is not localhost.");
     require(settings.value("nordictrack_x22i").toBool(),

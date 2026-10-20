@@ -2,7 +2,7 @@
   "$schema": "https://qdomyos-zwift.local/settings-catalog.schema.json",
   "schemaVersion": 1,
   "format": "qdomyos-zwift-settings-catalog",
-  "settingCount": 961,
+  "settingCount": 808,
   "pages": [
     {
       "key": "page_custom_gear_table",
@@ -485,45 +485,6 @@
       "options": null
     },
     {
-      "key": "zwift_erg",
-      "name": "Zwift Workout/Erg Mode",
-      "description": "Enable this setting ONLY when using Zwift in ERG (workout) Mode. QZ will communicate the target resistance (or automatically adjust your resistance if your bike has this capability) to match the target watts based on your cadence (RPM). In ERG Mode, the changes in road slope will not affect target resistance, as is the case in Simulation Mode. Default is off.",
-      "parent": "Bike Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "zwift_erg_filter",
-      "name": "Zwift ERG Watt Up Filter",
-      "description": "In ERG Mode or during a Power Zone workout on Peloton, the app sends a “target output” request. If the output requested doesn’t match your current output (calculated using cadence and resistance level), your target resistance will change to help you get closer to the target output. If the filter is set to higher values, you will get less adjustment of the target resistance and you will have to increase your cadence to match the target output. The Up and Down Watt Filter settings are the upper and lower margin before the adjustment of resistance is communicated. Example: if the up and down filters are set to 10 and the target output is 100 watts, a change of your resistance will only be communicated if your bike produces less than 90 watts or more than 110 watts. Default is 10.",
-      "parent": "Bike Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 10.0,
-      "defaultExpression": "10.0",
-      "options": null
-    },
-    {
-      "key": "zwift_erg_filter_down",
-      "name": "Zwift ERG Watt Down Filter",
-      "description": null,
-      "parent": "Bike Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 10.0,
-      "defaultExpression": "10.0",
-      "options": null
-    },
-    {
       "key": "zwift_negative_inclination_x2",
       "name": "Double Negative Inclination",
       "description": "Turn this on if you have a bike with inclination capabilities to fix Zwift’s bug that sends half-negative downhill inclination",
@@ -589,19 +550,6 @@
       "options": null
     },
     {
-      "key": "speed_power_based",
-      "name": "Speed calculates on Power",
-      "description": "QZ calculates speed based on your pedal cadence (RPMs). Enable this setting if you want your speed to be calculated based on your power output (watts), as Zwift and some other apps do. Default is off.",
-      "parent": "Bike Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "bike_resistance_start",
       "name": "Resistance at Startup",
       "description": "(only for bikes with electronically-controlled resistance): Enter the resistance level you want QZ to set at startup. Default is 1.",
@@ -638,19 +586,6 @@
       "visible": true,
       "defaultValue": 75.0,
       "defaultExpression": "75.0",
-      "options": null
-    },
-    {
-      "key": "ftp",
-      "name": "FTP value",
-      "description": "If you train to specific output (or watts) levels, for example in Peloton Power Zone classes,and have taken an FTP test (Functional Threshold Power), enter your FTP here. This number is used to calculate your Power Zones (Zones 1 to 7 for Peloton and 1 to 6 for Zwift).",
-      "parent": "General Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 200.0,
-      "defaultExpression": "200.0",
       "options": null
     },
     {
@@ -771,19 +706,6 @@
       "options": null
     },
     {
-      "key": "bike_power_sensor",
-      "name": "Bike Power Sensor",
-      "description": "This changes the virtual Bluetooth bridge from the standard FMTS to the Power Sensor interface. Default is off.",
-      "parent": "virtual_device_bluetooth",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "heart_rate_belt_name",
       "name": "Heart Belt Name",
       "description": "Apple Watch users: leave it disabled! Just open the app on your watch",
@@ -817,32 +739,6 @@
       "name": "Disable KCal from Machinery",
       "description": "This prevents your bike or treadmill from sending its calories-burned calculation to QZ and defaults to QZ's more accurate calculation.",
       "parent": "Heart Rate Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "ant_cadence",
-      "name": "Ant+ Cadence",
-      "description": "Turn this on if you need to use ANT+ along with Bluetooth. Power is also sent.",
-      "parent": "Ant+ Options (only for some Android)",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "ant_heart",
-      "name": "Ant+ Heart",
-      "description": null,
-      "parent": "Ant+ Options (only for some Android)",
       "type": "boolean",
       "qmlType": "bool",
       "control": "switch",
@@ -970,32 +866,6 @@
       "visible": true,
       "defaultValue": true,
       "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "pzp_username",
-      "name": "PZP Username",
-      "description": "As of 4/1/2022, this feature is broken due to a Power Zone Pack (PZP) website change. Leave (or change back to) the default of “username” (without quotation marks, all lowercase and all one word) until further notice.",
-      "parent": "Peloton Options",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "username",
-      "defaultExpression": "\"username\"",
-      "options": null
-    },
-    {
-      "key": "pzp_password",
-      "name": "PZP Password",
-      "description": "As of 4/1/2022, this feature is broken due to a Power Zone Pack (PZP) website change. Leave this setting blank until further notice.",
-      "parent": "Peloton Options",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "username",
-      "defaultExpression": "\"username\"",
       "options": null
     },
     {
@@ -1130,7 +1000,7 @@
     {
       "key": "tile_calories_order",
       "name": "order index",
-      "description": "Estimated calories burned during session, calculated on weight, age, and watts.",
+      "description": "Estimated calories burned during the session.",
       "parent": "tile_calories_enabled",
       "type": "integer",
       "qmlType": "int",
@@ -1231,35 +1101,6 @@
       }
     },
     {
-      "key": "tile_watt_enabled",
-      "name": "Watt",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "tile_watt_order",
-      "name": "order index",
-      "description": "Displays the watts generated by your current effort. Watt is also referred to as output (for example, in Peloton). If your equipment does not communicate watts, QZ will calculate watts using resistance and cadence.",
-      "parent": "tile_watt_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 8,
-      "defaultExpression": "8",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
       "key": "tile_weight_loss_enabled",
       "name": "Weight loss",
       "description": null,
@@ -1289,64 +1130,6 @@
       }
     },
     {
-      "key": "tile_avgwatt_enabled",
-      "name": "AVG Watt",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "tile_avgwatt_order",
-      "name": "order index",
-      "description": "Average watts produced for the session.",
-      "parent": "tile_avgwatt_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 9,
-      "defaultExpression": "9",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_ftp_enabled",
-      "name": "FTP %",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "tile_ftp_order",
-      "name": "order index",
-      "description": "Percentage of current FTP and current FTP zone.",
-      "parent": "tile_ftp_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 10,
-      "defaultExpression": "10",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
       "key": "tile_heart_enabled",
       "name": "Heart",
       "description": null,
@@ -1370,35 +1153,6 @@
       "visible": true,
       "defaultValue": 11,
       "defaultExpression": "11",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_jouls_enabled",
-      "name": "Jouls",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "tile_jouls_order",
-      "name": "order index",
-      "description": "Cumulative power produced during the session in kilojoules.",
-      "parent": "tile_jouls_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 13,
-      "defaultExpression": "13",
       "options": {
         "source": "expression",
         "expression": "rootItem.tile_order"
@@ -1692,64 +1446,6 @@
       }
     },
     {
-      "key": "tile_target_power_enabled",
-      "name": "Target Power",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_target_power_order",
-      "name": "order index",
-      "description": "Displays target output (watts) when this information is provided by third-party apps.",
-      "parent": "tile_target_power_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 20,
-      "defaultExpression": "20",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_target_zone_enabled",
-      "name": "Target Power Zone",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_target_zone_order",
-      "name": "order index",
-      "description": "Displays the target power zone when this information is provided by third-party apps.",
-      "parent": "tile_target_zone_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 24,
-      "defaultExpression": "24",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
       "key": "tile_target_speed_enabled",
       "name": "Target Speed",
       "description": null,
@@ -1866,35 +1562,6 @@
       }
     },
     {
-      "key": "tile_watt_kg_enabled",
-      "name": "Watt/Kg",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_watt_kg_order",
-      "name": "order index",
-      "description": "Calculates your output (watts) divided by your weight. This is the primary metric used by Zwift and similar apps to calculate your virtual speed. NOTE: This is a much better metric to use than Output/Watts when comparing your effort to other users. This is why Peloton’s leaderboard, which uses only Output, is flawed.",
-      "parent": "tile_watt_kg_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 25,
-      "defaultExpression": "25",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
       "key": "tile_gears_enabled",
       "name": "Gears",
       "description": null,
@@ -1910,7 +1577,7 @@
     {
       "key": "tile_gears_order",
       "name": "order index",
-      "description": "Allows you to change resistance while in Auto-Follow Mode.This tile allows you override the target resistance sent by third-party apps. For example, you would use the Gears Tile to increase resistance and generate more watts for sprinting in Zwift.",
+      "description": "Allows you to adjust the target resistance sent by connected apps while in Auto-Follow Mode.",
       "parent": "tile_gears_enabled",
       "type": "integer",
       "qmlType": "int",
@@ -1968,7 +1635,7 @@
     {
       "key": "tile_nextrowstrainprogram_order",
       "name": "order index",
-      "description": "Displays the next Peloton interval with duration and FTP Zone (in Power Zone classes) or Peloton Resistance (non–Power Zone classes).",
+      "description": "Displays the duration and resistance of the next Peloton interval.",
       "parent": "tile_nextrowstrainprogram_enabled",
       "type": "integer",
       "qmlType": "int",
@@ -1976,64 +1643,6 @@
       "visible": true,
       "defaultValue": 31,
       "defaultExpression": "31",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_mets_enabled",
-      "name": "METS",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_mets_order",
-      "name": "order index",
-      "description": "Displays metabolic equivalents (METs), a measurement of energy expenditure and amount of oxygen used by the body compared to the body at rest. (e.g., 4 METS requires the body to use 4 times as much oxygen than when at rest, which means it requires more energy and burns more calories).",
-      "parent": "tile_mets_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 28,
-      "defaultExpression": "28",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_targetmets_enabled",
-      "name": "Target METS",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_targetmets_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_targetmets_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 29,
-      "defaultExpression": "29",
       "options": {
         "source": "expression",
         "expression": "rootItem.tile_order"
@@ -2416,25 +2025,6 @@
       "options": null
     },
     {
-      "key": "echelon_watttable",
-      "name": "Watt Profile",
-      "description": null,
-      "parent": "Echelon Bike Options",
-      "type": "string",
-      "qmlType": "string",
-      "control": "select",
-      "visible": true,
-      "defaultValue": "Echelon",
-      "defaultExpression": "\"Echelon\"",
-      "options": {
-        "source": "inline",
-        "values": [
-          "Echelon",
-          "mgarcea"
-        ]
-      }
-    },
-    {
       "key": "proform_wheel_ratio",
       "name": "Wheel Ratio",
       "description": null,
@@ -2460,19 +2050,6 @@
       "defaultExpression": "false",
       "options": null,
       "virtualParent": "nordictrack_bike_model"
-    },
-    {
-      "key": "proform_tdf_jonseed_watt",
-      "name": "TDF CBC Jonseed watt table",
-      "description": null,
-      "parent": "Proform/Norditrack Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
     },
     {
       "key": "proform_studio",
@@ -3116,68 +2693,9 @@
       "options": null
     },
     {
-      "key": "watt_offset",
-      "name": "Watt Offset",
-      "description": "You can increase/decrease your watt output for moving your avatar faster/slower in Zwift or other similar apps as a way of calibrating your equipment. The number you enter as an Offset adds that amount to your watts.",
-      "parent": "Advanced Settings",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 0.0,
-      "defaultExpression": "0",
-      "options": null
-    },
-    {
-      "key": "watt_gain",
-      "name": "Watt Gain",
-      "description": "You can increase/decrease your watt output for moving your avatar faster/slower in Zwift or other similar apps as a way of calibrating your equipment. For example, to use a rower to cycle in Zwift, you could double your watt output to better match your cycling speed by entering 2. The number you enter is a multiplier applied to your actual watts.",
-      "parent": "Advanced Settings",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 1.0,
-      "defaultExpression": "1",
-      "options": null
-    },
-    {
-      "key": "power_avg_5s",
-      "name": "Power Averaging Mode",
-      "description": "If the power output/watts your equipment sends to QZ is quite variable, this setting will result in smoother Power Zone graphs. This is also helpful for use with Power Meter Pedals. Uses harmonic averaging which smooths power spikes better than arithmetic averaging. If any reading is 0, power immediately becomes 0. Default is Off. IMPORTANT NOTES: - No Average/smooth in Hometrainer config for standard home trainers which work at 1hz (No race mode available) - Disable Average on 3rd party apps (Rouvy/Zwift/MyWhoosh etc) or select 1sec in the app! - Need to use QZ in bridge mode! - For Elite home trainers or those who have a race mode (10hz), if it's not sufficient for some users, using Elite/Hometrainer smoothing in addition to QZ smoothing will improve it.",
-      "parent": "Advanced Settings",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "select",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": {
-        "source": "inline",
-        "values": [
-          "Off",
-          "3 seconds",
-          "5 seconds"
-        ]
-      }
-    },
-    {
-      "key": "instant_power_on_pause",
-      "name": "Instant Power on Pause",
-      "description": "Enables the calculation of watts, even while in Pause mode. Default is off.",
-      "parent": "Advanced Settings",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "speed_offset",
       "name": "Speed Offset",
-      "description": "You can increase/decrease your speed for moving your avatar faster/slower in Zwift if your equipment outputs speed but not watts. The number you enter as an Offset adds that amount to your speed.",
+      "description": "Add this offset to the speed reported by your equipment.",
       "parent": "Advanced Settings",
       "type": "number",
       "qmlType": "real",
@@ -3190,7 +2708,7 @@
     {
       "key": "speed_gain",
       "name": "Speed Gain",
-      "description": "You can increase/decrease your speed output for moving your avatar faster/slower in Zwift or other apps as a way of calibrating your equipment if your equipment outputs speed but not watts. For example, to use a rower to cycle in Zwift, you could double your speed output to better match your cycling speed. The number you enter is a multiplier applied to your actual speed.",
+      "description": "Multiply the speed reported by your equipment by this value to calibrate it.",
       "parent": "Advanced Settings",
       "type": "number",
       "qmlType": "real",
@@ -3269,113 +2787,6 @@
       "visible": true,
       "defaultValue": 0.33,
       "defaultExpression": "0.33",
-      "options": null
-    },
-    {
-      "key": "power_hr_pwr1",
-      "name": "Session 1 Watt",
-      "description": null,
-      "parent": "Power from Heart Rate Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 200.0,
-      "defaultExpression": "200",
-      "options": null
-    },
-    {
-      "key": "power_hr_hr1",
-      "name": "Session 1 HR",
-      "description": null,
-      "parent": "Power from Heart Rate Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 150.0,
-      "defaultExpression": "150",
-      "options": null
-    },
-    {
-      "key": "power_hr_pwr2",
-      "name": "Session 2 Watt",
-      "description": null,
-      "parent": "Power from Heart Rate Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 230.0,
-      "defaultExpression": "230",
-      "options": null
-    },
-    {
-      "key": "power_hr_hr2",
-      "name": "Session 2 HR",
-      "description": "Expand the bars to the right to display the options under this setting. These settings are used to calculate power (watts) for bikes that do not have power meters. Instead QZ estimates power from your cadence and heart rate. You can calibrate how QZ calculates your power from heart rate as follows: If you know that at a stable pace you produce 100W of power at a heart rate of 150 BPM and 150W at 170 BPM, you can add these values under Sessions 1 and 2 Watt and HR and QZ will calculate your power based on that trend line.",
-      "parent": "Power from Heart Rate Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 170.0,
-      "defaultExpression": "170",
-      "options": null
-    },
-    {
-      "key": "power_sensor_name",
-      "name": "Power Sensor",
-      "description": "Leave on Disabled or select from list of found Bluetooth devices.",
-      "parent": "Power Sensor Options",
-      "type": "string",
-      "qmlType": "string",
-      "control": "select",
-      "visible": true,
-      "defaultValue": "Disabled",
-      "defaultExpression": "\"Disabled\"",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.bluetoothDevices"
-      }
-    },
-    {
-      "key": "power_sensor_as_bike",
-      "name": "Power Sensor as a Bike",
-      "description": "If your bike doesn’t have Bluetooth, this setting allows you to use a power meter pedal sensor so your bike will work with QZ. Default is off.",
-      "parent": "Power Sensor Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "power_sensor_as_treadmill",
-      "name": "Power Sensor as a Treadmill",
-      "description": "If your treadmill doesn’t have Bluetooth, this setting allows you to use a Stryde sensor (or similar) so your treadmill will work with QZ. Default is off.",
-      "parent": "Power Sensor Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "powr_sensor_running_cadence_double",
-      "name": "Doubling Cadence for Run",
-      "description": "Some power sensors send cadence divided by 2. This setting will fix this behavior.",
-      "parent": "Power Sensor Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
       "options": null
     },
     {
@@ -3645,32 +3056,6 @@
       "visible": true,
       "defaultValue": false,
       "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "zwift_erg_resistance_down",
-      "name": "Min. Resistance",
-      "description": "Use this setting to set a minimum target resistance. For example, if you do not want to ride at a resistance below 25, enter a value of 25 and QZ will not set a target resistance below 25. Default is 0.",
-      "parent": "Bike Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 0.0,
-      "defaultExpression": "0.0",
-      "options": null
-    },
-    {
-      "key": "zwift_erg_resistance_up",
-      "name": "Max. Resistance",
-      "description": "Similar to the above, but sets a maximum target resistance. Default is 999.",
-      "parent": "Bike Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 999.0,
-      "defaultExpression": "999.0",
       "options": null
     },
     {
@@ -3977,19 +3362,6 @@
       "options": null
     },
     {
-      "key": "tile_watt_color_enabled",
-      "name": "Enable Watt color",
-      "description": null,
-      "parent": "tile_watt_enabled",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
       "key": "tile_pace_color_enabled",
       "name": "Enable Pace color",
       "description": null,
@@ -4192,7 +3564,7 @@
     {
       "key": "cadence_gain",
       "name": "Cadence Gain",
-      "description": "You can increase/decrease your cadence output as a way of calibrating your equipment if your equipment outputs cadence but not watts. The number you enter is a multiplier applied to your actual cadence.",
+      "description": "Multiply the cadence reported by your equipment by this value to calibrate it.",
       "parent": "Advanced Settings",
       "type": "number",
       "qmlType": "real",
@@ -4450,98 +3822,6 @@
       "options": null
     },
     {
-      "key": "tts_act_watt",
-      "name": "Actual Watt",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tts_avg_watt",
-      "name": "Average Watt",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "tts_max_watt",
-      "name": "Max Watt",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "tts_act_ftp",
-      "name": "Actual FTP",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null,
-      "defaultConflicts": [
-        {
-          "qmlType": "bool",
-          "type": "boolean",
-          "defaultExpression": "false",
-          "defaultValue": false
-        },
-        {
-          "qmlType": "bool",
-          "type": "boolean",
-          "defaultExpression": "true",
-          "defaultValue": true
-        }
-      ]
-    },
-    {
-      "key": "tts_avg_ftp",
-      "name": "Tts Avg Ftp",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": false,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "tts_max_ftp",
-      "name": "Tts Max Ftp",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": false,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "tts_act_heart",
       "name": "Actual Heart",
       "description": null,
@@ -4578,19 +3858,6 @@
       "visible": true,
       "defaultValue": false,
       "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tts_act_jouls",
-      "name": "Actual Jouls",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
       "options": null
     },
     {
@@ -4672,32 +3939,6 @@
       "options": null
     },
     {
-      "key": "tts_act_target_power",
-      "name": "Actual Target Power",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "tts_act_target_zone",
-      "name": "Actual Target Zone",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
       "key": "tts_act_target_speed",
       "name": "Actual Target Speed",
       "description": null,
@@ -4721,45 +3962,6 @@
       "visible": true,
       "defaultValue": true,
       "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "tts_act_watt_kg",
-      "name": "Actual Watt/KG",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tts_avg_watt_kg",
-      "name": "Average Watt/KG",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tts_max_watt_kg",
-      "name": "Max Watt/KG",
-      "description": null,
-      "parent": "TTS",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
       "options": null
     },
     {
@@ -6170,35 +5372,6 @@
       "options": null
     },
     {
-      "key": "tile_avg_watt_lap_enabled",
-      "name": "AVG Watt Lap",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_avg_watt_lap_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_avg_watt_lap_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 48,
-      "defaultExpression": "48",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
       "key": "nordictrack_t70_treadmill",
       "name": "Nordictrack T70 Treadmill",
       "description": null,
@@ -6331,19 +5504,6 @@
       "options": null
     },
     {
-      "key": "domyos_bike_500_profile_v1",
-      "name": "Bike 500 wattage profile",
-      "description": null,
-      "parent": "Domyos Bike Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "ss2k_peloton",
       "name": "Peloton Bike",
       "description": null,
@@ -6380,19 +5540,6 @@
       "visible": true,
       "defaultValue": true,
       "defaultExpression": "true",
-      "options": null
-    },
-    {
-      "key": "powr_sensor_running_cadence_half_on_strava",
-      "name": "Half Cadence on Strava",
-      "description": "Divide the cadence sent to Strava by 2.",
-      "parent": "Power Sensor Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
       "options": null
     },
     {
@@ -7222,19 +6369,6 @@
       "options": null
     },
     {
-      "key": "peloton_spinups_autoresistance",
-      "name": "Spinups Autoresistance",
-      "description": "By default, QZ treats Spin-UPS in Power Zone rides as an increasing ramp to warm you up. You can disable this, to leave the resistance up to you.",
-      "parent": "Peloton Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
       "key": "eslinker_costaway",
       "name": "Costaway Folding",
       "description": null,
@@ -7271,19 +6405,6 @@
       "visible": true,
       "defaultValue": 0.0,
       "defaultExpression": "0.0",
-      "options": null
-    },
-    {
-      "key": "bh_spada_2_watt",
-      "name": "BH SPADA wattage",
-      "description": null,
-      "parent": "Toorx/iConsole Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
       "options": null
     },
     {
@@ -7330,19 +6451,6 @@
       "name": "Inclination",
       "description": null,
       "parent": "GEM Module Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "treadmill_simulate_inclination_with_speed",
-      "name": "Simulate Inclination with Speed",
-      "description": "For treadmills without inclination: turning this on and QZ will transform inclination requests into speed changes.",
-      "parent": "Treadmill Options",
       "type": "boolean",
       "qmlType": "bool",
       "control": "switch",
@@ -7739,19 +6847,6 @@
       "options": null
     },
     {
-      "key": "watt_ignore_builtin",
-      "name": "Disable wattage from machinery",
-      "description": "This prevents your fitness device from sending its wattage calculation to QZ and defaults to QZ’s more accurate calculation.",
-      "parent": "Advanced Settings",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": true,
-      "defaultExpression": "true",
-      "options": null
-    },
-    {
       "key": "proform_treadmill_z1300i",
       "name": "Proform Treadmill Z1300I",
       "description": null,
@@ -7796,32 +6891,6 @@
         "source": "expression",
         "expression": "rootItem.bluetoothDevices"
       }
-    },
-    {
-      "key": "ant_speed_offset",
-      "name": "ANT+ Speed Offset",
-      "description": "You can increase/decrease your speed sent over ANT+. The number you enter as an Offset adds that amount to your speed.",
-      "parent": "Ant+ Options (only for some Android)",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 0.0,
-      "defaultExpression": "0",
-      "options": null
-    },
-    {
-      "key": "ant_speed_gain",
-      "name": "ANT+ Speed Gain",
-      "description": "You can increase/decrease your speed output sent over ANT+. For example, to use a rower to cycle in Zwift, you could double your speed output to better match your cycling speed. The number you enter is a multiplier applied to your actual speed.",
-      "parent": "Ant+ Options (only for some Android)",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 1.0,
-      "defaultExpression": "1",
-      "options": null
     },
     {
       "key": "proform_rower_sport_rl",
@@ -8402,35 +7471,6 @@
       }
     },
     {
-      "key": "tile_erg_mode_enabled",
-      "name": "Erg Mode",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_erg_mode_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_erg_mode_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 52,
-      "defaultExpression": "52",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
       "key": "toorx_srx_3500",
       "name": "Toorx SRX 3500",
       "description": null,
@@ -8454,19 +7494,6 @@
       "visible": true,
       "defaultValue": 0.0,
       "defaultExpression": "0.0",
-      "options": null
-    },
-    {
-      "key": "ergDataPoints",
-      "name": "Watt Offset",
-      "description": "You can increase/decrease your watt output for moving your avatar faster/slower in Zwift or other similar apps as a way of calibrating your equipment. The number you enter as an Offset adds that amount to your watts.",
-      "parent": "Advanced Settings",
-      "type": "string",
-      "qmlType": "string",
-      "control": "button",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
       "options": null
     },
     {
@@ -8526,61 +7553,6 @@
       "virtualParent": "nordictrack_bike_model"
     },
     {
-      "key": "ftp_run",
-      "name": "Critical Power Run value",
-      "description": "If you train to specific output (or watts) levels, for example with Stryd,and have taken an CP test (Critical Power Test), enter your CP here. This number is used to calculate your RSS.",
-      "parent": "General Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 200.0,
-      "defaultExpression": "200.0",
-      "options": null
-    },
-    {
-      "key": "tile_rss_enabled",
-      "name": "Running Stress Score",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_rss_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_rss_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 53,
-      "defaultExpression": "53",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "treadmillDataPoints",
-      "name": "Watt Offset",
-      "description": "You can increase/decrease your watt output for moving your avatar faster/slower in Zwift or other similar apps as a way of calibrating your equipment. The number you enter as an Offset adds that amount to your watts.",
-      "parent": "Advanced Settings",
-      "type": "string",
-      "qmlType": "string",
-      "control": "button",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
       "key": "nordictrack_s20i_treadmill",
       "name": "Nordictrack S20I Treadmill",
       "description": null,
@@ -8593,19 +7565,6 @@
       "defaultExpression": "false",
       "options": null,
       "virtualParent": "nordictrack_treadmill_model"
-    },
-    {
-      "key": "stryd_speed_instead_treadmill",
-      "name": "Use speed from the power sensor",
-      "description": "If you have a Bluetooth treadmill and also a Stryd device connected to QZ and you want to use the speed from the stryd instead of the speed of the treadmill, enable this. Default: disabled.",
-      "parent": "Power Sensor Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
     },
     {
       "key": "proform_595i_proshox2",
@@ -8682,19 +7641,6 @@
       "defaultExpression": "false",
       "options": null,
       "virtualParent": "nordictrack_treadmill_model"
-    },
-    {
-      "key": "stryd_add_inclination_gain",
-      "name": "Add inclination gain factor to the power",
-      "description": "If you have a Bluetooth treadmill and also a Stryd device connected to QZ, by default Stryd can't get the inclination from the treadmill. Enabling this and QZ will add an inclination gain to the power read from the Stryd. Default: disabled.",
-      "parent": "Power Sensor Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
     },
     {
       "key": "toorx_bike_srx_500",
@@ -8817,19 +7763,6 @@
       "options": null
     },
     {
-      "key": "antbike",
-      "name": "Ant+ Bike Over Garmin Watch",
-      "description": "Use your garmin watch to get the ANT+ metrics from a bike",
-      "parent": "Garmin Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "domyosbike_notfmts",
       "name": "Ignore FTMS",
       "description": null,
@@ -8915,19 +7848,6 @@
       "name": "Use Zwift app ratio for gears (Experimental)",
       "description": "Use the zwift gears table instead of the QZ classic gears algorithm. Default is off.",
       "parent": "Zwift Devices Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "domyos_bike_500_profile_v2",
-      "name": "Bike 500 wattage profile v2",
-      "description": null,
-      "parent": "Domyos Bike Options",
       "type": "boolean",
       "qmlType": "bool",
       "control": "switch",
@@ -9462,19 +8382,6 @@
       "options": null
     },
     {
-      "key": "treadmill_follow_wattage",
-      "name": "Treadmill Auto-adjust speed by power",
-      "description": "Treadmill only: Automatically adjusts speed to maintain consistent power output. Speed adjustments occur on incline changes and adapt to manual speed modifications.",
-      "parent": "Training Program Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "fit_file_garmin_device_training_effect",
       "name": "Use Garmin device in the FIT file",
       "description": "With this enabled, QZ will write the FIT file as a Garmin device so Garmin will consider this fit file for the training effect. Default: disabled.",
@@ -9581,482 +8488,6 @@
       "virtualParent": "nordictrack_treadmill_model"
     },
     {
-      "key": "tile_preset_powerzone_1_enabled",
-      "name": "Preset Power Zone 1",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_1_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_preset_powerzone_1_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 55,
-      "defaultExpression": "55",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_preset_powerzone_1_value",
-      "name": "zone value",
-      "description": null,
-      "parent": "tile_preset_powerzone_1_enabled",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 1.0,
-      "defaultExpression": "1.0",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_1_label",
-      "name": "label",
-      "description": null,
-      "parent": "tile_preset_powerzone_1_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "Zone 1",
-      "defaultExpression": "\"Zone 1\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_1_color",
-      "name": "Please choose a color",
-      "description": null,
-      "parent": "tile_preset_powerzone_1_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "white",
-      "defaultExpression": "\"white\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_2_enabled",
-      "name": "Preset Power Zone 2",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_2_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_preset_powerzone_2_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 56,
-      "defaultExpression": "56",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_preset_powerzone_2_value",
-      "name": "zone value",
-      "description": null,
-      "parent": "tile_preset_powerzone_2_enabled",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 2.0,
-      "defaultExpression": "2.0",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_2_label",
-      "name": "label",
-      "description": null,
-      "parent": "tile_preset_powerzone_2_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "Zone 2",
-      "defaultExpression": "\"Zone 2\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_2_color",
-      "name": "Please choose a color",
-      "description": null,
-      "parent": "tile_preset_powerzone_2_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "limegreen",
-      "defaultExpression": "\"limegreen\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_3_enabled",
-      "name": "Preset Power Zone 3",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_3_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_preset_powerzone_3_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 57,
-      "defaultExpression": "57",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_preset_powerzone_3_value",
-      "name": "zone value",
-      "description": null,
-      "parent": "tile_preset_powerzone_3_enabled",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 3.0,
-      "defaultExpression": "3.0",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_3_label",
-      "name": "label",
-      "description": null,
-      "parent": "tile_preset_powerzone_3_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "Zone 3",
-      "defaultExpression": "\"Zone 3\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_3_color",
-      "name": "Please choose a color",
-      "description": null,
-      "parent": "tile_preset_powerzone_3_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "gold",
-      "defaultExpression": "\"gold\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_4_enabled",
-      "name": "Preset Power Zone 4",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_4_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_preset_powerzone_4_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 58,
-      "defaultExpression": "58",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_preset_powerzone_4_value",
-      "name": "zone value",
-      "description": null,
-      "parent": "tile_preset_powerzone_4_enabled",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 4.0,
-      "defaultExpression": "4.0",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_4_label",
-      "name": "label",
-      "description": null,
-      "parent": "tile_preset_powerzone_4_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "Zone 4",
-      "defaultExpression": "\"Zone 4\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_4_color",
-      "name": "Please choose a color",
-      "description": null,
-      "parent": "tile_preset_powerzone_4_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "orange",
-      "defaultExpression": "\"orange\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_5_enabled",
-      "name": "Preset Power Zone 5",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_5_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_preset_powerzone_5_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 59,
-      "defaultExpression": "59",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_preset_powerzone_5_value",
-      "name": "zone value",
-      "description": null,
-      "parent": "tile_preset_powerzone_5_enabled",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 5.0,
-      "defaultExpression": "5.0",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_5_label",
-      "name": "label",
-      "description": null,
-      "parent": "tile_preset_powerzone_5_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "Zone 5",
-      "defaultExpression": "\"Zone 5\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_5_color",
-      "name": "Please choose a color",
-      "description": null,
-      "parent": "tile_preset_powerzone_5_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "darkorange",
-      "defaultExpression": "\"darkorange\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_6_enabled",
-      "name": "Preset Power Zone 6",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_6_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_preset_powerzone_6_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 60,
-      "defaultExpression": "60",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_preset_powerzone_6_value",
-      "name": "zone value",
-      "description": null,
-      "parent": "tile_preset_powerzone_6_enabled",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 6.0,
-      "defaultExpression": "6.0",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_6_label",
-      "name": "label",
-      "description": null,
-      "parent": "tile_preset_powerzone_6_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "Zone 6",
-      "defaultExpression": "\"Zone 6\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_6_color",
-      "name": "Please choose a color",
-      "description": null,
-      "parent": "tile_preset_powerzone_6_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "orangered",
-      "defaultExpression": "\"orangered\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_7_enabled",
-      "name": "Preset Power Zone 7",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_7_order",
-      "name": "order index",
-      "description": null,
-      "parent": "tile_preset_powerzone_7_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 61,
-      "defaultExpression": "61",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
-    },
-    {
-      "key": "tile_preset_powerzone_7_value",
-      "name": "zone value",
-      "description": null,
-      "parent": "tile_preset_powerzone_7_enabled",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 7.0,
-      "defaultExpression": "7.0",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_7_label",
-      "name": "label",
-      "description": null,
-      "parent": "tile_preset_powerzone_7_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "Zone 7",
-      "defaultExpression": "\"Zone 7\"",
-      "options": null
-    },
-    {
-      "key": "tile_preset_powerzone_7_color",
-      "name": "Please choose a color",
-      "description": "Power zone presets allow quick access to specific training zones with customizable labels and values.",
-      "parent": "tile_preset_powerzone_7_enabled",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "red",
-      "defaultExpression": "\"red\"",
-      "options": null
-    },
-    {
       "key": "proform_bike_PFEVEX71316_0",
       "name": "Proform Bike Pfevex71316 0",
       "description": null,
@@ -10075,19 +8506,6 @@
       "name": "Send real inclination to virtual bridge",
       "description": "By default QZ sends to the virtual Bluetooth/DIRCON bridge the current inclination of the treadmill. Enabling this, it will send instead the one wihtout considering inclination gain or offset. Default: False.",
       "parent": "Advanced Settings",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "stryd_inclination_instead_treadmill",
-      "name": "Use inclination from the power sensor",
-      "description": "If you have a Bluetooth treadmill and also a Runn device connected to QZ and you want to use the inclination from the RUNN instead of the inclination of the treadmill, enable this. Default: disabled.",
-      "parent": "Power Sensor Options",
       "type": "boolean",
       "qmlType": "bool",
       "control": "switch",
@@ -10347,19 +8765,6 @@
       "defaultExpression": "false",
       "options": null,
       "virtualParent": "nordictrack_treadmill_model"
-    },
-    {
-      "key": "android_antbike",
-      "name": "Ant+ Bike",
-      "description": "Use this to connect to your bike using ANT+ instead of Bluetooth. Default: Disabled",
-      "parent": "Ant+ Options (only for some Android)",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
     },
     {
       "key": "tile_coretemperature_enabled",
@@ -10635,19 +9040,6 @@
       "virtualParent": "nordictrack_treadmill_model"
     },
     {
-      "key": "rogue_echo_bike",
-      "name": "Rogue Echo Bike",
-      "description": "Enable special wattage calculation for Rogue Echo Bike: m_watt = 0.000602337 * pow(rpm, 3.11762) + 32.6404. Default is off.",
-      "parent": "Cadence Sensor Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "fit_file_garmin_device_training_effect_device",
       "name": "Fit File Garmin Device Training Effect Device",
       "description": null,
@@ -10817,45 +9209,6 @@
       "options": null
     },
     {
-      "key": "technogym_group_cycle",
-      "name": "Group Cycle",
-      "description": null,
-      "parent": "Technogym Bike Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "ant_bike_device_number",
-      "name": "ANT+ Bike Device Number (0=Auto)",
-      "description": null,
-      "parent": "Technogym Bike Options",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 0,
-      "defaultExpression": "0",
-      "options": null
-    },
-    {
-      "key": "ant_heart_device_number",
-      "name": "ANT+ Heart Device Number (0=Auto)",
-      "description": "This setting enables receiving the heart rate from an external HRM over ANT+ instead of from QZ.",
-      "parent": "Ant+ Options (only for some Android)",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 0,
-      "defaultExpression": "0",
-      "options": null
-    },
-    {
       "key": "peloton_treadmill_walk_level",
       "name": "Treadmill Walk Level",
       "description": "Difficulty level for Peloton treadmill walking classes. 1 is easy 10 is hard.",
@@ -10881,19 +9234,6 @@
           "10"
         ]
       }
-    },
-    {
-      "key": "pid_heart_zone_erg_mode_watt_step",
-      "name": "ERG Mode Watt Step",
-      "description": "Set the wattage step increment for ERG mode heart rate zone training. Default: 5 watts.",
-      "parent": "Training Program Options",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 5,
-      "defaultExpression": "5",
-      "options": null
     },
     {
       "key": "automatic_virtual_shifting_enabled",
@@ -11271,7 +9611,7 @@
     {
       "key": "calories_from_hr",
       "name": "Calculate Calories from Heart Rate",
-      "description": "Enable to calculate calories based on heart rate data instead of power. Requires heart rate sensor connection for accurate calorie estimation.",
+      "description": "Calculate calories using heart rate data. Requires a connected heart rate sensor.",
       "parent": "Heart Rate Options",
       "type": "boolean",
       "qmlType": "bool",
@@ -11280,39 +9620,6 @@
       "defaultValue": false,
       "defaultExpression": "false",
       "options": null
-    },
-    {
-      "key": "bike_power_offset",
-      "name": "Zwift Power Offset (W)",
-      "description": "Add an offset in watts to the requested power from apps like Zwift. Positive values increase power, negative values decrease it. Default is 0.",
-      "parent": "Bike Options",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 0,
-      "defaultExpression": "0",
-      "options": null
-    },
-    {
-      "key": "chart_display_mode",
-      "name": "Chart Display Mode",
-      "description": "Choose which charts to display in the footer: both heart rate and power charts, only heart rate chart, or only power chart.",
-      "parent": "General UI Options",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 0,
-      "defaultExpression": "0",
-      "options": {
-        "source": "inline",
-        "values": [
-          "Both Charts",
-          "Heart Rate Only",
-          "Power Only"
-        ]
-      }
     },
     {
       "key": "zwift_play_vibration",
@@ -11792,19 +10099,6 @@
       "options": null
     },
     {
-      "key": "power_sensor_cadence_instead_treadmill",
-      "name": "Use cadence from the power sensor",
-      "description": "If you have a Bluetooth treadmill and also a power sensor (like Stryd) connected to QZ and you want to use the cadence from the power sensor instead of the cadence of the treadmill, enable this. This is useful when the treadmill cadence sensor is unreliable at low speeds (walking/jogging). Default: disabled.",
-      "parent": "Power Sensor Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "garmin_oauth1_token",
       "name": "Garmin Oauth1 Token",
       "description": null,
@@ -11907,55 +10201,6 @@
       "defaultValue": false,
       "defaultExpression": "false",
       "options": null
-    },
-    {
-      "key": "power_avg_3s",
-      "name": "Power Averaging Mode",
-      "description": "If the power output/watts your equipment sends to QZ is quite variable, this setting will result in smoother Power Zone graphs. This is also helpful for use with Power Meter Pedals. Uses harmonic averaging which smooths power spikes better than arithmetic averaging. If any reading is 0, power immediately becomes 0. Default is Off. IMPORTANT NOTES: - No Average/smooth in Hometrainer config for standard home trainers which work at 1hz (No race mode available) - Disable Average on 3rd party apps (Rouvy/Zwift/MyWhoosh etc) or select 1sec in the app! - Need to use QZ in bridge mode! - For Elite home trainers or those who have a race mode (10hz), if it's not sufficient for some users, using Elite/Hometrainer smoothing in addition to QZ smoothing will improve it.",
-      "parent": "Advanced Settings",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "select",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": {
-        "source": "inline",
-        "values": [
-          "Off",
-          "3 seconds",
-          "5 seconds"
-        ]
-      }
-    },
-    {
-      "key": "tile_power_avg_enabled",
-      "name": "Power Averaging",
-      "description": null,
-      "parent": "Tiles",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "tile_power_avg_order",
-      "name": "order index",
-      "description": "Button tile to cycle through power averaging modes: Off, 3s avg (harmonic), 5s avg (harmonic). Tap to cycle between modes. Only for bikes.",
-      "parent": "tile_power_avg_enabled",
-      "type": "integer",
-      "qmlType": "int",
-      "control": "select",
-      "visible": true,
-      "defaultValue": 77,
-      "defaultExpression": "77",
-      "options": {
-        "source": "expression",
-        "expression": "rootItem.tile_order"
-      }
     },
     {
       "key": "life_fitness_ic5",
@@ -12199,19 +10444,6 @@
       "options": null
     },
     {
-      "key": "cadence_sensor_as_treadmill",
-      "name": "Cadence Sensor as a Treadmill",
-      "description": "If your equipment doesn’t have Bluetooth, these settings allow you to use a cadence sensor so it will work with QZ as a bike or treadmill. Default is off.",
-      "parent": "Cadence Sensor Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "proform_trainer_8_0_pftl59721_int_0",
       "name": "Proform Trainer 8 0 Pftl59721 Int 0",
       "description": null,
@@ -12240,19 +10472,6 @@
       "virtualParent": "nordictrack_treadmill_model"
     },
     {
-      "key": "toputure_teb1",
-      "name": "Toputure TEB1",
-      "description": "Enable the special SPORT01 instant power formula only for the Toputure TEB1 bike. Leave disabled to use the standard FTMS instant power reported by the device.",
-      "parent": "Toputure Bikes",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "ios_live_activity_compact_leading_metric",
       "name": "iOS Live Activity Left Metric",
       "description": null,
@@ -12271,13 +10490,13 @@
     {
       "key": "ios_live_activity_compact_trailing_metric",
       "name": "iOS Live Activity Right Metric",
-      "description": "iOS only: choose which two metrics are shown in the compact Dynamic Island bar for Live Activities. Default is Heart Rate on the left and Watt on the right.",
+      "description": "iOS only: choose which two metrics are shown in the compact Dynamic Island bar for Live Activities. Default is Heart Rate on the left and Speed on the right.",
       "parent": "General UI Options",
       "type": "string",
       "qmlType": "string",
       "control": "select",
       "visible": true,
-      "defaultValue": "Watt",
+      "defaultValue": "Speed",
       "defaultExpression": "\"Watt\"",
       "options": {
         "source": "expression",
@@ -12380,32 +10599,6 @@
       "options": null
     },
     {
-      "key": "power_sensor_speed_inclination_coeff_a",
-      "name": "Power Sensor Speed/Incline Coefficient A",
-      "description": "Power Sensor Speed/Incline Coefficient B:",
-      "parent": "Power Sensor Options",
-      "type": "number",
-      "qmlType": "double",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 0.0,
-      "defaultExpression": "0.0",
-      "options": null
-    },
-    {
-      "key": "power_sensor_speed_inclination_coeff_b",
-      "name": "Power Sensor Speed/Incline Coefficient B",
-      "description": "Custom coefficients for power sensor inclination calculation using formula: vwatts = (A + B × speed) × inclination. For Stryd sensors use: A = -0.96, B = 1.33 Examples with these values: • 8 km/h, 10% incline: (-0.96 + 1.33×8) × 10 = 97W added • 11 km/h, 10% incline: (-0.96 + 1.33×11) × 10 = 137W added If both A and B are 0, QZ will use the default formula: 9.8 × weight × (inclination/100). Default: A = -0.96, B = 1.33",
-      "parent": "Power Sensor Options",
-      "type": "number",
-      "qmlType": "double",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 0.0,
-      "defaultExpression": "0.0",
-      "options": null
-    },
-    {
       "key": "proform_carbon_tlx_v84_314_treadmill",
       "name": "Proform Carbon Tlx V84 314 Treadmill",
       "description": null,
@@ -12418,71 +10611,6 @@
       "defaultExpression": "false",
       "options": null,
       "virtualParent": "nordictrack_treadmill_model"
-    },
-    {
-      "key": "cscbike_custom_resistance_power_table",
-      "name": "Custom CSC Resistance/Watt Table",
-      "description": "Enable a custom linear resistance/watt table for CSC bikes. Joroto bikes keep using their dedicated resistance power profile. Resistance is clamped using the existing Min. Resistance and Max. Resistance settings.",
-      "parent": "Cadence Sensor Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": true,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "cscbike_custom_resistance_level_1",
-      "name": "Resistance Level 1",
-      "description": null,
-      "parent": "Cadence Sensor Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 1.0,
-      "defaultExpression": "1",
-      "options": null
-    },
-    {
-      "key": "cscbike_custom_watt_1",
-      "name": "Watt 1",
-      "description": null,
-      "parent": "Cadence Sensor Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 100.0,
-      "defaultExpression": "100",
-      "options": null
-    },
-    {
-      "key": "cscbike_custom_resistance_level_2",
-      "name": "Resistance Level 2",
-      "description": null,
-      "parent": "Cadence Sensor Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 15.0,
-      "defaultExpression": "15",
-      "options": null
-    },
-    {
-      "key": "cscbike_custom_watt_2",
-      "name": "Watt 2",
-      "description": "QZ will build a linear equation from the two resistance/watt points and clamp the effective resistance using the existing Min. Resistance and Max. Resistance settings.",
-      "parent": "Cadence Sensor Options",
-      "type": "number",
-      "qmlType": "real",
-      "control": "text",
-      "visible": true,
-      "defaultValue": 300.0,
-      "defaultExpression": "300",
-      "options": null
     },
     {
       "key": "applewatch_as_treadmill_speed",
@@ -12683,58 +10811,6 @@
     {
       "key": "shortcut_target_resistance_minus",
       "name": "Target Resistance + / -",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_target_power_plus",
-      "name": "Target Power + / -",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_target_power_minus",
-      "name": "Target Power + / -",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_target_zone_plus",
-      "name": "Target Zone + / -",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_target_zone_minus",
-      "name": "Target Zone + / -",
       "description": null,
       "parent": "Keyboard Shortcuts",
       "type": "string",
@@ -13019,32 +11095,6 @@
       "options": null
     },
     {
-      "key": "shortcut_power_avg",
-      "name": "Power Avg Toggle",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_erg_mode",
-      "name": "ERG Mode Toggle",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
       "key": "shortcut_auto_resistance",
       "name": "Auto-Resistance Toggle",
       "description": null,
@@ -13253,97 +11303,6 @@
       "options": null
     },
     {
-      "key": "shortcut_preset_powerzone_1",
-      "name": "Preset Power Zone",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_preset_powerzone_2",
-      "name": "Preset Power Zone",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_preset_powerzone_3",
-      "name": "Preset Power Zone",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_preset_powerzone_4",
-      "name": "Preset Power Zone",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_preset_powerzone_5",
-      "name": "Preset Power Zone",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_preset_powerzone_6",
-      "name": "Preset Power Zone",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "shortcut_preset_powerzone_7",
-      "name": "Preset Power Zone",
-      "description": null,
-      "parent": "Keyboard Shortcuts",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": true,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
       "key": "shortcut_lap",
       "name": "Lap",
       "description": null,
@@ -13382,32 +11341,6 @@
       "defaultExpression": "false",
       "options": null,
       "virtualParent": "nordictrack_treadmill_model"
-    },
-    {
-      "key": "garmin_last_seen_cycling_ftp_create_time",
-      "name": "Garmin Last Seen Cycling Ftp Create Time",
-      "description": null,
-      "parent": "Garmin",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": false,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
-    },
-    {
-      "key": "garmin_last_seen_running_ftp_create_time",
-      "name": "Garmin Last Seen Running Ftp Create Time",
-      "description": null,
-      "parent": "Garmin",
-      "type": "string",
-      "qmlType": "string",
-      "control": "text",
-      "visible": false,
-      "defaultValue": "",
-      "defaultExpression": "\"\"",
-      "options": null
     },
     {
       "key": "trainprogram_warmup_speed",
@@ -13556,19 +11489,6 @@
       "options": null
     },
     {
-      "key": "ant_garmin",
-      "name": "Ant+ Garmin Compatibility",
-      "description": null,
-      "parent": "Ant+ Options (only for some Android)",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": false,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
       "key": "service_changed",
       "name": "Service Changed Service",
       "description": null,
@@ -13586,19 +11506,6 @@
       "name": "Peloton Bike/Bike+ (Experimental)",
       "description": null,
       "parent": "Peloton Options",
-      "type": "boolean",
-      "qmlType": "bool",
-      "control": "switch",
-      "visible": false,
-      "defaultValue": false,
-      "defaultExpression": "false",
-      "options": null
-    },
-    {
-      "key": "watt_bike_emulator",
-      "name": "Show Gears to Zwift Only",
-      "description": null,
-      "parent": "Zwift Options",
       "type": "boolean",
       "qmlType": "bool",
       "control": "switch",

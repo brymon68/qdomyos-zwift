@@ -5,7 +5,6 @@
 
 KeepAwakeHelper::KeepAwakeHelper() {
     QSettings settings;
-    ant = 0;
     bool wake = settings.value(QZSettings::android_wakelock, QZSettings::default_android_wakelock).toBool();
     if (!wake) {
         return;
@@ -40,10 +39,6 @@ KeepAwakeHelper::KeepAwakeHelper() {
     }
 
     keepScreenOn(true);
-
-    /*antObject(true);
-    KeepAwakeHelper::antObject(true)->callMethod<void>("antStart","(Landroid/app/Activity;)V",
-    activity.object<jobject>());*/
 }
 
 void KeepAwakeHelper::keepScreenOn(bool on) {
@@ -70,26 +65,9 @@ void KeepAwakeHelper::keepScreenOn(bool on) {
     });
 }
 
-int KeepAwakeHelper::heart() {
-    int heart = KeepAwakeHelper::antObject(true)->callMethod<int>("getHeart", "()I");
-    qDebug() << "antHeart:" << heart;
-    return heart;
-}
-
-QAndroidJniObject *KeepAwakeHelper::antObject(bool forceCreate) {
-    if (!ant && forceCreate)
-        ant = new QAndroidJniObject("org/cagnulen/qdomyoszwift/Ant");
-    return ant;
-}
-
 KeepAwakeHelper::~KeepAwakeHelper() {
     if (m_wakeLock.isValid()) {
         m_wakeLock.callMethod<void>("release", "()V");
-
-        QSettings settings;
-        if ((settings.value(QZSettings::ant_cadence, QZSettings::default_ant_cadence).toBool() || settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) &&
-            KeepAwakeHelper::antObject(false))
-            KeepAwakeHelper::antObject(false)->callMethod<void>("doUnbindChannelService", "()V");
 
         qDebug() << "Unlocked device, can now go to standby";
 

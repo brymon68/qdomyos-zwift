@@ -75,7 +75,6 @@ class nordictrackifitadbbike : public bike {
     bool inclinationAvailableBySoftware() override { return true; }
     resistance_t resistanceFromPowerRequest(uint16_t power) override;
     bool ifitCompatible() override;
-    void changePower(int32_t power) override;
 
   private:
     const resistance_t max_resistance = 20; // max inclination for s22i
@@ -91,14 +90,11 @@ class nordictrackifitadbbike : public bike {
     void stopGrpcMetricsUpdates();
     double getGrpcSpeed();
     double getGrpcIncline();
-    double getGrpcWatts();
     double getGrpcCadence();
     double getGrpcResistance();
     double getGrpcHeartRate();
     void setGrpcResistance(double resistance);
     void setGrpcIncline(double inclination);
-    void setGrpcWatts(double watts);
-    void disableGrpcWatts();
     
     // Gear change debouncing
     void processPendingGearChange();
@@ -119,8 +115,6 @@ class nordictrackifitadbbike : public bike {
     bool noWriteResistance = false;
     bool noHeartService = false;
     bool grpcInitialized = false;
-    bool lastErgMode = true;
-    bool hasActiveWattsTarget = false;
 
     bool gearsAvailable = false;
     double lastGearValue = 0;

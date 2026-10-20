@@ -52,12 +52,6 @@ class QZSettings {
     static const QString csc_sensor_lastdevice_name;
     static const QString default_csc_sensor_lastdevice_name;
 
-    static const QString power_sensor_lastdevice_name;
-    static const QString default_power_sensor_lastdevice_name;
-
-    static const QString power_sensor_address;
-    static const QString default_power_sensor_address;
-
     static const QString elite_rizer_lastdevice_name;
     static const QString default_elite_rizer_lastdevice_name;
 
@@ -120,12 +114,6 @@ class QZSettings {
 
     static const QString garmin_last_refresh;
     static const QString default_garmin_last_refresh;
-
-    static const QString garmin_last_seen_cycling_ftp_create_time;
-    static const QString default_garmin_last_seen_cycling_ftp_create_time;
-
-    static const QString garmin_last_seen_running_ftp_create_time;
-    static const QString default_garmin_last_seen_running_ftp_create_time;
 
     static const QString intervalsicu_accesstoken;
     static const QString default_intervalsicu_accesstoken;
@@ -344,15 +332,6 @@ class QZSettings {
     static const QString kcal_ignore_builtin;
     static constexpr bool default_kcal_ignore_builtin = false;
 
-    static const QString ant_cadence;
-    static constexpr bool default_ant_cadence = false;
-
-    static const QString ant_heart;
-    static constexpr bool default_ant_heart = false;
-
-    static const QString ant_garmin;
-    static constexpr bool default_ant_garmin = false;
-
     static const QString top_bar_enabled;
     static constexpr bool default_top_bar_enabled = true;
     /**
@@ -448,29 +427,11 @@ class QZSettings {
     static const QString tile_resistance_order;
     static constexpr int default_tile_resistance_order = 7;
 
-    static const QString tile_watt_enabled;
-    static constexpr bool default_tile_watt_enabled = true;
-
-    static const QString tile_watt_order;
-    static constexpr int default_tile_watt_order = 8;
-
     static const QString tile_weight_loss_enabled;
     static constexpr bool default_tile_weight_loss_enabled = false;
 
     static const QString tile_weight_loss_order;
     static constexpr int default_tile_weight_loss_order = 24;
-
-    static const QString tile_avgwatt_enabled;
-    static constexpr bool default_tile_avgwatt_enabled = true;
-
-    static const QString tile_avgwatt_order;
-    static constexpr int default_tile_avgwatt_order = 9;
-
-    static const QString tile_ftp_enabled;
-    static constexpr bool default_tile_ftp_enabled = true;
-
-    static const QString tile_ftp_order;
-    static constexpr int default_tile_ftp_order = 10;
 
     static const QString tile_heart_enabled;
     static constexpr bool default_tile_heart_enabled = true;
@@ -480,14 +441,6 @@ class QZSettings {
 
     static const QString tile_heart_show_as_percent;
     static constexpr bool default_tile_heart_show_as_percent = false;
-
-
-
-    static const QString tile_jouls_enabled;
-    static constexpr bool default_tile_jouls_enabled = true;
-
-    static const QString tile_jouls_order;
-    static constexpr int default_tile_jouls_order = 13;
 
     static const QString tile_elapsed_enabled;
     static constexpr bool default_tile_elapsed_enabled = true;
@@ -549,18 +502,6 @@ class QZSettings {
     static const QString tile_target_cadence_order;
     static constexpr int default_tile_target_cadence_order = 19;
 
-    static const QString tile_target_power_enabled;
-    static constexpr bool default_tile_target_power_enabled = false;
-
-    static const QString tile_target_power_order;
-    static constexpr int default_tile_target_power_order = 20;
-
-    static const QString tile_target_zone_enabled;
-    static constexpr bool default_tile_target_zone_enabled = false;
-
-    static const QString tile_target_zone_order;
-    static constexpr int default_tile_target_zone_order = 24;
-
     static const QString tile_target_speed_enabled;
     static constexpr bool default_tile_target_speed_enabled = false;
 
@@ -585,12 +526,6 @@ class QZSettings {
     static const QString tile_strokes_length_order;
     static constexpr int default_tile_strokes_length_order = 23;
 
-    static const QString tile_watt_kg_enabled;
-    static constexpr bool default_tile_watt_kg_enabled = false;
-
-    static const QString tile_watt_kg_order;
-    static constexpr int default_tile_watt_kg_order = 25;
-
     static const QString tile_gears_enabled;
     static constexpr bool default_tile_gears_enabled = false;
 
@@ -608,18 +543,6 @@ class QZSettings {
 
     static const QString tile_nextrowstrainprogram_order;
     static constexpr int default_tile_nextrowstrainprogram_order = 31;
-
-    static const QString tile_mets_enabled;
-    static constexpr bool default_tile_mets_enabled = false;
-
-    static const QString tile_mets_order;
-    static constexpr int default_tile_mets_order = 28;
-
-    static const QString tile_targetmets_enabled;
-    static constexpr bool default_tile_targetmets_enabled = false;
-
-    static const QString tile_targetmets_order;
-    static constexpr int default_tile_targetmets_order = 29;
 
     static const QString tile_steering_angle_enabled;
     static constexpr bool default_tile_steering_angle_enabled = false;
@@ -890,15 +813,6 @@ class QZSettings {
     static const QString gym_mode;
     static constexpr bool default_gym_mode = false;
 
-    static const QString technogym_group_cycle;
-    static constexpr bool default_technogym_group_cycle = false;
-
-    static const QString ant_bike_device_number;
-    static constexpr int default_ant_bike_device_number = 0;
-
-    static const QString ant_heart_device_number;
-    static constexpr int default_ant_heart_device_number = 0;
-
     static const QString trainprogram_random;
     static constexpr bool default_trainprogram_random = false;
 
@@ -983,9 +897,6 @@ class QZSettings {
     static const QString cadence_sensor_as_bike;
     static constexpr bool default_cadence_sensor_as_bike = false;
 
-    static const QString cadence_sensor_as_treadmill;
-    static constexpr bool default_cadence_sensor_as_treadmill = false;
-
     static const QString cadence_sensor_speed_ratio;
     static constexpr float default_cadence_sensor_speed_ratio = 0.33;
 
@@ -1025,12 +936,6 @@ class QZSettings {
     static const QString power_sensor_as_treadmill;
     static constexpr bool default_power_sensor_as_treadmill = false;
 
-    static const QString power_sensor_speed_inclination_coeff_a;
-    static constexpr double default_power_sensor_speed_inclination_coeff_a = 0.0;
-
-    static const QString power_sensor_speed_inclination_coeff_b;
-    static constexpr double default_power_sensor_speed_inclination_coeff_b = 0.0;
-
     static const QString powr_sensor_running_cadence_double;
     static constexpr bool default_powr_sensor_running_cadence_double = false;
 
@@ -1045,9 +950,6 @@ class QZSettings {
 
     static const QString ss2k_shift_step;
     static constexpr float default_ss2k_shift_step = 900;
-
-
-
 
     /**
      *@brief Indicates if the virtual device should send resistance requests to the bike.
@@ -1233,9 +1135,6 @@ class QZSettings {
     static const QString tile_cadence_color_enabled;
     static constexpr bool default_tile_cadence_color_enabled = false;
 
-    static const QString tile_watt_color_enabled;
-    static constexpr bool default_tile_watt_color_enabled = true;
-
     static const QString tile_pace_color_enabled;
     static constexpr bool default_tile_pace_color_enabled = true;
 
@@ -1353,24 +1252,6 @@ class QZSettings {
     static const QString tts_max_resistance;
     static constexpr bool default_tts_max_resistance = false;
 
-    static const QString tts_act_watt;
-    static constexpr bool default_tts_act_watt = false;
-
-    static const QString tts_avg_watt;
-    static constexpr bool default_tts_avg_watt = true;
-
-    static const QString tts_max_watt;
-    static constexpr bool default_tts_max_watt = true;
-
-    static const QString tts_act_ftp;
-    static constexpr bool default_tts_act_ftp = false;
-
-    static const QString tts_avg_ftp;
-    static constexpr bool default_tts_avg_ftp = true;
-
-    static const QString tts_max_ftp;
-    static constexpr bool default_tts_max_ftp = false;
-
     static const QString tts_act_heart;
     static constexpr bool default_tts_act_heart = true;
 
@@ -1379,9 +1260,6 @@ class QZSettings {
 
     static const QString tts_max_heart;
     static constexpr bool default_tts_max_heart = false;
-
-    static const QString tts_act_jouls;
-    static constexpr bool default_tts_act_jouls = true;
 
     static const QString tts_act_elapsed;
     static constexpr bool default_tts_act_elapsed = true;
@@ -1401,26 +1279,11 @@ class QZSettings {
     static const QString tts_act_target_cadence;
     static constexpr bool default_tts_act_target_cadence = true;
 
-    static const QString tts_act_target_power;
-    static constexpr bool default_tts_act_target_power = true;
-
-    static const QString tts_act_target_zone;
-    static constexpr bool default_tts_act_target_zone = true;
-
     static const QString tts_act_target_speed;
     static constexpr bool default_tts_act_target_speed = true;
 
     static const QString tts_act_target_incline;
     static constexpr bool default_tts_act_target_incline = true;
-
-    static const QString tts_act_watt_kg;
-    static constexpr bool default_tts_act_watt_kg = false;
-
-    static const QString tts_avg_watt_kg;
-    static constexpr bool default_tts_avg_watt_kg = false;
-
-    static const QString tts_max_watt_kg;
-    static constexpr bool default_tts_max_watt_kg = false;
 
     /**
      *@brief Enable the fake device, emulating an elliptical trainer.
@@ -1752,12 +1615,6 @@ class QZSettings {
     static const QString tile_preset_inclination_5_color;
     static const QString default_tile_preset_inclination_5_color;
 
-    static const QString tile_avg_watt_lap_enabled;
-    static constexpr bool default_tile_avg_watt_lap_enabled = false;
-
-    static const QString tile_avg_watt_lap_order;
-    static constexpr int default_tile_avg_watt_lap_order = 48;
-
     static const QString nordictrack_t70_treadmill;
     static constexpr bool default_nordictrack_t70_treadmill = false;
 
@@ -1810,9 +1667,6 @@ class QZSettings {
 
     static const QString strava_virtual_activity;
     static constexpr bool default_strava_virtual_activity = true;
-
-    static const QString powr_sensor_running_cadence_half_on_strava;
-    static constexpr bool default_powr_sensor_running_cadence_half_on_strava = false;
 
     static const QString nordictrack_ifit_adb_remote;
     static constexpr bool default_nordictrack_ifit_adb_remote = false;
@@ -2016,9 +1870,6 @@ class QZSettings {
     static const QString gem_module_inclination;
     static constexpr bool default_gem_module_inclination = false;
 
-    static const QString treadmill_simulate_inclination_with_speed;
-    static constexpr bool default_treadmill_simulate_inclination_with_speed = false;
-
     static const QString garmin_companion;
     static constexpr bool default_garmin_companion = false;
 
@@ -2114,17 +1965,9 @@ class QZSettings {
     static const QString strava_date_prefix;
     static constexpr bool default_strava_date_prefix = false;
 
-    /**
-     * @brief Adjusts value in a metric object that's configured specifically for measuring SPEED on ANT+.
-     */
-    static const QString ant_speed_offset;
-    static constexpr float default_ant_speed_offset = 0;
 
-    /**
-     * @brief Adjusts value in a metric object that's configured specifically for measuring SPEED on ANT+.
-     */
-    static const QString ant_speed_gain;
-    static constexpr float default_ant_speed_gain = 1;
+
+
 
     static const QString race_mode;
     static constexpr bool default_race_mode = false;
@@ -2241,7 +2084,7 @@ class QZSettings {
 
     static const QString nordictrack_treadmill_t8_5s;
     static constexpr bool default_nordictrack_treadmill_t8_5s = false;
-    
+
     static const QString zwift_click;
     static constexpr bool default_zwift_click = false;
 
@@ -2275,17 +2118,9 @@ class QZSettings {
     static const QString tile_step_count_order;
     static constexpr int default_tile_step_count_order = 51;
 
-    static const QString tile_erg_mode_enabled;
-    static constexpr bool default_tile_erg_mode_enabled = false;
-
-    static const QString tile_erg_mode_order;
-    static constexpr int default_tile_erg_mode_order = 52;
-
     static const QString toorx_srx_3500;
     static constexpr bool default_toorx_srx_3500 = false;
 
-    static const QString stryd_speed_instead_treadmill;
-    static constexpr bool default_stryd_speed_instead_treadmill = false;
     static const QString inclination_delay_seconds;
     static constexpr float default_inclination_delay_seconds = 3.0;
 
@@ -2307,15 +2142,6 @@ class QZSettings {
     static const QString ftp_run;
     static constexpr float default_ftp_run = 200.0;
 
-    static const QString tile_rss_enabled;
-    static constexpr bool default_tile_rss_enabled = false;
-
-    static const QString tile_rss_order;
-    static constexpr int default_tile_rss_order = 53;
-
-    static const QString treadmillDataPoints;
-    static const QString default_treadmillDataPoints;
-
     static const QString nordictrack_s20i_treadmill;
     static constexpr bool default_nordictrack_s20i_treadmill = false;
 
@@ -2333,9 +2159,6 @@ class QZSettings {
 
     static const QString proform_treadmill_705_cst_V78_239;
     static constexpr bool default_proform_treadmill_705_cst_V78_239 = false;
-
-    static const QString stryd_add_inclination_gain;
-    static constexpr bool default_stryd_add_inclination_gain = false;
 
     static const QString toorx_bike_srx_500;
     static constexpr bool default_toorx_bike_srx_500 = false;
@@ -2385,10 +2208,6 @@ class QZSettings {
     static const QString proform_rower_ip;
     static const QString default_proform_rower_ip;
 
-
-    static const QString antbike;
-    static constexpr bool default_antbike = false;
-
     static const QString domyosbike_notfmts;
     static constexpr bool default_domyosbike_notfmts = false;
 
@@ -2430,7 +2249,7 @@ class QZSettings {
 
     static const QString peloton_code;
     static const QString default_peloton_code;
-    
+
     static const QString proform_carbon_tl_PFTL59720;
     static constexpr bool default_proform_carbon_tl_PFTL59720 = false;    
 
@@ -2550,9 +2369,6 @@ class QZSettings {
     static const QString tile_biggears_swap;
     static constexpr bool default_tile_biggears_swap = false;
 
-    static const QString treadmill_follow_wattage;
-    static constexpr bool default_treadmill_follow_wattage = false;
-
     static const QString fit_file_garmin_device_training_effect;
     static constexpr bool default_fit_file_garmin_device_training_effect = false;
 
@@ -2571,119 +2387,11 @@ class QZSettings {
     static const QString proform_trainer_9_0;
     static constexpr bool default_proform_trainer_9_0 = false;
 
-    static const QString tile_preset_powerzone_1_enabled;
-    static constexpr bool default_tile_preset_powerzone_1_enabled = false;
-
-    static const QString tile_preset_powerzone_1_order;
-    static constexpr int default_tile_preset_powerzone_1_order = 55;
-
-    static const QString tile_preset_powerzone_1_value;
-    static constexpr double default_tile_preset_powerzone_1_value = 1.0;
-
-    static const QString tile_preset_powerzone_1_label;
-    static const QString default_tile_preset_powerzone_1_label;
-
-    static const QString tile_preset_powerzone_1_color;
-    static const QString default_tile_preset_powerzone_1_color;
-
-    static const QString tile_preset_powerzone_2_enabled;
-    static constexpr bool default_tile_preset_powerzone_2_enabled = false;
-
-    static const QString tile_preset_powerzone_2_order;
-    static constexpr int default_tile_preset_powerzone_2_order = 56;
-
-    static const QString tile_preset_powerzone_2_value;
-    static constexpr double default_tile_preset_powerzone_2_value = 2.0;
-
-    static const QString tile_preset_powerzone_2_label;
-    static const QString default_tile_preset_powerzone_2_label;
-
-    static const QString tile_preset_powerzone_2_color;
-    static const QString default_tile_preset_powerzone_2_color;
-
-    static const QString tile_preset_powerzone_3_enabled;
-    static constexpr bool default_tile_preset_powerzone_3_enabled = false;
-
-    static const QString tile_preset_powerzone_3_order;
-    static constexpr int default_tile_preset_powerzone_3_order = 57;
-
-    static const QString tile_preset_powerzone_3_value;
-    static constexpr double default_tile_preset_powerzone_3_value = 3.0;
-
-    static const QString tile_preset_powerzone_3_label;
-    static const QString default_tile_preset_powerzone_3_label;
-
-    static const QString tile_preset_powerzone_3_color;
-    static const QString default_tile_preset_powerzone_3_color;
-
-    static const QString tile_preset_powerzone_4_enabled;
-    static constexpr bool default_tile_preset_powerzone_4_enabled = false;
-
-    static const QString tile_preset_powerzone_4_order;
-    static constexpr int default_tile_preset_powerzone_4_order = 58;
-
-    static const QString tile_preset_powerzone_4_value;
-    static constexpr double default_tile_preset_powerzone_4_value = 4.0;
-
-    static const QString tile_preset_powerzone_4_label;
-    static const QString default_tile_preset_powerzone_4_label;
-
-    static const QString tile_preset_powerzone_4_color;
-    static const QString default_tile_preset_powerzone_4_color;
-
-    static const QString tile_preset_powerzone_5_enabled;
-    static constexpr bool default_tile_preset_powerzone_5_enabled = false;
-
-    static const QString tile_preset_powerzone_5_order;
-    static constexpr int default_tile_preset_powerzone_5_order = 59;
-
-    static const QString tile_preset_powerzone_5_value;
-    static constexpr double default_tile_preset_powerzone_5_value = 5.0;
-
-    static const QString tile_preset_powerzone_5_label;
-    static const QString default_tile_preset_powerzone_5_label;
-
-    static const QString tile_preset_powerzone_5_color;
-    static const QString default_tile_preset_powerzone_5_color;
-
-    static const QString tile_preset_powerzone_6_enabled;
-    static constexpr bool default_tile_preset_powerzone_6_enabled = false;
-
-    static const QString tile_preset_powerzone_6_order;
-    static constexpr int default_tile_preset_powerzone_6_order = 60;
-
-    static const QString tile_preset_powerzone_6_value;
-    static constexpr double default_tile_preset_powerzone_6_value = 6.0;
-
-    static const QString tile_preset_powerzone_6_label;
-    static const QString default_tile_preset_powerzone_6_label;
-
-    static const QString tile_preset_powerzone_6_color;
-    static const QString default_tile_preset_powerzone_6_color;
-
-    static const QString tile_preset_powerzone_7_enabled;
-    static constexpr bool default_tile_preset_powerzone_7_enabled = false;
-
-    static const QString tile_preset_powerzone_7_order;
-    static constexpr int default_tile_preset_powerzone_7_order = 61;
-
-    static const QString tile_preset_powerzone_7_value;
-    static constexpr double default_tile_preset_powerzone_7_value = 7.0;
-
-    static const QString tile_preset_powerzone_7_label;
-    static const QString default_tile_preset_powerzone_7_label;
-
-    static const QString tile_preset_powerzone_7_color;
-    static const QString default_tile_preset_powerzone_7_color;    
-
     static const QString proform_bike_PFEVEX71316_0;
     static constexpr bool default_proform_bike_PFEVEX71316_0 = false;
 
     static const QString real_inclination_to_virtual_treamill_bridge;
     static constexpr bool default_real_inclination_to_virtual_treamill_bridge = false;
-
-    static const QString stryd_inclination_instead_treadmill;
-    static constexpr bool default_stryd_inclination_instead_treadmill = false;
 
     static const QString power_sensor_cadence_instead_treadmill;
     static constexpr bool default_power_sensor_cadence_instead_treadmill = false;
@@ -2700,8 +2408,6 @@ class QZSettings {
     static constexpr bool default_proform_225_csx_PFEX32925_INT_0 = false;
     static const QString trainprogram_pid_ignore_inclination;
     static constexpr bool default_trainprogram_pid_ignore_inclination = false;
-    static const QString android_antbike;
-    static constexpr bool default_android_antbike = false;
 
     static const QString tile_hr_time_in_zone_1_enabled;
     static constexpr bool default_tile_hr_time_in_zone_1_enabled = false;
@@ -2875,9 +2581,6 @@ class QZSettings {
     static const QString floatingwindow_type;
     static constexpr int default_floatingwindow_type = 0;
 
-    static const QString pid_heart_zone_erg_mode_watt_step;
-    static constexpr int default_pid_heart_zone_erg_mode_watt_step = 5;
-
     /**
      * @brief Enable auto virtual shifting cruise tile
      */
@@ -2914,17 +2617,9 @@ class QZSettings {
     static const QString tile_auto_virtual_shifting_sprint_order;
     static constexpr int default_tile_auto_virtual_shifting_sprint_order = 57;
 
-    /**
-     * @brief Enable power averaging tile
-     */
-    static const QString tile_power_avg_enabled;
-    static constexpr bool default_tile_power_avg_enabled = false;
 
-    /**
-     * @brief Order of power averaging tile
-     */
-    static const QString tile_power_avg_order;
-    static constexpr int default_tile_power_avg_order = 77;
+
+
 
     /**
      * @brief Enable negative inclination tile
@@ -2950,11 +2645,7 @@ class QZSettings {
     static const QString tile_hrv_order;
     static constexpr int default_tile_hrv_order = 78;
 
-    /**
-     * @brief Chart display mode: 0 = both charts, 1 = heart rate only, 2 = power only
-     */
-    static const QString chart_display_mode;
-    static constexpr int default_chart_display_mode = 0;
+
 
     /**
      * @brief Metric shown on the leading side of the iOS Dynamic Island compact Live Activity.
@@ -3052,16 +2743,6 @@ class QZSettings {
     static const QString shortcut_target_resistance_minus;
     static const QString default_shortcut_target_resistance_minus;
 
-    static const QString shortcut_target_power_plus;
-    static const QString default_shortcut_target_power_plus;
-    static const QString shortcut_target_power_minus;
-    static const QString default_shortcut_target_power_minus;
-
-    static const QString shortcut_target_zone_plus;
-    static const QString default_shortcut_target_zone_plus;
-    static const QString shortcut_target_zone_minus;
-    static const QString default_shortcut_target_zone_minus;
-
     static const QString shortcut_target_speed_plus;
     static const QString default_shortcut_target_speed_plus;
     static const QString shortcut_target_speed_minus;
@@ -3071,7 +2752,6 @@ class QZSettings {
     static const QString default_shortcut_target_incline_plus;
     static const QString shortcut_target_incline_minus;
     static const QString default_shortcut_target_incline_minus;
-
 
     static const QString shortcut_peloton_offset_plus;
     static const QString default_shortcut_peloton_offset_plus;
@@ -3115,12 +2795,6 @@ class QZSettings {
     static const QString shortcut_avs_sprint;
     static const QString default_shortcut_avs_sprint;
 
-    static const QString shortcut_power_avg;
-    static const QString default_shortcut_power_avg;
-
-    static const QString shortcut_erg_mode;
-    static const QString default_shortcut_erg_mode;
-
     static const QString shortcut_preset_resistance_1;
     static const QString default_shortcut_preset_resistance_1;
     static const QString shortcut_preset_resistance_2;
@@ -3153,21 +2827,6 @@ class QZSettings {
     static const QString default_shortcut_preset_inclination_4;
     static const QString shortcut_preset_inclination_5;
     static const QString default_shortcut_preset_inclination_5;
-
-    static const QString shortcut_preset_powerzone_1;
-    static const QString default_shortcut_preset_powerzone_1;
-    static const QString shortcut_preset_powerzone_2;
-    static const QString default_shortcut_preset_powerzone_2;
-    static const QString shortcut_preset_powerzone_3;
-    static const QString default_shortcut_preset_powerzone_3;
-    static const QString shortcut_preset_powerzone_4;
-    static const QString default_shortcut_preset_powerzone_4;
-    static const QString shortcut_preset_powerzone_5;
-    static const QString default_shortcut_preset_powerzone_5;
-    static const QString shortcut_preset_powerzone_6;
-    static const QString default_shortcut_preset_powerzone_6;
-    static const QString shortcut_preset_powerzone_7;
-    static const QString default_shortcut_preset_powerzone_7;
 
     static const QString shortcut_auto_resistance;
     static const QString default_shortcut_auto_resistance;

@@ -1,8 +1,5 @@
 #include "nautilusbike.h"
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include <QBluetoothLocalDevice>
 #include <QDateTime>
@@ -147,11 +144,6 @@ void nautilusbike::characteristicChanged(const QLowEnergyCharacteristic &charact
 
     if (newValue.length() == 20) {
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             uint8_t heart = ((uint8_t)newValue.at(16));
             if (heartRateBeltName.startsWith(QStringLiteral("Disabled")) && heart != 0) {

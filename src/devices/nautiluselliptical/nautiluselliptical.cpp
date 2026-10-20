@@ -1,8 +1,5 @@
 #include "nautiluselliptical.h"
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>
@@ -235,11 +232,6 @@ void nautiluselliptical::characteristicChanged(const QLowEnergyCharacteristic &c
     if (newValue.length() == 20) {
         const bool isM7Device = bluetoothDevice.name().startsWith(QStringLiteral("Nautilus M7"), Qt::CaseInsensitive);
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) {
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        } else
-#endif
         {
             uint8_t heart = ((uint8_t)newValue.at(16));
             if (!isM7Device && heartRateBeltName.startsWith(QStringLiteral("Disabled")) && heart != 0) {

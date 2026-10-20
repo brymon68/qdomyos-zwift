@@ -82,9 +82,7 @@ SOURCES += \
     $$PWD/characteristics/characteristicnotifier0002.cpp \
     $$PWD/characteristics/characteristicnotifier0004.cpp \
     $$PWD/characteristics/characteristicwriteprocessor0003.cpp \
-    $$PWD/devices/android_antbike/android_antbike.cpp \
     $$PWD/androidqlog.cpp \
-    $$PWD/devices/antbike/antbike.cpp \
     $$PWD/devices/coresensor/coresensor.cpp \
     $$PWD/devices/crossrope/crossrope.cpp \
     $$PWD/devices/cycleopsphantombike/cycleopsphantombike.cpp \
@@ -316,7 +314,6 @@ devices/solef80treadmill/solef80treadmill.cpp \
 devices/spirittreadmill/spirittreadmill.cpp \
 devices/sportsplusbike/sportsplusbike.cpp \
 devices/sportstechbike/sportstechbike.cpp \
-devices/strydrunpowersensor/strydrunpowersensor.cpp \
 devices/tacxneo2/tacxneo2.cpp \
 tcpclientinfosender.cpp \
 devices/technogymmyruntreadmill/technogymmyruntreadmill.cpp \
@@ -365,8 +362,6 @@ HEADERS += \
     $$PWD/characteristics/characteristicnotifier0004.h \
     $$PWD/characteristics/characteristicwriteprocessor0003.h \
     $$PWD/OAuth2.h \
-    $$PWD/devices/android_antbike/android_antbike.h \
-    $$PWD/devices/antbike/antbike.h \
     $$PWD/devices/coresensor/coresensor.h \
     $$PWD/devices/crossrope/crossrope.h \
     $$PWD/devices/cycleopsphantombike/cycleopsphantombike.h \
@@ -429,7 +424,6 @@ HEADERS += \
     $$PWD/mqtt/qmqtttopicfilter.h \
     $$PWD/mqtt/qmqtttopicname.h \
     $$PWD/mqtt/qmqtttype.h \
-    $$PWD/treadmillErgTable.h \
     $$PWD/wheelcircumference.h \
     $$PWD/workoutloaderworker.h \
     $$PWD/workoutmodel.h \
@@ -839,7 +833,6 @@ devices/solef80treadmill/solef80treadmill.h \
 devices/spirittreadmill/spirittreadmill.h \
 devices/sportsplusbike/sportsplusbike.h \
 devices/sportstechbike/sportstechbike.h \
-devices/strydrunpowersensor/strydrunpowersensor.h \
 devices/tacxneo2/tacxneo2.h \
 tcpclientinfosender.h \
 devices/technogymmyruntreadmill/technogymmyruntreadmill.h \
@@ -927,7 +920,6 @@ DISTFILES += \
     $$PWD/android/assets/ca_cert.pem \
     $$PWD/android/assets/client_cert.pem \
     $$PWD/android/assets/client_key.pem \
-    $$PWD/android/libs/android_antlib_4-16-0.aar \
     $$PWD/android/libs/ciq-companion-app-sdk-2.0.3.aar \
     $$PWD/android/libs/zaplibrary-debug.aar \
     $$PWD/android/proto/activitylog/ActivityLog.proto \
@@ -938,8 +930,6 @@ DISTFILES += \
     $$PWD/android/proto/activitylog/ActivityLogStats.proto \
     $$PWD/android/proto/activitylog/ActivityLogSummary.proto \
     $$PWD/android/proto/activitylog/ActivityLogUtils.proto \
-    $$PWD/android/proto/antplus/AntPlusDevice.proto \
-    $$PWD/android/proto/antplus/AntPlusService.proto \
     $$PWD/android/proto/appnavigation/AppNavigationService.proto \
     $$PWD/android/proto/appnavigation/ForegroundClasses.proto \
     $$PWD/android/proto/appnavigation/ForegroundFqns.proto \
@@ -968,7 +958,6 @@ DISTFILES += \
     $$PWD/android/proto/console/calibration/InclineCalibrationService.proto \
     $$PWD/android/proto/console/calibration/ThrottleCalibration.proto \
     $$PWD/android/proto/console/calibration/ThrottleCalibrationService.proto \
-    $$PWD/android/proto/console/constantwatts/ConstantWattsService.proto \
     $$PWD/android/proto/console/idlelockout/IdleModeLockout.proto \
     $$PWD/android/proto/console/idlelockout/IdleModeLockoutService.proto \
     $$PWD/android/proto/console/keypress/KeyCode.proto \
@@ -1069,7 +1058,6 @@ DISTFILES += \
     $$PWD/android/proto/workout/StepCountService.proto \
     $$PWD/android/proto/workout/StrokesPerMinuteService.proto \
     $$PWD/android/proto/workout/StrokesService.proto \
-    $$PWD/android/proto/workout/WattsService.proto \
     $$PWD/android/proto/workout/WorkoutError.proto \
     $$PWD/android/proto/workout/WorkoutResult.proto \
     $$PWD/android/proto/workout/WorkoutService.proto \
@@ -1100,7 +1088,6 @@ DISTFILES += \
     $$PWD/android/proto/workout/data/video/VideoSourceHls.proto \
     $$PWD/android/proto/workout/data/video/VideoSourceStream.proto \
     $$PWD/android/res/xml/device_filter.xml \
-    $$PWD/android/src/BikeChannelController.java \
     $$PWD/android/src/BleAdvertiser.java \
    $$PWD/android/src/CSafeRowerUSBHID.java \
     $$PWD/android/src/ContentHelper.java \
@@ -1133,8 +1120,6 @@ DISTFILES += \
 	android/gradlew.bat \
    android/res/layout/floating_layout.xml \
 	android/res/values/libs.xml \
-	android/src/Ant.java \
-	android/src/ChannelService.java \
    android/src/FloatingHandler.java \
    android/src/FloatingWindowGFG.java \
    android/src/ForegroundService.java \
@@ -1142,11 +1127,7 @@ DISTFILES += \
    android/src/QZAdbRemote.java \
         android/src/ScanRecordResult.java \
         android/src/NativeScanCallback.java \
-   android/src/HeartChannelController.java \
 	android/src/MyActivity.java \
-	android/src/PowerChannelController.java \
-	android/src/SpeedChannelController.java \
-   android/src/SDMChannelController.java \
     android/src/Usbserial.java \
    android/src/com/cgutman/adblib/AdbBase64.java \
    android/src/com/cgutman/adblib/AdbConnection.java \
@@ -1164,7 +1145,6 @@ DISTFILES += \
    android/src/com/cgutman/androidremotedebugger/service/ShellService.java \
    android/src/com/cgutman/androidremotedebugger/ui/Dialog.java \
    android/src/com/cgutman/androidremotedebugger/ui/SpinnerDialog.java \
-	android/src/com/dsi/ant/channel/PredefinedNetwork.java \
     android/gradle.properties \
     android/proguard-rules.pro \
 	ios/AppDelegate.swift \

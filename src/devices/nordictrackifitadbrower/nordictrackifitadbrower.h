@@ -112,7 +112,6 @@ class nordictrackifitadbrower : public rower {
     // gRPC metric getters
     double getGrpcSpeed();
     double getGrpcResistance();
-    double getGrpcWatts();
     double getGrpcCadence();
     double getGrpcStrokesCount();
     double getGrpcStrokesLength();

@@ -23,7 +23,6 @@ Page {
         property int bike_resistance_offset: 4
         property string zwift_username: ""
         property string zwift_password: ""
-        property bool speed_power_based: false
         property bool zwift_api_autoinclination: true
         property bool zwift_click: false
         property bool zwift_play: false
@@ -525,7 +524,6 @@ Page {
                         text: qsTr("Next")
                         onClicked: {
                             settings.bike_resistance_offset = spinBoxResistanceOffset.value;
-                            settings.speed_power_based = true;
                             stackViewLocal.push(finalStepComponent);
                         }
                     }                    

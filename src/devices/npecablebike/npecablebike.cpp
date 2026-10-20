@@ -9,7 +9,6 @@
 #include <QThread>
 #include <math.h>
 #ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
 #include <QLowEnergyConnectionParameters>
 #endif
 
@@ -377,11 +376,6 @@ void npecablebike::characteristicChanged(const QLowEnergyCharacteristic &charact
 
         emit debug(QStringLiteral("Current KCal: ") + QString::number(KCal.value()));
 
-    #ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-    #endif
         {
             if (Flags.heartRate && !disable_hr_frommachinery && newValue.length() > index) {
                 Heart = ((double)(((uint8_t)newValue.at(index))));
@@ -407,12 +401,6 @@ void npecablebike::characteristicChanged(const QLowEnergyCharacteristic &charact
         lastRefreshCharacteristicChanged2AD2 = now;
     }
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) {
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-        debug("Current Heart: " + QString::number(Heart.value()));
-    }
-#endif
     if (heartRateBeltName.startsWith(QStringLiteral("Disabled")) && Heart.value() == 0) {
         update_hr_from_external();
     }

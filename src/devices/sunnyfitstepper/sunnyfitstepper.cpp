@@ -1,7 +1,4 @@
 #include "sunnyfitstepper.h"
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>

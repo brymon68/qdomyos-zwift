@@ -1,7 +1,4 @@
 #include "fitshowtreadmill.h"
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualtreadmill.h"
 #include "homeform.h"
 #include <QBluetoothLocalDevice>
@@ -549,11 +546,6 @@ void fitshowtreadmill::characteristicChanged(const QLowEnergyCharacteristic &cha
                 if (truetimer)
                     elapsed = seconds_elapsed;
                 Distance = DistanceCalculated;
-#ifdef Q_OS_ANDROID
-                if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-                    Heart = (uint8_t)KeepAwakeHelper::heart();
-                else
-#endif
                 {
                     if (settings.value(QZSettings::heart_rate_belt_name, QZSettings::default_heart_rate_belt_name).toString().startsWith(QStringLiteral("Disabled"))) {
                         bool garminCompanionEnabledForHeart =

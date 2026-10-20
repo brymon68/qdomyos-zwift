@@ -419,21 +419,6 @@ bool coresensor::scanForBLEHeartRateMonitors() {
     return true;
 }
 
-bool coresensor::scanForANTHeartRateMonitors() {
-    if (!m_coreControlPointCharacteristic.isValid() || m_operationInProgress) {
-        return false;
-    }
-
-    QByteArray request;
-    request.append((char)0x0A);  // OpCode for scan ANT+ HRMs
-    request.append((char)0xFF);  // Parameter for starting scan
-
-    m_operationInProgress = true;
-    m_coreService->writeCharacteristic(m_coreControlPointCharacteristic, request, QLowEnergyService::WriteWithResponse);
-
-    return true;
-}
-
 int coresensor::getNumberOfPairedHeartRateMonitors() {
     // This is a simple implementation that requests the number of paired BLE HRMs
     // In a complete implementation, we would make an async request and store the result

@@ -24,7 +24,6 @@ BRANDS = [
     "FTMS",
     "Bluetooth",
     "BLE",
-    "ANT+",
     "GPX",
     "FIT",
     "JSON",

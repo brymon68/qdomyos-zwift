@@ -1,7 +1,7 @@
 #include "nordictrackifitadbelliptical.h"
 
 #ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
+#include <QtAndroidExtras>
 #endif
 #include <QDateTime>
 #include <QFile>
@@ -452,11 +452,6 @@ void nordictrackifitadbelliptical::processPendingDatagrams() {
 
         lastRefreshCharacteristicChanged = QDateTime::currentDateTime();
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
                 update_hr_from_external();
@@ -496,9 +491,6 @@ void nordictrackifitadbelliptical::onHRM(int hrm) {
         settings.value(QZSettings::heart_ignore_builtin, QZSettings::default_heart_ignore_builtin).toBool();
 
     if (
-#ifdef Q_OS_ANDROID
-        (!settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) &&
-#endif
         heartRateBeltName.startsWith(QStringLiteral("Disabled")) && !disable_hr_frommachinery) {
 
         Heart = hrm;

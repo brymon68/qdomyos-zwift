@@ -154,7 +154,6 @@ class m3ibike : public bike {
 
   private:
     bool heartRateBeltDisabled = true;
-    bool antHeart = false;
     bool disconnecting = false;
     void initScan();
     Q_INVOKABLE void processAdvertising(const QByteArray &data);

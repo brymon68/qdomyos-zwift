@@ -86,9 +86,7 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
         .float32(bluetoothManager->device()->calories().value())
         .closeMessage()
 
-        .openMessage("/QZ/Joules", 1)
-        .float32(bluetoothManager->device()->jouls().value())
-        .closeMessage()
+
 
         .openMessage("/QZ/ElapsedTime", 1)
         .string(bluetoothManager->device()->elapsedTime().toString(QStringLiteral("m:ss")).toLatin1())
@@ -135,9 +133,7 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
         .int32(bluetoothManager->device()->lastCrankEventTime())
         .closeMessage()
 
-        .openMessage("/QZ/Watts", 1)
-        .int32(bluetoothManager->device()->wattsMetric().value())
-        .closeMessage()
+
 
         .openMessage("/QZ/ElevationGain", 1)
         .float32(bluetoothManager->device()->elevationGain().value())
@@ -171,13 +167,9 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
         .float32(bluetoothManager->device()->weightLoss())
         .closeMessage()
 
-        .openMessage("/QZ/WattKg", 1)
-        .float32(bluetoothManager->device()->wattKg().value())
-        .closeMessage()
 
-        .openMessage("/QZ/METS", 1)
-        .float32(bluetoothManager->device()->currentMETS().value())
-        .closeMessage()
+
+
 
         .openMessage("/QZ/HeartZone", 1)
         .int32(bluetoothManager->device()->currentHeartZone().value())
@@ -187,13 +179,9 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
         .int32(bluetoothManager->device()->maxHeartZone())
         .closeMessage()
 
-        .openMessage("/QZ/PowerZone", 1)
-        .int32(bluetoothManager->device()->currentPowerZone().value())
-        .closeMessage()
 
-        .openMessage("/QZ/TargetPowerZone", 1)
-        .int32(bluetoothManager->device()->targetPowerZone().value())
-        .closeMessage()
+
+
 
         .openMessage("/QZ/DeviceType", 1)
         .int32(bluetoothManager->device()->deviceType())

@@ -1,8 +1,5 @@
 #include "nordictrackelliptical.h"
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>
@@ -1268,11 +1265,6 @@ void nordictrackelliptical::characteristicChanged(const QLowEnergyCharacteristic
     lastRefreshCharacteristicChanged = QDateTime::currentDateTime();
 
     if (disable_hr_frommachinery) {
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
                 update_hr_from_external();

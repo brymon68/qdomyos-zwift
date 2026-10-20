@@ -37,10 +37,6 @@ ScrollView {
         property string shortcut_peloton_resistance_minus: ""
         property string shortcut_target_resistance_plus: ""
         property string shortcut_target_resistance_minus: ""
-        property string shortcut_target_power_plus: ""
-        property string shortcut_target_power_minus: ""
-        property string shortcut_target_zone_plus: ""
-        property string shortcut_target_zone_minus: ""
         property string shortcut_target_speed_plus: ""
         property string shortcut_target_speed_minus: ""
         property string shortcut_target_incline_plus: ""
@@ -62,8 +58,6 @@ ScrollView {
         property string shortcut_avs_cruise: ""
         property string shortcut_avs_climb: ""
         property string shortcut_avs_sprint: ""
-        property string shortcut_power_avg: ""
-        property string shortcut_erg_mode: ""
         property string shortcut_preset_resistance_1: ""
         property string shortcut_preset_resistance_2: ""
         property string shortcut_preset_resistance_3: ""
@@ -79,13 +73,6 @@ ScrollView {
         property string shortcut_preset_inclination_3: ""
         property string shortcut_preset_inclination_4: ""
         property string shortcut_preset_inclination_5: ""
-        property string shortcut_preset_powerzone_1: ""
-        property string shortcut_preset_powerzone_2: ""
-        property string shortcut_preset_powerzone_3: ""
-        property string shortcut_preset_powerzone_4: ""
-        property string shortcut_preset_powerzone_5: ""
-        property string shortcut_preset_powerzone_6: ""
-        property string shortcut_preset_powerzone_7: ""
         property string shortcut_auto_resistance: ""
         property string shortcut_lap: ""
         property string shortcut_start_stop: ""
@@ -236,16 +223,6 @@ ScrollView {
                     ShortcutField { text: settings.shortcut_target_resistance_minus; settingName: "shortcut_target_resistance_minus" }
                 }
                 RowLayout {
-                    Label { text: qsTr("Target Power + / -"); Layout.fillWidth: true }
-                    ShortcutField { text: settings.shortcut_target_power_plus; settingName: "shortcut_target_power_plus" }
-                    ShortcutField { text: settings.shortcut_target_power_minus; settingName: "shortcut_target_power_minus" }
-                }
-                RowLayout {
-                    Label { text: qsTr("Target Zone + / -"); Layout.fillWidth: true }
-                    ShortcutField { text: settings.shortcut_target_zone_plus; settingName: "shortcut_target_zone_plus" }
-                    ShortcutField { text: settings.shortcut_target_zone_minus; settingName: "shortcut_target_zone_minus" }
-                }
-                RowLayout {
                     Label { text: qsTr("Target Speed + / -"); Layout.fillWidth: true }
                     ShortcutField { text: settings.shortcut_target_speed_plus; settingName: "shortcut_target_speed_plus" }
                     ShortcutField { text: settings.shortcut_target_speed_minus; settingName: "shortcut_target_speed_minus" }
@@ -292,14 +269,6 @@ ScrollView {
                     Label { text: qsTr("Ext. Inclination + / -"); Layout.fillWidth: true }
                     ShortcutField { text: settings.shortcut_ext_incline_plus; settingName: "shortcut_ext_incline_plus" }
                     ShortcutField { text: settings.shortcut_ext_incline_minus; settingName: "shortcut_ext_incline_minus" }
-                }
-                RowLayout {
-                    Label { text: qsTr("ERG Mode Toggle"); Layout.fillWidth: true }
-                    ShortcutField { text: settings.shortcut_erg_mode; settingName: "shortcut_erg_mode" }
-                }
-                RowLayout {
-                    Label { text: qsTr("Power Avg Toggle"); Layout.fillWidth: true }
-                    ShortcutField { text: settings.shortcut_power_avg; settingName: "shortcut_power_avg" }
                 }
                 RowLayout {
                     Label { text: qsTr("Auto-Resistance Toggle"); Layout.fillWidth: true }
@@ -353,19 +322,5 @@ ScrollView {
             }
         }
 
-        GroupBox {
-            title: qsTr("Preset Power Zone")
-            Layout.fillWidth: true
-            RowLayout {
-                anchors.fill: parent
-                PresetShortcutField { text: settings.shortcut_preset_powerzone_1; settingName: "shortcut_preset_powerzone_1" }
-                PresetShortcutField { text: settings.shortcut_preset_powerzone_2; settingName: "shortcut_preset_powerzone_2" }
-                PresetShortcutField { text: settings.shortcut_preset_powerzone_3; settingName: "shortcut_preset_powerzone_3" }
-                PresetShortcutField { text: settings.shortcut_preset_powerzone_4; settingName: "shortcut_preset_powerzone_4" }
-                PresetShortcutField { text: settings.shortcut_preset_powerzone_5; settingName: "shortcut_preset_powerzone_5" }
-                PresetShortcutField { text: settings.shortcut_preset_powerzone_6; settingName: "shortcut_preset_powerzone_6" }
-                PresetShortcutField { text: settings.shortcut_preset_powerzone_7; settingName: "shortcut_preset_powerzone_7" }
-            }
-        }
     }
 }

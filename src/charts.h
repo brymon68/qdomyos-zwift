@@ -24,7 +24,6 @@ class charts : public QDialog {
 
     void on_Inclination_clicked();
 
-    void on_watt_clicked();
 
     void on_resistance_clicked();
 
@@ -39,7 +38,6 @@ class charts : public QDialog {
     QtCharts::QLineSeries *chart_series_speed = nullptr;
     QtCharts::QLineSeries *chart_series_inclination = nullptr;
     QtCharts::QLineSeries *chart_series_heart = nullptr;
-    QtCharts::QLineSeries *chart_series_watt = nullptr;
     QtCharts::QLineSeries *chart_series_resistance = nullptr;
     QtCharts::QLineSeries *chart_series_pace = nullptr;
 };

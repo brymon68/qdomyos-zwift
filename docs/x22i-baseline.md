@@ -72,9 +72,11 @@ Initialize submodules and commit changes in the mounted fork first. `/LOCAL/BUIL
 
 The build verifies ARM64 Qt/OpenSSL/C++ payloads, QML resources, gRPC assets, package/component/provider identities, and removed-code markers in the native app and all DEX files. APK signatures are verified separately. These checks establish packaging and source removal; they do not establish runtime connectivity or physical incline behavior.
 
+ANT+ drivers, services, SDKs, and controls have been deleted. The X22i no longer reads or estimates watts, offers power targets or FTP zones, or records power-derived metrics. Bluetooth/DIRCON treadmill payloads omit watts and reject target-power commands; speed and terrain-incline commands remain supported.
+
 ## Settings and installation
 
-[`src/x22i_defaults.h`](../src/x22i_defaults.h) supplies 70 reviewed nonsecret settings in test builds before normal settings reads and QML startup. It only writes missing keys. Saved custom values, explicit false/zero/empty values, and private credentials take precedence. It preserves miles, local iFIT, Bluetooth/DIRCON, Zwift auto-incline, gain/calibration, the 0.5% incline step, three-second delay, bounds, and the 31-entry incline lookup table. Reset Settings still uses the inherited defaults.
+[`src/x22i_defaults.h`](../src/x22i_defaults.h) supplies 67 reviewed nonsecret settings in test builds before normal settings reads and QML startup. It only writes missing keys. Saved custom values, explicit false/zero/empty values, and private credentials take precedence. It preserves miles, local iFIT, Bluetooth/DIRCON, Zwift auto-incline, gain/calibration, the 0.5% incline step, three-second delay, bounds, and the 31-entry incline lookup table. Reset Settings still uses the inherited defaults.
 
 Upgrade X22i Test with the same package and persistent signer. Do not uninstall to work around an update failure or rotate the signing key casually. Fresh installs need private Zwift authentication; credentials and the profile encryption key are never bundled.
 

@@ -11,9 +11,6 @@
 #ifdef Q_OS_ANDROID
 #include <QLowEnergyConnectionParameters>
 #endif
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include <chrono>
 #include "wheelcircumference.h"
 

@@ -10,7 +10,6 @@ void InitializeTrackedSettings()
     if(trackedSettings.size())
         return;
 
-    trackedSettings.insert(QZSettings::antbike, QZSettings::default_antbike);
     trackedSettings.insert(QZSettings::applewatch_fakedevice, QZSettings::default_applewatch_fakedevice);
     trackedSettings.insert(QZSettings::cadence_sensor_as_bike, QZSettings::default_cadence_sensor_as_bike);
     trackedSettings.insert(QZSettings::cadence_sensor_name, QZSettings::default_cadence_sensor_name);
@@ -38,9 +37,6 @@ void InitializeTrackedSettings()
     trackedSettings.insert(QZSettings::pafers_treadmill, QZSettings::default_pafers_treadmill);
     trackedSettings.insert(QZSettings::pafers_rower, QZSettings::default_pafers_rower);
     trackedSettings.insert(QZSettings::pafers_treadmill_bh_iboxster_plus, QZSettings::default_pafers_treadmill_bh_iboxster_plus);
-    trackedSettings.insert(QZSettings::power_sensor_as_bike, QZSettings::default_power_sensor_as_bike);
-    trackedSettings.insert(QZSettings::power_sensor_as_treadmill, QZSettings::default_power_sensor_as_treadmill);
-    trackedSettings.insert(QZSettings::power_sensor_name, QZSettings::default_power_sensor_name);
     trackedSettings.insert(QZSettings::proform_elliptical_ip, QZSettings::default_proform_elliptical_ip);
     trackedSettings.insert(QZSettings::proformtdf1ip, QZSettings::default_proformtdf1ip);
     trackedSettings.insert(QZSettings::proformtdf4ip, QZSettings::default_proformtdf4ip);

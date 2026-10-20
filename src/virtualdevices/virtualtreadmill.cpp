@@ -247,7 +247,7 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
         valueFIT.append((char)'I'); // heart rate and elapsed time
         valueFIT.append((char)'C');
         valueFIT.append((char)'K');
-        valueFIT.append((char)'R'); // resistance and power target supported
+        valueFIT.append((char)'R');
         valueFIT.append((char)' '); // indoor simulation, wheel and spin down supported
         valueFIT.append((char)'R');
         valueFIT.append((char)'U');
@@ -547,17 +547,9 @@ void virtualtreadmill::treadmillProvider() {
         }
     uint16_t normalizeSpeed = (uint16_t)qRound(treadMill->currentSpeed().value() * 100);
 
-    // really connected to a device
-    //if (h->virtualtreadmill_updateFTMS(
-    //        normalizeSpeed, 0, (uint16_t)((treadmill *)treadMill)->currentCadence().value() * cadence_multiplier,
-    //        (uint16_t)((treadmill *)treadMill)->wattsMetric().value(),
-    //        inclination * 10, (uint64_t)(((treadmill *)treadMill)->odometer() * 1000.0))) {
-    //    h->virtualtreadmill_setHeartRate(((treadmill *)treadMill)->currentHeart().value());
-
     uint16_t swiftSpeed = normalizeSpeed;
     uint16_t swiftCadence = (uint16_t)(((treadmill *)treadMill)->currentCadence().value() * cadence_multiplier);
     uint8_t swiftResistance = 0;
-    uint16_t swiftWatt = (uint16_t)((treadmill *)treadMill)->wattsMetric().value();
     uint16_t swiftInclination = (uint16_t)(inclination * 10.0);
     uint64_t swiftDistance = bike_cadence_sensor ?
         (uint64_t)(((treadmill *)treadMill)->odometer() * 1000.0) :  // old behavior
@@ -577,7 +569,6 @@ void virtualtreadmill::treadmillProvider() {
             swiftSpeed,
             swiftResistance,
             swiftCadence,
-            swiftWatt,
             swiftInclination,
             swiftDistance,
             ((treadmill *)treadMill)->elevationGain().value(),  // Use QZ's calculated elevation gain

@@ -15,7 +15,6 @@
  */
 
 #include "kettlerusbbike.h"
-#include "keepawakehelper.h"
 #include "virtualdevices/virtualbike.h"
 #include <QDateTime>
 #include <QFile>
@@ -211,11 +210,6 @@ void kettlerusbbike::update() {
 
         lastRefreshCharacteristicChanged = QDateTime::currentDateTime();
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (disable_hr_frommachinery && heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
                 update_hr_from_external();

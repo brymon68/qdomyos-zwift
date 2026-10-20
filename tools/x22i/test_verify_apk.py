@@ -97,6 +97,26 @@ class VerifyApkTests(unittest.TestCase):
                     self.assertEqual(result.returncode, 1)
                     self.assertIn("Removed licensing code remains", result.stderr)
 
+    def test_ant_and_treadmill_power_are_always_rejected(self):
+        for marker in ("antObject", "antbike", "strydrunpowersensor", "getCurrentWatts",
+                       "treadmill_follow_wattage"):
+            for encoding in ("utf-8", "utf-16-le"):
+                with self.subTest(marker=marker, encoding=encoding):
+                    self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = marker.encode(encoding)
+                    result = self.run_verifier()
+                    self.assertEqual(result.returncode, 1)
+                    self.assertIn(marker, result.stderr)
+
+    def test_ant_and_watts_services_are_rejected_in_secondary_dex(self):
+        for marker in ("com/dsi/ant/", "org/cagnulen/qdomyoszwift/ChannelService",
+                       "WattsServiceGrpc", "ConstantWattsServiceGrpc", "getCurrentWatts"):
+            with self.subTest(marker=marker):
+                self.entries["classes3.dex"] = marker.encode()
+                result = self.run_verifier()
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("classes3.dex", result.stderr)
+                self.assertIn(marker, result.stderr)
+
     def test_missing_qt_or_runtime_library(self):
         for name in ("libQt5QuickControls2_arm64-v8a.so", "libQt5HttpServer_arm64-v8a.so", "libc++_shared.so", "libssl_1_1.so"):
             with self.subTest(library=name):

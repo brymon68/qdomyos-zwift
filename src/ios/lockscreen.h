@@ -57,11 +57,10 @@ class lockscreen {
     void virtualtreadmill_setHeartRate(unsigned char heartRate);
     double virtualtreadmill_getCurrentSlope();
     uint64_t virtualtreadmill_lastChangeCurrentSlope();
-    double virtualtreadmill_getPowerRequested();
     double virtualtreadmill_getRequestedSpeed();
     uint64_t virtualtreadmill_lastChangeRequestedSpeed();
     bool virtualtreadmill_updateFTMS(unsigned short normalizeSpeed, unsigned char currentResistance,
-                                     unsigned short currentCadence, unsigned short currentWatt,
+                                     unsigned short currentCadence,
                                      unsigned short currentInclination, unsigned long long currentDistance, double elevationGain,
                                      unsigned short currentCalories, qint32 currentSteps, unsigned short elapsedSeconds,
                                      unsigned char deviceType);

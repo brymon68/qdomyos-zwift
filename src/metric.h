@@ -53,12 +53,10 @@ class metric {
     static double calculateSpeedFromPower(double power, double inclination, double speed, double deltaTimeSeconds,
                                           double speedLimit);
     static double calculateWeightLoss(double kcal);
-    static double calculateVO2Max(QList<SessionLine> *session);
     static double calculateKCalfromHR(double HR_AVG, double elapsed);
     static double calculateBMR();
     static double calculateActiveKCal(double totalKCal, double elapsed);
 
-    static double powerPeak(QList<SessionLine> *session, int seconds);
     
   private:
     double m_value = 0;

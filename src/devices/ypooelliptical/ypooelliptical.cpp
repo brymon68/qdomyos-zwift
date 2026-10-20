@@ -13,7 +13,6 @@
 #include <QLowEnergyConnectionParameters>
 #endif
 #include <chrono>
-#include "keepawakehelper.h"
 
 using namespace std::chrono_literals;
 
@@ -571,11 +570,6 @@ void ypooelliptical::characteristicChanged(const QLowEnergyCharacteristic &chara
 
         emit debug(QStringLiteral("Current KCal: ") + QString::number(KCal.value()));
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (SCH_411_510E && lastPacket.length() > 23) {
                 heartRate((uint8_t)lastPacket.at(23));
@@ -787,11 +781,6 @@ void ypooelliptical::characteristicChanged(const QLowEnergyCharacteristic &chara
         }
 
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
 
         }
@@ -821,11 +810,6 @@ void ypooelliptical::characteristicChanged(const QLowEnergyCharacteristic &chara
                               now)))); //(( (0.048* Output in watts +1.19) * body weight in
                                                                 // kg * 3.5) / 200 ) / 60
 
-#ifdef Q_OS_ANDROID
-            if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-                Heart = (uint8_t)KeepAwakeHelper::heart();
-            else
-#endif
             {
 
             }

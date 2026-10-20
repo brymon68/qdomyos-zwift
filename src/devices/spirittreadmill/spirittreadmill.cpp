@@ -1,8 +1,5 @@
 #include "spirittreadmill.h"
 #include "virtualdevices/virtualbike.h"
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>
 #include <QDateTime>
@@ -250,11 +247,6 @@ void spirittreadmill::characteristicChanged(const QLowEnergyCharacteristic &char
     // settings.value(QZSettings::domyos_elliptical_speed_ratio,
     // QZSettings::default_domyos_elliptical_speed_ratio).toDouble();
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         /*if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
             Heart = ((uint8_t)newValue.at(18));

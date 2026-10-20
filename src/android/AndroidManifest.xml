@@ -106,7 +106,6 @@
                             android:scheme="wear" />
                     </intent-filter>
                 </service>
-				<service android:name=".ChannelService"></service>
 				<service android:name=".FloatingWindowGFG" android:enabled="true" android:exported="true"/>
 
             <service android:name="com.cgutman.androidremotedebugger.service.ShellService"
@@ -175,7 +174,6 @@
          <uses-permission android:name="android.permission.health.WRITE_DISTANCE" />
          <uses-permission android:name="android.permission.health.WRITE_TOTAL_CALORIES_BURNED" />
          <uses-permission android:name="android.permission.health.WRITE_HEART_RATE" />
-         <uses-permission android:name="android.permission.health.WRITE_POWER" />
          <uses-permission android:name="android.permission.health.WRITE_SPEED" />
          <uses-permission android:name="android.permission.health.WRITE_CYCLING_PEDALING_CADENCE" />
          <uses-permission android:name="android.permission.health.WRITE_ELEVATION_GAINED" />

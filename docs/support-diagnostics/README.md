@@ -17,7 +17,6 @@ This directory contains reusable diagnostic intake guidance for QZ support. It f
 - [Virtual device settings diagnostics](virtual-device-settings.md)
 - [Virtual profile diagnostic intake](virtual-profile-intake.md)
 - [Workout recording and history](workout-recording.md)
-- [Power and training metrics](power-metrics.md)
 
 
 ## How to use these guides

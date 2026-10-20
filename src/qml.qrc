@@ -111,8 +111,6 @@
         <file>inner_templates/chartjs/bike.png</file>
         <file>inner_templates/chartjs/html2canvas.min.js</file>
         <file>inner_templates/chartjs/qzlogo.png</file>
-        <file>inner_templates/chartjs/dochartlive.js</file>
-        <file>inner_templates/chartjs/chartlive.htm</file>
         <file>inner_templates/i18n.js</file>
         <file alias="inner_templates/i18n/i18n.js">inner_templates/i18n.js</file>
         <file>inner_templates/workouteditor/index.html</file>

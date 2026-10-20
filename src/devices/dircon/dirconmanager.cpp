@@ -42,7 +42,7 @@ using namespace std::chrono_literals;
 #define DM_BT(A) QByteArrayLiteral(A)
 
 #define DM_CHAR_OP(OP, P1, P2, P3, ZWIFT_ENABLED)                                                                     \
-    OP(FITNESS_MACHINE_CYCLE, 0x2ACC, DPKT_CHAR_PROP_FLAG_READ, DM_BT("\x83\x14\x00\x00\x0C\xE0\x00\x00"),             \
+    OP(FITNESS_MACHINE_CYCLE, 0x2ACC, DPKT_CHAR_PROP_FLAG_READ, (dt == TREADMILL ? DM_BT("\x83\x14\x00\x00\x03\xE0\x00\x00") : DM_BT("\x83\x14\x00\x00\x0C\xE0\x00\x00")),             \
        DP_PROCESS_WRITE_NULL, P1, P2, P3)                                                                              \
     OP(FITNESS_MACHINE_CYCLE, 0x2AD6, DPKT_CHAR_PROP_FLAG_READ, DM_BT("\x0A\x00\x96\x00\x0A\x00"),                     \
        DP_PROCESS_WRITE_NULL, P1, P2, P3)                                                                              \
@@ -125,7 +125,7 @@ enum {
     if (P3 & (TYPE)) {                                                                                                 \
         P2.clear();                                                                                                    \
         foreach (DirconProcessorService *s, P1) {                                                                      \
-            if (s->machine_id == DM_MACHINE_##DESC) {                                                                  \
+            if (s->machine_id == DM_MACHINE_##DESC && (dt != TREADMILL || s->uuid != 0x1818)) {                                                                  \
                 P2.append(s);                                                                                          \
             }                                                                                                          \
         }                                                                                                              \
@@ -204,7 +204,8 @@ DirconManager::DirconManager(bluetoothdevice *Bike, int8_t bikeResistanceOffset,
     uint16_t server_base_port =
         settings.value(QZSettings::dircon_server_base_port, QZSettings::default_dircon_server_base_port).toUInt();
     bool bike_wheel_revs = settings.value(QZSettings::bike_wheel_revs, QZSettings::default_bike_wheel_revs).toBool();
-    bool zwift_play_emulator = settings.value(QZSettings::zwift_play_emulator, QZSettings::default_zwift_play_emulator).toBool();
+    bool zwift_play_emulator = bt->deviceType() != TREADMILL &&
+        settings.value(QZSettings::zwift_play_emulator, QZSettings::default_zwift_play_emulator).toBool();
     bool rouvy_compatibility = settings.value(QZSettings::rouvy_compatibility, QZSettings::default_rouvy_compatibility).toBool();
     
     DM_CHAR_NOTIF_OP(DM_CHAR_NOTIF_BUILD_OP, Bike, 0, 0)
@@ -257,7 +258,8 @@ DirconManager::DirconManager(bluetoothdevice *Bike, int8_t bikeResistanceOffset,
 
 void DirconManager::bikeProvider() {
     QSettings settings;
-    bool zwift_play_emulator = settings.value(QZSettings::zwift_play_emulator, QZSettings::default_zwift_play_emulator).toBool();
+    bool zwift_play_emulator = bt->deviceType() != TREADMILL &&
+        settings.value(QZSettings::zwift_play_emulator, QZSettings::default_zwift_play_emulator).toBool();
 
     // If no hub riding frame has been produced for >=1s, force one on the Zwift Play channel.
     if (writeP0003 && notif0004 && writeP0003->hubRidingDataIdleMs() >= 100 && zwift_play_emulator) {

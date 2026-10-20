@@ -2,9 +2,6 @@
 #include "qzsettings.h"
 #include "virtualdevices/virtualrower.h"
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include <QDateTime>
 #include <QFile>
 #include <QMetaEnum>
@@ -388,11 +385,6 @@ void nordictrackifitadbrower::processPendingDatagrams() {
 
         lastRefreshCharacteristicChanged = QDateTime::currentDateTime();
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
                 update_hr_from_external();
@@ -429,9 +421,6 @@ void nordictrackifitadbrower::onHRM(int hrm) {
         settings.value(QZSettings::heart_ignore_builtin, QZSettings::default_heart_ignore_builtin).toBool();
 
     if (
-#ifdef Q_OS_ANDROID
-        (!settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) &&
-#endif
         heartRateBeltName.startsWith(QStringLiteral("Disabled")) && !disable_hr_frommachinery) {
 
         Heart = hrm;
@@ -603,21 +592,6 @@ double nordictrackifitadbrower::getGrpcResistance() {
         );
         qDebug() << "getGrpcResistance() returned:" << resistance;
         return resistance;
-    }
-#endif
-    return 0.0;
-}
-
-double nordictrackifitadbrower::getGrpcWatts() {
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized) {
-        double watts = QAndroidJniObject::callStaticMethod<jdouble>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
-            "getCurrentWatts",
-            "()D"
-        );
-        qDebug() << "getGrpcWatts() returned:" << watts;
-        return watts;
     }
 #endif
     return 0.0;

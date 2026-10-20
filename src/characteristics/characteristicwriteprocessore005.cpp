@@ -39,7 +39,8 @@ int CharacteristicWriteProcessorE005::writeProcess(quint16 uuid, const QByteArra
         }
         reply.append((quint8)FTMS_RESPONSE_CODE);
         reply.append((quint8)data.at(0));
-        reply.append((quint8)FTMS_SUCCESS);
+        reply.append((quint8)(dt == TREADMILL && data.at(0) == wahookickrsnapbike::_setErgMode
+                                  ? FTMS_NOT_SUPPORTED : FTMS_SUCCESS));
         /*if (notifier) {
             notifier->answer = reply;
         }*/

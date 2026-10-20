@@ -1,5 +1,4 @@
 #include "ziprotreadmill.h"
-#include "keepawakehelper.h"
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>
 #include <QDateTime>
@@ -190,11 +189,6 @@ void ziprotreadmill::characteristicChanged(const QLowEnergyCharacteristic &chara
     if ((newValue.length() != 18))
         return;
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         uint8_t heart = ((uint8_t)value.at(15));
         if (heart == 0 || disable_hr_frommachinery) {

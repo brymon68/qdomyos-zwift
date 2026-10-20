@@ -11,9 +11,6 @@
 #ifdef Q_OS_ANDROID
 #include <QLowEnergyConnectionParameters>
 #endif
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include <chrono>
 
 using namespace std::chrono_literals;
@@ -655,11 +652,6 @@ void solef80treadmill::characteristicChanged(const QLowEnergyCharacteristic &cha
 
         emit debug(QStringLiteral("Current KCal: ") + QString::number(KCal.value()));
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (Flags.heartRate) {
                 if (index < newValue.length()) {

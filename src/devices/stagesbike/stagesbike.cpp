@@ -11,9 +11,6 @@
 #ifdef Q_OS_ANDROID
 #include <QLowEnergyConnectionParameters>
 #endif
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include <chrono>
 
 using namespace std::chrono_literals;
@@ -416,12 +413,6 @@ void stagesbike::characteristicChanged(const QLowEnergyCharacteristic &character
     }
 
     if (!noVirtualDevice) {
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) {
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-            debug("Current Heart: " + QString::number(Heart.value()));
-        } else
-#endif
             if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
                 update_hr_from_external();
         }

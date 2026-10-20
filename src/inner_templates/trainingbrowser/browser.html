@@ -356,7 +356,6 @@
                 { key: 'inclination', labelKey: 'workoutEditor.incline',     label: 'Incline',     color: '#26c6da', unit: '%',    axis: 'inclineAxis',    axisLabelKey: 'workoutEditor.inclinePercent', axisLabel: 'Incline (%)',   axisPosition: 'right', fill: false }
             ],
             bike: [
-                { key: 'watts',      labelKey: 'workoutEditor.power',      label: 'Power',       color: '#ef6c00', unit: 'W',    axis: 'powerAxis',      axisLabelKey: 'workoutEditor.powerW',      axisLabel: 'Power (W)',     axisPosition: 'left',  fill: true  },
                 { key: 'resistance', labelKey: 'workoutEditor.resistance', label: 'Resistance',  color: '#ab47bc', unit: 'lvl',  axis: 'resistanceAxis', axisLabelKey: 'workoutEditor.resistance', axisLabel: 'Resistance',    axisPosition: 'right', fill: false },
                 { key: 'cadence',    labelKey: 'workoutEditor.cadence',    label: 'Cadence',     color: '#29b6f6', unit: 'rpm',  axis: 'cadenceAxis',    axisLabelKey: 'workoutEditor.cadenceRpm',  axisLabel: 'Cadence (rpm)', axisPosition: 'right', fill: false }
             ],
@@ -365,7 +364,6 @@
                 { key: 'inclination', labelKey: 'workoutEditor.ramp',       label: 'Ramp',       color: '#66bb6a', unit: '%',    axis: 'inclineAxis',    axisLabelKey: 'workoutEditor.rampPercent', axisLabel: 'Ramp (%)',      axisPosition: 'right', fill: false }
             ],
             rower: [
-                { key: 'watts',   labelKey: 'workoutEditor.power',      label: 'Power',       color: '#fb8c00', unit: 'W',   axis: 'powerAxis',    axisLabelKey: 'workoutEditor.powerW',            axisLabel: 'Power (W)',     axisPosition: 'left',  fill: true  },
                 { key: 'cadence', labelKey: 'workoutEditor.strokeRate', label: 'Stroke Rate', color: '#26a69a', unit: 'spm', axis: 'cadenceAxis',  axisLabelKey: 'workoutEditor.strokesPerMinute', axisLabel: 'Strokes/min',   axisPosition: 'right', fill: false }
             ]
         };
@@ -542,7 +540,6 @@
             // Build normalised payload
             const workoutData = {
                 points: workout.points || 0,
-                watts: Array.isArray(workout.watts) ? workout.watts : [],
                 speed: Array.isArray(workout.speed) ? workout.speed : [],
                 inclination: Array.isArray(workout.inclination) ? workout.inclination : [],
                 resistance: Array.isArray(workout.resistance) ? workout.resistance : [],
@@ -566,19 +563,13 @@
         function updateWorkoutChart(workout) {
             if (!workout) return;
 
-            // The C++ backend always populates the watts array even for treadmill workouts
-            // where power is unset (sent as y = -1).  Detect the actual device type from
-            // the data by checking whether any watts value is valid (>= 0).
-            var hasValidWatts = Array.isArray(workout.watts) && workout.watts.some(function(p) {
-                return (p !== null && typeof p === 'object' && p.y !== undefined) ? p.y >= 0 : Number(p) >= 0;
-            });
             var hasSpeed = Array.isArray(workout.speed) && workout.speed.length > 0;
             var hasResistance = Array.isArray(workout.resistance) && workout.resistance.length > 0;
 
             var deviceType;
-            if (!hasValidWatts && hasSpeed) {
+            if (hasSpeed) {
                 deviceType = 'treadmill';
-            } else if (!hasValidWatts && hasResistance) {
+            } else if (hasResistance) {
                 deviceType = 'elliptical';
             } else {
                 deviceType = workout.deviceType || 'bike';
@@ -588,20 +579,16 @@
 
             // Derive totalSeconds from the longest non-empty array
             var totalSeconds = 0;
-            ['watts', 'speed', 'inclination', 'resistance', 'cadence'].forEach(function(k) {
+            ['speed', 'inclination', 'resistance', 'cadence'].forEach(function(k) {
                 if (Array.isArray(workout[k]) && workout[k].length > totalSeconds) {
                     totalSeconds = workout[k].length;
                 }
             });
 
-            // Build series list – only include series that have data (filter invalid y < 0 for watts)
+            // Build series list from available data
             var series = [];
             seriesDefs.forEach(function(def) {
                 var points = toPoints(workout[def.key]);
-                // For watts, skip data points where power is invalid (y < 0 means unset)
-                if (def.key === 'watts') {
-                    points = points.filter(function(p) { return p.y >= 0; });
-                }
                 if (points.length > 0) {
                     series.push({
                         key: def.key,

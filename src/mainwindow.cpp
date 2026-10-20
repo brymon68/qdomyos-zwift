@@ -50,7 +50,6 @@ void MainWindow::update() {
         double inclination = 0;
         double resistance = 0;
         double peloton_resistance = 0;
-        double watts = 0;
         double pace = 0;
         uint32_t totalStrokes = 0;
         double avgStrokesRate = 0;
@@ -60,7 +59,6 @@ void MainWindow::update() {
         double groundContact = 0;
         double verticalOscillation = 0;
         double target_cadence = 0;
-        double target_watt = 0;
         double target_resistance = 0;
         double stepCount = 0;
         double target_speed = 0;
@@ -86,11 +84,9 @@ void MainWindow::update() {
             groundContact = ((treadmill *)bluetoothManager->device())->currentGroundContact().value();
             verticalOscillation = ((treadmill *)bluetoothManager->device())->currentVerticalOscillation().value();
             stepCount = ((treadmill *)bluetoothManager->device())->currentStepCount().value();
-            watts = ((treadmill *)bluetoothManager->device())->watts(ui->weight->text().toFloat());
             inclination = ((treadmill *)bluetoothManager->device())->currentInclination().value();
             ui->pace->setText(
                 ((treadmill *)bluetoothManager->device())->currentPace().toString(QStringLiteral("m:ss")));
-            ui->watt->setText(QString::number(watts, 'f', 0));
             ui->inclination->setText(QString::number(inclination, 'f', 1));
             ui->elevationGain->setText(
                 QString::number(((treadmill *)bluetoothManager->device())->elevationGain().value(), 'f', 1));
@@ -98,24 +94,18 @@ void MainWindow::update() {
 
             cadence = ((bike *)bluetoothManager->device())->currentCadence().value();
             resistance = ((bike *)bluetoothManager->device())->currentResistance().value();
-            watts = ((bike *)bluetoothManager->device())->watts();
-            ui->watt->setText(QString::number(watts));
             ui->resistance->setText(QString::number(resistance));
             ui->cadence->setText(QString::number(cadence));
         } else if (bluetoothManager->device()->deviceType() == ROWING) {
 
             cadence = ((rower *)bluetoothManager->device())->currentCadence().value();
             resistance = ((rower *)bluetoothManager->device())->currentResistance().value();
-            watts = ((rower *)bluetoothManager->device())->watts();
-            ui->watt->setText(QString::number(watts));
             ui->resistance->setText(QString::number(resistance));
             ui->cadence->setText(QString::number(cadence));
         } else if (bluetoothManager->device()->deviceType() == ELLIPTICAL) {
 
             cadence = ((elliptical *)bluetoothManager->device())->currentCadence().value();
             resistance = ((elliptical *)bluetoothManager->device())->currentResistance().value();
-            watts = ((elliptical *)bluetoothManager->device())->watts();
-            ui->watt->setText(QString::number(watts));
             ui->resistance->setText(QString::number(resistance));
             ui->cadence->setText(QString::number(cadence));
         }
@@ -169,7 +159,7 @@ void MainWindow::update() {
         }
 
         SessionLine s(bluetoothManager->device()->currentSpeed().value(), inclination,
-                      bluetoothManager->device()->odometer(), watts, resistance, peloton_resistance,
+                      bluetoothManager->device()->odometer(), resistance, peloton_resistance,
                       (uint8_t)bluetoothManager->device()->currentHeart().value(), pace, cadence,
                       bluetoothManager->device()->calories().value(),
                       bluetoothManager->device()->elevationGain().value(), bluetoothManager->device()->negativeElevationGain().value(),
@@ -180,7 +170,7 @@ void MainWindow::update() {
                       false, totalStrokes, avgStrokesRate, maxStrokesRate, avgStrokesLength,
                       bluetoothManager->device()->currentCordinate(), strideLength, groundContact,
                       verticalOscillation, stepCount,
-                      target_cadence, target_watt, target_resistance, target_inclination, target_speed,
+                      target_cadence, target_resistance, target_inclination, target_speed,
                       bluetoothManager->device()->CoreBodyTemperature.value(), bluetoothManager->device()->SkinTemperature.value(),
                       bluetoothManager->device()->HeatStrainIndex.value(),
                       bluetoothManager->device()->currentHRV().value(),

@@ -4,8 +4,6 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.0
 import QtQuick.Dialogs 1.0
-import QtCharts 2.2
-import Qt.labs.settings 1.0
 
 ColumnLayout {
     signal trainprogram_open_clicked(url name)
@@ -21,12 +19,7 @@ ColumnLayout {
         }
         selectedWorkoutUrl = fileUrl
         trainprogram_preview(fileUrl)
-        powerSeries.clear();
-        for(var i=0;i<rootItem.preview_workout_points;i+=10)
-        {
-            powerSeries.append(i * 1000, rootItem.preview_workout_watt[i]);
-        }
-        rootItem.update_chart_power(powerChart);
+
     }
 
     Component.onCompleted: {
@@ -222,12 +215,7 @@ ColumnLayout {
                         list.currentItem.textColor = Material.color(Material.Yellow)
                         console.log(fileUrl + ' selected');
                         trainprogram_preview(fileUrl)
-                        powerSeries.clear();
-                        for(var i=0;i<rootItem.preview_workout_points;i+=10)
-                        {
-                            powerSeries.append(i * 1000, rootItem.preview_workout_watt[i]);
-                        }
-                        rootItem.update_chart_power(powerChart);
+
                         //trainprogram_open_clicked(fileUrl);
                         //popup.open()
                     } else {
@@ -243,19 +231,13 @@ ColumnLayout {
         ScrollView {
             anchors.top: parent.top
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-            contentHeight: date.height + description.height + powerChart.height
+            contentHeight: date.height + description.height
             Layout.preferredHeight: parent.height
             Layout.fillWidth: true
             Layout.minimumWidth: 100
             Layout.preferredWidth: 200
 
-            property alias powerSeries: powerSeries
-            property alias powerChart: powerChart
 
-            Settings {
-                id: settings
-                property real ftp: 200.0
-            }
 
             Row {
                 id: row
@@ -286,58 +268,6 @@ ColumnLayout {
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
-                Item {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: description.bottom
-                    anchors.bottom: parent.bottom
-
-                    ChartView {
-                        id: powerChart
-                        objectName: "powerChart"
-                        antialiasing: true
-                        legend.visible: false
-                        height: 400
-                        width: parent.width
-                        title: "Power"
-                        titleFont.pixelSize: 20
-
-                        DateTimeAxis {
-                            id: valueAxisX
-                            tickCount: 7
-                            min: new Date(0)
-                            max: new Date(rootItem.preview_workout_points * 1000)
-                            format: "mm:ss"
-                            //labelsVisible: false
-                            gridVisible: false
-                            //lineVisible: false
-                            labelsFont.pixelSize: 10
-                        }
-
-                        ValueAxis {
-                            id: valueAxisY
-                            min: 0
-                            max: rootItem.wattMaxChart
-                            //tickCount: 60
-                            tickCount: 8
-                            labelFormat: "%.0f"
-                            //labelsVisible: false
-                            //gridVisible: false
-                            //lineVisible: false
-                            labelsFont.pixelSize: 10
-                        }
-
-                        LineSeries {
-                            //name: "Power"
-                            id: powerSeries
-                            visible: true
-                            axisX: valueAxisX
-                            axisY: valueAxisY
-                            color: "black"
-                            width: 1
-                        }
-                    }
-                }
             }
         }
     }

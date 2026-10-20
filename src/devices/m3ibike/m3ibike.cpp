@@ -1,7 +1,4 @@
 #include "m3ibike.h"
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include <QBluetoothLocalDevice>
 #include <QDateTime>
@@ -252,7 +249,6 @@ bool KeiserM3iDeviceSimulator::step_cyc(keiser_m3i_out_t *f, qint64 now) {
 
 m3ibike::m3ibike(bool noWriteResistance, bool noHeartService) {
     QSettings settings;
-    antHeart = settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool();
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     qt_search =
         (QT_VERSION < QT_VERSION_CHECK(5, 12, 0)) ? false : settings.value(QZSettings::m3i_bike_qt_search, QZSettings::default_m3i_bike_qt_search).toBool();
@@ -712,11 +708,6 @@ void m3ibike::processAdvertising(const QByteArray &data) {
 
         lastRefreshCharacteristicChanged = QDateTime::currentDateTime();
 
-#ifdef Q_OS_ANDROID
-        if (antHeart)
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (heartRateBeltDisabled && (k3.pulse == 0 || settings.value(QZSettings::heart_ignore_builtin, QZSettings::default_heart_ignore_builtin).toBool())) {
                 update_hr_from_external();

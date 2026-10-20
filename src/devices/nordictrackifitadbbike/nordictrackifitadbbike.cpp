@@ -1,8 +1,5 @@
 #include "nordictrackifitadbbike.h"
 #include "virtualdevices/virtualbike.h"
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include <QDateTime>
 #include <QFile>
 #include <QMetaEnum>
@@ -444,13 +441,6 @@ void nordictrackifitadbbike::processPendingDatagrams() {
                 bool erg_mode = settings.value(QZSettings::zwift_erg, QZSettings::default_zwift_erg).toBool();
                 bool nordictrackadbbike_gear_resistance_mode = settings.value(QZSettings::nordictrackadbbike_gear_resistance_mode, QZSettings::default_nordictrackadbbike_gear_resistance_mode).toBool();
                 
-                // Check if erg_mode has been disabled and we had an active watts target
-                if (!erg_mode && lastErgMode && hasActiveWattsTarget) {
-                    qDebug() << "ERG mode disabled, disabling constant watts target";
-                    disableGrpcWatts();
-                }
-                lastErgMode = erg_mode;
-                
                 if (requestInclination != -100 && erg_mode && requestResistance != -100) {
                     qDebug() << "forcing inclination based on the erg mode resistance request of" << requestResistance;
                     requestInclination = requestResistance;
@@ -529,11 +519,6 @@ void nordictrackifitadbbike::processPendingDatagrams() {
 
         lastRefreshCharacteristicChanged = now;
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
                 update_hr_from_external();
@@ -572,9 +557,6 @@ void nordictrackifitadbbike::onHRM(int hrm) {
         settings.value(QZSettings::heart_ignore_builtin, QZSettings::default_heart_ignore_builtin).toBool();
 
     if (
-#ifdef Q_OS_ANDROID
-        (!settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) &&
-#endif
         heartRateBeltName.startsWith(QStringLiteral("Disabled")) && !disable_hr_frommachinery) {
 
         Heart = hrm;
@@ -709,7 +691,6 @@ void nordictrackifitadbbike::update() {
     if (grpcInitialized) {
         double currentSpeed = getGrpcSpeed();
         double currentIncline = getGrpcIncline();
-        double currentWatts = getGrpcWatts();
         double currentCadence = getGrpcCadence();
         double currentResistance = getGrpcResistance();
         // Capture current time once and reuse below
@@ -728,11 +709,6 @@ void nordictrackifitadbbike::update() {
         if (currentIncline != Inclination.value()) {
             Inclination = currentIncline;
             emit debug(QString("gRPC Inclination: %1").arg(currentIncline));
-        }
-        
-        if (currentWatts != m_watt.value()) {
-            m_watt = currentWatts;
-            emit debug(QString("gRPC Watts: %1").arg(currentWatts));
         }
         
         if (currentCadence != Cadence.value()) {
@@ -1103,21 +1079,6 @@ double nordictrackifitadbbike::getGrpcIncline() {
     return 0.0;
 }
 
-double nordictrackifitadbbike::getGrpcWatts() {
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized) {
-        double watts = QAndroidJniObject::callStaticMethod<jdouble>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
-            "getCurrentWatts",
-            "()D"
-        );
-        qDebug() << "getGrpcWatts() returned:" << watts << "W";
-        return watts;
-    }
-#endif
-    return 0.0;
-}
-
 double nordictrackifitadbbike::getGrpcCadence() {
 #ifdef Q_OS_ANDROID
     if (grpcInitialized) {
@@ -1188,51 +1149,5 @@ void nordictrackifitadbbike::setGrpcIncline(double incline) {
         );
         emit debug(QString("Set gRPC incline to: %1").arg(incline));
     }
-#endif
-}
-
-void nordictrackifitadbbike::setGrpcWatts(double watts) {
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized) {
-        QAndroidJniObject::callStaticMethod<void>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
-            "setWatts",
-            "(D)V",
-            watts
-        );
-        emit debug(QString("Set gRPC watts to: %1").arg(watts));
-        hasActiveWattsTarget = (watts > 0);
-    }
-#endif
-}
-
-void nordictrackifitadbbike::disableGrpcWatts() {
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized) {
-        QAndroidJniObject::callStaticMethod<void>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
-            "disableConstantWatts",
-            "()V"
-        );
-        emit debug("Disabled gRPC constant watts mode");
-        hasActiveWattsTarget = false;
-    }
-#endif
-}
-
-void nordictrackifitadbbike::changePower(int32_t power) {
-    // Call base class implementation first to set RequestedPower
-    bike::changePower(power);
-    
-    // If gRPC is available, use it to set the power directly
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized && power > 0) {
-        setGrpcWatts(static_cast<double>(power));
-        emit debug(QString("changePower: Set power to %1W via gRPC").arg(power));
-    } else {
-        emit debug(QString("changePower: Power request %1W (gRPC not available or power <= 0)").arg(power));
-    }
-#else
-    emit debug(QString("changePower: Power request %1W (Android gRPC not available)").arg(power));
 #endif
 }

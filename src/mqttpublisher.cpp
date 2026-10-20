@@ -266,8 +266,6 @@ void MQTTPublisher::handleControlCommand(const QString& command, const QVariant&
         m_device->setPaused(value.toBool());
     } else if(mainCommand == "resistance") {
         m_device->changeResistance(value.toInt());
-    } else if(mainCommand == "power") {
-        m_device->changePower(value.toInt());
     } else if(mainCommand == "inclination") {
         m_device->changeInclination(value.toDouble(), value.toDouble());
     }
@@ -281,8 +279,6 @@ void MQTTPublisher::processDeviceCommand(const QString& deviceType, const QStrin
         
         if(command == "resistance") {
             bikeDevice->changeResistance(value.toInt());
-        } else if(command == "power") {
-            bikeDevice->changePower(value.toInt());
         } else if(command == "cadence") {
             bikeDevice->changeCadence(value.toInt());
         } else if(command == "peloton_resistance") {
@@ -302,8 +298,6 @@ void MQTTPublisher::processDeviceCommand(const QString& deviceType, const QStrin
             treadDevice->changeSpeed(value.toDouble());
         } else if(command == "inclination") {
             treadDevice->changeInclination(value.toDouble(), value.toDouble());
-        } else if(command == "power") {
-            treadDevice->changePower(value.toInt());
         }
         
     } else if(deviceType == "rowing" && m_device->deviceType() == ROWING) {
@@ -311,8 +305,6 @@ void MQTTPublisher::processDeviceCommand(const QString& deviceType, const QStrin
         
         if(command == "resistance") {
             rowDevice->changeResistance(value.toInt());
-        } else if(command == "power") {
-            rowDevice->changePower(value.toInt());
         } else if(command == "cadence") {
             rowDevice->changeCadence(value.toInt());
         } else if(command == "speed") {
@@ -324,8 +316,6 @@ void MQTTPublisher::processDeviceCommand(const QString& deviceType, const QStrin
         
         if(command == "resistance") {
             ellipticalDevice->changeResistance(value.toInt());
-        } else if(command == "power") {
-            ellipticalDevice->changePower(value.toInt());
         } else if(command == "speed") {
             ellipticalDevice->changeSpeed(value.toDouble());
         } else if(command == "inclination") {
@@ -448,8 +438,8 @@ void MQTTPublisher::removeDiscoveryConfig() {
     QStringList components = {"sensor", "binary_sensor", "number", "switch", "button"};
     QStringList entities = {
         "speed_current", "speed_avg", "distance", "calories", "elapsed_time", "elapsed_total_seconds", "heart_current", "heart_avg",
-        "watts_current", "watts_avg", "connected", "paused", "resistance", "cadence", "inclination",
-        "power", "start", "stop", "pause"
+        "connected", "paused", "resistance", "cadence", "inclination",
+        "start", "stop", "pause"
     };
     
     for (const QString& component : components) {
@@ -516,7 +506,6 @@ void MQTTPublisher::publishWorkoutData() {
 
     publishToTopic("calories", m_device->calories().value());
     publishToTopic("distance", m_device->odometer());
-    publishToTopic("jouls", m_device->jouls().value());
     publishToTopic("elevation", m_device->elevationGain().value());
     publishToTopic("difficult", m_device->difficult());
 
@@ -527,20 +516,6 @@ void MQTTPublisher::publishWorkoutData() {
     publishToTopic("heart/lap_avg", heart.lapAverage());
     publishToTopic("heart/max", heart.max());
     publishToTopic("heart/lap_max", heart.lapMax());
-
-    // Power Metrics
-    metric watts = m_device->wattsMetric();
-    publishToTopic("watts/current", watts.value());
-    publishToTopic("watts/avg", watts.average());
-    publishToTopic("watts/lap_avg", watts.lapAverage());
-    publishToTopic("watts/max", watts.max());
-    publishToTopic("watts/lap_max", watts.lapMax());
-
-    // Power per KG
-    metric wattsKg = m_device->wattKg();
-    publishToTopic("kgwatts/current", wattsKg.value());
-    publishToTopic("kgwatts/avg", wattsKg.average());
-    publishToTopic("kgwatts/max", wattsKg.max());
 
     // Location Data
     QGeoCoordinate coord = m_device->currentCordinate();
@@ -558,12 +533,6 @@ void MQTTPublisher::publishWorkoutData() {
             publishToTopic("bike/target_resistance", bikeDevice->lastRequestedResistance().value());
             publishToTopic("bike/target_peloton_resistance", bikeDevice->lastRequestedPelotonResistance().value());
             publishToTopic("bike/target_cadence", bikeDevice->lastRequestedCadence().value());
-            publishToTopic("bike/target_power", bikeDevice->lastRequestedPower().value());
-
-            metric powerZone = m_device->currentPowerZone();
-            publishToTopic("bike/power_zone", powerZone.value());
-            publishToTopic("bike/power_zone_lapavg", powerZone.lapAverage());
-            publishToTopic("bike/power_zone_lapmax", powerZone.lapMax());
 
             metric pelotonRes = bikeDevice->pelotonResistance();
             publishToTopic("bike/peloton_resistance/current", pelotonRes.value());
@@ -649,8 +618,6 @@ void MQTTPublisher::publishDiscoveryConfig() {
     publishSensorDiscovery("elapsed_total_seconds", "Elapsed Total Seconds", baseTopic + "elapsed/total_seconds", "s", "duration", "mdi:timer");
     publishSensorDiscovery("heart_current", "Heart Rate", baseTopic + "heart/current", "bpm", "", "mdi:heart-pulse");
     publishSensorDiscovery("heart_avg", "Average Heart Rate", baseTopic + "heart/avg", "bpm", "", "mdi:heart-pulse");
-    publishSensorDiscovery("watts_current", "Power", baseTopic + "watts/current", "W", "power", "mdi:flash");
-    publishSensorDiscovery("watts_avg", "Average Power", baseTopic + "watts/avg", "W", "power", "mdi:flash");
     publishSensorDiscovery("elevation", "Elevation Gain", baseTopic + "elevation", "m", "", "mdi:elevation-rise");
     
     // Binary sensors
@@ -666,11 +633,9 @@ void MQTTPublisher::publishDiscoveryConfig() {
                 publishSensorDiscovery("bike_resistance", "Resistance", baseTopic + "bike/resistance/current", "", "", "mdi:tune");
                 publishSensorDiscovery("bike_cadence", "Cadence", baseTopic + "bike/cadence/current", "rpm", "", "mdi:rotate-right");
                 publishSensorDiscovery("bike_gears", "Gears", baseTopic + "bike/gears", "", "", "mdi:cog");
-                publishSensorDiscovery("bike_power_zone", "Power Zone", baseTopic + "bike/power_zone", "", "", "mdi:target");
                 
                 // Bike controls
                 publishNumberDiscovery("bike_resistance", "Bike Resistance", baseTopic + "bike/resistance/current", controlTopic + "bike/resistance", 0, 32, 1, "", "mdi:tune");
-                publishNumberDiscovery("bike_power", "Target Power", baseTopic + "bike/target_power", controlTopic + "bike/power", 0, 1000, 5, "W", "mdi:flash");
                 publishNumberDiscovery("bike_cadence", "Target Cadence", baseTopic + "bike/target_cadence", controlTopic + "bike/cadence", 0, 200, 1, "rpm", "mdi:rotate-right");
                 
                 // Bike buttons
@@ -714,7 +679,6 @@ void MQTTPublisher::publishDiscoveryConfig() {
                 
                 // Rowing controls
                 publishNumberDiscovery("rowing_resistance", "Rowing Resistance", baseTopic + "rowing/resistance/current", controlTopic + "rowing/resistance", 0, 32, 1, "", "mdi:tune");
-                publishNumberDiscovery("rowing_power", "Target Power", baseTopic + "rowing/target_power", controlTopic + "rowing/power", 0, 1000, 5, "W", "mdi:flash");
                 
                 break;
             }

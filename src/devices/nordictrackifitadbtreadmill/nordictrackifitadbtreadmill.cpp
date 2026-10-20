@@ -1,8 +1,5 @@
 #include "nordictrackifitadbtreadmill.h"
 #include "homeform.h"
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include "virtualdevices/virtualtreadmill.h"
 #include <QDateTime>
@@ -81,7 +78,6 @@ void nordictrackifitadbtreadmillLogcatAdbThread::runAdbTailCommand(QString comma
         QString output = process->readAllStandardOutput();
         qDebug() << "adbLogCat STDOUT << " << output;
         QStringList lines = output.split('\n', Qt::SplitBehaviorFlags::SkipEmptyParts);
-        bool wattFound = false;
         bool cadenceFound = false;
         foreach (QString line, lines) {
             if (line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
@@ -94,15 +90,9 @@ void nordictrackifitadbtreadmillLogcatAdbThread::runAdbTailCommand(QString comma
                 emit debug(line);
                 cadence = line.split(' ').last().toDouble();
                 cadenceFound = true;
-            } else if (line.contains("Changed Watts")) {
-                emit debug(line);
-                watt = line.split(' ').last().toDouble();
-                wattFound = true;
             }
         }
         emit onSpeedInclination(speed, inclination);
-        if (wattFound)
-            emit onWatt(watt);
         if (cadenceFound)
             emit onCadence(cadence);
 #ifdef Q_OS_WINDOWS
@@ -228,7 +218,6 @@ nordictrackifitadbtreadmill::nordictrackifitadbtreadmill(bool noWriteResistance,
     bool nordictrack_ifit_adb_remote =
         settings.value(QZSettings::nordictrack_ifit_adb_remote, QZSettings::default_nordictrack_ifit_adb_remote)
             .toBool();
-    m_watt.setType(metric::METRIC_WATT, deviceType());
     Speed.setType(metric::METRIC_SPEED);
     refresh = new QTimer(this);
     this->noWriteResistance = noWriteResistance;
@@ -253,8 +242,6 @@ nordictrackifitadbtreadmill::nordictrackifitadbtreadmill(bool noWriteResistance,
         logcatAdbThread = new nordictrackifitadbtreadmillLogcatAdbThread("logcatAdbThread");
         connect(logcatAdbThread, &nordictrackifitadbtreadmillLogcatAdbThread::onSpeedInclination, this,
                 &nordictrackifitadbtreadmill::onSpeedInclination);
-        connect(logcatAdbThread, &nordictrackifitadbtreadmillLogcatAdbThread::onWatt, this,
-                &nordictrackifitadbtreadmill::onWatt);
         connect(logcatAdbThread, &nordictrackifitadbtreadmillLogcatAdbThread::onCadence, this,
                 &nordictrackifitadbtreadmill::onCadence);
         connect(logcatAdbThread, &nordictrackifitadbtreadmillLogcatAdbThread::debug, this,
@@ -338,7 +325,6 @@ void nordictrackifitadbtreadmill::processPendingDatagrams() {
             settings.value(QZSettings::nordictrack_2950_ip, QZSettings::default_nordictrack_2950_ip).toString();
         QString heartRateBeltName =
             settings.value(QZSettings::heart_rate_belt_name, QZSettings::default_heart_rate_belt_name).toString();
-        double weight = settings.value(QZSettings::weight, QZSettings::default_weight).toFloat();
         bool disable_hr_frommachinery =
             settings.value(QZSettings::heart_ignore_builtin, QZSettings::default_heart_ignore_builtin).toBool();
 
@@ -366,9 +352,6 @@ void nordictrackifitadbtreadmill::processPendingDatagrams() {
                     Inclination = incline;
                 }
             } else if (line.contains("HeartRateDataUpdate") && 
-#ifdef Q_OS_ANDROID
-                        (!settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) &&
-#endif
                         heartRateBeltName.startsWith(QStringLiteral("Disabled")) && !disable_hr_frommachinery
             ) {                
                 QStringList splitted = line.split(' ', Qt::SkipEmptyParts);
@@ -523,22 +506,8 @@ void nordictrackifitadbtreadmill::processPendingDatagrams() {
             qDebug() << QString::number(ret) + " >> " + message;
         }
 
-        if (watts(weight))
-            KCal +=
-                ((((0.048 * ((double)watts(weight)) + 1.19) * weight * 3.5) / 200.0) /
-                 (60000.0 / ((double)lastRefreshCharacteristicChanged.msecsTo(
-                                QDateTime::currentDateTime())))); //(( (0.048* Output in watts +1.19) * body weight in
-                                                                  // kg * 3.5) / 200 ) / 60
-        // KCal = (((uint16_t)((uint8_t)newValue.at(15)) << 8) + (uint16_t)((uint8_t) newValue.at(14)));
-        
-
         lastRefreshCharacteristicChanged = QDateTime::currentDateTime();
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
                 update_hr_from_external();
@@ -552,7 +521,6 @@ void nordictrackifitadbtreadmill::processPendingDatagrams() {
         emit debug(QStringLiteral("Current Calculate Distance: ") + QString::number(Distance.value()));
         // debug("Current Distance: " + QString::number(distance));
         emit debug(QStringLiteral("Current Heart: ") + QString::number(Heart.value()));
-        emit debug(QStringLiteral("Current Watt: ") + QString::number(watts(weight)));
     }
 }
 
@@ -593,11 +561,6 @@ void nordictrackifitadbtreadmill::forceSpeed(double speed) {
 #endif
 }
 
-void nordictrackifitadbtreadmill::onWatt(double watt) {
-    m_watt = watt;
-    wattReadFromTM = true;
-}
-
 void nordictrackifitadbtreadmill::onCadence(double cadence) {
     Cadence = cadence;
     cadenceReadFromTM = true;
@@ -609,26 +572,11 @@ void nordictrackifitadbtreadmill::onSpeedInclination(double speed, double inclin
     Inclination = inclination;
 
     QSettings settings;
-    double weight = settings.value(QZSettings::weight, QZSettings::default_weight).toFloat();
     QString heartRateBeltName =
         settings.value(QZSettings::heart_rate_belt_name, QZSettings::default_heart_rate_belt_name).toString();
 
-    if (watts(weight))
-        KCal += ((((0.048 * ((double)watts(weight)) + 1.19) * weight * 3.5) / 200.0) /
-                 (60000.0 / ((double)lastRefreshCharacteristicChanged.msecsTo(
-                                QDateTime::currentDateTime())))); //(( (0.048* Output in watts +1.19) * body weight in
-                                                                  // kg * 3.5) / 200 ) / 60
-    // KCal = (((uint16_t)((uint8_t)newValue.at(15)) << 8) + (uint16_t)((uint8_t) newValue.at(14)));
-    
-
-    
     lastRefreshCharacteristicChanged = QDateTime::currentDateTime();
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
             update_hr_from_external();
@@ -640,7 +588,6 @@ void nordictrackifitadbtreadmill::onSpeedInclination(double speed, double inclin
     emit debug(QStringLiteral("Current Speed: ") + QString::number(Speed.value()));
     emit debug(QStringLiteral("Current Calculate Distance: ") + QString::number(Distance.value()));
     // debug("Current Distance: " + QString::number(distance));
-    emit debug(QStringLiteral("Current Watt: ") + QString::number(watts(weight)));
 }
 
 void nordictrackifitadbtreadmill::update() {
@@ -648,9 +595,8 @@ void nordictrackifitadbtreadmill::update() {
     QSettings settings;
     QString heartRateBeltName =
         settings.value(QZSettings::heart_rate_belt_name, QZSettings::default_heart_rate_belt_name).toString();
-    double weight = settings.value(QZSettings::weight, QZSettings::default_weight).toFloat();
 
-    update_metrics(!wattReadFromTM, watts(weight));
+    update_metrics();
 
     if (initRequest) {
         initRequest = false;
@@ -765,7 +711,6 @@ void nordictrackifitadbtreadmill::update() {
     if (grpcInitialized) {
         double currentSpeed = getGrpcSpeed();
         double currentIncline = getGrpcIncline();
-        double currentWatts = getGrpcWatts();
         double currentCadence = getGrpcCadence();
         
         // Update the metrics if they've changed
@@ -777,12 +722,6 @@ void nordictrackifitadbtreadmill::update() {
         if (currentIncline != Inclination.value()) {
             Inclination = currentIncline;
             emit debug(QString("gRPC Incline: %1").arg(currentIncline));
-        }
-        
-        if (currentWatts != m_watt.value() && currentWatts > 0) {
-            m_watt = currentWatts;
-            wattReadFromTM = true;
-            emit debug(QString("gRPC Watts: %1").arg(currentWatts));
         }
         
         if (currentCadence != Cadence.value() && currentCadence > 0) {
@@ -1207,19 +1146,6 @@ double nordictrackifitadbtreadmill::getGrpcIncline() {
         return QAndroidJniObject::callStaticMethod<jdouble>(
             "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
             "getCurrentIncline",
-            "()D"
-        );
-    }
-#endif
-    return 0.0;
-}
-
-double nordictrackifitadbtreadmill::getGrpcWatts() {
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized) {
-        return QAndroidJniObject::callStaticMethod<jdouble>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
-            "getCurrentWatts",
             "()D"
         );
     }

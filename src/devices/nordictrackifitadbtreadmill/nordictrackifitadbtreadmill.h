@@ -44,14 +44,12 @@ class nordictrackifitadbtreadmillLogcatAdbThread : public QThread {
   signals:
     void onSpeedInclination(double speed, double inclination);
     void debug(QString message);
-    void onWatt(double watt);
     void onCadence(double cadence);
 
   private:
     QString adbCommandPending = "";
     double speed = 0;
     double inclination = 0;
-    double watt = 0;
     double cadence = 0;
     QString name;
     struct adbfile {
@@ -95,7 +93,6 @@ class nordictrackifitadbtreadmill : public treadmill {
     void stopGrpcMetricsUpdates();
     double getGrpcSpeed();
     double getGrpcIncline();
-    double getGrpcWatts();
     double getGrpcCadence();
     double getGrpcHeartRate();
     void setGrpcSpeed(double speed);
@@ -109,8 +106,6 @@ class nordictrackifitadbtreadmill : public treadmill {
     QDateTime lastRefreshCharacteristicChanged = QDateTime::currentDateTime();
     QDateTime lastInclinationChanged = QDateTime::currentDateTime();
     uint8_t firstStateChanged = 0;
-    uint16_t m_watts = 0;
-    bool wattReadFromTM = false;
     bool cadenceReadFromTM = false;
 
     bool initDone = false;
@@ -157,7 +152,6 @@ class nordictrackifitadbtreadmill : public treadmill {
   private slots:
 
     void onSpeedInclination(double speed, double inclination);
-    void onWatt(double watt);
     void onCadence(double cadence);
 
     void processPendingDatagrams();

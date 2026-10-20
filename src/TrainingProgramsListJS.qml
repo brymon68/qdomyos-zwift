@@ -19,7 +19,6 @@ ColumnLayout {
 
     Settings {
         id: settings
-        property real ftp: 200.0
     }
 
     property var selectedFileUrl: ""

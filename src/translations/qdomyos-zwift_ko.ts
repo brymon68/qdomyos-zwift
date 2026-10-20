@@ -258,11 +258,6 @@ Would you like to do that now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="678"/>
-        <source>Watt:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="746"/>
         <source>Pace (min/km):</source>
         <translation type="unfinished"></translation>
@@ -1579,11 +1574,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../charts.ui" line="107"/>
-        <source>Watt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../charts.ui" line="131"/>
         <source>Resistance</source>
         <translation type="unfinished"></translation>
@@ -1733,16 +1723,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../homeform.cpp" line="444"/>
-        <source>T.Power(W)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="446"/>
-        <source>T.Zone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../homeform.cpp" line="448"/>
         <source>T.Speed (%1/h)</source>
         <translation type="unfinished"></translation>
@@ -1753,33 +1733,8 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../homeform.cpp" line="455"/>
-        <source>Watt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../homeform.cpp" line="457"/>
         <source>Weight Loss(%1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="460"/>
-        <source>AVG Watt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="462"/>
-        <source>AVG Watt Lap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="464"/>
-        <source>Watt/Kg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="466"/>
-        <source>FTP Zone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1790,11 +1745,6 @@ The following questions will customize QZ for your equipment and goals.</source>
     <message>
         <location filename="../homeform.cpp" line="470"/>
         <source>Fan Speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="472"/>
-        <source>KJouls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1825,21 +1775,6 @@ The following questions will customize QZ for your equipment and goals.</source>
     <message>
         <location filename="../homeform.cpp" line="491"/>
         <source>Next Rows</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="494"/>
-        <source>METS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="496"/>
-        <source>Target METS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="498"/>
-        <source>RSS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1898,11 +1833,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../homeform.cpp" line="524"/>
-        <source>Power Avg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../homeform.cpp" line="528"/>
         <source>PID Heart</source>
         <translation type="unfinished"></translation>
@@ -1945,71 +1875,6 @@ The following questions will customize QZ for your equipment and goals.</source>
     <message>
         <location filename="../homeform.cpp" line="5805"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6408"/>
-        <location filename="../homeform.cpp" line="6560"/>
-        <location filename="../homeform.cpp" line="6731"/>
-        <source>Rec.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6411"/>
-        <location filename="../homeform.cpp" line="6563"/>
-        <location filename="../homeform.cpp" line="6734"/>
-        <source>Easy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6415"/>
-        <source>Brisk</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6417"/>
-        <location filename="../homeform.cpp" line="6566"/>
-        <location filename="../homeform.cpp" line="6737"/>
-        <source>Moder.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6422"/>
-        <source>Power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6424"/>
-        <location filename="../homeform.cpp" line="6569"/>
-        <location filename="../homeform.cpp" line="6740"/>
-        <source>Chall.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6429"/>
-        <location filename="../homeform.cpp" line="6438"/>
-        <location filename="../homeform.cpp" line="6578"/>
-        <location filename="../homeform.cpp" line="6743"/>
-        <source>Max</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6431"/>
-        <location filename="../homeform.cpp" line="6572"/>
-        <source>Hard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6435"/>
-        <location filename="../homeform.cpp" line="6575"/>
-        <source>V.Hard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6441"/>
-        <location filename="../homeform.cpp" line="6581"/>
-        <location filename="../homeform.cpp" line="6746"/>
-        <source>N/A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2129,21 +1994,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../homeform.cpp" line="8099"/>
-        <source>, watt </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8102"/>
-        <source>, average watt </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8105"/>
-        <source>, max watt </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../homeform.cpp" line="8111"/>
         <source>, heart rate </source>
         <translation type="unfinished"></translation>
@@ -2156,11 +2006,6 @@ The following questions will customize QZ for your equipment and goals.</source>
     <message>
         <location filename="../homeform.cpp" line="8117"/>
         <source>, max heart rate </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8120"/>
-        <source>, jouls </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2204,16 +2049,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../homeform.cpp" line="8171"/>
-        <source>, target power </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8177"/>
-        <source>, target zone </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../homeform.cpp" line="8183"/>
         <source>, target speed </source>
         <translation type="unfinished"></translation>
@@ -2221,21 +2056,6 @@ The following questions will customize QZ for your equipment and goals.</source>
     <message>
         <location filename="../homeform.cpp" line="8197"/>
         <source>, target incline </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8202"/>
-        <source>, watt for kilograms </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8205"/>
-        <source>, average watt for kilograms</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8208"/>
-        <source>, max watt for kilograms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3258,26 +3078,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="2296"/>
-        <source>FTP value:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="2318"/>
-        <source>If you train to specific output (or watts) levels, for example in Peloton Power Zone classes,and have taken an FTP test (Functional Threshold Power), enter your FTP here. This number is used to calculate your Power Zones (Zones 1 to 7 for Peloton and 1 to 6 for Zwift).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="2333"/>
-        <source>Critical Power Run value:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="2354"/>
-        <source>If you train to specific output (or watts) levels, for example with Stryd,and have taken an CP test (Critical Power Test), enter your CP here. This number is used to calculate your RSS.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="2370"/>
         <source>Nickname:</source>
         <translation type="unfinished"></translation>
@@ -3389,11 +3189,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="2703"/>
-        <source>Enable to calculate calories based on heart rate data instead of power. Requires heart rate sensor connection for accurate calorie estimation.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="2717"/>
         <source>Heart Belt Name:</source>
         <translation type="unfinished"></translation>
@@ -3482,48 +3277,8 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="3000"/>
-        <source>Power from Heart Rate Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3010"/>
-        <source>Session 1 Watt:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3035"/>
-        <source>Session 1 HR:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3060"/>
-        <source>Session 2 Watt:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3085"/>
-        <source>Session 2 HR:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3108"/>
-        <source>Expand the bars to the right to display the options under this setting. These settings are used to calculate power (watts) for bikes that do not have power meters. Instead QZ estimates power from your cadence and heart rate. You can calibrate how QZ calculates your power from heart rate as follows: If you know that at a stable pace you produce 100W of power at a heart rate of 150 BPM and 150W at 170 BPM, you can add these values under Sessions 1 and 2 Watt and HR and QZ will calculate your power based on that trend line.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="3126"/>
         <source>Bike Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3137"/>
-        <source>Speed calculates on Power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3150"/>
-        <source>QZ calculates speed based on your pedal cadence (RPMs). Enable this setting if you want your speed to be calculated based on your power output (watts), as Zwift and some other apps do. Default is off.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3584,16 +3339,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="3374"/>
-        <source>Zwift Workout/Erg Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3388"/>
-        <source>Enable this setting ONLY when using Zwift in ERG (workout) Mode. QZ will communicate the target resistance (or automatically adjust your resistance if your bike has this capability) to match the target watts based on your cadence (RPM). In ERG Mode, the changes in road slope will not affect target resistance, as is the case in Simulation Mode. Default is off.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="3404"/>
         <source>Zwift Resistance Offset:</source>
         <translation type="unfinished"></translation>
@@ -3604,16 +3349,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="3442"/>
-        <source>Zwift Power Offset (W):</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3464"/>
-        <source>Add an offset in watts to the requested power from apps like Zwift. Positive values increase power, negative values decrease it. Default is 0.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="3480"/>
         <source>Zwift Resistance Gain:</source>
         <translation type="unfinished"></translation>
@@ -3621,46 +3356,6 @@ Do you want to start it now?</source>
     <message>
         <location filename="../settings.qml" line="3502"/>
         <source>(for bikes and treadmills when using “treadmill as a bike” setting). This setting scales the resistance from your bike or the speed from your treadmill before sending it to Zwift. Default is 1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3518"/>
-        <source>Zwift ERG Watt Up Filter:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3540"/>
-        <source>In ERG Mode or during a Power Zone workout on Peloton, the app sends a “target output” request. If the output requested doesn’t match your current output (calculated using cadence and resistance level), your target resistance will change to help you get closer to the target output. If the filter is set to higher values, you will get less adjustment of the target resistance and you will have to increase your cadence to match the target output. The Up and Down Watt Filter settings are the upper and lower margin before the adjustment of resistance is communicated. Example: if the up and down filters are set to 10 and the target output is 100 watts, a change of your resistance will only be communicated if your bike produces less than 90 watts or more than 110 watts. Default is 10.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3556"/>
-        <source>Zwift ERG Watt Down Filter:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3578"/>
-        <source>See above. Default is 10.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3594"/>
-        <source>Min. Resistance:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3616"/>
-        <source>Use this setting to set a minimum target resistance. For example, if you do not want to ride at a resistance below 25, enter a value of 25 and QZ will not set a target resistance below 25. Default is 0.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3632"/>
-        <source>Max. Resistance:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3654"/>
-        <source>Similar to the above, but sets a maximum target resistance. Default is 999.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3859,11 +3554,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="4355"/>
-        <source>Watt Profile:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="4381"/>
         <source>Resistance Gain:</source>
         <translation type="unfinished"></translation>
@@ -4045,16 +3735,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="4872"/>
-        <source>Bike 500 wattage profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="4885"/>
-        <source>Bike 500 wattage profile v2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="4900"/>
         <source>Tacx Neo Options</source>
         <translation type="unfinished"></translation>
@@ -4089,11 +3769,6 @@ Do you want to start it now?</source>
         <location filename="../settings.qml" line="4979"/>
         <location filename="../settings.qml" line="9527"/>
         <source>Specific Model:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5120"/>
-        <source>TDF CBC Jonseed watt table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4190,16 +3865,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="5472"/>
-        <source>Group Cycle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5494"/>
-        <source>ANT+ Bike Device Number (0=Auto):</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="5519"/>
         <source>Toputure Bikes</source>
         <translation type="unfinished"></translation>
@@ -4207,76 +3872,6 @@ Do you want to start it now?</source>
     <message>
         <location filename="../settings.qml" line="5527"/>
         <source>Toputure TEB1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5541"/>
-        <source>Enable the special SPORT01 instant power formula only for the Toputure TEB1 bike. Leave disabled to use the standard FTMS instant power reported by the device.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5559"/>
-        <source>Ant+ Options (only for some Android)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5571"/>
-        <source>Set 100mm as wheel circumference in settings of ant+ speed sensor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5584"/>
-        <source>Ant+ Cadence</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5598"/>
-        <source>Turn this on if you need to use ANT+ along with Bluetooth. Power is also sent.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5613"/>
-        <source>ANT+ Speed Offset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5634"/>
-        <source>You can increase/decrease your speed sent over ANT+. The number you enter as an Offset adds that amount to your speed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5650"/>
-        <source>ANT+ Speed Gain:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5671"/>
-        <source>You can increase/decrease your speed output sent over ANT+. For example, to use a rower to cycle in Zwift, you could double your speed output to better match your cycling speed. The number you enter is a multiplier applied to your actual speed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5685"/>
-        <source>Ant+ Heart</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5701"/>
-        <source>ANT+ Heart Device Number (0=Auto):</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5723"/>
-        <source>This setting enables receiving the heart rate from an external HRM over ANT+ instead of from QZ.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5736"/>
-        <source>Ant+ Bike</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5750"/>
-        <source>Use this to connect to your bike using ANT+ instead of Bluetooth. Default: Disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4355,16 +3950,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="6014"/>
-        <source>Chart Display Mode:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6036"/>
-        <source>Choose which charts to display in the footer: both heart rate and power charts, only heart rate chart, or only power chart.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="6051"/>
         <source>iOS Live Activity Left Metric:</source>
         <translation type="unfinished"></translation>
@@ -4372,11 +3957,6 @@ Do you want to start it now?</source>
     <message>
         <location filename="../settings.qml" line="6072"/>
         <source>iOS Live Activity Right Metric:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6091"/>
-        <source>iOS only: choose which two metrics are shown in the compact Dynamic Island bar for Live Activities. Default is Heart Rate on the left and Watt on the right.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4493,26 +4073,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="6628"/>
-        <source>PZP Username:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6649"/>
-        <source>As of 4/1/2022, this feature is broken due to a Power Zone Pack (PZP) website change. Leave (or change back to) the default of “username” (without quotation marks, all lowercase and all one word) until further notice.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6665"/>
-        <source>PZP Password:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6688"/>
-        <source>As of 4/1/2022, this feature is broken due to a Power Zone Pack (PZP) website change. Leave this setting blank until further notice.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="6704"/>
         <source>Conversion Gain:</source>
         <translation type="unfinished"></translation>
@@ -4598,16 +4158,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="7020"/>
-        <source>Spinups Autoresistance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="7034"/>
-        <source>By default, QZ treats Spin-UPS in Power Zone rides as an increasing ramp to warm you up. You can disable this, to leave the resistance up to you.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="7048"/>
         <source>Peloton Auto Sync (Experimental)</source>
         <translation type="unfinished"></translation>
@@ -4662,16 +4212,6 @@ Do you want to start it now?</source>
     <message>
         <location filename="../settings.qml" line="7219"/>
         <source>Would you like to disable Zwift Play and Zwift Click settings? Having them enabled together with &apos;Get gears from Zwift&apos; may cause conflicts.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="7231"/>
-        <source>Get Gears from Zwift</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="7254"/>
-        <source>This setting bring virtual gearing from zwift to all the bikes directly from the Zwift interface. You have to configure Zwift: Wahoo virtual device from QZ as for power and cadence, and your QZ device as resistance. MUST be disabled for Mywhoosh app. Default: disabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4763,16 +4303,6 @@ Do you want to start it now?</source>
     <message>
         <location filename="../settings.qml" line="7542"/>
         <source>You have to install the QZ Companion App on your Garmin Watch/Computer first.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="7555"/>
-        <source>Ant+ Bike Over Garmin Watch</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="7569"/>
-        <source>Use your garmin watch to get the ANT+ metrics from a bike</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4902,16 +4432,6 @@ Please enter it below:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="8385"/>
-        <source>Treadmill Auto-adjust speed by power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="8399"/>
-        <source>Treadmill only: Automatically adjusts speed to maintain consistent power output. Speed adjustments occur on incline changes and adapt to manual speed modifications.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="8415"/>
         <source>PID on Heart Zone:</source>
         <translation type="unfinished"></translation>
@@ -5014,16 +4534,6 @@ Please enter it below:</source>
     <message>
         <location filename="../settings.qml" line="8775"/>
         <source>Select the default Pace to be used when the ZWO file does not indicate a precise pace.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="8791"/>
-        <source>ERG Mode Watt Step:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="8812"/>
-        <source>Set the wattage step increment for ERG mode heart rate zone training. Default: 5 watts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5194,16 +4704,6 @@ Please enter it below:</source>
     <message>
         <location filename="../settings.qml" line="9427"/>
         <source>Overrides the default inclination values sent from the treadmill</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="9440"/>
-        <source>Simulate Inclination with Speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="9454"/>
-        <source>For treadmills without inclination: turning this on and QZ will transform inclination requests into speed changes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5559,11 +5059,6 @@ Please enter it below:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="10945"/>
-        <source>BH SPADA wattage</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="10959"/>
         <source>Toorx SRX 500</source>
         <translation type="unfinished"></translation>
@@ -5795,43 +5290,13 @@ Please enter it below:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="11789"/>
-        <source>Watt Offset:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="11811"/>
-        <source>You can increase/decrease your watt output for moving your avatar faster/slower in Zwift or other similar apps as a way of calibrating your equipment. The number you enter as an Offset adds that amount to your watts.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="11827"/>
-        <source>Watt Gain:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="11849"/>
-        <source>You can increase/decrease your watt output for moving your avatar faster/slower in Zwift or other similar apps as a way of calibrating your equipment. For example, to use a rower to cycle in Zwift, you could double your watt output to better match your cycling speed by entering 2. The number you enter is a multiplier applied to your actual watts.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="11865"/>
         <source>Speed Offset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="11887"/>
-        <source>You can increase/decrease your speed for moving your avatar faster/slower in Zwift if your equipment outputs speed but not watts. The number you enter as an Offset adds that amount to your speed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="11904"/>
         <source>Speed Gain:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="11926"/>
-        <source>You can increase/decrease your speed output for moving your avatar faster/slower in Zwift or other apps as a way of calibrating your equipment if your equipment outputs speed but not watts. For example, to use a rower to cycle in Zwift, you could double your speed output to better match your cycling speed. The number you enter is a multiplier applied to your actual speed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5847,11 +5312,6 @@ Please enter it below:</source>
     <message>
         <location filename="../settings.qml" line="11980"/>
         <source>Cadence Gain:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12002"/>
-        <source>You can increase/decrease your cadence output as a way of calibrating your equipment if your equipment outputs cadence but not watts. The number you enter is a multiplier applied to your actual cadence.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5930,32 +5390,6 @@ Please enter it below:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="12252"/>
-        <source>Power Averaging Mode:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12281"/>
-        <source>If the power output/watts your equipment sends to QZ is quite variable, this setting will result in smoother Power Zone graphs. This is also helpful for use with Power Meter Pedals. Uses harmonic averaging which smooths power spikes better than arithmetic averaging. If any reading is 0, power immediately becomes 0. Default is Off.
-
-IMPORTANT NOTES:
-- No Average/smooth in Hometrainer config for standard home trainers which work at 1hz (No race mode available)
-- Disable Average on 3rd party apps (Rouvy/Zwift/MyWhoosh etc) or select 1sec in the app!
-- Need to use QZ in bridge mode!
-- For Elite home trainers or those who have a race mode (10hz), if it&apos;s not sufficient for some users, using Elite/Hometrainer smoothing in addition to QZ smoothing will improve it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12295"/>
-        <source>Instant Power on Pause</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12309"/>
-        <source>Enables the calculation of watts, even while in Pause mode. Default is off.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="12323"/>
         <source>Double Negative Inclination</source>
         <translation type="unfinished"></translation>
@@ -6016,16 +5450,6 @@ IMPORTANT NOTES:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="12528"/>
-        <source>Disable wattage from machinery</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12542"/>
-        <source>This prevents your fitness device from sending its wattage calculation to QZ and defaults to QZ’s more accurate calculation.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="12555"/>
         <source>Use Resistance instead of Inclination</source>
         <translation type="unfinished"></translation>
@@ -6071,16 +5495,6 @@ IMPORTANT NOTES:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="12708"/>
-        <source>Cadence Sensor as a Treadmill</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12727"/>
-        <source>If your equipment doesn’t have Bluetooth, these settings allow you to use a cadence sensor so it will work with QZ as a bike or treadmill. Default is off.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="12741"/>
         <source>Cadence Sensor:</source>
         <translation type="unfinished"></translation>
@@ -6098,166 +5512,6 @@ IMPORTANT NOTES:
     <message>
         <location filename="../settings.qml" line="12826"/>
         <source>Rogue Echo Bike</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12840"/>
-        <source>Enable special wattage calculation for Rogue Echo Bike: m_watt = 0.000602337 * pow(rpm, 3.11762) + 32.6404. Default is off.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12853"/>
-        <source>Custom CSC Resistance/Watt Table</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12867"/>
-        <source>Enable a custom linear resistance/watt table for CSC bikes. Joroto bikes keep using their dedicated resistance power profile. Resistance is clamped using the existing Min. Resistance and Max. Resistance settings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12882"/>
-        <source>Resistance Level 1:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12905"/>
-        <source>Watt 1:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12928"/>
-        <source>Resistance Level 2:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12951"/>
-        <source>Watt 2:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12972"/>
-        <source>QZ will build a linear equation from the two resistance/watt points and clamp the effective resistance using the existing Min. Resistance and Max. Resistance settings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12988"/>
-        <source>Power Sensor Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12996"/>
-        <source>Power Sensor as a Bike</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13010"/>
-        <source>If your bike doesn’t have Bluetooth, this setting allows you to use a power meter pedal sensor so your bike will work with QZ. Default is off.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13024"/>
-        <source>Power Sensor as a Treadmill</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13038"/>
-        <source>If your treadmill doesn’t have Bluetooth, this setting allows you to use a Stryde sensor (or similar) so your treadmill will work with QZ. Default is off.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13052"/>
-        <source>Doubling Cadence for Run</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13066"/>
-        <source>Some power sensors send cadence divided by 2. This setting will fix this behavior.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13080"/>
-        <source>Half Cadence on Strava</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13094"/>
-        <source>Divide the cadence sent to Strava by 2.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13107"/>
-        <source>Use speed from the power sensor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13121"/>
-        <source>If you have a Bluetooth treadmill and also a Stryd device connected to QZ and you want to use the speed from the stryd instead of the speed of the treadmill, enable this. Default: disabled.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13134"/>
-        <source>Use inclination from the power sensor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13148"/>
-        <source>If you have a Bluetooth treadmill and also a Runn device connected to QZ and you want to use the inclination from the RUNN instead of the inclination of the treadmill, enable this. Default: disabled.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13161"/>
-        <source>Use cadence from the power sensor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13175"/>
-        <source>If you have a Bluetooth treadmill and also a power sensor (like Stryd) connected to QZ and you want to use the cadence from the power sensor instead of the cadence of the treadmill, enable this. This is useful when the treadmill cadence sensor is unreliable at low speeds (walking/jogging). Default: disabled.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13188"/>
-        <source>Add inclination gain factor to the power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13202"/>
-        <source>If you have a Bluetooth treadmill and also a Stryd device connected to QZ, by default Stryd can&apos;t get the inclination from the treadmill. Enabling this and QZ will add an inclination gain to the power read from the Stryd. Default: disabled.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13215"/>
-        <source>Power Sensor Speed/Incline Coefficient A:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13236"/>
-        <source>Power Sensor Speed/Incline Coefficient B:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13257"/>
-        <source>Custom coefficients for power sensor inclination calculation using formula: vwatts = (A + B × speed) × inclination.
-
-For Stryd sensors use: A = -0.96, B = 1.33
-
-Examples with these values:
-• 8 km/h, 10% incline: (-0.96 + 1.33×8) × 10 = 97W added
-• 11 km/h, 10% incline: (-0.96 + 1.33×11) × 10 = 137W added
-
-If both A and B are 0, QZ will use the default formula: 9.8 × weight × (inclination/100).
-
-Default: A = -0.96, B = 1.33</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13271"/>
-        <source>Power Sensor:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13305"/>
-        <source>Leave on Disabled or select from list of found Bluetooth devices.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6629,16 +5883,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="14808"/>
-        <source>Bike Power Sensor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="14822"/>
-        <source>This changes the virtual Bluetooth bridge from the standard FMTS to the Power Sensor interface. Default is off.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="14836"/>
         <source>Virtual iFit</source>
         <translation type="unfinished"></translation>
@@ -6982,16 +6226,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings-shortcuts.qml" line="241"/>
-        <source>Target Power + / -</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-shortcuts.qml" line="246"/>
-        <source>Target Zone + / -</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings-shortcuts.qml" line="251"/>
         <source>Target Speed + / -</source>
         <translation type="unfinished"></translation>
@@ -7042,16 +6276,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings-shortcuts.qml" line="304"/>
-        <source>ERG Mode Toggle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-shortcuts.qml" line="308"/>
-        <source>Power Avg Toggle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings-shortcuts.qml" line="312"/>
         <source>Auto-Resistance Toggle</source>
         <translation type="unfinished"></translation>
@@ -7074,11 +6298,6 @@ Default: A = -0.96, B = 1.33</source>
     <message>
         <location filename="../settings-shortcuts.qml" line="351"/>
         <source>Preset Inclination</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-shortcuts.qml" line="364"/>
-        <source>Preset Power Zone</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7558,11 +6777,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings-tiles.qml" line="644"/>
-        <source>Estimated calories burned during session, calculated on weight, age, and watts.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings-tiles.qml" line="658"/>
         <source>Odometer</source>
         <translation type="unfinished"></translation>
@@ -7608,16 +6822,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings-tiles.qml" line="870"/>
-        <source>Watt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="901"/>
-        <source>Displays the watts generated by your current effort. Watt is also referred to as output (for example, in Peloton). If your equipment does not communicate watts, QZ will calculate watts using resistance and cadence.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings-tiles.qml" line="915"/>
         <source>Weight loss</source>
         <translation type="unfinished"></translation>
@@ -7625,26 +6829,6 @@ Default: A = -0.96, B = 1.33</source>
     <message>
         <location filename="../settings-tiles.qml" line="946"/>
         <source>Estimation of weight loss during the session.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="961"/>
-        <source>AVG Watt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="992"/>
-        <source>Average watts produced for the session.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1007"/>
-        <source>AVG Watt Lap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1070"/>
-        <source>Percentage of current FTP and current FTP zone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7670,16 +6854,6 @@ Default: A = -0.96, B = 1.33</source>
     <message>
         <location filename="../settings-tiles.qml" line="1177"/>
         <source>Built-in treadmill fan speed (Treadmill only)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1191"/>
-        <source>Jouls</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1222"/>
-        <source>Cumulative power produced during the session in kilojoules.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7773,26 +6947,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings-tiles.qml" line="1678"/>
-        <source>Target Power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1709"/>
-        <source>Displays target output (watts) when this information is provided by third-party apps.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1724"/>
-        <source>Target Power Zone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1755"/>
-        <source>Displays the target power zone when this information is provided by third-party apps.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings-tiles.qml" line="1769"/>
         <source>Target Speed</source>
         <translation type="unfinished"></translation>
@@ -7808,23 +6962,8 @@ Default: A = -0.96, B = 1.33</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings-tiles.qml" line="1864"/>
-        <source>Watt/Kg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1895"/>
-        <source>Calculates your output (watts) divided by your weight. This is the primary metric used by Zwift and similar apps to calculate your virtual speed. NOTE: This is a much better metric to use than Output/Watts when comparing your effort to other users. This is why Peloton’s leaderboard, which uses only Output, is flawed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings-tiles.qml" line="1909"/>
         <source>Gears</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1940"/>
-        <source>Allows you to change resistance while in Auto-Follow Mode.This tile allows you override the target resistance sent by third-party apps. For example, you would use the Gears Tile to increase resistance and generate more watts for sprinting in Zwift.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7855,26 +6994,6 @@ Default: A = -0.96, B = 1.33</source>
     <message>
         <location filename="../settings-tiles.qml" line="2056"/>
         <source>Next Rows</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2087"/>
-        <source>Displays the next Peloton interval with duration and FTP Zone (in Power Zone classes) or Peloton Resistance (non–Power Zone classes).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2101"/>
-        <source>METS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2132"/>
-        <source>Displays metabolic equivalents (METs), a measurement of energy expenditure and amount of oxygen used by the body compared to the body at rest. (e.g., 4 METS requires the body to use 4 times as much oxygen than when at rest, which means it requires more energy and burns more calories).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2146"/>
-        <source>Target METS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7975,16 +7094,6 @@ Default: A = -0.96, B = 1.33</source>
     <message>
         <location filename="../settings-tiles.qml" line="2615"/>
         <source>Step Count</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2647"/>
-        <source>Erg Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2678"/>
-        <source>Running Stress Score</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8160,57 +7269,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings-tiles.qml" line="4363"/>
-        <source>Preset Power Zone 1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4392"/>
-        <location filename="../settings-tiles.qml" line="4493"/>
-        <location filename="../settings-tiles.qml" line="4594"/>
-        <location filename="../settings-tiles.qml" line="4695"/>
-        <location filename="../settings-tiles.qml" line="4796"/>
-        <location filename="../settings-tiles.qml" line="4897"/>
-        <location filename="../settings-tiles.qml" line="4998"/>
-        <source>zone value:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4464"/>
-        <source>Preset Power Zone 2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4565"/>
-        <source>Preset Power Zone 3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4666"/>
-        <source>Preset Power Zone 4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4767"/>
-        <source>Preset Power Zone 5</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4868"/>
-        <source>Preset Power Zone 6</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4969"/>
-        <source>Preset Power Zone 7</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="5069"/>
-        <source>Power zone presets allow quick access to specific training zones with customizable labels and values.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings-tiles.qml" line="5083"/>
         <source>Heart Rate Time in Zone 1+</source>
         <translation type="unfinished"></translation>
@@ -8348,16 +7406,6 @@ Default: A = -0.96, B = 1.33</source>
     <message>
         <location filename="../settings-tiles.qml" line="5677"/>
         <source>Button tile to switch automatic virtual shifting to Sprint profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="5691"/>
-        <source>Power Averaging</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="5720"/>
-        <source>Button tile to cycle through power averaging modes: Off, 3s avg (harmonic), 5s avg (harmonic). Tap to cycle between modes. Only for bikes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8731,26 +7779,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings-tts.qml" line="356"/>
-        <source>Actual Watt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="370"/>
-        <source>Average Watt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="384"/>
-        <source>Max Watt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="398"/>
-        <source>Actual FTP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings-tts.qml" line="440"/>
         <source>Actual Heart</source>
         <translation type="unfinished"></translation>
@@ -8763,11 +7791,6 @@ Default: A = -0.96, B = 1.33</source>
     <message>
         <location filename="../settings-tts.qml" line="468"/>
         <source>Max Heart</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="482"/>
-        <source>Actual Jouls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8801,16 +7824,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings-tts.qml" line="580"/>
-        <source>Actual Target Power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="594"/>
-        <source>Actual Target Zone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settings-tts.qml" line="608"/>
         <source>Actual Target Speed</source>
         <translation type="unfinished"></translation>
@@ -8823,21 +7836,6 @@ Default: A = -0.96, B = 1.33</source>
     <message>
         <location filename="../settings-tts.qml" line="636"/>
         <source>Actual Target Incline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="650"/>
-        <source>Actual Watt/KG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="664"/>
-        <source>Average Watt/KG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="678"/>
-        <source>Max Watt/KG</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

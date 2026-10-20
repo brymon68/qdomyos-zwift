@@ -43,7 +43,6 @@ public:
 
     DEFINE_DEVICE(ActivioTreadmill, "Activio Treadmill");
     DEFINE_DEVICE(ApexBike, "Apex Bike");
-    DEFINE_DEVICE(AntBike, "Ant Bike");
     DEFINE_DEVICE(BHFitnessElliptical, "BH Fitness Elliptical");
     DEFINE_DEVICE(BKoolBike, "BKool Bike");
     DEFINE_DEVICE(BowflexT216Treadmill, "Bowflex T216 Treadmill");
@@ -147,11 +146,7 @@ public:
     DEFINE_DEVICE(SportsPlusBike, "Sports Plus Bike");
     DEFINE_DEVICE(SportsPlusRower, "Sports Plus Rower");
     DEFINE_DEVICE(SportsTechBike, "Sports Tech Bike");
-    DEFINE_DEVICE(StagesBike_Assioma_PowerSensorDisabled, "Stages Bike (Assioma / Power Sensor disabled)");
     DEFINE_DEVICE(StagesBike, "Stages Bike");
-    DEFINE_DEVICE(StagesPowerBike, "Stages Power Bike");
-    DEFINE_DEVICE(StrydeRunTreadmill_PowerSensor, "StrydeRun Treadmill / Power Sensor");
-    DEFINE_DEVICE(StrydeRunTreadmill_PowerSensor2, "StrydeRun Treadmill / Power Sensor 2");
     DEFINE_DEVICE(TacxNeoBike, "Tacx Neo Bike");
     DEFINE_DEVICE(TacxNeo2Bike, "Tacx Neo 2 Bike");
     DEFINE_DEVICE(TechnoGymMyRunTreadmillRFComm, "TechnoGym MyRun Treadmill RF Comm");
@@ -174,7 +169,6 @@ public:
     DEFINE_DEVICE(YpooElliptical, "Ypoo Elliptical");
     DEFINE_DEVICE(YpooElliptical2, "Ypoo Elliptical 2");
     DEFINE_DEVICE(YpooElliptical3, "Ypoo Elliptical 3");
-    DEFINE_DEVICE(ZwiftRunpod, "Zwift Runpod");
     DEFINE_DEVICE(iConceptBike, "iConcept Bike");
     DEFINE_DEVICE(iConceptElliptical, "iConcept Elliptical");
     DEFINE_DEVICE(SnodeBikeTF, "Snode Bike TF");

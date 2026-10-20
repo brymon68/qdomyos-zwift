@@ -27,8 +27,6 @@ window.chartColors = {
     lightsteelbluet: 'rgb(176,192,222, 0.55)',
 };
 
-var ftp = 200;
-var ftpZones = [];
 var maxHeartRate = 190;
 var heartZones = [];
 var miles = 1;
@@ -108,17 +106,9 @@ function t(key, fallback) {
 }
 
 function process_trainprogram_heart(arr) {
-    let powerWorkout = false;
     let elapsed = 0;
-
-    for (let el of arr.list) {
-        // if the power is ok or it was a power zone workout but this segment is a freeride tag...
-        if(el.power !== -1 || powerWorkout) {
-            powerWorkout = true;
-            for (i=0; i<el.duration_s; i++) {
-                elapsed++;
-            }
-        }
+    for (const segment of arr.list) {
+        elapsed += segment.duration_s;
     }
 
     if(elapsed > 0) {
@@ -148,127 +138,12 @@ function process_arr_heart(arr) {
         div = document.getElementById('divcanvasheart') || document.getElementById('divcanvasheartFull');
     }
 
-    let reqpower = [];
-    let reqcadence = [];
     let heart = [];
-    let cadence = [];
-    let speed = [];
-    let inclination = [];
-    let resistance = [];
-    let watts = [];
-    let reqresistance = [];
-    let pelotonresistance = [];
-    let pelotonreqresistance = [];
-    let distributionPowerZones = [];
     let maxEl = 0;
-    let saveScreenshot = [];
-    let workoutName = '';
-    let workoutStartDate = '';
-    let instructorName = '';
-    let watts_avg = 0;
-    let watts_max = 0;
-    let heart_avg = 0;
-    let heart_max = 0;
-    let jouls = 0;
-    let deviceType = 0;
-    let cadence_avg = 0;
-    let peloton_resistance_avg = 0;
-    let calories = 0;
-    let distance = 0;
-    saveScreenshot[0] = false;
-    saveScreenshot[1] = false;
-    saveScreenshot[2] = false;
-    saveScreenshot[3] = false;
-    saveScreenshot[4] = false;
-    saveScreenshot[5] = false;
-    saveScreenshot[6] = false;
-    saveScreenshot[7] = false;
-    distributionPowerZones[0] = 0;
-    distributionPowerZones[1] = 0;
-    distributionPowerZones[2] = 0;
-    distributionPowerZones[3] = 0;
-    distributionPowerZones[4] = 0;
-    distributionPowerZones[5] = 0;
-    distributionPowerZones[6] = 0;
-
-    for (let el of arr) {
-        let wattel = {};
-        let reqpowerel = {};
-        let reqcadenceel = {};
-        let heartel = {};
-        let cadenceel = {};
-        let resistanceel = {};
-        let reqresistanceel = {};
-        let pelotonresistanceel = {};
-        let pelotonreqresistanceel = {};
-        let speedel = {};
-        let inclinationel = {};
-        let time = el.elapsed_s + el.elapsed_m * 60 + el.elapsed_h * 3600;
-        workoutName = el.workoutName;
-        workoutStartDate = el.workoutStartDate;
-        instructorName = el.instructorName;
-        watts_avg = el.watts_avg;
-        watts_max = el.watts_max;
-        heart_avg = el.heart_avg;
-        heart_max = el.heart_max;
-        jouls = el.jouls;
-        deviceType = el.deviceType;
-        peloton_resistance_avg = el.peloton_resistance_avg;
-        cadence_avg = el.cadence_avg;
-        distance = el.distance;
-        calories = el.calories;
+    for (const sample of arr) {
+        const time = sample.elapsed_s + sample.elapsed_m * 60 + sample.elapsed_h * 3600;
+        heart.push({x: time, y: sample.heart});
         maxEl = time;
-        wattel.x = time;
-        wattel.y = el.watts;
-        watts.push(wattel);
-        if(el.watts < ftpZones[0])
-            distributionPowerZones[0]++;
-        else if(el.watts < ftpZones[1])
-            distributionPowerZones[1]++;
-        else if(el.watts < ftpZones[2])
-            distributionPowerZones[2]++;
-        else if(el.watts < ftpZones[3])
-            distributionPowerZones[3]++;
-        else if(el.watts < ftpZones[4])
-            distributionPowerZones[4]++;
-        else if(el.watts < ftpZones[5])
-            distributionPowerZones[5]++;
-        else
-            distributionPowerZones[6]++;
-        reqpowerel.x = time;
-        reqpowerel.y = el.req_power;
-        // they are added from the process_trainprogram()
-        //reqpower.push(reqpowerel);
-
-        reqcadenceel.x = time;
-        reqcadenceel.y = el.req_cadence;
-        reqcadence.push(reqcadenceel);
-        heartel.x = time;
-        heartel.y = el.heart;
-        heart.push(heartel);
-        cadenceel.x = time;
-        cadenceel.y = el.cadence;
-        cadence.push(cadenceel);
-        resistanceel.x = time;
-        resistanceel.y = el.resistance;
-        resistance.push(resistanceel);
-        reqresistanceel.x = time;
-        reqresistanceel.y = el.req_resistance;
-        reqresistance.push(reqresistanceel);
-
-        pelotonresistanceel.x = time;
-        pelotonresistanceel.y = el.peloton_resistance;
-        pelotonresistance.push(pelotonresistanceel);
-        pelotonreqresistanceel.x = time;
-        pelotonreqresistanceel.y = el.peloton_req_resistance;
-        pelotonreqresistance.push(pelotonreqresistanceel);
-
-        speedel.x = time;
-        speedel.y = el.speed;
-        speed.push(speedel);
-        inclinationel.x = time;
-        inclinationel.y = el.inclination;
-        inclination.push(inclinationel);
     }
 
     const maxRecordedHeart = heart.reduce(function(maxValue, point) {
@@ -519,7 +394,7 @@ function load_heart_workout_data() {
 }
 
 function dochartheart_init() {
-    keys_arr = ['ftp', 'miles_unit', 'age', 'heart_rate_zone1', 'heart_rate_zone2', 'heart_rate_zone3', 'heart_rate_zone4', 'heart_max_override_enable', 'heart_max_override_value']
+    keys_arr = ['miles_unit', 'age', 'heart_rate_zone1', 'heart_rate_zone2', 'heart_rate_zone3', 'heart_rate_zone4', 'heart_max_override_enable', 'heart_max_override_value']
     let el = new MainWSQueueElement({
             msg: 'getsettings',
             content: {
@@ -537,15 +412,7 @@ function dochartheart_init() {
                 for (let key of keys_arr) {
                     if (msg.content[key] === undefined)
                         return null;
-                    if (key === 'ftp') {
-                        ftp = msg.content[key];
-                        ftpZones[0] = Math.round(ftp * 0.55);
-                        ftpZones[1] = Math.round(ftp * 0.75);
-                        ftpZones[2] = Math.round(ftp * 0.90);
-                        ftpZones[3] = Math.round(ftp * 1.05);
-                        ftpZones[4] = Math.round(ftp * 1.20);
-                        ftpZones[5] = Math.round(ftp * 1.50);
-                    } else if (key === 'age') {
+                    if (key === 'age') {
                         age = msg.content[key];
                         maxHeartRate = 220 - age;
                     } else if (key === 'heart_max_override_enable') {
@@ -594,41 +461,7 @@ function dochartheart_init() {
 $(window).on('load', function () {
     dochartheart_init(); return;
 
-    // DEBUG
-    ftpZones[0] = Math.round(ftp * 0.55);
-    ftpZones[1] = Math.round(ftp * 0.75);
-    ftpZones[2] = Math.round(ftp * 0.90);
-    ftpZones[3] = Math.round(ftp * 1.05);
-    ftpZones[4] = Math.round(ftp * 1.20);
-    ftpZones[5] = Math.round(ftp * 1.50);
 
-    heartZones[0] = 110;
-    heartZones[1] = 130;
-    heartZones[2] = 150;
-    heartZones[3] = 170;    
-
-    arr = [{'watts': 50, 'req_power': 150, 'elapsed_s':0,'elapsed_m':0,'elapsed_h':0, 'heart':90, 'resistance': 10, 'req_resistance': 15, 'cadence': 80, 'req_cadence': 90, 'speed': 10, 'inclination': 1, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 60, 'req_power': 150, 'elapsed_s':1,'elapsed_m':1,'elapsed_h':0, 'heart':92, 'resistance': 11, 'req_resistance': 30, 'cadence': 90, 'req_cadence': 100, 'speed': 8, 'inclination': 2, 'peloton_resistance': 20, 'peloton_req_resistance': 25},
-           {'watts': 70, 'req_power': 170, 'elapsed_s':2,'elapsed_m':2,'elapsed_h':0, 'heart':110, 'resistance': 12, 'req_resistance': 40, 'cadence': 100, 'req_cadence': 90, 'speed': 9, 'inclination': 2.5, 'peloton_resistance': 30, 'peloton_req_resistance': 35},
-           {'watts': 140, 'req_power': 170, 'elapsed_s':3,'elapsed_m':3,'elapsed_h':0, 'heart':115, 'resistance': 16, 'req_resistance': 41, 'cadence': 90, 'req_cadence': 95, 'speed': 11, 'inclination': 1, 'peloton_resistance': 40, 'peloton_req_resistance': 45},
-           {'watts': 130, 'req_power': 170, 'elapsed_s':4,'elapsed_m':4,'elapsed_h':0, 'heart':130, 'resistance': 18, 'req_resistance': 43, 'cadence': 95, 'req_cadence': 95, 'speed': 10, 'inclination': 4, 'peloton_resistance': 50, 'peloton_req_resistance': 55},
-           {'watts': 160, 'req_power': 170, 'elapsed_s':5,'elapsed_m':5,'elapsed_h':0, 'heart':135, 'resistance': 22, 'req_resistance': 43, 'cadence': 95, 'req_cadence': 95, 'speed': 12, 'inclination': 1, 'peloton_resistance': 60, 'peloton_req_resistance': 15},
-           {'watts': 180, 'req_power': 130, 'elapsed_s':6,'elapsed_m':6,'elapsed_h':0, 'heart':140, 'resistance': 31, 'req_resistance': 43, 'cadence': 95, 'req_cadence': 90, 'speed': 10, 'inclination': 3, 'peloton_resistance': 70, 'peloton_req_resistance': 15},
-           {'watts': 120, 'req_power': 130, 'elapsed_s':7,'elapsed_m':7,'elapsed_h':0, 'heart':150, 'resistance': 18, 'req_resistance': 35, 'cadence': 95, 'req_cadence': 80, 'speed': 10, 'inclination': 4, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 190, 'req_power': 150, 'elapsed_s':1,'elapsed_m':8,'elapsed_h':0, 'heart':155, 'resistance': 17, 'req_resistance': 35, 'cadence': 95, 'req_cadence': 80, 'speed': 13, 'inclination': 1, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 195, 'req_power': 170, 'elapsed_s':2,'elapsed_m':9,'elapsed_h':0, 'heart':165, 'resistance': 19, 'req_resistance': 30, 'cadence': 80, 'req_cadence': 80, 'speed': 12, 'inclination': 3, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 200, 'req_power': 170, 'elapsed_s':3,'elapsed_m':10,'elapsed_h':0, 'heart':153, 'resistance': 20, 'req_resistance': 25, 'cadence': 90, 'req_cadence': 90, 'speed': 10, 'inclination': 2, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 206, 'req_power': 170, 'elapsed_s':4,'elapsed_m':11,'elapsed_h':0, 'heart':152, 'resistance': 21, 'req_resistance': 35, 'cadence': 90, 'req_cadence': 90, 'speed': 12, 'inclination': 7, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 211, 'req_power': 170, 'elapsed_s':5,'elapsed_m':12,'elapsed_h':0, 'heart':180, 'resistance': 25, 'req_resistance': 35, 'cadence': 90, 'req_cadence': 70, 'speed': 10, 'inclination': 10, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 222, 'req_power': 130, 'elapsed_s':6,'elapsed_m':13,'elapsed_h':0, 'heart':182, 'resistance': 31, 'req_resistance': 35, 'cadence': 80, 'req_cadence': 70, 'speed': 7, 'inclination': 12, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 237, 'req_power': 130, 'elapsed_s':7,'elapsed_m':14,'elapsed_h':0, 'heart':160, 'resistance': 20, 'req_resistance': 50, 'cadence': 90, 'req_cadence': 70, 'speed': 6, 'inclination': 1, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 250, 'req_power': 170, 'elapsed_s':3,'elapsed_m':15,'elapsed_h':0, 'heart':115, 'resistance': 20, 'req_resistance': 50, 'cadence': 90, 'req_cadence': 90, 'speed': 10, 'inclination': 14, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 266, 'req_power': 170, 'elapsed_s':4,'elapsed_m':16,'elapsed_h':0, 'heart':120, 'resistance': 11, 'req_resistance': 35, 'cadence': 80, 'req_cadence': 60, 'speed': 10, 'inclination': 10, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 351, 'req_power': 170, 'elapsed_s':5,'elapsed_m':17,'elapsed_h':0, 'heart':112, 'resistance': 22, 'req_resistance': 23, 'cadence': 80, 'req_cadence': 60, 'speed': 5, 'inclination': 9, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 322, 'req_power': 130, 'elapsed_s':6,'elapsed_m':18,'elapsed_h':0, 'heart':90, 'resistance': 25, 'req_resistance': 23, 'cadence': 80, 'req_cadence': 96, 'speed': 10, 'inclination': 5, 'peloton_resistance': 10, 'peloton_req_resistance': 15},
-           {'watts': 257, 'req_power': 130, 'elapsed_s':7,'elapsed_m':19,'elapsed_h':0, 'heart':120, 'resistance': 10, 'req_resistance': 23, 'cadence': 80, 'req_cadence': 97, 'speed': 10, 'inclination': 1, 'workoutName': '45min Power Zone Ride', 'workoutStartDate': '20/12/2021', 'instructorName': "Robin Arzon", 'watts_avg': 200, 'watts_max' : 351, 'heart_avg': 120, 'heart_max' : 150, 'jouls': 138000, 'calories': 950, 'distance': 11, 'cadence_avg': 65, 'peloton_resistance_avg': 22, 'deviceType': 1},
-            ]
-    process_arr_heart(arr);
 });
 
 $(document).ready(function () {

@@ -263,11 +263,6 @@ Would you like to do that now?</source>
         <translation>阻力:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="678"/>
-        <source>Watt:</source>
-        <translation>Watt:</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="746"/>
         <source>Pace (min/km):</source>
         <translation>配速 (min/km):</translation>
@@ -1592,11 +1587,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation>坡度</translation>
     </message>
     <message>
-        <location filename="../charts.ui" line="107"/>
-        <source>Watt</source>
-        <translation>Watt</translation>
-    </message>
-    <message>
         <location filename="../charts.ui" line="131"/>
         <source>Resistance</source>
         <translation>阻力</translation>
@@ -1746,16 +1736,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation>T.踏频(rpm)</translation>
     </message>
     <message>
-        <location filename="../homeform.cpp" line="444"/>
-        <source>T.Power(W)</source>
-        <translation>T.功率(W)</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="446"/>
-        <source>T.Zone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../homeform.cpp" line="448"/>
         <source>T.Speed (%1/h)</source>
         <translation>T.速度 (%1/h)</translation>
@@ -1766,34 +1746,9 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation>坡度 (%)</translation>
     </message>
     <message>
-        <location filename="../homeform.cpp" line="455"/>
-        <source>Watt</source>
-        <translation>Watt</translation>
-    </message>
-    <message>
         <location filename="../homeform.cpp" line="457"/>
         <source>Weight Loss(%1)</source>
         <translation>减重(%1)</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="460"/>
-        <source>AVG Watt</source>
-        <translation>平均瓦数</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="462"/>
-        <source>AVG Watt Lap</source>
-        <translation>平均瓦数圈</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="464"/>
-        <source>Watt/Kg</source>
-        <translation>瓦特/公斤</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="466"/>
-        <source>FTP Zone</source>
-        <translation>FTP 区间</translation>
     </message>
     <message>
         <location filename="../homeform.cpp" line="468"/>
@@ -1804,11 +1759,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <location filename="../homeform.cpp" line="470"/>
         <source>Fan Speed</source>
         <translation>风扇速度</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="472"/>
-        <source>KJouls</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../homeform.cpp" line="475"/>
@@ -1839,21 +1789,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <location filename="../homeform.cpp" line="491"/>
         <source>Next Rows</source>
         <translation>下一行</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="494"/>
-        <source>METS</source>
-        <translation>代谢当量</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="496"/>
-        <source>Target METS</source>
-        <translation>目标METS</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="498"/>
-        <source>RSS</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../homeform.cpp" line="500"/>
@@ -1911,11 +1846,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation>冲刺</translation>
     </message>
     <message>
-        <location filename="../homeform.cpp" line="524"/>
-        <source>Power Avg</source>
-        <translation>平均功率</translation>
-    </message>
-    <message>
         <source>HRV (ms)</source>
         <translation type="vanished">HRV (毫秒)</translation>
     </message>
@@ -1963,71 +1893,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <location filename="../homeform.cpp" line="5805"/>
         <source>Pause</source>
         <translation>暂停</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6408"/>
-        <location filename="../homeform.cpp" line="6560"/>
-        <location filename="../homeform.cpp" line="6731"/>
-        <source>Rec.</source>
-        <translation>记录</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6411"/>
-        <location filename="../homeform.cpp" line="6563"/>
-        <location filename="../homeform.cpp" line="6734"/>
-        <source>Easy</source>
-        <translation>轻松</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6415"/>
-        <source>Brisk</source>
-        <translation>快速</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6417"/>
-        <location filename="../homeform.cpp" line="6566"/>
-        <location filename="../homeform.cpp" line="6737"/>
-        <source>Moder.</source>
-        <translation>中等</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6422"/>
-        <source>Power</source>
-        <translation>功率</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6424"/>
-        <location filename="../homeform.cpp" line="6569"/>
-        <location filename="../homeform.cpp" line="6740"/>
-        <source>Chall.</source>
-        <translation>挑战</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6429"/>
-        <location filename="../homeform.cpp" line="6438"/>
-        <location filename="../homeform.cpp" line="6578"/>
-        <location filename="../homeform.cpp" line="6743"/>
-        <source>Max</source>
-        <translation>最大</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6431"/>
-        <location filename="../homeform.cpp" line="6572"/>
-        <source>Hard</source>
-        <translation>困难</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6435"/>
-        <location filename="../homeform.cpp" line="6575"/>
-        <source>V.Hard</source>
-        <translation>V.困难</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="6441"/>
-        <location filename="../homeform.cpp" line="6581"/>
-        <location filename="../homeform.cpp" line="6746"/>
-        <source>N/A</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../homeform.cpp" line="8006"/>
@@ -2146,21 +2011,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation>, 最大阻力 </translation>
     </message>
     <message>
-        <location filename="../homeform.cpp" line="8099"/>
-        <source>, watt </source>
-        <translation>, 瓦特 </translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8102"/>
-        <source>, average watt </source>
-        <translation>, 平均瓦特 </translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8105"/>
-        <source>, max watt </source>
-        <translation>, 最大瓦特 </translation>
-    </message>
-    <message>
         <source>, ftp </source>
         <translation type="vanished">, 功率计 </translation>
     </message>
@@ -2178,11 +2028,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <location filename="../homeform.cpp" line="8117"/>
         <source>, max heart rate </source>
         <translation>, 最大心率 </translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8120"/>
-        <source>, jouls </source>
-        <translation>, 焦耳 </translation>
     </message>
     <message>
         <location filename="../homeform.cpp" line="8123"/>
@@ -2225,16 +2070,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <translation>, 目标踏频 </translation>
     </message>
     <message>
-        <location filename="../homeform.cpp" line="8171"/>
-        <source>, target power </source>
-        <translation>, 目标功率 </translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8177"/>
-        <source>, target zone </source>
-        <translation>, 目标区域 </translation>
-    </message>
-    <message>
         <location filename="../homeform.cpp" line="8183"/>
         <source>, target speed </source>
         <translation>, 目标速度 </translation>
@@ -2243,21 +2078,6 @@ The following questions will customize QZ for your equipment and goals.</source>
         <location filename="../homeform.cpp" line="8197"/>
         <source>, target incline </source>
         <translation>, 目标坡度 </translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8202"/>
-        <source>, watt for kilograms </source>
-        <translation>, 瓦特用于千克 </translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8205"/>
-        <source>, average watt for kilograms</source>
-        <translation>, 平均瓦特每公斤</translation>
-    </message>
-    <message>
-        <location filename="../homeform.cpp" line="8208"/>
-        <source>, max watt for kilograms</source>
-        <translation>, 每公斤最大瓦特</translation>
     </message>
     <message>
         <location filename="../homeform.cpp" line="8218"/>
@@ -3067,26 +2887,6 @@ Do you want to start it now?</source>
         <translation>请选择您的性别，以便更准确地计算消耗的卡路里。</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="2296"/>
-        <source>FTP value:</source>
-        <translation>FTP值：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="2318"/>
-        <source>If you train to specific output (or watts) levels, for example in Peloton Power Zone classes,and have taken an FTP test (Functional Threshold Power), enter your FTP here. This number is used to calculate your Power Zones (Zones 1 to 7 for Peloton and 1 to 6 for Zwift).</source>
-        <translation>如果您训练到特定的输出（或瓦特）水平，例如在 Peloton Power Zone 课程中，并且进行了 FTP 测试（Functional Threshold Power），请在此处输入您的 FTP 值。此数值用于计算您的功率区域（Peloton 为 Zones 1 到 7，Zwift 为 Zones 1 到 6）。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="2333"/>
-        <source>Critical Power Run value:</source>
-        <translation>临界功率跑值：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="2354"/>
-        <source>If you train to specific output (or watts) levels, for example with Stryd,and have taken an CP test (Critical Power Test), enter your CP here. This number is used to calculate your RSS.</source>
-        <translation>如果您训练到特定的输出（或瓦特）水平，例如使用 Stryd，并且进行了 CP 测试（Critical Power Test），请在此处输入您的 CP 值。此数值用于计算您的 RSS。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="2370"/>
         <source>Nickname:</source>
         <translation>昵称:</translation>
@@ -3188,11 +2988,6 @@ Do you want to start it now?</source>
         <translation>根据心率计算卡路里</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="2703"/>
-        <source>Enable to calculate calories based on heart rate data instead of power. Requires heart rate sensor connection for accurate calorie estimation.</source>
-        <translation>启用基于心率数据而非功率的卡路里计算。需要连接心率传感器才能准确估算卡路里。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="2717"/>
         <source>Heart Belt Name:</source>
         <translation>心率带名称:</translation>
@@ -3258,49 +3053,9 @@ Do you want to start it now?</source>
         <translation>QZ 使用基于年龄的标准计算来确定最大心率，然后根据该最大心率设置心率区间。如果您知道您的实际最大心率（已知能达到的最高心率），请开启此选项并输入您的实际最大心率。然后点击确定。</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="3000"/>
-        <source>Power from Heart Rate Options</source>
-        <translation>心率功率选项</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3010"/>
-        <source>Session 1 Watt:</source>
-        <translation>第 1 节瓦特：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3035"/>
-        <source>Session 1 HR:</source>
-        <translation>第 1 次心率：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3060"/>
-        <source>Session 2 Watt:</source>
-        <translation>节次 2 瓦特：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3085"/>
-        <source>Session 2 HR:</source>
-        <translation>第二次心率：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3108"/>
-        <source>Expand the bars to the right to display the options under this setting. These settings are used to calculate power (watts) for bikes that do not have power meters. Instead QZ estimates power from your cadence and heart rate. You can calibrate how QZ calculates your power from heart rate as follows: If you know that at a stable pace you produce 100W of power at a heart rate of 150 BPM and 150W at 170 BPM, you can add these values under Sessions 1 and 2 Watt and HR and QZ will calculate your power based on that trend line.</source>
-        <translation>展开右侧的条形图以显示此设置下的选项。这些设置用于计算没有功率计的自行车功率（瓦）。QZ 会根据您的踏频和心率估算功率。您可以按以下步骤校准 QZ 如何根据心率计算您的功率：如果您知道在稳定配速下，心率为 150 BPM 时产生 100W 的功率，心率为 170 BPM 时产生 150W 的功率，您可以在“Session 1”和“Session 2”的瓦数和心率下添加这些值，QZ 将根据该趋势线计算您的功率。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="3126"/>
         <source>Bike Options</source>
         <translation>自行车选项</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3137"/>
-        <source>Speed calculates on Power</source>
-        <translation>速度基于功率计算</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3150"/>
-        <source>QZ calculates speed based on your pedal cadence (RPMs). Enable this setting if you want your speed to be calculated based on your power output (watts), as Zwift and some other apps do. Default is off.</source>
-        <translation>QZ 根据您的踏频（RPMs）计算速度。如果您希望速度根据您的功率输出（watts）计算，就像 Zwift 和一些其他应用那样，请启用此设置。默认关闭。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="3164"/>
@@ -3357,16 +3112,6 @@ Do you want to start it now?</source>
         <translation>风阻增益</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="3374"/>
-        <source>Zwift Workout/Erg Mode</source>
-        <translation>Zwift 训练/划阻模式</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3388"/>
-        <source>Enable this setting ONLY when using Zwift in ERG (workout) Mode. QZ will communicate the target resistance (or automatically adjust your resistance if your bike has this capability) to match the target watts based on your cadence (RPM). In ERG Mode, the changes in road slope will not affect target resistance, as is the case in Simulation Mode. Default is off.</source>
-        <translation>仅在使用 Zwift 的 ERG（训练）模式时启用此设置。QZ 将根据您的踏频（RPM）传输目标阻力（或如果您的自行车具备此功能，将自动调整阻力），以匹配目标瓦数。在 ERG 模式下，路坡的变化不会影响目标阻力，与模拟模式相同。默认关闭。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="3404"/>
         <source>Zwift Resistance Offset:</source>
         <translation>Zwift 阻力偏移量:</translation>
@@ -3377,16 +3122,6 @@ Do you want to start it now?</source>
         <translation>此设置用于在 Zwift 中设置您的“平路”。所有传输的阻力变化都将基于此设置。输入的值是个人偏好，并取决于您的体能水平。建议为 Echelon 自行车设置的值在 18 到 20 之间。默认值是 4。</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="3442"/>
-        <source>Zwift Power Offset (W):</source>
-        <translation>Zwift 功率偏移 (W):</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3464"/>
-        <source>Add an offset in watts to the requested power from apps like Zwift. Positive values increase power, negative values decrease it. Default is 0.</source>
-        <translation>向来自 Zwift 等应用的请求功率添加瓦特偏移量。正值增加功率，负值减少功率。默认值为 0。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="3480"/>
         <source>Zwift Resistance Gain:</source>
         <translation>Zwift 阻力提升:</translation>
@@ -3395,46 +3130,6 @@ Do you want to start it now?</source>
         <location filename="../settings.qml" line="3502"/>
         <source>(for bikes and treadmills when using “treadmill as a bike” setting). This setting scales the resistance from your bike or the speed from your treadmill before sending it to Zwift. Default is 1.</source>
         <translation>(当使用“跑步机作为自行车”设置时，适用于自行车和跑步机)。此设置会在将数据发送到 Zwift 之前，对来自自行车的阻力或来自跑步机的速度进行缩放。默认值为 1。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3518"/>
-        <source>Zwift ERG Watt Up Filter:</source>
-        <translation>Zwift ERG 功率筛选器:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3540"/>
-        <source>In ERG Mode or during a Power Zone workout on Peloton, the app sends a “target output” request. If the output requested doesn’t match your current output (calculated using cadence and resistance level), your target resistance will change to help you get closer to the target output. If the filter is set to higher values, you will get less adjustment of the target resistance and you will have to increase your cadence to match the target output. The Up and Down Watt Filter settings are the upper and lower margin before the adjustment of resistance is communicated. Example: if the up and down filters are set to 10 and the target output is 100 watts, a change of your resistance will only be communicated if your bike produces less than 90 watts or more than 110 watts. Default is 10.</source>
-        <translation>在 Peloton 的 ERG 模式或 Power Zone 训练期间，应用会发送一个“目标输出”请求。如果请求的输出与您当前的输出（根据踏频和阻力水平计算）不匹配，您的目标阻力将发生变化，以帮助您更接近目标输出。如果将过滤器设置为更高的值，目标阻力的调整会减少，您需要增加踏频来匹配目标输出。上下瓦特过滤器设置是阻力调整通知的上限和下限范围。示例：如果上下过滤器设置为 10，目标输出为 100 瓦，只有当您的自行车输出低于 90 瓦或高于 110 瓦时，才会通知阻力变化。默认值为 10。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3556"/>
-        <source>Zwift ERG Watt Down Filter:</source>
-        <translation>Zwift ERG 瓦数下降过滤器：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3578"/>
-        <source>See above. Default is 10.</source>
-        <translation>上方可见。默认值：10。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3594"/>
-        <source>Min. Resistance:</source>
-        <translation>最小阻力：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3616"/>
-        <source>Use this setting to set a minimum target resistance. For example, if you do not want to ride at a resistance below 25, enter a value of 25 and QZ will not set a target resistance below 25. Default is 0.</source>
-        <translation>使用此设置来设定最小目标阻力。例如，如果您不希望阻力低于 25，请输入 25，QZ 将不会设置低于 25 的目标阻力。默认值为 0。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3632"/>
-        <source>Max. Resistance:</source>
-        <translation>最大阻力:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="3654"/>
-        <source>Similar to the above, but sets a maximum target resistance. Default is 999.</source>
-        <translation>与上面类似，但设置了最大目标阻力。默认值是 999。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="3670"/>
@@ -3627,11 +3322,6 @@ Do you want to start it now?</source>
         <translation>Echelon 自行车选项</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="4355"/>
-        <source>Watt Profile:</source>
-        <translation>瓦特曲线：</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="4381"/>
         <source>Resistance Gain:</source>
         <translation>阻力增益:</translation>
@@ -3778,16 +3468,6 @@ Do you want to start it now?</source>
         <translation>卡路里/公里至控制台</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="4872"/>
-        <source>Bike 500 wattage profile</source>
-        <translation>500瓦自行车功率曲线</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="4885"/>
-        <source>Bike 500 wattage profile v2</source>
-        <translation>自行车 500 瓦功率配置 v2</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="4900"/>
         <source>Tacx Neo Options</source>
         <translation>Tacx Neo 选项</translation>
@@ -3823,11 +3503,6 @@ Do you want to start it now?</source>
         <location filename="../settings.qml" line="9527"/>
         <source>Specific Model:</source>
         <translation>特定型号:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5120"/>
-        <source>TDF CBC Jonseed watt table</source>
-        <translation>TDF CBC Jonseed 瓦特表</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="5219"/>
@@ -3900,81 +3575,6 @@ Do you want to start it now?</source>
         <translation>Technogym 自行车选项</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="5472"/>
-        <source>Group Cycle</source>
-        <translation>群组骑行</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5494"/>
-        <source>ANT+ Bike Device Number (0=Auto):</source>
-        <translation>ANT+ 自行车设备编号 (0=自动):</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5559"/>
-        <source>Ant+ Options (only for some Android)</source>
-        <translation>Ant+ 选项 (仅限部分安卓)</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5571"/>
-        <source>Set 100mm as wheel circumference in settings of ant+ speed sensor</source>
-        <translation>在 ant+ 速度传感器设置中，将车轮周长设置为 100mm</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5584"/>
-        <source>Ant+ Cadence</source>
-        <translation>ANT+ 踏频</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5598"/>
-        <source>Turn this on if you need to use ANT+ along with Bluetooth. Power is also sent.</source>
-        <translation>如果需要同时使用 ANT+ 和 Bluetooth，请开启此项。此项也会发送功率数据。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5613"/>
-        <source>ANT+ Speed Offset</source>
-        <translation>ANT+ 速度偏移</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5634"/>
-        <source>You can increase/decrease your speed sent over ANT+. The number you enter as an Offset adds that amount to your speed.</source>
-        <translation>您可以增加/减少通过 ANT+ 发送的速度。您输入的偏移量数字会将其加到您的速度上。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5650"/>
-        <source>ANT+ Speed Gain:</source>
-        <translation>ANT+ 速度提升:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5671"/>
-        <source>You can increase/decrease your speed output sent over ANT+. For example, to use a rower to cycle in Zwift, you could double your speed output to better match your cycling speed. The number you enter is a multiplier applied to your actual speed.</source>
-        <translation>您可以增加/减少通过 ANT+ 发送的速度输出。例如，如果您使用划船机在 Zwift 中骑行，您可以将速度输出加倍，以更好地匹配您的骑行速度。您输入的数字是应用于您实际速度的乘数。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5685"/>
-        <source>Ant+ Heart</source>
-        <translation>Ant+ 心率</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5701"/>
-        <source>ANT+ Heart Device Number (0=Auto):</source>
-        <translation>ANT+ 心率设备编号 (0=自动):</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5723"/>
-        <source>This setting enables receiving the heart rate from an external HRM over ANT+ instead of from QZ.</source>
-        <translation>此设置允许通过 ANT+ 从外部 HRM 接收心率，而不是从 QZ 接收。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5736"/>
-        <source>Ant+ Bike</source>
-        <translation>ANT+ 自行车</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="5750"/>
-        <source>Use this to connect to your bike using ANT+ instead of Bluetooth. Default: Disabled</source>
-        <translation>使用此功能通过 ANT+ 而非 Bluetooth 连接到您的自行车。默认: 关闭</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="5781"/>
         <source>Tiles Options</source>
         <translation>瓦片选项</translation>
@@ -4043,16 +3643,6 @@ Do you want to start it now?</source>
         <location filename="../settings.qml" line="5992"/>
         <source>Android Only: if enabled the floating window will start as soon as the fitness devices is connected.</source>
         <translation>仅限 Android：如果启用，浮动窗口将在健身设备连接后立即启动。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6014"/>
-        <source>Chart Display Mode:</source>
-        <translation>图表显示模式：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6036"/>
-        <source>Choose which charts to display in the footer: both heart rate and power charts, only heart rate chart, or only power chart.</source>
-        <translation>选择在页脚显示的图表：心率和功率图表，仅心率图表，或仅功率图表。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="6105"/>
@@ -4133,26 +3723,6 @@ Do you want to start it now?</source>
         <location filename="../settings.qml" line="6612"/>
         <source>Difficulty level for Peloton rower classes. 1 is easy 10 is hard.</source>
         <translation>Peloton划船课难度等级。1为简单，10为困难。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6628"/>
-        <source>PZP Username:</source>
-        <translation>用户名:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6649"/>
-        <source>As of 4/1/2022, this feature is broken due to a Power Zone Pack (PZP) website change. Leave (or change back to) the default of “username” (without quotation marks, all lowercase and all one word) until further notice.</source>
-        <translation>截至 2022 年 4 月 1 日，由于 Power Zone Pack (PZP) 网站更改，此功能出现故障。请保持（或改回）默认值“username”（不带引号，全小写，且为一个词），直至另行通知。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6665"/>
-        <source>PZP Password:</source>
-        <translation>密码:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6688"/>
-        <source>As of 4/1/2022, this feature is broken due to a Power Zone Pack (PZP) website change. Leave this setting blank until further notice.</source>
-        <translation>截至 2022 年 4 月 1 日，由于 Power Zone Pack (PZP) 网站更改，此功能已失效。请在后续通知前保持此设置为空。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="6704"/>
@@ -4509,11 +4079,6 @@ Do you want to start it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="5541"/>
-        <source>Enable the special SPORT01 instant power formula only for the Toputure TEB1 bike. Leave disabled to use the standard FTMS instant power reported by the device.</source>
-        <translation>仅为 Toputure TEB1 自行车启用特殊的 SPORT01 瞬时功率公式。保持禁用以使用设备报告的标准 FTMS 瞬时功率。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="6005"/>
         <source>Open Floating on a Browser</source>
         <translation>在浏览器中打开浮动视图</translation>
@@ -4527,11 +4092,6 @@ Do you want to start it now?</source>
         <location filename="../settings.qml" line="6072"/>
         <source>iOS Live Activity Right Metric:</source>
         <translation>iOS 实时活动右侧指标：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="6091"/>
-        <source>iOS only: choose which two metrics are shown in the compact Dynamic Island bar for Live Activities. Default is Heart Rate on the left and Watt on the right.</source>
-        <translation>仅限 iOS：选择在“实时活动”的紧凑型动态岛栏中显示哪两个指标。默认是左侧心率，右侧瓦特。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="6150"/>
@@ -4632,16 +4192,6 @@ Do you want to start it now?</source>
         <translation>开启此项，以便 QZ 捕获 Peloton 课程链接并在 Strava 中显示。</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="7020"/>
-        <source>Spinups Autoresistance</source>
-        <translation>Spinups 自阻力</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="7034"/>
-        <source>By default, QZ treats Spin-UPS in Power Zone rides as an increasing ramp to warm you up. You can disable this, to leave the resistance up to you.</source>
-        <translation>默认情况下，QZ 将 Power Zone 骑行中的 Spin-UPS 视为一个逐渐增加的坡度，用于热身。您可以禁用此功能，让阻力由您自己决定。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="7048"/>
         <source>Peloton Auto Sync (Experimental)</source>
         <translation>Peloton 自动同步（实验性）</translation>
@@ -4697,16 +4247,6 @@ Do you want to start it now?</source>
         <location filename="../settings.qml" line="7219"/>
         <source>Would you like to disable Zwift Play and Zwift Click settings? Having them enabled together with &apos;Get gears from Zwift&apos; may cause conflicts.</source>
         <translation>您是否要禁用 Zwift Play 和 Zwift Click 设置？将它们与 &apos;Get gears from Zwift&apos; 同时启用可能会导致冲突。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="7231"/>
-        <source>Get Gears from Zwift</source>
-        <translation>获取 Zwift 的齿轮</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="7254"/>
-        <source>This setting bring virtual gearing from zwift to all the bikes directly from the Zwift interface. You have to configure Zwift: Wahoo virtual device from QZ as for power and cadence, and your QZ device as resistance. MUST be disabled for Mywhoosh app. Default: disabled.</source>
-        <translation>此设置可将来自 Zwift 界面的虚拟齿轮比传输到所有自行车。您必须配置 Zwift：将 Wahoo 虚拟设备设置为功率和踏频，并将您的 QZ 设备设置为阻力。对于 Mywhoosh 应用，必须禁用。默认值：禁用。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="7295"/>
@@ -4798,16 +4338,6 @@ Do you want to start it now?</source>
         <location filename="../settings.qml" line="7542"/>
         <source>You have to install the QZ Companion App on your Garmin Watch/Computer first.</source>
         <translation>您必须先在您的 Garmin Watch/Computer 上安装 QZ Companion App。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="7555"/>
-        <source>Ant+ Bike Over Garmin Watch</source>
-        <translation>Ant+ 自行车通过 Garmin Watch</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="7569"/>
-        <source>Use your garmin watch to get the ANT+ metrics from a bike</source>
-        <translation>使用您的 Garmin 手表获取来自自行车的 ANT+ 指标</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="7590"/>
@@ -4945,16 +4475,6 @@ Please enter it below:</source>
         <translation>完成每个训练段/行时，自动记录一圈。对于坡道段，仅在坡道结束时记录一圈，以避免每秒记录一次。</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="8385"/>
-        <source>Treadmill Auto-adjust speed by power</source>
-        <translation>跑步机自动根据功率调整速度</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="8399"/>
-        <source>Treadmill only: Automatically adjusts speed to maintain consistent power output. Speed adjustments occur on incline changes and adapt to manual speed modifications.</source>
-        <translation>仅限跑步机：自动调整速度以保持恒定的功率输出。速度调整发生在坡度变化时，并适应手动速度修改。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="8415"/>
         <source>PID on Heart Zone:</source>
         <translation>心率区域的PID：</translation>
@@ -5058,16 +4578,6 @@ Please enter it below:</source>
         <location filename="../settings.qml" line="8775"/>
         <source>Select the default Pace to be used when the ZWO file does not indicate a precise pace.</source>
         <translation>当 ZWO 文件未指示精确配速时，选择默认配速。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="8791"/>
-        <source>ERG Mode Watt Step:</source>
-        <translation>ERG模式瓦特步数：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="8812"/>
-        <source>Set the wattage step increment for ERG mode heart rate zone training. Default: 5 watts.</source>
-        <translation>设置ERG模式心率区间训练的功率步进增量。默认值：5瓦。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="8826"/>
@@ -5238,16 +4748,6 @@ Please enter it below:</source>
         <location filename="../settings.qml" line="9427"/>
         <source>Overrides the default inclination values sent from the treadmill</source>
         <translation>覆盖来自跑步机的默认坡度值</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="9440"/>
-        <source>Simulate Inclination with Speed</source>
-        <translation>模拟坡度与速度</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="9454"/>
-        <source>For treadmills without inclination: turning this on and QZ will transform inclination requests into speed changes.</source>
-        <translation>适用于没有坡度的跑步机：开启此功能后，QZ 会将坡度请求转换为速度变化。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="9467"/>
@@ -5602,11 +5102,6 @@ Please enter it below:</source>
         <translation>BH SPADA 兼容性</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="10945"/>
-        <source>BH SPADA wattage</source>
-        <translation>BH SPADA 功率</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="10959"/>
         <source>Toorx SRX 500</source>
         <translation type="unfinished"></translation>
@@ -5842,44 +5337,14 @@ Please enter it below:</source>
         <translation>从界面停止锻炼前，会弹出确认提示。</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="11789"/>
-        <source>Watt Offset:</source>
-        <translation>瓦特偏移量：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="11811"/>
-        <source>You can increase/decrease your watt output for moving your avatar faster/slower in Zwift or other similar apps as a way of calibrating your equipment. The number you enter as an Offset adds that amount to your watts.</source>
-        <translation>您可以在 Zwift 或其他类似应用中，通过增加/减少瓦特输出，来控制虚拟形象的移动速度，以此校准您的设备。您作为偏移量（Offset）输入的数字会将其值加到您的瓦特数上。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="11827"/>
-        <source>Watt Gain:</source>
-        <translation>功率增益:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="11849"/>
-        <source>You can increase/decrease your watt output for moving your avatar faster/slower in Zwift or other similar apps as a way of calibrating your equipment. For example, to use a rower to cycle in Zwift, you could double your watt output to better match your cycling speed by entering 2. The number you enter is a multiplier applied to your actual watts.</source>
-        <translation>您可以通过增加/减少瓦特输出，在 Zwift 或其他类似应用中更快/更慢地移动您的虚拟形象，从而校准您的设备。例如，要在 Zwift 中使用划船机进行骑行，您可以通过输入 2 将瓦特输出加倍，以更好地匹配您的骑行速度。您输入的数字是应用于您实际瓦特的乘数。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="11865"/>
         <source>Speed Offset</source>
         <translation>速度偏移</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="11887"/>
-        <source>You can increase/decrease your speed for moving your avatar faster/slower in Zwift if your equipment outputs speed but not watts. The number you enter as an Offset adds that amount to your speed.</source>
-        <translation>如果您的设备输出的是速度而非瓦数，您可以在 Zwift 中调整速度，从而控制虚拟形象的移动速度。您作为偏移量（Offset）输入的数字会将其加到您的速度上。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="11904"/>
         <source>Speed Gain:</source>
         <translation>速度提升:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="11926"/>
-        <source>You can increase/decrease your speed output for moving your avatar faster/slower in Zwift or other apps as a way of calibrating your equipment if your equipment outputs speed but not watts. For example, to use a rower to cycle in Zwift, you could double your speed output to better match your cycling speed. The number you enter is a multiplier applied to your actual speed.</source>
-        <translation>如果您的设备输出的是速度而非瓦特，您可以通过调整速度输出，在 Zwift 或其他应用中让您的虚拟形象移动得更快/更慢，从而校准您的设备。例如，若要在 Zwift 中用划船机模拟骑行，您可以将速度输出加倍，以更好地匹配您的骑行速度。您输入的数字是应用于您实际速度的乘数。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="11942"/>
@@ -5895,11 +5360,6 @@ Please enter it below:</source>
         <location filename="../settings.qml" line="11980"/>
         <source>Cadence Gain:</source>
         <translation>ケイ定增益:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12002"/>
-        <source>You can increase/decrease your cadence output as a way of calibrating your equipment if your equipment outputs cadence but not watts. The number you enter is a multiplier applied to your actual cadence.</source>
-        <translation>如果您的设备只输出踏频而没有输出瓦数，您可以增加/减少踏频输出来校准设备。您输入的数字将作为乘数应用于您的实际踏频。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="12016"/>
@@ -5977,38 +5437,6 @@ Please enter it below:</source>
         <translation>启用音量按钮去抖功能，当检测到两个或更多接近音量的步数时，只显示 1 个档位步数。默认关闭。</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="12252"/>
-        <source>Power Averaging Mode:</source>
-        <translation>平均功率模式：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12281"/>
-        <source>If the power output/watts your equipment sends to QZ is quite variable, this setting will result in smoother Power Zone graphs. This is also helpful for use with Power Meter Pedals. Uses harmonic averaging which smooths power spikes better than arithmetic averaging. If any reading is 0, power immediately becomes 0. Default is Off.
-
-IMPORTANT NOTES:
-- No Average/smooth in Hometrainer config for standard home trainers which work at 1hz (No race mode available)
-- Disable Average on 3rd party apps (Rouvy/Zwift/MyWhoosh etc) or select 1sec in the app!
-- Need to use QZ in bridge mode!
-- For Elite home trainers or those who have a race mode (10hz), if it&apos;s not sufficient for some users, using Elite/Hometrainer smoothing in addition to QZ smoothing will improve it.</source>
-        <translation>如果您的设备发送给 QZ 的功率输出/瓦数波动较大，此设置将使功率区域图表更平滑。这对于使用功率计踏板也很有帮助。它使用谐波平均，比算术平均更能平滑功率尖峰。如果任何读数是 0，功率会立即变为 0。默认值是关闭。
-
-重要提示：
-- 标准家用训练器（工作频率为 1hz，无比赛模式）的家用训练器配置中，不应使用平均/平滑功能。
-- 在第三方应用（Rouvy/Zwift/MyWhoosh 等）中禁用平均功能，或在应用中选择 1 秒！
-- 需要使用 QZ 的桥接模式！
-- 对于精英家用训练器或具有比赛模式（10hz）的训练器，如果对某些用户来说仍不够平滑，则可以同时使用精英/家用训练器平滑和 QZ 平滑来改善效果。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12295"/>
-        <source>Instant Power on Pause</source>
-        <translation>暂停瞬时功率</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12309"/>
-        <source>Enables the calculation of watts, even while in Pause mode. Default is off.</source>
-        <translation>即使在暂停模式下也能计算瓦特。默认关闭。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="12323"/>
         <source>Double Negative Inclination</source>
         <translation>双负坡度</translation>
@@ -6069,16 +5497,6 @@ IMPORTANT NOTES:
         <translation>默认情况下，QZ 将跑步机的当前倾角发送到虚拟的 Bluetooth/DIRCON 网桥。启用此项后，它将发送不考虑倾角增益或偏移的数值。默认值：False。</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="12528"/>
-        <source>Disable wattage from machinery</source>
-        <translation>禁用机械功率</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12542"/>
-        <source>This prevents your fitness device from sending its wattage calculation to QZ and defaults to QZ’s more accurate calculation.</source>
-        <translation>这会阻止您的健身设备将功率计算发送到QZ，并默认使用QZ更准确的计算结果。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="12555"/>
         <source>Use Resistance instead of Inclination</source>
         <translation>使用阻力代替坡度</translation>
@@ -6124,16 +5542,6 @@ IMPORTANT NOTES:
         <translation>踏频传感器作为自行车</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="12708"/>
-        <source>Cadence Sensor as a Treadmill</source>
-        <translation>踏板传感器作为跑步机</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12727"/>
-        <source>If your equipment doesn’t have Bluetooth, these settings allow you to use a cadence sensor so it will work with QZ as a bike or treadmill. Default is off.</source>
-        <translation>如果您的设备没有Bluetooth，这些设置允许您使用踏频传感器，使其可以作为自行车或跑步机与QZ配合使用。默认关闭。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="12741"/>
         <source>Cadence Sensor:</source>
         <translation>ケイデンス传感器：</translation>
@@ -6152,176 +5560,6 @@ IMPORTANT NOTES:
         <location filename="../settings.qml" line="12826"/>
         <source>Rogue Echo Bike</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12840"/>
-        <source>Enable special wattage calculation for Rogue Echo Bike: m_watt = 0.000602337 * pow(rpm, 3.11762) + 32.6404. Default is off.</source>
-        <translation>启用 Rogue Echo Bike 的特殊功率计算：m_watt = 0.000602337 * pow(rpm, 3.11762) + 32.6404。默认关闭。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12853"/>
-        <source>Custom CSC Resistance/Watt Table</source>
-        <translation>自定义阻力/瓦数表</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12867"/>
-        <source>Enable a custom linear resistance/watt table for CSC bikes. Joroto bikes keep using their dedicated resistance power profile. Resistance is clamped using the existing Min. Resistance and Max. Resistance settings.</source>
-        <translation>为 CSC 自行车启用自定义线性阻力/瓦特表。Joroto 自行车继续使用其专用的阻力功率配置文件。阻力将使用现有的最小阻力和最大阻力设置进行限制。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12882"/>
-        <source>Resistance Level 1:</source>
-        <translation>阻力级别 1:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12905"/>
-        <source>Watt 1:</source>
-        <translation>瓦特 1:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12928"/>
-        <source>Resistance Level 2:</source>
-        <translation>阻力级别 2:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12951"/>
-        <source>Watt 2:</source>
-        <translation>瓦特 2:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12972"/>
-        <source>QZ will build a linear equation from the two resistance/watt points and clamp the effective resistance using the existing Min. Resistance and Max. Resistance settings.</source>
-        <translation>QZ 将根据两个阻力/瓦特点构建线性方程，并使用现有最小阻力和最大阻力设置来限制有效阻力。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12988"/>
-        <source>Power Sensor Options</source>
-        <translation>功率传感器选项</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="12996"/>
-        <source>Power Sensor as a Bike</source>
-        <translation>功率传感器作为自行车</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13010"/>
-        <source>If your bike doesn’t have Bluetooth, this setting allows you to use a power meter pedal sensor so your bike will work with QZ. Default is off.</source>
-        <translation>如果您的自行车没有Bluetooth，此设置允许您使用功率计踏板传感器，从而使您的自行车能够与QZ连接。默认关闭。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13024"/>
-        <source>Power Sensor as a Treadmill</source>
-        <translation>功率传感器作为跑步机</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13038"/>
-        <source>If your treadmill doesn’t have Bluetooth, this setting allows you to use a Stryde sensor (or similar) so your treadmill will work with QZ. Default is off.</source>
-        <translation>如果您的跑步机没有Bluetooth，此设置允许您使用Stryde传感器（或类似设备），以便您的跑步机能与QZ兼容。默认关闭。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13052"/>
-        <source>Doubling Cadence for Run</source>
-        <translation>增加跑步踏频</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13066"/>
-        <source>Some power sensors send cadence divided by 2. This setting will fix this behavior.</source>
-        <translation>某些功率传感器发送的踏频是除以 2 的值。此设置将修复此行为。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13080"/>
-        <source>Half Cadence on Strava</source>
-        <translation>Strava上的半频率</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13094"/>
-        <source>Divide the cadence sent to Strava by 2.</source>
-        <translation>将发送到 Strava 的踏频除以 2。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13107"/>
-        <source>Use speed from the power sensor</source>
-        <translation>使用功率传感器速度</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13121"/>
-        <source>If you have a Bluetooth treadmill and also a Stryd device connected to QZ and you want to use the speed from the stryd instead of the speed of the treadmill, enable this. Default: disabled.</source>
-        <translation>如果您连接了蓝牙跑步机和 Stryd 设备到 QZ，并且想使用 Stryd 的速度而不是跑步机的速度，请启用此项。默认：禁用。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13134"/>
-        <source>Use inclination from the power sensor</source>
-        <translation>使用功率传感器倾角</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13148"/>
-        <source>If you have a Bluetooth treadmill and also a Runn device connected to QZ and you want to use the inclination from the RUNN instead of the inclination of the treadmill, enable this. Default: disabled.</source>
-        <translation>如果您连接了蓝牙跑步机和 Runn 设备到 QZ，并且希望使用 RUNN 的坡度数据而非跑步机本身的坡度数据，请启用此项。默认值：禁用。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13161"/>
-        <source>Use cadence from the power sensor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13175"/>
-        <source>If you have a Bluetooth treadmill and also a power sensor (like Stryd) connected to QZ and you want to use the cadence from the power sensor instead of the cadence of the treadmill, enable this. This is useful when the treadmill cadence sensor is unreliable at low speeds (walking/jogging). Default: disabled.</source>
-        <translation>如果您连接了蓝牙跑步机和功率传感器（如 Stryd）到 QZ，并且希望使用功率传感器而非跑步机本身的踏频数据，请启用此项。当跑步机踏频传感器在低速（步行/慢跑）时不可靠时，此功能特别有用。默认值：禁用。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13188"/>
-        <source>Add inclination gain factor to the power</source>
-        <translation>功率中添加坡度增益因子</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13202"/>
-        <source>If you have a Bluetooth treadmill and also a Stryd device connected to QZ, by default Stryd can&apos;t get the inclination from the treadmill. Enabling this and QZ will add an inclination gain to the power read from the Stryd. Default: disabled.</source>
-        <translation>如果您连接了蓝牙跑步机和 Stryd 设备到 QZ，默认情况下，Stryd 无法从跑步机获取倾斜度。启用此功能后，QZ 将向从 Stryd 读取的功率增加一个倾斜度增益。默认值：禁用。</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13215"/>
-        <source>Power Sensor Speed/Incline Coefficient A:</source>
-        <translation>功率传感器 速度/坡度系数 A:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13236"/>
-        <source>Power Sensor Speed/Incline Coefficient B:</source>
-        <translation>功率传感器速度/坡度系数 B:</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13257"/>
-        <source>Custom coefficients for power sensor inclination calculation using formula: vwatts = (A + B × speed) × inclination.
-
-For Stryd sensors use: A = -0.96, B = 1.33
-
-Examples with these values:
-• 8 km/h, 10% incline: (-0.96 + 1.33×8) × 10 = 97W added
-• 11 km/h, 10% incline: (-0.96 + 1.33×11) × 10 = 137W added
-
-If both A and B are 0, QZ will use the default formula: 9.8 × weight × (inclination/100).
-
-Default: A = -0.96, B = 1.33</source>
-        <translation>使用公式 vwatts = (A + B × speed) × inclination 计算功率传感器坡度系数。
-
-对于 Stryd 传感器，使用：A = -0.96, B = 1.33
-
-使用这些值示例：
-• 8 km/h, 10% 坡度：(-0.96 + 1.33×8) × 10 = 增加了 97W
-• 11 km/h, 10% 坡度：(-0.96 + 1.33×11) × 10 = 增加了 137W
-
-如果 A 和 B 均为 0，QZ 将使用默认公式：9.8 × weight × (inclination/100)。
-
-默认值：A = -0.96, B = 1.33</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13271"/>
-        <source>Power Sensor:</source>
-        <translation>功率传感器：</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="13305"/>
-        <source>Leave on Disabled or select from list of found Bluetooth devices.</source>
-        <translation>保持禁用，或从已发现的蓝牙设备列表中选择。</translation>
     </message>
     <message>
         <location filename="../settings.qml" line="13321"/>
@@ -6700,16 +5938,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation>允许第三方应用改变您的设备阻力。默认开启。</translation>
     </message>
     <message>
-        <location filename="../settings.qml" line="14808"/>
-        <source>Bike Power Sensor</source>
-        <translation>自行车功率传感器</translation>
-    </message>
-    <message>
-        <location filename="../settings.qml" line="14822"/>
-        <source>This changes the virtual Bluetooth bridge from the standard FMTS to the Power Sensor interface. Default is off.</source>
-        <translation>这将把虚拟蓝牙桥接从标准的 FMTS 更改为功率传感器接口。默认关闭。</translation>
-    </message>
-    <message>
         <location filename="../settings.qml" line="14836"/>
         <source>Virtual iFit</source>
         <translation>虚拟 iFit</translation>
@@ -7057,16 +6285,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation>目标阻力 + / -</translation>
     </message>
     <message>
-        <location filename="../settings-shortcuts.qml" line="241"/>
-        <source>Target Power + / -</source>
-        <translation>目标功率 +/-</translation>
-    </message>
-    <message>
-        <location filename="../settings-shortcuts.qml" line="246"/>
-        <source>Target Zone + / -</source>
-        <translation>目标区域 +/-</translation>
-    </message>
-    <message>
         <location filename="../settings-shortcuts.qml" line="251"/>
         <source>Target Speed + / -</source>
         <translation>目标速度 +/-</translation>
@@ -7117,16 +6335,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation>外部坡度 + / -</translation>
     </message>
     <message>
-        <location filename="../settings-shortcuts.qml" line="304"/>
-        <source>ERG Mode Toggle</source>
-        <translation>ERG模式切换</translation>
-    </message>
-    <message>
-        <location filename="../settings-shortcuts.qml" line="308"/>
-        <source>Power Avg Toggle</source>
-        <translation>平均功率开关</translation>
-    </message>
-    <message>
         <location filename="../settings-shortcuts.qml" line="312"/>
         <source>Auto-Resistance Toggle</source>
         <translation>自动阻力开关</translation>
@@ -7150,11 +6358,6 @@ Default: A = -0.96, B = 1.33</source>
         <location filename="../settings-shortcuts.qml" line="351"/>
         <source>Preset Inclination</source>
         <translation>预设坡度</translation>
-    </message>
-    <message>
-        <location filename="../settings-shortcuts.qml" line="364"/>
-        <source>Preset Power Zone</source>
-        <translation>预设功率区</translation>
     </message>
 </context>
 <context>
@@ -7633,11 +6836,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation>卡路里</translation>
     </message>
     <message>
-        <location filename="../settings-tiles.qml" line="644"/>
-        <source>Estimated calories burned during session, calculated on weight, age, and watts.</source>
-        <translation>训练期间估计消耗的卡路里，基于体重、年龄和瓦特数计算。</translation>
-    </message>
-    <message>
         <location filename="../settings-tiles.qml" line="658"/>
         <source>Odometer</source>
         <translation>里程表</translation>
@@ -7683,16 +6881,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation>显示您的自行车阻力。如果您的自行车兼容，可以使用 +/- 按钮更改阻力。</translation>
     </message>
     <message>
-        <location filename="../settings-tiles.qml" line="870"/>
-        <source>Watt</source>
-        <translation>Watt</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="901"/>
-        <source>Displays the watts generated by your current effort. Watt is also referred to as output (for example, in Peloton). If your equipment does not communicate watts, QZ will calculate watts using resistance and cadence.</source>
-        <translation>显示当前努力产生的瓦数。瓦数也称为输出（例如，在 Peloton 中）。如果您的设备无法传输瓦数，QZ 将使用阻力和踏频计算瓦数。</translation>
-    </message>
-    <message>
         <location filename="../settings-tiles.qml" line="915"/>
         <source>Weight loss</source>
         <translation>减重</translation>
@@ -7701,26 +6889,6 @@ Default: A = -0.96, B = 1.33</source>
         <location filename="../settings-tiles.qml" line="946"/>
         <source>Estimation of weight loss during the session.</source>
         <translation>训练期间减重估算</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="961"/>
-        <source>AVG Watt</source>
-        <translation>平均瓦数</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="992"/>
-        <source>Average watts produced for the session.</source>
-        <translation>平均输出瓦特</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1007"/>
-        <source>AVG Watt Lap</source>
-        <translation>平均瓦数圈</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1070"/>
-        <source>Percentage of current FTP and current FTP zone.</source>
-        <translation>当前FTP百分比和当前FTP区间。</translation>
     </message>
     <message>
         <location filename="../settings-tiles.qml" line="1084"/>
@@ -7746,16 +6914,6 @@ Default: A = -0.96, B = 1.33</source>
         <location filename="../settings-tiles.qml" line="1177"/>
         <source>Built-in treadmill fan speed (Treadmill only)</source>
         <translation>内置跑步机风扇速度（仅限跑步机）</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1191"/>
-        <source>Jouls</source>
-        <translation>焦耳</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1222"/>
-        <source>Cumulative power produced during the session in kilojoules.</source>
-        <translation>本次训练累计功率（千焦）</translation>
     </message>
     <message>
         <location filename="../settings-tiles.qml" line="1236"/>
@@ -7848,26 +7006,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation>显示目标踏频。</translation>
     </message>
     <message>
-        <location filename="../settings-tiles.qml" line="1678"/>
-        <source>Target Power</source>
-        <translation>目标功率</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1709"/>
-        <source>Displays target output (watts) when this information is provided by third-party apps.</source>
-        <translation>当此信息由第三方应用提供时，显示目标输出（瓦）。</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1724"/>
-        <source>Target Power Zone</source>
-        <translation>目标功率区</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1755"/>
-        <source>Displays the target power zone when this information is provided by third-party apps.</source>
-        <translation>当第三方应用提供此信息时，将显示目标功率区。</translation>
-    </message>
-    <message>
         <location filename="../settings-tiles.qml" line="1769"/>
         <source>Target Speed</source>
         <translation>目标速度</translation>
@@ -7883,24 +7021,9 @@ Default: A = -0.96, B = 1.33</source>
         <translation>目标坡度</translation>
     </message>
     <message>
-        <location filename="../settings-tiles.qml" line="1864"/>
-        <source>Watt/Kg</source>
-        <translation>瓦特/公斤</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1895"/>
-        <source>Calculates your output (watts) divided by your weight. This is the primary metric used by Zwift and similar apps to calculate your virtual speed. NOTE: This is a much better metric to use than Output/Watts when comparing your effort to other users. This is why Peloton’s leaderboard, which uses only Output, is flawed.</source>
-        <translation>计算您的输出（瓦特）除以您的体重。这是 Zwift 和类似应用用于计算虚拟速度的主要指标。注意：当您将自己的努力与其他用户进行比较时，使用此指标比使用 Output/Watts 要好得多。这就是为什么 Peloton 的排行榜（它只使用 Output）存在缺陷。</translation>
-    </message>
-    <message>
         <location filename="../settings-tiles.qml" line="1909"/>
         <source>Gears</source>
         <translation>齿轮</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="1940"/>
-        <source>Allows you to change resistance while in Auto-Follow Mode.This tile allows you override the target resistance sent by third-party apps. For example, you would use the Gears Tile to increase resistance and generate more watts for sprinting in Zwift.</source>
-        <translation>允许您在自动跟随模式下改变阻力。此卡片允许您覆盖第三方应用发送的目标阻力。例如，您可以使用齿轮卡片增加阻力，为在 Zwift 中的冲刺生成更多瓦特。</translation>
     </message>
     <message>
         <location filename="../settings-tiles.qml" line="1953"/>
@@ -7931,26 +7054,6 @@ Default: A = -0.96, B = 1.33</source>
         <location filename="../settings-tiles.qml" line="2056"/>
         <source>Next Rows</source>
         <translation>下一行</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2087"/>
-        <source>Displays the next Peloton interval with duration and FTP Zone (in Power Zone classes) or Peloton Resistance (non–Power Zone classes).</source>
-        <translation>显示下一个 Peloton 间歇，包括持续时间和 FTP Zone（在功率区类别中）或 Peloton 阻力（非功率区类别）。</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2101"/>
-        <source>METS</source>
-        <translation>代谢当量</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2132"/>
-        <source>Displays metabolic equivalents (METs), a measurement of energy expenditure and amount of oxygen used by the body compared to the body at rest. (e.g., 4 METS requires the body to use 4 times as much oxygen than when at rest, which means it requires more energy and burns more calories).</source>
-        <translation>显示代谢当量 (METs)。它衡量身体消耗的能量和氧气量，与静息状态相比。(例如，4 METs 要求身体消耗的氧气量是静息状态的 4 倍，这意味着需要更多能量并燃烧更多卡路里)。</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2146"/>
-        <source>Target METS</source>
-        <translation>目标METS</translation>
     </message>
     <message>
         <location filename="../settings-tiles.qml" line="2178"/>
@@ -8051,16 +7154,6 @@ Default: A = -0.96, B = 1.33</source>
         <location filename="../settings-tiles.qml" line="2615"/>
         <source>Step Count</source>
         <translation>步数</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2647"/>
-        <source>Erg Mode</source>
-        <translation>阻力模式</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="2678"/>
-        <source>Running Stress Score</source>
-        <translation>跑步压力评分</translation>
     </message>
     <message>
         <location filename="../settings-tiles.qml" line="2708"/>
@@ -8235,57 +7328,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation>预设坡度 5</translation>
     </message>
     <message>
-        <location filename="../settings-tiles.qml" line="4363"/>
-        <source>Preset Power Zone 1</source>
-        <translation>预设功率区 1</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4392"/>
-        <location filename="../settings-tiles.qml" line="4493"/>
-        <location filename="../settings-tiles.qml" line="4594"/>
-        <location filename="../settings-tiles.qml" line="4695"/>
-        <location filename="../settings-tiles.qml" line="4796"/>
-        <location filename="../settings-tiles.qml" line="4897"/>
-        <location filename="../settings-tiles.qml" line="4998"/>
-        <source>zone value:</source>
-        <translation>区域值：</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4464"/>
-        <source>Preset Power Zone 2</source>
-        <translation>预设功率区 2</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4565"/>
-        <source>Preset Power Zone 3</source>
-        <translation>预设功率区 3</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4666"/>
-        <source>Preset Power Zone 4</source>
-        <translation>预设功率区 4</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4767"/>
-        <source>Preset Power Zone 5</source>
-        <translation>预设功率区 5</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4868"/>
-        <source>Preset Power Zone 6</source>
-        <translation>预设功率区 6</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="4969"/>
-        <source>Preset Power Zone 7</source>
-        <translation>预设功率区 7</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="5069"/>
-        <source>Power zone presets allow quick access to specific training zones with customizable labels and values.</source>
-        <translation>功率区预设允许快速访问具有可自定义标签和值的特定训练区域。</translation>
-    </message>
-    <message>
         <location filename="../settings-tiles.qml" line="5083"/>
         <source>Heart Rate Time in Zone 1+</source>
         <translation>心率时间（Zone 1+）</translation>
@@ -8424,16 +7466,6 @@ Default: A = -0.96, B = 1.33</source>
         <location filename="../settings-tiles.qml" line="5677"/>
         <source>Button tile to switch automatic virtual shifting to Sprint profile.</source>
         <translation>切换自动虚拟变速到冲刺模式的按钮</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="5691"/>
-        <source>Power Averaging</source>
-        <translation>平均功率</translation>
-    </message>
-    <message>
-        <location filename="../settings-tiles.qml" line="5720"/>
-        <source>Button tile to cycle through power averaging modes: Off, 3s avg (harmonic), 5s avg (harmonic). Tap to cycle between modes. Only for bikes.</source>
-        <translation>功率平均模式切换按钮：关闭，3秒平均（谐波），5秒平均（谐波）。轻触切换模式。仅限自行车。</translation>
     </message>
     <message>
         <location filename="../settings-tiles.qml" line="5734"/>
@@ -8806,26 +7838,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation>最大阻力</translation>
     </message>
     <message>
-        <location filename="../settings-tts.qml" line="356"/>
-        <source>Actual Watt</source>
-        <translation>实际功率</translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="370"/>
-        <source>Average Watt</source>
-        <translation>平均瓦数</translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="384"/>
-        <source>Max Watt</source>
-        <translation>最大瓦特</translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="398"/>
-        <source>Actual FTP</source>
-        <translation>实际FTP</translation>
-    </message>
-    <message>
         <location filename="../settings-tts.qml" line="440"/>
         <source>Actual Heart</source>
         <translation>实际心率</translation>
@@ -8839,11 +7851,6 @@ Default: A = -0.96, B = 1.33</source>
         <location filename="../settings-tts.qml" line="468"/>
         <source>Max Heart</source>
         <translation>最大心率</translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="482"/>
-        <source>Actual Jouls</source>
-        <translation>实际焦耳</translation>
     </message>
     <message>
         <location filename="../settings-tts.qml" line="496"/>
@@ -8876,16 +7883,6 @@ Default: A = -0.96, B = 1.33</source>
         <translation>实际目标踏频</translation>
     </message>
     <message>
-        <location filename="../settings-tts.qml" line="580"/>
-        <source>Actual Target Power</source>
-        <translation>实际目标功率</translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="594"/>
-        <source>Actual Target Zone</source>
-        <translation>实际目标区域</translation>
-    </message>
-    <message>
         <location filename="../settings-tts.qml" line="608"/>
         <source>Actual Target Speed</source>
         <translation>实际目标速度</translation>
@@ -8899,21 +7896,6 @@ Default: A = -0.96, B = 1.33</source>
         <location filename="../settings-tts.qml" line="636"/>
         <source>Actual Target Incline</source>
         <translation>实际目标坡度</translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="650"/>
-        <source>Actual Watt/KG</source>
-        <translation>实际瓦特/公斤</translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="664"/>
-        <source>Average Watt/KG</source>
-        <translation>平均瓦/公斤</translation>
-    </message>
-    <message>
-        <location filename="../settings-tts.qml" line="678"/>
-        <source>Max Watt/KG</source>
-        <translation>最大瓦特/公斤</translation>
     </message>
 </context>
 </TS>

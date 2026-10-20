@@ -181,17 +181,13 @@ void gpx::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_TY
             "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd "
             "http://www8.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd "
             "http://www8.garmin.com/xmlschemas/TrackPointExtension/v1 "
-            "http://www8.garmin.com/xmlschemas/TrackPointExtensionv1.xsd "
-            "http://www8.garmin.com/xmlschemas/PowerExtension/v1 "
-            "http://www8.garmin.com/xmlschemas/PowerExtensionv1.xsd"));
+            "http://www8.garmin.com/xmlschemas/TrackPointExtensionv1.xsd"));
     stream.writeAttribute(QStringLiteral("version"), QStringLiteral("1.1"));
     stream.writeAttribute(QStringLiteral("xmlns"), QStringLiteral("http://www.topografix.com/GPX/1/1"));
     stream.writeAttribute(QStringLiteral("xmlns:gpxtpx"),
                           QStringLiteral("http://www8.garmin.com/xmlschemas/TrackPointExtension/v1"));
     stream.writeAttribute(QStringLiteral("xmlns:gpxx"),
                           QStringLiteral("http://www8.garmin.com/xmlschemas/GpxExtensions/v3"));
-    stream.writeAttribute(QStringLiteral("xmlns:gpxpx"),
-                          QStringLiteral("http://www8.garmin.com/xmlschemas/PowerExtension/v1"));
     stream.writeAttribute(QStringLiteral("xmlns:gpxdata"), QStringLiteral("http://www.cluetrust.com/XML/GPXDATA/1/0"));
 
     stream.writeStartElement(QStringLiteral("metadata"));
@@ -219,7 +215,6 @@ void gpx::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_TY
             stream.writeTextElement(QStringLiteral("time"), s.time.toString(QStringLiteral("yyyy-MM-ddTHH:mm:ssZ")));
             stream.writeTextElement(QStringLiteral("speed"), QString::number(s.speed / 3.6)); // meter per second
             stream.writeStartElement(QStringLiteral("extensions"));
-            stream.writeTextElement(QStringLiteral("power"), QString::number(s.watt));
             stream.writeTextElement(QStringLiteral("gpxdata:hr"), QString::number(s.heart));
             stream.writeTextElement(QStringLiteral("gpxdata:cadence"), QString::number(s.cadence));
             stream.writeStartElement(QStringLiteral("gpxtpx:TrackPointExtension"));
@@ -228,9 +223,6 @@ void gpx::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_TY
             stream.writeTextElement(QStringLiteral("gpxtpx:cad"), QString::number(s.cadence));
             stream.writeTextElement(QStringLiteral("gpxtpx:distance"), QString::number(s.distance));
             stream.writeEndElement(); // gpxtpx:TrackPointExtension
-            stream.writeStartElement(QStringLiteral("gpxpx:PowerExtension"));
-            stream.writeTextElement(QStringLiteral("gpxpx:PowerInWatts"), QString::number(s.watt));
-            stream.writeEndElement(); // gpxtpx:PowerExtension
             stream.writeEndElement(); // extensions
             stream.writeEndElement(); // trkpt
         }

@@ -1,8 +1,5 @@
 #include "domyosrower.h"
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include "virtualdevices/virtualrower.h"
 #include "virtualdevices/virtualtreadmill.h"
@@ -356,11 +353,6 @@ void domyosrower::characteristicChanged(const QLowEnergyCharacteristic &characte
             Inclination.setValue(0);
         }
 
-    #ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-    #endif
         {
             if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
                 Heart = ((uint8_t)newValue.at(18));
@@ -581,11 +573,6 @@ void domyosrower::characteristicChanged(const QLowEnergyCharacteristic &characte
 
         emit debug(QStringLiteral("Current KCal: ") + QString::number(KCal.value()));
 
-    #ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-    #endif
         {
             if (Flags.heartRate && !disable_hr_frommachinery) {
                 if (index < newValue.length()) {

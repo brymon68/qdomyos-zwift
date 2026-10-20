@@ -1,9 +1,6 @@
 #include "speraxtreadmill.h"
 #include "virtualdevices/virtualbike.h"
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>
 #include <QDateTime>
@@ -653,11 +650,6 @@ void speraxtreadmill::characteristicChanged(const QLowEnergyCharacteristic &char
     StepCount = (double)((uint8_t)newValue.at(16)) + (((double)(uint8_t)newValue.at(15)) * 256.0);
     qDebug() << "Current Step: " << StepCount.value();
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
 

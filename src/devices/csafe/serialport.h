@@ -23,8 +23,7 @@
 #include "serialhandler.h"
 
 #ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#include <QAndroidJniObject>
+#include <QtAndroidExtras>
 #endif
 
 #include <QString>

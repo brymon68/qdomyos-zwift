@@ -11,7 +11,6 @@
 #include <math.h>
 
 #ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
 #include <QLowEnergyConnectionParameters>
 #endif
 
@@ -186,11 +185,6 @@ void concept2skierg::characteristicChanged(const QLowEnergyCharacteristic &chara
 
                 uint8_t heart_rate = newValue.at(7);
 
-#ifdef Q_OS_ANDROID
-                if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-                    Heart = (uint8_t)KeepAwakeHelper::heart();
-                else
-#endif
                 {
                     if (heart_rate != 0xFF)
                         Heart = heart_rate;

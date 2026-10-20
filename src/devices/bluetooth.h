@@ -22,8 +22,6 @@
 
 #include "devices/activiotreadmill/activiotreadmill.h"
 #include "devices/speraxtreadmill/speraxtreadmill.h"
-#include "devices/antbike/antbike.h"
-#include "devices/android_antbike/android_antbike.h"
 #include "devices/apexbike/apexbike.h"
 #include "devices/volavabike/volavabike.h"
 #include "devices/bhfitnesselliptical/bhfitnesselliptical.h"
@@ -115,7 +113,6 @@
 #include "devices/sunnyfitstepper/sunnyfitstepper.h"
 #include "devices/smartspin2k/smartspin2k.h"
 #include "devices/snodebike/snodebike.h"
-#include "devices/strydrunpowersensor/strydrunpowersensor.h"
 
 #include "devices/shuaa5treadmill/shuaa5treadmill.h"
 #include "devices/solebike/solebike.h"
@@ -184,8 +181,6 @@ class bluetooth : public QObject, public SignalHandler {
     bool useDiscovery = false;
     QFile *debugCommsLog = nullptr;
     QBluetoothDeviceDiscoveryAgent *discoveryAgent = nullptr;
-    antbike *antBike = nullptr;
-    android_antbike *android_antBike = nullptr;
     apexbike *apexBike = nullptr;
     volavabike *volavaBike = nullptr;
     bkoolbike *bkoolBike = nullptr;
@@ -295,15 +290,11 @@ class bluetooth : public QObject, public SignalHandler {
     heartratebelt *heartRateBelt = nullptr;
     smartspin2k *ftmsAccessory = nullptr;
     cscbike *cadenceSensor = nullptr;
-    stagesbike *powerSensor = nullptr;
-    strydrunpowersensor *powerSensorRun = nullptr;
-    stagesbike *powerBike = nullptr;
     ultrasportbike *ultraSportBike = nullptr;
     wahookickrsnapbike *wahooKickrSnapBike = nullptr;
     ypooelliptical *ypooElliptical = nullptr;
     ziprotreadmill *ziproTreadmill = nullptr;
     kineticinroadbike *kineticInroadBike = nullptr;
-    strydrunpowersensor *powerTreadmill = nullptr;
     eliterizer *eliteRizer = nullptr;
     elitesterzosmart *eliteSterzoSmart = nullptr;
     fakebike *fakeBike = nullptr;
@@ -346,7 +337,6 @@ class bluetooth : public QObject, public SignalHandler {
     bool heartRateBeltAvaiable();
     bool ftmsAccessoryAvaiable();
     bool cscSensorAvaiable();
-    bool powerSensorAvaiable();
     bool eliteRizerAvaiable();
     bool eliteSterzoSmartAvaiable();
     bool zwiftDeviceAvaiable();

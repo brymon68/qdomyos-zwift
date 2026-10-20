@@ -6,8 +6,6 @@ import QtQuick.Controls 2.15
 Item {
     anchors.fill: parent
 
-    property alias powerSeries: powerSeries
-    property alias powerChart: powerChart
     property alias heartSeries: heartSeries
     property alias heartChart: heartChart
     property alias cadenceSeries: cadenceSeries
@@ -15,10 +13,6 @@ Item {
     property alias pelotonResistanceSeries: pelotonResistanceSeries
     property alias cadenceChart: cadenceChart
 
-    Settings {
-        id: settings
-        property real ftp: 200.0
-    }
 
     Row {
         id: row
@@ -54,72 +48,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }
-/*
-        ChartView {
-            id: caloriesChart
-            title: "KCal"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            legend.visible: false
-            antialiasing: true
-            width: 64
-            height: 64
-            margins.bottom: 1
-            margins.top: 1
-            margins.left: 1
-            margins.right: 1
 
-            Text {
-                anchors.topMargin: 10
-                anchors.fill: caloriesChart
-                text: rootItem.Pcalories
-                font.pixelSize: 16
-                color: "black"
-                z: 1
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                anchors.horizontalCenter: cadenceChart.horizontalCenter
-            }
-
-            PieSeries {
-                size: 1.0
-                holeSize: 0.7
-                PieSlice { value: 1.0; color: "red" }
-            }
-        }
-
-        ChartView {
-            id: outputChart
-            title: "KJoul"
-            anchors.left: caloriesChart.right
-            anchors.top: parent.top
-            legend.visible: false
-            antialiasing: true
-            width: 64
-            height: 64
-            margins.bottom: 1
-            margins.top: 1
-            margins.left: 1
-            margins.right: 1
-
-            Text {
-                anchors.topMargin: 10
-                anchors.fill: outputChart
-                text: rootItem.Pkjoules
-                font.pixelSize: 16
-                color: "black"
-                z: 1
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                anchors.horizontalCenter: cadenceChart.horizontalCenter
-            }
-
-            PieSeries {
-                size: 1.0
-                holeSize: 0.7
-                PieSlice { value: 1.0; color: "yellow" }
-            }
-        }*/
 
         ScrollView {
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -128,53 +57,8 @@ Item {
             anchors.right: parent.right
             anchors.top: instructor.bottom
             anchors.bottom: parent.bottom
-            contentHeight: powerChart.height+heartChart.height+cadenceChart.height
+            contentHeight: heartChart.height+cadenceChart.height
 
-            ChartView {
-                id: powerChart
-                objectName: "powerChart"
-                antialiasing: true
-                legend.visible: false
-                height: 400
-                width: parent.width
-                title: "Power"
-                titleFont.pixelSize: 20
-
-                DateTimeAxis {
-                    id: valueAxisX
-                    tickCount: 7
-                    min: new Date(0)
-                    max: new Date(rootItem.workout_sample_points * 1000)
-                    format: "mm:ss"
-                    //labelsVisible: false
-                    gridVisible: false
-                    //lineVisible: false
-                    labelsFont.pixelSize: 10
-                }
-
-                ValueAxis {
-                    id: valueAxisY
-                    min: 0
-                    max: rootItem.wattMaxChart
-                    //tickCount: 60
-                    tickCount: 8
-                    labelFormat: "%.0f"
-                    //labelsVisible: false
-                    //gridVisible: false
-                    //lineVisible: false
-                    labelsFont.pixelSize: 10
-                }
-
-                LineSeries {
-                    //name: "Power"
-                    id: powerSeries
-                    visible: true
-                    axisX: valueAxisX
-                    axisY: valueAxisY
-                    color: "black"
-                    width: 1
-                }
-            }
 
             ChartView {
                 id: heartChart
@@ -182,7 +66,7 @@ Item {
                 width: parent.width
                 antialiasing: true
                 legend.visible: false
-                anchors.top: powerChart.bottom
+                anchors.top: parent.top
                 title: "Heart Rate"
                 titleFont.pixelSize: 20
 
@@ -211,7 +95,6 @@ Item {
                 }
 
                 LineSeries {
-                    //name: "Power"
                     id: heartSeries
                     visible: true
                     axisX: valueAxisXHR

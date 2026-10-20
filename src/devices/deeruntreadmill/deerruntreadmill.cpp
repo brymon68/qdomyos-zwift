@@ -1,9 +1,6 @@
 #include "deerruntreadmill.h"
 #include "virtualdevices/virtualbike.h"
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>
 #include <QDateTime>
@@ -379,11 +376,6 @@ void deerruntreadmill::characteristicChanged(const QLowEnergyCharacteristic &cha
         incline = (double)(value[11] & 0xFF);
     }
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
 

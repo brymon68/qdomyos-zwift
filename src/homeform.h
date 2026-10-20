@@ -180,12 +180,10 @@ class homeform : public QObject {
     Q_PROPERTY(QString workoutName READ workoutName)
     Q_PROPERTY(QString instructorName READ instructorName)
     Q_PROPERTY(int workout_sample_points READ workout_sample_points)
-    Q_PROPERTY(QList<double> workout_watt_points READ workout_watt_points)
     Q_PROPERTY(QList<double> workout_heart_points READ workout_heart_points)
     Q_PROPERTY(QList<double> workout_cadence_points READ workout_cadence_points)
     Q_PROPERTY(QList<double> workout_peloton_resistance_points READ workout_peloton_resistance_points)
     Q_PROPERTY(QList<double> workout_resistance_points READ workout_resistance_points)
-    Q_PROPERTY(double wattMaxChart READ wattMaxChart)
     Q_PROPERTY(bool autoResistance READ autoResistance NOTIFY autoResistanceChanged WRITE setAutoResistance)
     Q_PROPERTY(bool stopRequested READ stopRequested NOTIFY stopRequestedChanged WRITE setStopRequestedChanged)
     Q_PROPERTY(bool startRequested READ startRequested NOTIFY startRequestedChanged WRITE setStartRequestedChanged)
@@ -195,8 +193,6 @@ class homeform : public QObject {
     Q_PROPERTY(bool garminWorkoutPromptRequested READ garminWorkoutPromptRequested NOTIFY garminWorkoutPromptRequestedChanged WRITE setGarminWorkoutPromptRequested)
     Q_PROPERTY(QString garminWorkoutPromptName READ garminWorkoutPromptName NOTIFY garminWorkoutPromptNameChanged)
     Q_PROPERTY(QString garminWorkoutPromptDate READ garminWorkoutPromptDate NOTIFY garminWorkoutPromptDateChanged)
-    Q_PROPERTY(bool garminFtpPromptRequested READ garminFtpPromptRequested NOTIFY garminFtpPromptRequestedChanged WRITE setGarminFtpPromptRequested)
-    Q_PROPERTY(QString garminFtpPromptMessage READ garminFtpPromptMessage NOTIFY garminFtpPromptMessageChanged)
     Q_PROPERTY(bool clipboardWorkoutPromptRequested READ clipboardWorkoutPromptRequested NOTIFY clipboardWorkoutPromptRequestedChanged WRITE setClipboardWorkoutPromptRequested)
     Q_PROPERTY(QString clipboardWorkoutPromptName READ clipboardWorkoutPromptName NOTIFY clipboardWorkoutPromptNameChanged)
     Q_PROPERTY(bool clipboardWorkoutDeletePromptRequested READ clipboardWorkoutDeletePromptRequested NOTIFY clipboardWorkoutDeletePromptRequestedChanged WRITE setClipboardWorkoutDeletePromptRequested)
@@ -205,7 +201,6 @@ class homeform : public QObject {
 
     // workout preview
     Q_PROPERTY(int preview_workout_points READ preview_workout_points NOTIFY previewWorkoutPointsChanged)
-    Q_PROPERTY(QList<double> preview_workout_watt READ preview_workout_watt)
     Q_PROPERTY(QList<double> preview_workout_speed READ preview_workout_speed)
     Q_PROPERTY(QList<double> preview_workout_inclination READ preview_workout_inclination)
     Q_PROPERTY(QList<double> preview_workout_resistance READ preview_workout_resistance)
@@ -270,46 +265,6 @@ class homeform : public QObject {
         });
     }
 
-    Q_INVOKABLE void update_chart_power(QQuickItem *item) {
-        if (QGraphicsScene *scene = item->findChild<QGraphicsScene *>()) {
-            auto items_list = scene->items();
-            for (QGraphicsItem *it : qAsConst(items_list)) {
-                if (QtCharts::QChart *chart = dynamic_cast<QtCharts::QChart *>(it)) {
-                    // Customize chart background
-                    QLinearGradient backgroundGradient;
-                    double maxWatt = wattMaxChart();
-                    QSettings settings;
-                    double ftpSetting = settings.value(QZSettings::ftp, QZSettings::default_ftp).toDouble();
-                    /*backgroundGradient.setStart(QPointF(0, 0));
-                    backgroundGradient.setFinalStop(QPointF(0, 1));
-                    backgroundGradient.setColorAt((maxWatt - (ftpSetting * 0.55)) / maxWatt, QColor("white"));
-                    backgroundGradient.setColorAt((maxWatt - (ftpSetting * 0.75)) / maxWatt, QColor("limegreen"));
-                    backgroundGradient.setColorAt((maxWatt - (ftpSetting * 0.90)) / maxWatt, QColor("gold"));
-                    backgroundGradient.setColorAt((maxWatt - (ftpSetting * 1.05)) / maxWatt, QColor("orange"));
-                    backgroundGradient.setColorAt((maxWatt - (ftpSetting * 1.20)) / maxWatt, QColor("darkorange"));
-                    backgroundGradient.setColorAt((maxWatt - (ftpSetting * 1.5)) / maxWatt, QColor("orangered"));
-                    backgroundGradient.setColorAt(0.0, QColor("red"));*/
-
-                    // backgroundGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
-                    // chart->setBackgroundBrush(backgroundGradient);
-                    // Customize plot area background
-                    QLinearGradient plotAreaGradient;
-                    plotAreaGradient.setStart(QPointF(0, 0));
-                    plotAreaGradient.setFinalStop(QPointF(0, 1));
-                    plotAreaGradient.setColorAt((maxWatt - (ftpSetting * 0.55)) / maxWatt, QColor("white"));
-                    plotAreaGradient.setColorAt((maxWatt - (ftpSetting * 0.75)) / maxWatt, QColor("limegreen"));
-                    plotAreaGradient.setColorAt((maxWatt - (ftpSetting * 0.90)) / maxWatt, QColor("gold"));
-                    plotAreaGradient.setColorAt((maxWatt - (ftpSetting * 1.05)) / maxWatt, QColor("orange"));
-                    plotAreaGradient.setColorAt((maxWatt - (ftpSetting * 1.20)) / maxWatt, QColor("darkorange"));
-                    plotAreaGradient.setColorAt((maxWatt - (ftpSetting * 1.5)) / maxWatt, QColor("orangered"));
-                    plotAreaGradient.setColorAt(0.0, QColor("red"));
-                    plotAreaGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
-                    chart->setPlotAreaBackgroundBrush(plotAreaGradient);
-                    chart->setPlotAreaBackgroundVisible(true);
-                }
-            }
-        }
-    }
     Q_INVOKABLE void update_chart_heart(QQuickItem *item) {
         if (QGraphicsScene *scene = item->findChild<QGraphicsScene *>()) {
             auto items_list = scene->items();
@@ -393,7 +348,6 @@ class homeform : public QObject {
     Q_INVOKABLE bool firstRun() {
         QSettings settings;
         
-        bool android_antbike = settings.value(QZSettings::android_antbike, QZSettings::default_android_antbike).toBool();
         QString proformtdf4ip = settings.value(QZSettings::proformtdf4ip, QZSettings::default_proformtdf4ip).toString();
         QString proformtdf1ip = settings.value(QZSettings::proformtdf1ip, QZSettings::default_proformtdf1ip).toString();
         QString proformtreadmillip = settings.value(QZSettings::proformtreadmillip, QZSettings::default_proformtreadmillip).toString();
@@ -409,15 +363,12 @@ class homeform : public QObject {
         bool fakedevice_rower = settings.value(QZSettings::fakedevice_rower, QZSettings::default_fakedevice_rower).toBool();
         bool fakedevice_treadmill =
             settings.value(QZSettings::fakedevice_treadmill, QZSettings::default_fakedevice_treadmill).toBool();
-        bool antbike =
-            settings.value(QZSettings::antbike, QZSettings::default_antbike).toBool();
 
         return settings.value(QZSettings::bluetooth_lastdevice_name, QZSettings::default_bluetooth_lastdevice_name).toString().isEmpty() && 
                 nordictrack_2950_ip.isEmpty() && tdf_10_ip.isEmpty() && !fake_bike && !fakedevice_elliptical &&
-                !fakedevice_rower && !fakedevice_treadmill && !antbike && !android_antbike && proform_elliptical_ip.isEmpty() && 
+                !fakedevice_rower && !fakedevice_treadmill && proform_elliptical_ip.isEmpty() &&
                 proformtdf4ip.isEmpty() && proformtdf1ip.isEmpty() && proformtreadmillip.isEmpty();
     }
-
 
     Q_INVOKABLE bool autoInclinationEnabled() {
         QSettings settings;
@@ -503,8 +454,6 @@ class homeform : public QObject {
     bool garminWorkoutPromptRequested() { return m_garminWorkoutPromptRequested; }
     QString garminWorkoutPromptName() { return m_garminWorkoutPromptName; }
     QString garminWorkoutPromptDate() { return m_garminWorkoutPromptDate; }
-    bool garminFtpPromptRequested() { return m_garminFtpPromptRequested; }
-    QString garminFtpPromptMessage() { return m_garminFtpPromptMessage; }
     bool echelonBridgeSwitchPromptRequested() { return m_echelonBridgeSwitchPromptRequested; }
     bool echelonEnablePromptRequested() { return m_echelonEnablePromptRequested; }
     void setPelotonProvider(const QString &value) { m_pelotonProvider = value; }
@@ -578,13 +527,7 @@ class homeform : public QObject {
         m_garminWorkoutPromptRequested = value;
         emit garminWorkoutPromptRequestedChanged(value);
     }
-    void setGarminFtpPromptRequested(bool value) {
-        if (m_garminFtpPromptRequested == value) {
-            return;
-        }
-        m_garminFtpPromptRequested = value;
-        emit garminFtpPromptRequestedChanged(value);
-    }
+
     bool clipboardWorkoutPromptRequested() const { return m_clipboardWorkoutPromptRequested; }
     QString clipboardWorkoutPromptName() const { return m_clipboardWorkoutPromptName; }
     void setClipboardWorkoutPromptRequested(bool value) {
@@ -621,8 +564,6 @@ class homeform : public QObject {
     Q_INVOKABLE void garmin_connect_logout();
     Q_INVOKABLE void garmin_start_downloaded_workout();
     Q_INVOKABLE void garmin_dismiss_downloaded_workout_prompt();
-    Q_INVOKABLE void garmin_accept_ftp_update();
-    Q_INVOKABLE void garmin_dismiss_ftp_update();
     Q_INVOKABLE QUrl clipboard_workout_url() const { return QUrl::fromLocalFile(m_clipboardWorkoutPromptFile); }
     Q_INVOKABLE void clipboard_accept_workout_prompt();
     Q_INVOKABLE void clipboard_dismiss_workout_prompt();
@@ -650,9 +591,6 @@ class homeform : public QObject {
 
 private:
     void clearWebViewCache();
-    void handleGarminFtpValues(int cyclingFtp, const QString &cyclingCreateTime,
-                               int runningFtp, const QString &runningCreateTime);
-    void markPendingGarminFtpSeen();
     void showNextGarminWorkoutPrompt();
 
 public:
@@ -671,17 +609,6 @@ public:
     Q_INVOKABLE bool startTrainingProgramFromFile(const QString &filePath);
     Q_INVOKABLE bool deleteTrainingProgramFile(const QString &fileUrl);
 
-    double wattMaxChart() {
-        QSettings settings;
-        if (bluetoothManager && bluetoothManager->device() &&
-            bluetoothManager->device()->wattsMetric().max() >
-                (settings.value(QZSettings::ftp, QZSettings::default_ftp).toDouble() * 2)) {
-            return bluetoothManager->device()->wattsMetric().max();
-        } else {
-            return settings.value(QZSettings::ftp, QZSettings::default_ftp).toDouble() * 2;
-        }
-    }
-
     Q_INVOKABLE void sendMail();
 
     Q_INVOKABLE void keyboardStartStop() { StartRequested(); }
@@ -699,14 +626,6 @@ public:
     Q_INVOKABLE void moveTile(QString name, int newIndex, int oldIndex);
     DataObject *tileFromName(QString name);
 
-    QList<double> workout_watt_points() {
-        QList<double> l;
-        l.reserve(Session.size() + 1);
-        for (const SessionLine &s : qAsConst(Session)) {
-            l.append(s.watt);
-        }
-        return l;
-    }
     QList<double> workout_heart_points() {
         QList<double> l;
         l.reserve(Session.size() + 1);
@@ -736,20 +655,6 @@ public:
         l.reserve(Session.size() + 1);
         for (const SessionLine &s : qAsConst(Session)) {
             l.append(s.peloton_resistance);
-        }
-        return l;
-    }
-
-    QList<double> preview_workout_watt() {
-        QList<double> l;
-        if (!previewTrainProgram)
-            return l;
-        QTime d = previewTrainProgram->duration();
-        l.reserve((d.hour() * 3600) + (d.minute() * 60) + d.second() + 1);
-        foreach (trainrow r, previewTrainProgram->loadedRows) {
-            for (int i = 0; i < (r.duration.hour() * 3600) + (r.duration.minute() * 60) + r.duration.second(); i++) {
-                l.append(r.power);
-            }
         }
         return l;
     }
@@ -867,11 +772,7 @@ public:
     DataObject *grade_adjusted_pace;
     DataObject *datetime;
     DataObject *resistance;
-    DataObject *watt;
-    DataObject *avgWatt;
-    DataObject *avgWattLap;
     DataObject *heart;
-    DataObject *jouls;
     DataObject *peloton_offset;
     DataObject *peloton_remaining;
     DataObject *elapsed;
@@ -880,24 +781,18 @@ public:
     DataObject *target_resistance;
     DataObject *target_peloton_resistance;
     DataObject *target_cadence;
-    DataObject *target_power;
-    DataObject *target_zone;
     DataObject *target_speed;
     DataObject *target_pace;
     DataObject *target_incline;
-    DataObject *ftp;
     DataObject *lapElapsed;
     DataObject *weightLoss;
     DataObject *strokesLength;
     DataObject *strokesCount;
-    DataObject *wattKg;
     DataObject *gears;
     DataObject *biggearsPlus;
     DataObject *biggearsMinus;
     DataObject *remaningTimeTrainingProgramCurrentRow;
     DataObject *nextRows;
-    DataObject *mets;
-    DataObject *targetMets;
     DataObject *steeringAngle;
     DataObject *pidHR;
     DataObject *extIncline;
@@ -921,15 +816,6 @@ public:
     DataObject *preset_inclination_5;
     DataObject *pace_last500m;
     DataObject *stepCount;
-    DataObject *ergMode;
-    DataObject *rss;
-    DataObject *preset_powerzone_1;
-    DataObject *preset_powerzone_2;
-    DataObject *preset_powerzone_3;
-    DataObject *preset_powerzone_4;
-    DataObject *preset_powerzone_5;
-    DataObject *preset_powerzone_6;
-    DataObject *preset_powerzone_7;
     DataObject *tile_hr_time_in_zone_1;
     DataObject *tile_hr_time_in_zone_2;
     DataObject *tile_hr_time_in_zone_3;
@@ -943,7 +829,6 @@ public:
     DataObject *autoVirtualShiftingCruise;
     DataObject *autoVirtualShiftingClimb;
     DataObject *autoVirtualShiftingSprint;
-    DataObject *powerAvg;
     DataObject *hrv;
 
   private:
@@ -1005,7 +890,6 @@ public:
     bool m_stravaUploadRequested = false;
     bool m_garminMfaRequested = false;
     bool m_garminWorkoutPromptRequested = false;
-    bool m_garminFtpPromptRequested = false;
     bool m_clipboardWorkoutPromptRequested = false;
     bool m_clipboardWorkoutDeletePromptRequested = false;
     bool m_echelonBridgeSwitchPromptRequested = false;
@@ -1013,11 +897,6 @@ public:
     QString m_garminWorkoutPromptName = QStringLiteral("");
     QString m_garminWorkoutPromptDate = QStringLiteral("");
     QString m_garminWorkoutPromptFile = QStringLiteral("");
-    QString m_garminFtpPromptMessage = QStringLiteral("");
-    int m_pendingGarminCyclingFtp = 0;
-    int m_pendingGarminRunningFtp = 0;
-    QString m_pendingGarminCyclingFtpCreateTime = QStringLiteral("");
-    QString m_pendingGarminRunningFtpCreateTime = QStringLiteral("");
     QString m_clipboardWorkoutPromptName = QStringLiteral("");
     QString m_clipboardWorkoutPromptFile = QStringLiteral("");
     QString m_activeClipboardWorkoutFile = QStringLiteral("");
@@ -1050,7 +929,6 @@ public:
     bool m_autoresistance = true;
     bool m_stopRequested = false;
     bool m_startRequested = false;
-    bool m_overridePower = false;
     bool m_nativeShortcutCaptureSuspended = false;
 
     QTimer *timer;
@@ -1088,7 +966,6 @@ public:
 
     static QString copyAndroidContentsURI(QUrl file, QString subfolder);
     static QString getFileNameFromContentUri(const QString &uriString);
-
 
     void update();
     void ten_hz();
@@ -1250,8 +1127,6 @@ public:
     void garminWorkoutPromptRequestedChanged(bool value);
     void garminWorkoutPromptNameChanged(QString value);
     void garminWorkoutPromptDateChanged(QString value);
-    void garminFtpPromptRequestedChanged(bool value);
-    void garminFtpPromptMessageChanged(QString value);
     void clipboardWorkoutPromptRequestedChanged(bool value);
     void clipboardWorkoutPromptNameChanged(QString value);
     void clipboardWorkoutDeletePromptRequestedChanged(bool value);

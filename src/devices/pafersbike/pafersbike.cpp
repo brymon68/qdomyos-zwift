@@ -1,8 +1,5 @@
 #include "pafersbike.h"
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include "pafers_defaults.h"
 #include <QBluetoothLocalDevice>
@@ -241,11 +238,6 @@ void pafersbike::characteristicChanged(const QLowEnergyCharacteristic &character
 
     lastRefreshCharacteristicChanged = now;
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) {
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    } else
-#endif
     {
         if (heartRateBeltName.startsWith(QLatin1String("Disabled"))) {
             update_hr_from_external();

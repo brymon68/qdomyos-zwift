@@ -13,7 +13,6 @@
 #ifdef Q_OS_ANDROID
 #include <QLowEnergyConnectionParameters>
 #endif
-#include "keepawakehelper.h"
 #include <chrono>
 
 using namespace std::chrono_literals;
@@ -194,11 +193,6 @@ void schwinn170bike::characteristicChanged(const QLowEnergyCharacteristic &chara
 
     emit debug(QStringLiteral("Current KCal: ") + QString::number(KCal.value()));
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
     }
 

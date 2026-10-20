@@ -28,11 +28,8 @@ var speed_max = 0;
 var incline_max = 0;
 var miles = 1; // 1 = km, 0.621371 = miles
 
-// Whole-workout target curve, pre-rendered from the training program (mirrors dochartlive.js'
-// reqpower/rebuildTrainingProgramTarget) so the user sees the entire planned speed/inclination
-// profile up front, with the actual live values then progressing across that fixed timeline --
-// exactly like the bike power chart, instead of a target line that only ever grows one point at
-// a time and never shows what's coming next.
+// Draw the complete planned speed and inclination profile, then advance live values
+// across the same timeline as the workout progresses.
 var trainingProgramRows = [];
 var trainingProgramDurations = [];
 var firstElapsedTargetSpeed = 0;
@@ -45,12 +42,8 @@ function isTrueSetting(value) {
     return value === true || value === 'true' || value === 1 || value === '1';
 }
 
-// Speed zones derived from the user's own race pace settings (Settings -> Training Program Options ->
-// 1 Mile/5K/10K/Half Marathon/Marathon pace), the same reference paces QZ uses to turn a Zwift running
-// workout's %pace target into an actual km/h (see zwiftworkout::speedFromPace). This mirrors how the
-// bike power chart derives its zones from FTP, but for running there's no single "reference value" like
-// FTP -- each race distance gives its own reference pace -- so we use all five, sorted from slowest
-// (marathon) to fastest (1 mile), as the zone boundaries.
+// Use the runner's race pace settings as speed-zone boundaries, ordered from
+// marathon pace to one-mile pace.
 var paceZoneLabels = ['Marathon', 'Half Marathon', '10K', '5K', '1 Mile'];
 var paceZones = [8, 10, 11, 12, 14]; // km/h fallback if settings can't be read; overwritten in dochart_init()
 var paceZoneColorsT = ['greyt', 'limegreent', 'goldt', 'oranget', 'darkoranget', 'redt'];
@@ -215,8 +208,7 @@ function process_arr(arr) {
     // The target (dashed) datasets are populated separately once the training program loads
     // (process_trainprogram/rebuildTrainingProgramTarget), covering the whole planned workout up
     // front. Here we only rebuild the actual (solid) history, aligned to the same workoutElapsed
-    // baseline: the first moment the training program actually gave a speed target, mirroring how
-    // dochartlive.js finds firstElapsedTargetPower for the bike power chart.
+    // baseline: the first moment the training program gave a speed target.
     for (let el of arr) {
         const time = el.elapsed_s + el.elapsed_m * 60 + el.elapsed_h * 3600;
 

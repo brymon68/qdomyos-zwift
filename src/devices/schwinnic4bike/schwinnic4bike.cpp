@@ -12,7 +12,6 @@
 #include <math.h>
 #include <limits>
 #ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
 #include <QLowEnergyConnectionParameters>
 #endif
 
@@ -264,11 +263,6 @@ void schwinnic4bike::characteristicChanged(const QLowEnergyCharacteristic &chara
 
     emit debug(QStringLiteral("Current KCal: ") + QString::number(KCal.value()));
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         if (Flags.heartRate) {
 

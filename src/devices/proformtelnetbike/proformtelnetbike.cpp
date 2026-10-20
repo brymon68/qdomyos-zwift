@@ -1,7 +1,4 @@
 #include "proformtelnetbike.h"
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include <QDateTime>
 #include <QFile>
@@ -349,11 +346,6 @@ void proformtelnetbike::characteristicChanged(const char *buff, int len) {
         emit debug(QStringLiteral("Current Heart: ") + QString::number(Heart.value()));
     }*/
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         if (disable_hr_frommachinery && heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
             update_hr_from_external();

@@ -11,5 +11,7 @@
   "abi": "arm64-v8a",
   "package": "org.cagnulen.qdomyoszwift",
   "fan_support": false,
-  "in_app_purchasing": false
+  "in_app_purchasing": false,
+  "ant_support": false,
+  "treadmill_power_measurement": false
 }

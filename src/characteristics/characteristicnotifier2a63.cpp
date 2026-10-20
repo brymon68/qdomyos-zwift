@@ -4,6 +4,9 @@ CharacteristicNotifier2A63::CharacteristicNotifier2A63(bluetoothdevice *Bike, QO
     : CharacteristicNotifier(0x2a63, parent), Bike(Bike) {}
 
 int CharacteristicNotifier2A63::notify(QByteArray &value) {
+    if (Bike->deviceType() != BIKE)
+        return CN_INVALID;
+
     double normalizeWattage = Bike->wattsMetricforUI();
     if (normalizeWattage < 0)
         normalizeWattage = 0;

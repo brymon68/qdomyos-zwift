@@ -47,18 +47,10 @@ ScrollView {
         property int  tile_pace_order: 6
         property bool tile_resistance_enabled: true
         property int  tile_resistance_order: 7
-        property bool tile_watt_enabled: true
-        property int  tile_watt_order: 8
         property bool tile_weight_loss_enabled: false
         property int  tile_weight_loss_order: 24
-        property bool tile_avgwatt_enabled: true
-        property int  tile_avgwatt_order: 9
-        property bool tile_ftp_enabled: true
-        property int  tile_ftp_order: 10
         property bool tile_heart_enabled: true
         property int  tile_heart_order: 11
-        property bool tile_jouls_enabled: true
-        property int  tile_jouls_order: 13
         property bool tile_elapsed_enabled: true
         property int  tile_elapsed_order: 14
         property bool tile_lapelapsed_enabled: false
@@ -79,10 +71,6 @@ ScrollView {
         property int  tile_target_peloton_resistance_order: 21
         property bool tile_target_cadence_enabled: false
         property int  tile_target_cadence_order: 19
-        property bool tile_target_power_enabled: false
-        property int  tile_target_power_order: 20
-        property bool tile_target_zone_enabled: false
-        property int  tile_target_zone_order: 24
         property bool tile_target_speed_enabled: false
         property int  tile_target_speed_order: 27
         property bool tile_target_incline_enabled: false
@@ -91,18 +79,12 @@ ScrollView {
         property int  tile_strokes_count_order: 22
         property bool tile_strokes_length_enabled: false
         property int  tile_strokes_length_order: 23
-        property bool tile_watt_kg_enabled: false
-        property int  tile_watt_kg_order: 25
         property bool tile_gears_enabled: false
         property int  tile_gears_order: 26
         property bool tile_remainingtimetrainprogramrow_enabled: false
         property int  tile_remainingtimetrainprogramrow_order: 27
         property bool tile_nextrowstrainprogram_enabled: false
         property int  tile_nextrowstrainprogram_order: 31
-        property bool tile_mets_enabled: false
-        property int  tile_mets_order: 28
-        property bool tile_targetmets_enabled: false
-        property int  tile_targetmets_order: 29
         property bool tile_steering_angle_enabled: false
         property int  tile_steering_angle_order: 30
         property bool tile_pid_hr_enabled: false
@@ -194,63 +176,16 @@ ScrollView {
 		  property string tile_preset_inclination_3_color: "grey"
 		  property string tile_preset_inclination_4_color: "grey"
 		  property string tile_preset_inclination_5_color: "grey"
-		  property bool tile_avg_watt_lap_enabled: false
-		  property int tile_avg_watt_lap_order: 48
         property bool tile_pace_last500m_enabled: true
         property int  tile_pace_last500m_order: 49
         property bool tile_target_pace_enabled: false
         property int  tile_target_pace_order: 50
         property bool tile_step_count_enabled: false
         property int  tile_step_count_order: 51
-        property bool tile_erg_mode_enabled: false
-        property int  tile_erg_mode_order: 52
-        property bool tile_rss_enabled: false
-        property int  tile_rss_order: 53        
         property bool tile_biggears_enabled: false
         property int  tile_biggears_order: 54
         property bool tile_biggears_swap: false
         
-        property bool tile_preset_powerzone_1_enabled: false
-        property int tile_preset_powerzone_1_order: 55
-        property real tile_preset_powerzone_1_value: 1.0
-        property string tile_preset_powerzone_1_label: "Zone 1"
-        property string tile_preset_powerzone_1_color: "white"
-
-        property bool tile_preset_powerzone_2_enabled: false
-        property int tile_preset_powerzone_2_order: 56
-        property real tile_preset_powerzone_2_value: 2.0
-        property string tile_preset_powerzone_2_label: "Zone 2"
-        property string tile_preset_powerzone_2_color: "limegreen"
-
-        property bool tile_preset_powerzone_3_enabled: false
-        property int tile_preset_powerzone_3_order: 57
-        property real tile_preset_powerzone_3_value: 3.0
-        property string tile_preset_powerzone_3_label: "Zone 3"
-        property string tile_preset_powerzone_3_color: "gold"
-
-        property bool tile_preset_powerzone_4_enabled: false
-        property int tile_preset_powerzone_4_order: 58
-        property real tile_preset_powerzone_4_value: 4.0
-        property string tile_preset_powerzone_4_label: "Zone 4"
-        property string tile_preset_powerzone_4_color: "orange"
-
-        property bool tile_preset_powerzone_5_enabled: false
-        property int tile_preset_powerzone_5_order: 59
-        property real tile_preset_powerzone_5_value: 5.0
-        property string tile_preset_powerzone_5_label: "Zone 5"
-        property string tile_preset_powerzone_5_color: "darkorange"
-
-        property bool tile_preset_powerzone_6_enabled: false
-        property int tile_preset_powerzone_6_order: 60
-        property real tile_preset_powerzone_6_value: 6.0
-        property string tile_preset_powerzone_6_label: "Zone 6"
-        property string tile_preset_powerzone_6_color: "orangered"
-
-        property bool tile_preset_powerzone_7_enabled: false
-        property int tile_preset_powerzone_7_order: 61
-        property real tile_preset_powerzone_7_value: 7.0
-        property string tile_preset_powerzone_7_label: "Zone 7"
-        property string tile_preset_powerzone_7_color: "red"        
 
         property bool tile_hr_time_in_zone_1_enabled: false
         property int  tile_hr_time_in_zone_1_order: 62
@@ -287,8 +222,6 @@ ScrollView {
         property int  tile_negative_inclination_order: 75
         property bool tile_avg_pace_enabled: false
         property int  tile_avg_pace_order: 76
-        property bool tile_power_avg_enabled: false
-        property int  tile_power_avg_order: 77
 
         property bool tile_heart_show_as_percent: false
 
@@ -309,10 +242,6 @@ ScrollView {
         property string shortcut_peloton_resistance_minus: ""
         property string shortcut_target_resistance_plus: ""
         property string shortcut_target_resistance_minus: ""
-        property string shortcut_target_power_plus: ""
-        property string shortcut_target_power_minus: ""
-        property string shortcut_target_zone_plus: ""
-        property string shortcut_target_zone_minus: ""
         property string shortcut_target_speed_plus: ""
         property string shortcut_target_speed_minus: ""
         property string shortcut_target_incline_plus: ""
@@ -334,8 +263,6 @@ ScrollView {
         property string shortcut_avs_cruise: ""
         property string shortcut_avs_climb: ""
         property string shortcut_avs_sprint: ""
-        property string shortcut_power_avg: ""
-        property string shortcut_erg_mode: ""
         property string shortcut_preset_resistance_1: ""
         property string shortcut_preset_resistance_2: ""
         property string shortcut_preset_resistance_3: ""
@@ -351,17 +278,9 @@ ScrollView {
         property string shortcut_preset_inclination_3: ""
         property string shortcut_preset_inclination_4: ""
         property string shortcut_preset_inclination_5: ""
-        property string shortcut_preset_powerzone_1: ""
-        property string shortcut_preset_powerzone_2: ""
-        property string shortcut_preset_powerzone_3: ""
-        property string shortcut_preset_powerzone_4: ""
-        property string shortcut_preset_powerzone_5: ""
-        property string shortcut_preset_powerzone_6: ""
-        property string shortcut_preset_powerzone_7: ""
         property string shortcut_auto_resistance: ""
         property string shortcut_lap: ""
         property string shortcut_start_stop: ""            
-        property bool tile_watt_color_enabled: true
         property bool tile_pace_color_enabled: true
     }
 
@@ -639,7 +558,7 @@ ScrollView {
         }
 
         Label {
-            text: qsTr("Estimated calories burned during session, calculated on weight, age, and watts.")
+            text: qsTr("Estimated calories burned during the session.")
             font.bold: true
             font.italic: true
             font.pixelSize: Qt.application.font.pixelSize - 2
@@ -880,67 +799,6 @@ ScrollView {
             color: Material.color(Material.Lime)
         }
 
-        AccordionCheckElement {
-            id: wattEnabledAccordion
-            title: qsTr("Watt")
-            linkedBoolSetting: "tile_watt_enabled"
-            settings: settings
-            accordionContent:  ColumnLayout {
-                SwitchDelegate {
-                    id: wattColorEnabled
-                    text: qsTr("Enable Watt color")
-                    spacing: 0
-                    bottomPadding: 0
-                    topPadding: 0
-                    rightPadding: 0
-                    leftPadding: 0
-                    clip: false
-                    checked: settings.tile_watt_color_enabled
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.fillWidth: true
-                    onClicked: settings.tile_watt_color_enabled = checked
-                }
-
-                RowLayout {
-                    spacing: 10
-                    Label {
-                        id: labelwattOrder
-                        text: qsTr("order index:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ComboBox {
-                        id: wattOrderTextField
-                        model: rootItem.tile_order
-                        displayText: settings.tile_watt_order
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActivated: {
-                            displayText = wattOrderTextField.currentValue
-                         }
-                    }
-                    Button {
-                        id: okwattOrderButton
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_watt_order = wattOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-            }
-        }
-
-        Label {
-            text: qsTr("Displays the watts generated by your current effort. Watt is also referred to as output (for example, in Peloton). If your equipment does not communicate watts, QZ will calculate watts using resistance and cadence.")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
-        }
 
         AccordionCheckElement {
             id: weightLossEnabledAccordion
@@ -987,129 +845,6 @@ ScrollView {
             color: Material.color(Material.Lime)
         }
 
-
-        AccordionCheckElement {
-            id: avgwattEnabledAccordion
-            title: qsTr("AVG Watt")
-            linkedBoolSetting: "tile_avgwatt_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    id: labelavgwattOrder
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: avgwattOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_avgwatt_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = avgwattOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    id: okavgwattOrderButton
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_avgwatt_order = avgwattOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
-
-        Label {
-            text: qsTr("Average watts produced for the session.")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
-        }
-
-
-        AccordionCheckElement {
-		      id: avgwattLapEnabledAccordion
-				title: qsTr("AVG Watt Lap")
-				linkedBoolSetting: "tile_avg_watt_lap_enabled"
-				settings: settings
-				accordionContent: RowLayout {
-				    spacing: 10
-					 Label {
-					     id: labelavgwattLapOrder
-						  text: qsTr("order index:")
-						  Layout.fillWidth: true
-						  horizontalAlignment: Text.AlignRight
-						}
-					 ComboBox {
-					     id: avgwattLapOrderTextField
-						  model: rootItem.tile_order
-						  displayText: settings.tile_avg_watt_lap_order
-						  Layout.fillHeight: false
-						  Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-						  onActivated: {
-						      displayText = avgwattLapOrderTextField.currentValue
-								}
-							}
-					 Button {
-					     id: okavgwattLapOrderButton
-						  text: qsTr("OK")
-						  Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-						  onClicked: {settings.tile_avg_watt_lap_order = avgwattLapOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-						}
-					}
-				}
-
-        AccordionCheckElement {
-            id: ftpEnabledAccordion
-            title: "FTP %"
-            linkedBoolSetting: "tile_ftp_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    id: labelftpOrder
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: ftpOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_ftp_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = ftpOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    id: okftpOrderButton
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_ftp_order = ftpOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
-
-        Label {
-            text: qsTr("Percentage of current FTP and current FTP zone.")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
-        }
 
         AccordionCheckElement {
             id: heartEnabledAccordion
@@ -1173,50 +908,6 @@ ScrollView {
             }
         }
 
-        AccordionCheckElement {
-            id: joulsEnabledAccordion
-            title: qsTr("Jouls")
-            linkedBoolSetting: "tile_jouls_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    id: labeljoulsOrder
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: joulsOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_jouls_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = joulsOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    id: okjoulsOrderButton
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_jouls_order = joulsOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
-
-        Label {
-            text: qsTr("Cumulative power produced during the session in kilojoules.")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
-        }
 
         AccordionCheckElement {
             id: elapsedEnabledAccordion
@@ -1660,96 +1351,6 @@ ScrollView {
             color: Material.color(Material.Lime)
         }
 
-        AccordionCheckElement {
-            id: targetPowerEnabledAccordion
-            title: qsTr("Target Power")
-            linkedBoolSetting: "tile_target_power_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    id: labeltarget_powerOrder
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: target_powerOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_target_power_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = target_powerOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    id: oktarget_powerOrderButton
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_target_power_order = target_powerOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
-
-        Label {
-            text: qsTr("Displays target output (watts) when this information is provided by third-party apps.")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
-        }
-
-
-        AccordionCheckElement {
-            id: targetZoneEnabledAccordion
-            title: qsTr("Target Power Zone")
-            linkedBoolSetting: "tile_target_zone_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    id: labeltarget_zoneOrder
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: target_zoneOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_target_zone_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = target_zoneOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    id: oktarget_zoneOrderButton
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_target_zone_order = target_zoneOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
-
-        Label {
-            text: qsTr("Displays the target power zone when this information is provided by third-party apps.")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
-        }
 
         AccordionCheckElement {
             id: targetSpeedEnabledAccordion
@@ -1846,50 +1447,6 @@ ScrollView {
                 }
             }
         }
-        AccordionCheckElement {
-            id: wattKgEnabledAccordion
-            title: qsTr("Watt/Kg")
-            linkedBoolSetting: "tile_watt_kg_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    id: labelwatt_kgOrder
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: watt_kgOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_watt_kg_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = watt_kgOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    id: okwatt_kgOrderButton
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_watt_kg_order = watt_kgOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
-
-        Label {
-            text: qsTr("Calculates your output (watts) divided by your weight. This is the primary metric used by Zwift and similar apps to calculate your virtual speed. NOTE: This is a much better metric to use than Output/Watts when comparing your effort to other users. This is why Peloton’s leaderboard, which uses only Output, is flawed.")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
-        }
 
         AccordionCheckElement {
             id: gearsEnabledAccordion
@@ -1924,7 +1481,7 @@ ScrollView {
         }
 
         Label {
-            text: qsTr("Allows you to change resistance while in Auto-Follow Mode.This tile allows you override the target resistance sent by third-party apps. For example, you would use the Gears Tile to increase resistance and generate more watts for sprinting in Zwift.")
+            text: qsTr("Allows you to adjust the target resistance sent by connected apps while in Auto-Follow Mode.")
             font.bold: true
             font.italic: true
             font.pixelSize: Qt.application.font.pixelSize - 2
@@ -2071,7 +1628,7 @@ ScrollView {
         }
 
         Label {
-            text: qsTr("Displays the next Peloton interval with duration and FTP Zone (in Power Zone classes) or Peloton Resistance (non–Power Zone classes).")
+            text: qsTr("Displays the duration and resistance of the next Peloton interval.")
             font.bold: true
             font.italic: true
             font.pixelSize: Qt.application.font.pixelSize - 2
@@ -2083,82 +1640,7 @@ ScrollView {
             color: Material.color(Material.Lime)
         }
 
-        AccordionCheckElement {
-            id: metsEnabledAccordion
-            title: qsTr("METS")
-            linkedBoolSetting: "tile_mets_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    id: labelmetsOrder
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: metsOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_mets_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = metsOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    id: okmetsOrderButton
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_mets_order = metsOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
 
-        Label {
-            text: qsTr("Displays metabolic equivalents (METs), a measurement of energy expenditure and amount of oxygen used by the body compared to the body at rest. (e.g., 4 METS requires the body to use 4 times as much oxygen than when at rest, which means it requires more energy and burns more calories).")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
-        }
-
-        AccordionCheckElement {
-            id: targetMetsEnabledAccordion
-            title: qsTr("Target METS")
-            linkedBoolSetting: "tile_targetmets_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    id: labeltargetmetsOrder
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: targetmetsOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_targetmets_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = targetmetsOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    id: oktargetmetsOrderButton
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_targetmets_order = targetmetsOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
 
         AccordionCheckElement {
             id: datetimeEnabledAccordion
@@ -2629,66 +2111,6 @@ ScrollView {
             }
         }
 
-        AccordionCheckElement {
-            id: ergModeEnabledAccordion
-            title: qsTr("Erg Mode")
-            linkedBoolSetting: "tile_erg_mode_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    id: labelErgModeOrder
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: ergModeOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_erg_mode_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = ergModeOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    id: okErgModeOrderButton
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_erg_mode_order = ergModeOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
-
-        AccordionCheckElement {
-            title: qsTr("Running Stress Score")
-            linkedBoolSetting: "tile_rss_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: rssOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_rss_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = rssOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_rss_order = rssOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }        
 
         AccordionCheckElement {
             id: presetResistance1EnabledAccordion
@@ -4344,726 +3766,8 @@ ScrollView {
 						  }
 					 }
             }
-        }       
-        AccordionCheckElement {
-            id: presetPowerZone1EnabledAccordion
-            title: qsTr("Preset Power Zone 1")
-            linkedBoolSetting: "tile_preset_powerzone_1_enabled"
-            settings: settings
-            accordionContent: ColumnLayout {
-                spacing: 10
-                RowLayout {
-                    Label {
-                        text: qsTr("order index:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ComboBox {
-                        id: presetPowerZone1OrderTextField
-                        model: rootItem.tile_order
-                        displayText: settings.tile_preset_powerzone_1_order
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActivated: {
-                            displayText = presetPowerZone1OrderTextField.currentValue
-                        }
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_1_order = presetPowerZone1OrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("zone value:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone1Value
-                        text: settings.tile_preset_powerzone_1_value
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        validator: DoubleValidator {bottom: 1; top: 7;}
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_1_value = parseFloat(presetPowerZone1Value.text); toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("label:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone1Label
-                        text: settings.tile_preset_powerzone_1_label
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_1_label = presetPowerZone1Label.text; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        id: labelPresetPowerzone1Color
-                        text: qsTr("color:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ColorDialog {
-                        id: colorPresetPowerzone1
-                        title: qsTr("Please choose a color")
-                        onAccepted: {
-                            presetPowerzone1ColorTextField.text = colorPresetPowerzone1.color
-                        }
-                        onRejected: {}
-                    }
-                    TextField {
-                        id: presetPowerzone1ColorTextField
-                        text: settings.tile_preset_powerzone_1_color
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        onPressed: {
-                            if(OS_VERSION !== "Android") colorPresetPowerzone1.visible = true
-                        }
-                    }
-                    Button {
-                        id: okPresetPowerzone1ColorButton
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_1_color = presetPowerzone1ColorTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }                
-            }
         }
 
-        AccordionCheckElement {
-            id: presetPowerZone2EnabledAccordion
-            title: qsTr("Preset Power Zone 2")
-            linkedBoolSetting: "tile_preset_powerzone_2_enabled"
-            settings: settings
-            accordionContent: ColumnLayout {
-                spacing: 10
-                RowLayout {
-                    Label {
-                        text: qsTr("order index:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ComboBox {
-                        id: presetPowerZone2OrderTextField
-                        model: rootItem.tile_order
-                        displayText: settings.tile_preset_powerzone_2_order
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActivated: {
-                            displayText = presetPowerZone2OrderTextField.currentValue
-                        }
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_2_order = presetPowerZone2OrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("zone value:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone2Value
-                        text: settings.tile_preset_powerzone_2_value
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        validator: DoubleValidator {bottom: 1; top: 7;}
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_2_value = parseFloat(presetPowerZone2Value.text); toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("label:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone2Label
-                        text: settings.tile_preset_powerzone_2_label
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_2_label = presetPowerZone2Label.text; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        id: labelPresetPowerzone2Color
-                        text: qsTr("color:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ColorDialog {
-                        id: colorPresetPowerzone2
-                        title: qsTr("Please choose a color")
-                        onAccepted: {
-                            presetPowerzone2ColorTextField.text = colorPresetPowerzone2.color
-                        }
-                        onRejected: {}
-                    }
-                    TextField {
-                        id: presetPowerzone2ColorTextField
-                        text: settings.tile_preset_powerzone_2_color
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        onPressed: {
-                            if(OS_VERSION !== "Android") colorPresetPowerzone2.visible = true
-                        }
-                    }
-                    Button {
-                        id: okPresetPowerzone2ColorButton
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_2_color = presetPowerzone2ColorTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }                
-            }
-        }
-
-        AccordionCheckElement {
-            id: presetPowerZone3EnabledAccordion
-            title: qsTr("Preset Power Zone 3")
-            linkedBoolSetting: "tile_preset_powerzone_3_enabled"
-            settings: settings
-            accordionContent: ColumnLayout {
-                spacing: 10
-                RowLayout {
-                    Label {
-                        text: qsTr("order index:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ComboBox {
-                        id: presetPowerZone3OrderTextField
-                        model: rootItem.tile_order
-                        displayText: settings.tile_preset_powerzone_3_order
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActivated: {
-                            displayText = presetPowerZone3OrderTextField.currentValue
-                        }
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_3_order = presetPowerZone3OrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("zone value:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone3Value
-                        text: settings.tile_preset_powerzone_3_value
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        validator: DoubleValidator {bottom: 1; top: 7;}
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_3_value = parseFloat(presetPowerZone3Value.text); toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("label:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone3Label
-                        text: settings.tile_preset_powerzone_3_label
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_3_label = presetPowerZone3Label.text; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        id: labelPresetPowerzone3Color
-                        text: qsTr("color:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ColorDialog {
-                        id: colorPresetPowerzone3
-                        title: qsTr("Please choose a color")
-                        onAccepted: {
-                            presetPowerzone3ColorTextField.text = colorPresetPowerzone3.color
-                        }
-                        onRejected: {}
-                    }
-                    TextField {
-                        id: presetPowerzone3ColorTextField
-                        text: settings.tile_preset_powerzone_3_color
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        onPressed: {
-                            if(OS_VERSION !== "Android") colorPresetPowerzone3.visible = true
-                        }
-                    }
-                    Button {
-                        id: okPresetPowerzone3ColorButton
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_3_color = presetPowerzone3ColorTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }                
-            }
-        }
-
-        AccordionCheckElement {
-            id: presetPowerZone4EnabledAccordion
-            title: qsTr("Preset Power Zone 4")
-            linkedBoolSetting: "tile_preset_powerzone_4_enabled"
-            settings: settings
-            accordionContent: ColumnLayout {
-                spacing: 10
-                RowLayout {
-                    Label {
-                        text: qsTr("order index:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ComboBox {
-                        id: presetPowerZone4OrderTextField
-                        model: rootItem.tile_order
-                        displayText: settings.tile_preset_powerzone_4_order
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActivated: {
-                            displayText = presetPowerZone4OrderTextField.currentValue
-                        }
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_4_order = presetPowerZone4OrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("zone value:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone4Value
-                        text: settings.tile_preset_powerzone_4_value
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        validator: DoubleValidator {bottom: 1; top: 7;}
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_4_value = parseFloat(presetPowerZone4Value.text); toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("label:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone4Label
-                        text: settings.tile_preset_powerzone_4_label
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_4_label = presetPowerZone4Label.text; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        id: labelPresetPowerzone4Color
-                        text: qsTr("color:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ColorDialog {
-                        id: colorPresetPowerzone4
-                        title: qsTr("Please choose a color")
-                        onAccepted: {
-                            presetPowerzone4ColorTextField.text = colorPresetPowerzone4.color
-                        }
-                        onRejected: {}
-                    }
-                    TextField {
-                        id: presetPowerzone4ColorTextField
-                        text: settings.tile_preset_powerzone_4_color
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        onPressed: {
-                            if(OS_VERSION !== "Android") colorPresetPowerzone4.visible = true
-                        }
-                    }
-                    Button {
-                        id: okPresetPowerzone4ColorButton
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_4_color = presetPowerzone4ColorTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-            }
-        }
-
-        AccordionCheckElement {
-            id: presetPowerZone5EnabledAccordion
-            title: qsTr("Preset Power Zone 5")
-            linkedBoolSetting: "tile_preset_powerzone_5_enabled"
-            settings: settings
-            accordionContent: ColumnLayout {
-                spacing: 10
-                RowLayout {
-                    Label {
-                        text: qsTr("order index:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ComboBox {
-                        id: presetPowerZone5OrderTextField
-                        model: rootItem.tile_order
-                        displayText: settings.tile_preset_powerzone_5_order
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActivated: {
-                            displayText = presetPowerZone5OrderTextField.currentValue
-                        }
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_5_order = presetPowerZone5OrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("zone value:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone5Value
-                        text: settings.tile_preset_powerzone_5_value
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        validator: DoubleValidator {bottom: 1; top: 7;}
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_5_value = parseFloat(presetPowerZone5Value.text); toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("label:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone5Label
-                        text: settings.tile_preset_powerzone_5_label
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_5_label = presetPowerZone5Label.text; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        id: labelPresetPowerzone5Color
-                        text: qsTr("color:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ColorDialog {
-                        id: colorPresetPowerzone5
-                        title: qsTr("Please choose a color")
-                        onAccepted: {
-                            presetPowerzone5ColorTextField.text = colorPresetPowerzone5.color
-                        }
-                        onRejected: {}
-                    }
-                    TextField {
-                        id: presetPowerzone5ColorTextField
-                        text: settings.tile_preset_powerzone_5_color
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        onPressed: {
-                            if(OS_VERSION !== "Android") colorPresetPowerzone5.visible = true
-                        }
-                    }
-                    Button {
-                        id: okPresetPowerzone5ColorButton
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_5_color = presetPowerzone5ColorTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-            }
-        }
-
-        AccordionCheckElement {
-            id: presetPowerZone6EnabledAccordion
-            title: qsTr("Preset Power Zone 6")
-            linkedBoolSetting: "tile_preset_powerzone_6_enabled"
-            settings: settings
-            accordionContent: ColumnLayout {
-                spacing: 10
-                RowLayout {
-                    Label {
-                        text: qsTr("order index:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ComboBox {
-                        id: presetPowerZone6OrderTextField
-                        model: rootItem.tile_order
-                        displayText: settings.tile_preset_powerzone_6_order
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActivated: {
-                            displayText = presetPowerZone6OrderTextField.currentValue
-                        }
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_6_order = presetPowerZone6OrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("zone value:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone6Value
-                        text: settings.tile_preset_powerzone_6_value
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        validator: DoubleValidator {bottom: 1; top: 7;}
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_6_value = parseFloat(presetPowerZone6Value.text); toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("label:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone6Label
-                        text: settings.tile_preset_powerzone_6_label
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_6_label = presetPowerZone6Label.text; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        id: labelPresetPowerzone6Color
-                        text: qsTr("color:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ColorDialog {
-                        id: colorPresetPowerzone6
-                        title: qsTr("Please choose a color")
-                        onAccepted: {
-                            presetPowerzone6ColorTextField.text = colorPresetPowerzone6.color
-                        }
-                        onRejected: {}
-                    }
-                    TextField {
-                        id: presetPowerzone6ColorTextField
-                        text: settings.tile_preset_powerzone_6_color
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        onPressed: {
-                            if(OS_VERSION !== "Android") colorPresetPowerzone6.visible = true
-                        }
-                    }
-                    Button {
-                        id: okPresetPowerzone6ColorButton
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_6_color = presetPowerzone6ColorTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-            }
-        }
-
-        AccordionCheckElement {
-            id: presetPowerZone7EnabledAccordion
-            title: qsTr("Preset Power Zone 7")
-            linkedBoolSetting: "tile_preset_powerzone_7_enabled"
-            settings: settings
-            accordionContent: ColumnLayout {
-                spacing: 10
-                RowLayout {
-                    Label {
-                        text: qsTr("order index:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ComboBox {
-                        id: presetPowerZone7OrderTextField
-                        model: rootItem.tile_order
-                        displayText: settings.tile_preset_powerzone_7_order
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActivated: {
-                            displayText = presetPowerZone7OrderTextField.currentValue
-                        }
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_7_order = presetPowerZone7OrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("zone value:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone7Value
-                        text: settings.tile_preset_powerzone_7_value
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        validator: DoubleValidator {bottom: 1; top: 7;}
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_7_value = parseFloat(presetPowerZone7Value.text); toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        text: qsTr("label:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    TextField {
-                        id: presetPowerZone7Label
-                        text: settings.tile_preset_powerzone_7_label
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    }
-                    Button {
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_7_label = presetPowerZone7Label.text; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-                RowLayout {
-                    Label {
-                        id: labelPresetPowerzone7Color
-                        text: qsTr("color:")
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                    }
-                    ColorDialog {
-                        id: colorPresetPowerzone7
-                        title: qsTr("Please choose a color")
-                        onAccepted: {
-                            presetPowerzone7ColorTextField.text = colorPresetPowerzone7.color
-                        }
-                        onRejected: {}
-                    }
-                    TextField {
-                        id: presetPowerzone7ColorTextField
-                        text: settings.tile_preset_powerzone_7_color
-                        Layout.fillHeight: false
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                        onPressed: {
-                            if(OS_VERSION !== "Android") colorPresetPowerzone7.visible = true
-                        }
-                    }
-                    Button {
-                        id: okPresetPowerzone7ColorButton
-                        text: qsTr("OK")
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        onClicked: {settings.tile_preset_powerzone_7_color = presetPowerzone7ColorTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                    }
-                }
-            }
-        }
-
-        Label {
-            text: qsTr("Power zone presets allow quick access to specific training zones with customizable labels and values.")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
-        }
 
         AccordionCheckElement {
             id: hrTimeInZone1EnabledAccordion
@@ -5673,48 +4377,6 @@ ScrollView {
             color: Material.color(Material.Lime)
         }
 
-        AccordionCheckElement {
-            id: powerAvgEnabledAccordion
-            title: qsTr("Power Averaging")
-            linkedBoolSetting: "tile_power_avg_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: powerAvgOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_power_avg_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = powerAvgOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_power_avg_order = powerAvgOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
-
-        Label {
-            text: qsTr("Button tile to cycle through power averaging modes: Off, 3s avg (harmonic), 5s avg (harmonic). Tap to cycle between modes. Only for bikes.")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
-        }
 
         AccordionCheckElement {
             id: hrvEnabledAccordion

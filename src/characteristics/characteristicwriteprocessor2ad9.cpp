@@ -14,7 +14,11 @@ CharacteristicWriteProcessor2AD9::CharacteristicWriteProcessor2AD9(double bikeRe
 int CharacteristicWriteProcessor2AD9::writeProcess(quint16 uuid, const QByteArray &data, QByteArray &reply) {
     if (data.size()) {
         BLUETOOTH_TYPE dt = Bike->deviceType();
-        if (dt == BIKE || dt == ROWING) {
+        if (dt == TREADMILL && data.at(0) == FTMS_SET_TARGET_POWER) {
+            reply.append((quint8)FTMS_RESPONSE_CODE);
+            reply.append((quint8)FTMS_SET_TARGET_POWER);
+            reply.append((quint8)FTMS_NOT_SUPPORTED);
+        } else if (dt == BIKE || dt == ROWING) {
             QSettings settings;
             bool force_resistance =
                 settings.value(QZSettings::virtualbike_forceresistance, QZSettings::default_virtualbike_forceresistance)

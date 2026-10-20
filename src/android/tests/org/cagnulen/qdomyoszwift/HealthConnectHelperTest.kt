@@ -6,7 +6,6 @@ import androidx.health.connect.client.records.ElevationGainedRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.HeartRateVariabilityRmssdRecord
-import androidx.health.connect.client.records.PowerRecord
 import androidx.health.connect.client.records.SpeedRecord
 import androidx.health.connect.client.records.StepsCadenceRecord
 import androidx.health.connect.client.records.StepsRecord
@@ -121,7 +120,7 @@ class HealthConnectHelperTest {
     @Test
     fun `buildRecords bumps end 1 second when start equals end`() {
         val t = System.currentTimeMillis()
-        val samples = JSONArray().apply { put(makeSample(t, watt = 100.0)) }
+        val samples = JSONArray().apply { put(makeSample(t)) }
         val records = HealthConnectHelper.buildRecords(samples, "t", BIKE, null)
         val session = records.first() as ExerciseSessionRecord
         assertTrue(session.endTime.isAfter(session.startTime))
@@ -137,40 +136,6 @@ class HealthConnectHelperTest {
         val session = records.first() as ExerciseSessionRecord
         assertEquals(Instant.ofEpochMilli(start), session.startTime)
         assertEquals(Instant.ofEpochMilli(end), session.endTime)
-    }
-
-    // ── buildRecords: power ───────────────────────────────────────────────────
-
-    @Test
-    fun `buildRecords includes PowerRecord when watt greater than 0`() {
-        val samples = JSONArray().apply {
-            put(makeSample(1_000L, watt = 150.0))
-            put(makeSample(2_000L, watt = 200.0))
-        }
-        val records = HealthConnectHelper.buildRecords(samples, "t", BIKE, null)
-        assertTrue(records.any { it is PowerRecord })
-    }
-
-    @Test
-    fun `buildRecords PowerRecord has correct number of samples`() {
-        val samples = JSONArray().apply {
-            put(makeSample(1_000L, watt = 150.0))
-            put(makeSample(2_000L, watt = 200.0))
-            put(makeSample(3_000L, watt = 0.0))  // zero — should be skipped
-        }
-        val records = HealthConnectHelper.buildRecords(samples, "t", BIKE, null)
-        val powerRecord = records.filterIsInstance<PowerRecord>().first()
-        assertEquals(2, powerRecord.samples.size)
-    }
-
-    @Test
-    fun `buildRecords omits PowerRecord when all watts are 0`() {
-        val samples = JSONArray().apply {
-            put(makeSample(1_000L, watt = 0.0))
-            put(makeSample(2_000L, watt = 0.0))
-        }
-        val records = HealthConnectHelper.buildRecords(samples, "t", BIKE, null)
-        assertFalse(records.any { it is PowerRecord })
     }
 
     // ── buildRecords: cadence ─────────────────────────────────────────────────
@@ -351,7 +316,6 @@ class HealthConnectHelperTest {
     private fun makeSample(
         time: Long,
         speed: Double = 0.0,
-        watt: Double = 0.0,
         cadence: Double = 0.0,
         heart: Int = 0,
         distance: Double = 0.0,
@@ -362,7 +326,6 @@ class HealthConnectHelperTest {
     ) = JSONObject().apply {
         put("time", time)
         put("speed", speed)
-        put("watt", watt)
         put("cadence", cadence)
         put("heart", heart)
         put("distance", distance)
@@ -373,7 +336,7 @@ class HealthConnectHelperTest {
     }
 
     private fun singleSample(time: Long = System.currentTimeMillis()) =
-        JSONArray().apply { put(makeSample(time, watt = 100.0, cadence = 80.0, speed = 25.0)) }
+        JSONArray().apply { put(makeSample(time, cadence = 80.0, speed = 25.0)) }
 
     private fun twoSamples(
         startMs: Long,
@@ -383,8 +346,8 @@ class HealthConnectHelperTest {
         elevationGain: Double = 0.0,
         stepCount: Double = 0.0
     ) = JSONArray().apply {
-        put(makeSample(startMs, speed = 25.0, watt = 150.0, cadence = 80.0))
-        put(makeSample(endMs, speed = 28.0, watt = 180.0, cadence = 85.0,
+        put(makeSample(startMs, speed = 25.0, cadence = 80.0))
+        put(makeSample(endMs, speed = 28.0, cadence = 85.0,
                        distance = distance, calories = calories,
                        elevationGain = elevationGain, stepCount = stepCount))
     }

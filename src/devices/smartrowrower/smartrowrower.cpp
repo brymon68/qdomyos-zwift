@@ -1,8 +1,5 @@
 #include "smartrowrower.h"
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include <QBluetoothLocalDevice>
 #include <QDateTime>
 #include <QFile>
@@ -307,11 +304,6 @@ void smartrowrower::characteristicChanged(const QLowEnergyCharacteristic &charac
 
     lastRefreshCharacteristicChanged = now;
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
             update_hr_from_external();

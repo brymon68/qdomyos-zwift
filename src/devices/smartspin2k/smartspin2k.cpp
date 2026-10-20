@@ -10,7 +10,6 @@
 #include <QThread>
 #include <math.h>
 #ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
 #include <QLowEnergyConnectionParameters>
 #endif
 

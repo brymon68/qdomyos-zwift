@@ -12,7 +12,6 @@
 #include <QThread>
 #include <math.h>
 #ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
 #include <QLowEnergyConnectionParameters>
 #endif
 #include <chrono>
@@ -1813,11 +1812,6 @@ void horizontreadmill::characteristicChanged(const QLowEnergyCharacteristic &cha
 
         emit debug(QStringLiteral("Current KCal: ") + QString::number(KCal.value()));
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (Flags.heartRate && !disable_hr_frommachinery && newValue.length() > index) {
                 Heart = ((double)(((uint8_t)newValue.at(index))));
@@ -2024,11 +2018,6 @@ void horizontreadmill::characteristicChanged(const QLowEnergyCharacteristic &cha
 
         emit debug(QStringLiteral("Current KCal: ") + QString::number(KCal.value()));
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (Flags.heartRate) {
                 if (index < newValue.length()) {
@@ -2227,11 +2216,6 @@ void horizontreadmill::characteristicChanged(const QLowEnergyCharacteristic &cha
 
         emit debug(QStringLiteral("Current KCal: ") + QString::number(KCal.value()));
 
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-        else
-#endif
         {
             if (Flags.heartRate && !disable_hr_frommachinery && newValue.length() > index) {
                 Heart = ((double)(((uint8_t)newValue.at(index))));

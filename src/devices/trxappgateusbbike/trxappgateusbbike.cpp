@@ -1,7 +1,4 @@
 #include "trxappgateusbbike.h"
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include <QBluetoothLocalDevice>
 
@@ -308,11 +305,6 @@ void trxappgateusbbike::characteristicChanged(const QLowEnergyCharacteristic &ch
         }
     }
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) {
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    } else
-#endif
     {
         if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
             if (bike_type != JLL_IC400 && bike_type != ASVIVA && bike_type != HAMMER_SPEED_BIKE_S) {

@@ -356,11 +356,9 @@ void bluetoothdevice::update_hr_from_external() {
 #endif
 #endif
 #ifdef Q_OS_ANDROID
-    if (!settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) {
-        Heart = QAndroidJniObject::callStaticMethod<jint>("org/cagnulen/qdomyoszwift/WearableController", "getHeart", "()I");
-        heartRateFromHealthKit = false;
-        qDebug() << "WearOS Companion Heart:" << Heart.value();
-    }
+    Heart = QAndroidJniObject::callStaticMethod<jint>("org/cagnulen/qdomyoszwift/WearableController", "getHeart", "()I");
+    heartRateFromHealthKit = false;
+    qDebug() << "WearOS Companion Heart:" << Heart.value();
 #endif
     }
     // Note: workoutTrackingUpdate is now called from update_ios_live_activity() with throttling

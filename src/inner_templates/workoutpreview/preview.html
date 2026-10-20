@@ -222,45 +222,11 @@
 
         // Determine primary metric based on device type
         function getPrimaryMetric(deviceType, workoutData) {
-            const { watts, speed, inclination, resistance, cadence } = workoutData;
-
-            // For bikes: show watts (power)
-            if (deviceType === 'bike' && watts && watts.length > 0) {
+            const { speed, resistance } = workoutData;
+            if ((deviceType === 'elliptical' || deviceType === 'rower') && resistance && resistance.length > 0) {
                 return {
-                    label: tq('workoutEditor.powerW', 'Power (W)'),
-                    data: watts
-                };
-            }
-
-            // For treadmills: show speed
-            if (deviceType === 'treadmill' && speed && speed.length > 0) {
-                return {
-                    label: miles === 1 ? tq('workoutEditor.speedKmh', 'Speed (km/h)') : tq('workoutEditor.speedMph', 'Speed (mph)'),
-                    data: speed.map(point => ({ x: point.x, y: point.y * miles }))
-                };
-            }
-
-            // For ellipticals/rowers: show watts if available, otherwise resistance
-            if ((deviceType === 'elliptical' || deviceType === 'rower')) {
-                if (watts && watts.length > 0) {
-                    return {
-                        label: tq('workoutEditor.powerW', 'Power (W)'),
-                        data: watts
-                    };
-                }
-                if (resistance && resistance.length > 0) {
-                    return {
-                        label: tq('workoutEditor.resistance', 'Resistance'),
-                        data: resistance
-                    };
-                }
-            }
-
-            // Default: try watts, then speed, then resistance
-            if (watts && watts.length > 0) {
-                return {
-                    label: tq('workoutEditor.powerW', 'Power (W)'),
-                    data: watts
+                    label: tq('workoutEditor.resistance', 'Resistance'),
+                    data: resistance
                 };
             }
             if (speed && speed.length > 0) {
@@ -275,7 +241,6 @@
                     data: resistance
                 };
             }
-
             return null;
         }
 
@@ -364,7 +329,6 @@
             // Create a hash of the data to detect changes
             const dataHash = JSON.stringify({
                 points: data.points,
-                watts: data.watts,
                 speed: data.speed,
                 inclination: data.inclination,
                 resistance: data.resistance,
@@ -381,7 +345,7 @@
 
             lastDataHash = dataHash;
 
-            const { points, watts, speed, inclination, resistance, cadence, segments, hasOpenEndedSteps, deviceType, miles_unit } = data;
+            const { points, speed, inclination, resistance, cadence, segments, hasOpenEndedSteps, deviceType, miles_unit } = data;
 
             // Update miles setting if provided
             if (miles_unit !== undefined) {
@@ -389,7 +353,6 @@
             }
 
             const workoutData = {
-                watts: watts || [],
                 speed: speed || [],
                 inclination: inclination || [],
                 resistance: resistance || [],
@@ -398,18 +361,11 @@
                 hasOpenEndedSteps: hasOpenEndedSteps || false
             };
 
-            // The C++ backend always populates watts even for treadmill workouts where
-            // power is unset (sent as y = -1).  Detect the actual device type from data.
-            var hasValidWatts = workoutData.watts.some(function(p) {
-                return (p !== null && typeof p === 'object' && p.y !== undefined) ? p.y >= 0 : Number(p) >= 0;
-            });
             var actualDeviceType = deviceType || 'bike';
-            if (!hasValidWatts) {
-                if (workoutData.speed.length > 0) {
-                    actualDeviceType = 'treadmill';
-                } else if (workoutData.resistance.length > 0) {
-                    actualDeviceType = 'elliptical';
-                }
+            if (workoutData.speed.length > 0) {
+                actualDeviceType = 'treadmill';
+            } else if (workoutData.resistance.length > 0) {
+                actualDeviceType = 'elliptical';
             }
 
             console.log('Updating chart with new data');
@@ -425,7 +381,6 @@
         // Initialize with empty chart
         window.addEventListener('load', function() {
             updateWorkoutChart({
-                watts: [],
                 speed: [],
                 inclination: [],
                 resistance: []

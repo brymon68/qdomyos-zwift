@@ -37,10 +37,6 @@ import com.ifit.glassos.workout.SpeedRequest;
 import com.ifit.glassos.workout.InclineMetric;
 import com.ifit.glassos.workout.InclineServiceGrpc;
 import com.ifit.glassos.workout.InclineRequest;
-import com.ifit.glassos.workout.WattsMetric;
-import com.ifit.glassos.workout.WattsServiceGrpc;
-import com.ifit.glassos.console.constantwatts.ConstantWattsMessage;
-import com.ifit.glassos.console.constantwatts.ConstantWattsServiceGrpc;
 import com.ifit.glassos.workout.ResistanceMetric;
 import com.ifit.glassos.workout.ResistanceServiceGrpc;
 import com.ifit.glassos.workout.ResistanceRequest;
@@ -94,8 +90,6 @@ public class GrpcTreadmillService {
     private ManagedChannel channel;
     private SpeedServiceGrpc.SpeedServiceBlockingStub speedStub;
     private InclineServiceGrpc.InclineServiceBlockingStub inclineStub;
-    private WattsServiceGrpc.WattsServiceBlockingStub wattsStub;
-    private ConstantWattsServiceGrpc.ConstantWattsServiceBlockingStub constantWattsStub;
     private ResistanceServiceGrpc.ResistanceServiceBlockingStub resistanceStub;
     private CadenceServiceGrpc.CadenceServiceBlockingStub cadenceStub;
     private RpmServiceGrpc.RpmServiceBlockingStub rpmStub;
@@ -112,7 +106,6 @@ public class GrpcTreadmillService {
     private volatile double currentSpeed = 0.0;
     private volatile double currentIncline = 0.0;
     private volatile double currentResistance = 0.0;
-    private volatile double currentWatts = 0.0;
     private volatile double currentCadence = 0.0;
     private volatile double currentRpm = 0.0;
     private volatile double currentStrokesCount = 0.0;
@@ -128,7 +121,6 @@ public class GrpcTreadmillService {
     public interface MetricsListener {
         void onSpeedUpdated(double speed);
         void onInclineUpdated(double incline);
-        void onWattsUpdated(double watts);
         void onResistanceUpdated(double resistance);
         void onCadenceUpdated(double cadence);
         void onRpmUpdated(double rpm);
@@ -315,56 +307,6 @@ public class GrpcTreadmillService {
         });
     }
 
-    private void setWattsInstance(double watts) {
-        executorService.execute(() -> {
-            try {
-                Metadata headers = createHeaders();
-                ConstantWattsServiceGrpc.ConstantWattsServiceBlockingStub stubWithHeaders = constantWattsStub.withInterceptors(
-                        MetadataUtils.newAttachHeadersInterceptor(headers)
-                );
-                
-                if (watts <= 0) {
-                    // Disable constant watts mode when watts is 0 or negative
-                    stubWithHeaders.disable(Empty.newBuilder().build());
-                    QLog.d(TAG, "Disabled constant watts mode");
-                } else {
-                    // Set target watts
-                    int targetWatts = (int) watts;
-                    ConstantWattsMessage request = ConstantWattsMessage.newBuilder().setWatts(targetWatts).build();
-                    stubWithHeaders.setConstantWatts(request);
-                    QLog.d(TAG, String.format("Set constant watts to %d", targetWatts));
-                }
-                
-            } catch (Exception e) {
-                QLog.e(TAG, "Failed to set watts", e);
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onError("watts", e.getMessage()));
-                }
-            }
-        });
-    }
-
-    private void disableConstantWattsInstance() {
-        executorService.execute(() -> {
-            try {
-                Metadata headers = createHeaders();
-                ConstantWattsServiceGrpc.ConstantWattsServiceBlockingStub stubWithHeaders = constantWattsStub.withInterceptors(
-                        MetadataUtils.newAttachHeadersInterceptor(headers)
-                );
-                
-                stubWithHeaders.disable(Empty.newBuilder().build());
-                QLog.d(TAG, "Explicitly disabled constant watts mode");
-                
-            } catch (Exception e) {
-                QLog.e(TAG, "Failed to disable constant watts", e);
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onError("watts", e.getMessage()));
-                }
-            }
-        });
-    }
-
-
     private void shutdownInstance() {
         stopMetricsUpdates();
         stopWorkoutStateMonitoringInstance();
@@ -442,8 +384,6 @@ public class GrpcTreadmillService {
 
         speedStub = SpeedServiceGrpc.newBlockingStub(channel);
         inclineStub = InclineServiceGrpc.newBlockingStub(channel);
-        wattsStub = WattsServiceGrpc.newBlockingStub(channel);
-        constantWattsStub = ConstantWattsServiceGrpc.newBlockingStub(channel);
         resistanceStub = ResistanceServiceGrpc.newBlockingStub(channel);
         cadenceStub = CadenceServiceGrpc.newBlockingStub(channel);
         rpmStub = RpmServiceGrpc.newBlockingStub(channel);
@@ -589,33 +529,6 @@ public class GrpcTreadmillService {
                 QLog.w(TAG, "Failed to fetch inclination", e);
                 if (metricsListener != null) {
                     mainHandler.post(() -> metricsListener.onError("inclination", "Error"));
-                }
-            }
-
-            // Fetch watts
-            try {
-                long wattsStartTime = System.currentTimeMillis();
-                WattsServiceGrpc.WattsServiceBlockingStub wattsStubWithHeaders = wattsStub.withInterceptors(
-                        MetadataUtils.newAttachHeadersInterceptor(headers)
-                );
-                long wattsInterceptorTime = System.currentTimeMillis();
-                QLog.d(TAG, "Watts interceptor setup took: " + (wattsInterceptorTime - wattsStartTime) + "ms");
-                
-                WattsMetric wattsResponse = wattsStubWithHeaders.getWatts(request);
-                long wattsCallTime = System.currentTimeMillis();
-                QLog.d(TAG, "Watts gRPC call took: " + (wattsCallTime - wattsInterceptorTime) + "ms");
-                
-                currentWatts = wattsResponse.getLastWatts();
-                
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onWattsUpdated(currentWatts));
-                }
-                long wattsEndTime = System.currentTimeMillis();
-                QLog.d(TAG, "Watts total processing took: " + (wattsEndTime - wattsStartTime) + "ms");
-            } catch (Exception e) {
-                QLog.w(TAG, "Failed to fetch watts", e);
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onError("watts", "Error"));
                 }
             }
 
@@ -797,7 +710,6 @@ public class GrpcTreadmillService {
                 mainHandler.post(() -> {
                     metricsListener.onError("speed", "Error");
                     metricsListener.onError("inclination", "Error");
-                    metricsListener.onError("watts", "Error");
                     metricsListener.onError("resistance", "Error");
                     metricsListener.onError("cadence", "Error");
                 });
@@ -860,13 +772,6 @@ public class GrpcTreadmillService {
     public static double getCurrentIncline() {
         if (instance != null) {
             return instance.currentIncline;
-        }
-        return 0.0;
-    }
-    
-    public static double getCurrentWatts() {
-        if (instance != null) {
-            return instance.currentWatts;
         }
         return 0.0;
     }
@@ -951,23 +856,6 @@ public class GrpcTreadmillService {
             QLog.e(TAG, "Service not initialized. Call initialize() first.");
         }
     }
-    
-    public static void setWatts(double watts) {
-        if (instance != null) {
-            instance.setWattsInstance(watts);
-        } else {
-            QLog.e(TAG, "Service not initialized. Call initialize() first.");
-        }
-    }
-    
-    public static void disableConstantWatts() {
-        if (instance != null) {
-            instance.disableConstantWattsInstance();
-        } else {
-            QLog.e(TAG, "Service not initialized. Call initialize() first.");
-        }
-    }
-    
     
     private void startWorkoutInstance() {
         executorService.execute(() -> {

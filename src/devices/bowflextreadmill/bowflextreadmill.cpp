@@ -1,7 +1,6 @@
 // THIS MODULE IS UNUSED RIGHT NOW
 
 #include "bowflextreadmill.h"
-#include "keepawakehelper.h"
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>
 #include <QDateTime>
@@ -188,11 +187,6 @@ void bowflextreadmill::characteristicChanged(const QLowEnergyCharacteristic &cha
     double kcal = GetKcalFromPacket(value);
     // double distance = GetDistanceFromPacket(value);
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         /*if(heartRateBeltName.startsWith("Disabled"))
         Heart = value.at(18);*/

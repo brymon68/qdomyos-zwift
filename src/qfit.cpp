@@ -42,11 +42,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
             .value(QZSettings::treadmill_force_running_activity,
                    QZSettings::default_treadmill_force_running_activity)
             .toBool();
-    bool powr_sensor_running_cadence_half_on_strava =
-        settings
-            .value(QZSettings::powr_sensor_running_cadence_half_on_strava,
-                   QZSettings::default_powr_sensor_running_cadence_half_on_strava)
-            .toBool();
     std::list<fit::RecordMesg> records;
     fit::Encode encode(fit::ProtocolVersion::V20);
     if (session.isEmpty()) {
@@ -165,8 +160,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
     int hr_count = 0;
     uint8_t min_hr = 255;
     uint8_t max_hr = 0;
-    double watt_sum = 0;
-    int watt_count = 0;
 
     // Variables for jump rope cadence
     double cadence_sum = 0;
@@ -216,12 +209,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
             }
         }
 
-        // Collect power data for TSS calculation
-        if (session.at(i).watt > 0) {
-            watt_sum += session.at(i).watt;
-            watt_count++;
-        }
-
         // Collect cadence data for jump rope
         if (type == JUMPROPE && session.at(i).cadence > 0) {
             cadence_sum += session.at(i).cadence;
@@ -249,34 +236,11 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
         qDebug() << "average speed from the fit file" << speed_avg;
     }
 
-    // Calculate training load: TSS for cycling with power, TRIMP otherwise
+    // Calculate training load from heart rate
     float training_load = 0.0f;
-    float tss = 0.0f;  // Training Stress Score (for cycling with power)
     uint32_t duration_seconds = session.last().elapsedTime;
-    bool has_tss = false;
 
-    // For cycling with power data, calculate TSS (Training Stress Score)
-    if (type == BIKE && watt_count > 0) {
-        double avg_watt = watt_sum / watt_count;
-        float ftp = settings.value(QZSettings::ftp, QZSettings::default_ftp).toFloat();
-
-        if (ftp > 0 && avg_watt > 0) {
-            // TSS formula: (duration_seconds × average_power × IF) / (FTP × 36)
-            // where IF (Intensity Factor) = average_power / FTP
-            double intensity_factor = avg_watt / ftp;
-            tss = (duration_seconds * avg_watt * intensity_factor) / (ftp * 36.0);
-            training_load = tss;  // Use TSS as training load in the worst scenario
-            has_tss = true;
-
-            qDebug() << "Training Load (TSS) calculated:" << tss
-                     << "Duration:" << (duration_seconds / 60) << "min"
-                     << "Avg Power:" << avg_watt << "W"
-                     << "FTP:" << ftp << "W"
-                     << "IF:" << intensity_factor;
-        }
-    }
-
-    // Always calculate TRIMP if we have HR data (fallback or additional metric)
+    // Calculate TRIMP if heart rate data is available
     if (hr_count > 0) {
         double avg_hr = hr_sum / hr_count;
         uint32_t duration_minutes = duration_seconds / 60;
@@ -346,14 +310,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
     targetCadenceMesg.SetUnits(0, L"rpm");
     targetCadenceMesg.SetNativeMesgNum(FIT_MESG_NUM_RECORD);
 
-    fit::FieldDescriptionMesg targetWattMesg;
-    targetWattMesg.SetDeveloperDataIndex(0);
-    targetWattMesg.SetFieldDefinitionNumber(2);
-    targetWattMesg.SetFitBaseTypeId(FIT_BASE_TYPE_FLOAT64);
-    targetWattMesg.SetFieldName(0, L"Target Watt");
-    targetWattMesg.SetUnits(0, L"watts");
-    targetWattMesg.SetNativeMesgNum(FIT_MESG_NUM_RECORD);
-
     fit::FieldDescriptionMesg targetResistanceMesg;
     targetResistanceMesg.SetDeveloperDataIndex(0);
     targetResistanceMesg.SetFieldDefinitionNumber(3);
@@ -361,14 +317,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
     targetResistanceMesg.SetFieldName(0, L"Target Resistance");
     targetResistanceMesg.SetUnits(0, L"resistance");
     targetResistanceMesg.SetNativeMesgNum(FIT_MESG_NUM_RECORD);
-
-    fit::FieldDescriptionMesg ftpSessionMesg;
-    ftpSessionMesg.SetDeveloperDataIndex(0);
-    ftpSessionMesg.SetFieldDefinitionNumber(4);
-    ftpSessionMesg.SetFitBaseTypeId(FIT_BASE_TYPE_FLOAT64);
-    ftpSessionMesg.SetFieldName(0, L"FTP");
-    ftpSessionMesg.SetUnits(0, L"FTP");
-    ftpSessionMesg.SetNativeMesgNum(FIT_MESG_NUM_WORKOUT);  // Workout message for developer metadata
 
     // Peloton and workout source fields
     fit::FieldDescriptionMesg workoutSourceMesg;
@@ -431,13 +379,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
     if (training_load > 0) {
         //sessionMesg.SetTrainingLoadPeak(training_load);
         qDebug() << "Training load will be stored in developer data:" << training_load;
-    }
-
-    // For cycling with power, also set training_stress_score (TSS)
-    // COMMENTED OUT: Moving to developer data message
-    if (has_tss) {
-        //sessionMesg.SetTrainingStressScore(tss);
-        qDebug() << "TSS will be stored in developer data:" << tss;
     }
 
     const FIT_SPORT treadmill_activity_sport =
@@ -605,9 +546,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
     fit::FieldDescriptionMesg ciqDeviceInfoFieldDesc =
         makeCoreFieldDescription(26, FIT_BASE_TYPE_UINT8, L"CIQ_device_info", L"°", FIT_MESG_NUM_SESSION, 255);
 
-    fit::DeveloperField ftpSessionField(ftpSessionMesg, devIdMesg);
-    ftpSessionField.AddValue(settings.value(QZSettings::ftp, QZSettings::default_ftp).toDouble());
-
     fit::DeveloperField activityTitleField(activityTitle, devIdMesg);
     activityTitleField.SetSTRINGValue(workoutName.toStdWString());
 
@@ -689,9 +627,7 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
     // Write developer field descriptions (declared earlier)
     encode.Write(activityTitle);
     encode.Write(targetCadenceMesg);
-    encode.Write(targetWattMesg);
     encode.Write(targetResistanceMesg);
-    encode.Write(ftpSessionMesg);
     encode.Write(workoutSourceMesg);
     encode.Write(pelotonWorkoutIdMesg);
     encode.Write(pelotonUrlMesg);
@@ -750,7 +686,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
 
         // Add developer fields to workout message
         workout.AddDeveloperField(activityTitleField);
-        workout.AddDeveloperField(ftpSessionField);
         workout.AddDeveloperField(workoutSourceField);
         if (!pelotonWorkoutId.isEmpty()) {
             workout.AddDeveloperField(pelotonWorkoutIdField);
@@ -853,10 +788,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
         targetCadenceField.AddValue(sl.target_cadence);
         newRecord.AddDeveloperField(targetCadenceField);
 
-        fit::DeveloperField targetWattField(targetWattMesg, devIdMesg);
-        targetWattField.AddValue(sl.target_watt);
-        newRecord.AddDeveloperField(targetWattField);
-
         fit::DeveloperField targetResistanceField(targetResistanceMesg, devIdMesg);
         targetResistanceField.AddValue(sl.target_resistance);
         newRecord.AddDeveloperField(targetResistanceField);
@@ -864,12 +795,9 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
         // fit::DateTime date((time_t)session.at(i).time.toSecsSinceEpoch());
         newRecord.SetHeartRate(sl.heart);
         uint8_t cad = sl.cadence;
-        if (powr_sensor_running_cadence_half_on_strava)
-            cad = cad / 2;
         newRecord.SetCadence(cad);
         newRecord.SetDistance((sl.distance - startingDistanceOffset) * 1000.0); // meters
         newRecord.SetSpeed(sl.speed / 3.6);                                     // meter per second
-        newRecord.SetPower(sl.watt);
         newRecord.SetResistance(sl.resistance);
         newRecord.SetCalories(sl.calories);
         if (type == TREADMILL) {
@@ -1271,7 +1199,6 @@ class Listener : public fit::FileIdMesgListener,
             s.cadence = record.GetCadence();
             s.distance = record.GetDistance() / 1000;
             s.speed = record.GetSpeed() * 3.6;
-            s.watt = record.GetPower();
             s.resistance = record.GetResistance();
             s.calories = record.GetCalories();
             if (record.IsCoreTemperatureValid()) {

@@ -1,8 +1,5 @@
 #include "flywheelbike.h"
 
-#ifdef Q_OS_ANDROID
-#include "keepawakehelper.h"
-#endif
 #include "virtualdevices/virtualbike.h"
 #include "qzsettings.h"
 #include <QBluetoothLocalDevice>
@@ -263,10 +260,6 @@ void flywheelbike::characteristicChanged(const QLowEnergyCharacteristic &charact
         if (bikeData.message_id == SEND_ICG_LIVE_STREAM_DATA) {
             // double distance = GetDistanceFromPacket(newValue); //Note: clang-analyzer-deadcode.DeadStores
 
-#ifdef Q_OS_ANDROID
-            if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-                Heart = (uint8_t)KeepAwakeHelper::heart();
-#endif
 
             uint16_t power = ((parsedData->power >> 8) & 0xFF);
             power += ((parsedData->power & 0xFF) << 8);

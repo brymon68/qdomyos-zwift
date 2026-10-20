@@ -179,8 +179,6 @@ QVariantMap WorkoutModel::getWorkoutDetails(int workoutId) {
     details["maxCadence"] = query.value("max_cadence");
     details["avgSpeed"] = query.value("avg_speed");
     details["maxSpeed"] = query.value("max_speed");
-    details["avgPower"] = query.value("avg_power");
-    details["maxPower"] = query.value("max_power");
     details["totalAscent"] = query.value("total_ascent");
     details["totalDescent"] = query.value("total_descent");
 
@@ -193,7 +191,7 @@ QVariantMap WorkoutModel::getWorkoutDetails(int workoutId) {
         qfit::open(filePath, &session, &sport);
 
         if (!session.isEmpty()) {
-            QVariantList timestamps, heartRates, speeds, power, cadence;
+            QVariantList timestamps, heartRates, speeds, cadence;
 
             // Get first timestamp to calculate relative times
             qint64 startTime = session.first().time.toSecsSinceEpoch();
@@ -204,7 +202,6 @@ QVariantMap WorkoutModel::getWorkoutDetails(int workoutId) {
                 timestamps.append(minutes);
                 heartRates.append(point.heart);
                 speeds.append(point.speed);
-                power.append(point.watt);
                 cadence.append(point.cadence);
             }
 
@@ -212,7 +209,6 @@ QVariantMap WorkoutModel::getWorkoutDetails(int workoutId) {
                 {"timestamps", timestamps},
                 {"heartRates", heartRates},
                 {"speeds", speeds},
-                {"power", power},
                 {"cadence", cadence}
             };
         }
@@ -223,7 +219,6 @@ QVariantMap WorkoutModel::getWorkoutDetails(int workoutId) {
             {"timestamps", QVariantList()},
             {"heartRates", QVariantList()},
             {"speeds", QVariantList()},
-            {"power", QVariantList()},
             {"cadence", QVariantList()}
         };
     }

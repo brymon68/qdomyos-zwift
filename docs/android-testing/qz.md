@@ -56,7 +56,7 @@ $ADB shell input tap 175 300  # tap "Settings"
 ## Settings Structure
 
 The Settings page contains a scrollable list:
-- General / bike / heart rate / ANT+ options
+- General / bike / heart rate options
 - Zwift / Peloton / Rouvy / Garmin options
 - Treadmill / rower / elliptical options
 - Advanced / accessories / TTS / maps settings

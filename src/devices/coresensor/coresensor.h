@@ -63,16 +63,6 @@ const uint8_t NOT_AVAILABLE = 3;
 
 // Control Point OpCodes
 namespace CoreControlPoint {
-// ANT+ Related OpCodes
-const uint8_t CLEAR_ANT_PAIRED_HRM_LIST = 0x01;
-const uint8_t ADD_ANT_HRM = 0x02;
-const uint8_t REMOVE_ANT_HRM = 0x03;
-const uint8_t GET_TOTAL_ANT_PAIRED_HRMS = 0x04;
-const uint8_t GET_ANT_HRM_ID_AT_INDEX = 0x05;
-const uint8_t SCAN_ANT_HRMS = 0x0A;
-const uint8_t GET_TOTAL_SCANNED_ANT_HRMS = 0x0B;
-const uint8_t GET_SCANNED_ANT_HRM_ID = 0x0C;
-
 // BLE Related OpCodes
 const uint8_t ADD_BLE_HRM = 0x06;
 const uint8_t REMOVE_BLE_HRM = 0x07;
@@ -174,7 +164,6 @@ class coresensor : public bluetoothdevice {
 
     // Heart rate monitor operations - these depend on implementation
     bool scanForBLEHeartRateMonitors();
-    bool scanForANTHeartRateMonitors();
     int getNumberOfPairedHeartRateMonitors();
 
   private slots:

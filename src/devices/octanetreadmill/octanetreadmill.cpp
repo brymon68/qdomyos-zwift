@@ -152,7 +152,6 @@
 */
 
 #include "octanetreadmill.h"
-#include "keepawakehelper.h"
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>
 #include <QDateTime>
@@ -535,11 +534,6 @@ void octanetreadmill::characteristicChanged(const QLowEnergyCharacteristic &char
     if (isinf(speed))
         return;
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         update_hr_from_external();
     }

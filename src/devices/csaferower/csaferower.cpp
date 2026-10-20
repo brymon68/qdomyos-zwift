@@ -54,11 +54,6 @@ void csaferower::onHeart(double hr) {
     bool disable_hr_frommachinery =
         settings.value(QZSettings::heart_ignore_builtin, QZSettings::default_heart_ignore_builtin).toBool();
 
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool())
-        Heart = (uint8_t)KeepAwakeHelper::heart();
-    else
-#endif
     {
         if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
             uint8_t heart = ((uint8_t)hr);
@@ -400,12 +395,6 @@ void csaferower::update() {
     // ********************************************************************************************************
 
     if (!noVirtualDevice) {
-#ifdef Q_OS_ANDROID
-        if (settings.value(QZSettings::ant_heart, QZSettings::default_ant_heart).toBool()) {
-            Heart = (uint8_t)KeepAwakeHelper::heart();
-            debug("Current Heart: " + QString::number(Heart.value()));
-        }
-#endif
         if (heartRateBeltName.startsWith(QStringLiteral("Disabled"))) {
             update_hr_from_external();
         }

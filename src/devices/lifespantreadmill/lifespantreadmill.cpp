@@ -1,5 +1,4 @@
 #include "lifespantreadmill.h"
-#include "keepawakehelper.h"
 #include "virtualdevices/virtualtreadmill.h"
 #include <QBluetoothLocalDevice>
 #include <QDateTime>

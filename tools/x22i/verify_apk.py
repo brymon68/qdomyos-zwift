@@ -50,6 +50,9 @@ def verify_apk(path, no_fan=False, no_purchasing=False):
             payload = apk.read(app_library)
             checks = [("Removed licensing code", (
                 "robertoviola.cloud:4010", "licensePopupVisible", "licenseRequest", "licenseTimeout"))]
+            checks.append(("Removed ANT and treadmill power code", (
+                "antObject", "antbike", "strydrunpowersensor", "getCurrentWatts",
+                "treadmill_follow_wattage")))
             if no_fan:
                 checks.append(("Fan support", (
                     "changeFanSpeed", "fanSpeedChanged", "fitmetria_fanfit", "wahookickrheadwind",
@@ -60,18 +63,18 @@ def verify_apk(path, no_fan=False, no_purchasing=False):
                 for marker in markers:
                     if any(marker.encode(encoding) in payload for encoding in ("utf-8", "utf-16-le")):
                         errors.append(feature + " remains in the application library: " + marker)
-        if no_fan or no_purchasing:
-            markers = []
-            if no_fan:
-                markers.extend(("FanStateService", "setFanSpeed", "getCurrentFanSpeed"))
-            if no_purchasing:
-                markers.extend(("com/android/billingclient", "qt/android/purchasing"))
-            for name in entries:
-                if name.startswith("classes") and name.endswith(".dex"):
-                    payload = apk.read(name)
-                    for marker in markers:
-                        if marker.encode("utf-8") in payload:
-                            errors.append("Removed feature remains in " + name + ": " + marker)
+        markers = ["com/dsi/ant/", "org/cagnulen/qdomyoszwift/ChannelService",
+                   "WattsServiceGrpc", "ConstantWattsServiceGrpc", "getCurrentWatts"]
+        if no_fan:
+            markers.extend(("FanStateService", "setFanSpeed", "getCurrentFanSpeed"))
+        if no_purchasing:
+            markers.extend(("com/android/billingclient", "qt/android/purchasing"))
+        for name in entries:
+            if name.startswith("classes") and name.endswith(".dex"):
+                payload = apk.read(name)
+                for marker in markers:
+                    if marker.encode("utf-8") in payload:
+                        errors.append("Removed feature remains in " + name + ": " + marker)
         if errors:
             raise ValueError("\n".join(errors))
 
