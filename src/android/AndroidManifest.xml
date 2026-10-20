@@ -8,10 +8,6 @@
 	      Remove the comment if you do not require these default features. -->
 			<!-- %%INSERT_FEATURES -->
 
-    <queries>
-        <package android:name="com.google.android.apps.healthdata" />
-    </queries>
-
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 	 <application android:hardwareAccelerated="true" android:debuggable="false" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="${x22iApplicationLabel}" android:extractNativeLibs="true" android:icon="@drawable/icon" android:usesCleartextTraffic="true" android:networkSecurityConfig="@xml/network_security_config">
              <activity android:theme="@style/Theme.AppCompat" android:exported="true" android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density" android:name="org.cagnulen.qdomyoszwift.CustomQtActivity" android:label="${x22iLauncherLabel}" android:launchMode="singleTop">
@@ -21,15 +17,6 @@
 					</intent-filter>
                                         <intent-filter>
                                             <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-                                        </intent-filter>
-                                        <intent-filter android:autoVerify="true">
-                                            <action android:name="android.intent.action.VIEW" />
-                                            <category android:name="android.intent.category.DEFAULT" />
-                                            <category android:name="android.intent.category.BROWSABLE" />
-                                            <data
-                                                android:scheme="https"
-                                                android:host="www.qzfitness.com"
-                                                android:pathPrefix="/peloton/callback" />
                                         </intent-filter>
                                         <meta-data
                                             android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
@@ -93,19 +80,7 @@
 					 android:enabled="true"
                                          android:foregroundServiceType="connectedDevice"
                                          android:exported="false"></service>
-                <service
-                    android:name=".WearableMessageListenerService"
-                    android:enabled="true"
-                    android:exported="true">
-                    <intent-filter>
-                        <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
-                        <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
-                        <data
-                            android:host="*"
-                            android:pathPrefix="/qz"
-                            android:scheme="wear" />
-                    </intent-filter>
-                </service>
+
 				<service android:name=".FloatingWindowGFG" android:enabled="true" android:exported="true"/>
 
             <service android:name="com.cgutman.androidremotedebugger.service.ShellService"
@@ -123,40 +98,14 @@
                                     android:value="ocr" />
 
 				<activity android:name="org.cagnulen.qdomyoszwift.MyActivity" />
-                                <activity
-                                    android:name=".HealthConnectPermissionActivity"
-                                    android:exported="false"
-                                    android:theme="@style/Theme.AppCompat">
-                                    <intent-filter>
-                                        <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
-                                    </intent-filter>
-                                </activity>
-
-                                <activity-alias
-                                    android:name="ViewPermissionUsageActivity"
-                                    android:exported="true"
-                                    android:targetActivity=".HealthConnectPermissionActivity"
-                                    android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
-                                    <intent-filter>
-                                        <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
-                                        <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
-                                    </intent-filter>
-                                </activity-alias>
-
-                                <receiver android:name=".MediaButtonReceiver" android:exported="true" android:permission="android.permission.MODIFY_AUDIO_SETTINGS">
-                                    <intent-filter>
-                                        <action android:name="android.media.VOLUME_CHANGED_ACTION" />
-                                    </intent-filter>
-                                </receiver>
 		  <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
 		</application>
 
-<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="36" tools:overrideLibrary="com.google.android.play.agesignals,com.google.android.gms.common,androidx.health.connect.client" />
+<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="36" tools:overrideLibrary="com.google.android.gms.common" />
 <uses-permission android:name="android.permission.WAKE_LOCK"/>
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-<uses-permission android:name="android.permission.RECEIVE_MEDIA_BUTTON" />
     <uses-permission android:name="android.permission.ACCESS_CHECKIN_PROPERTIES"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
@@ -166,18 +115,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 	 <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 	 <uses-permission android:name="com.google.android.things.permission.USE_PERIPHERAL_IO" />
-         <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 	 <uses-permission android:name="android.permission.GET_TASKS" />
 	 <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
 	     tools:ignore="ProtectedPermissions" />
-         <uses-permission android:name="android.permission.health.WRITE_EXERCISE" />
-         <uses-permission android:name="android.permission.health.WRITE_DISTANCE" />
-         <uses-permission android:name="android.permission.health.WRITE_TOTAL_CALORIES_BURNED" />
-         <uses-permission android:name="android.permission.health.WRITE_HEART_RATE" />
-         <uses-permission android:name="android.permission.health.WRITE_SPEED" />
-         <uses-permission android:name="android.permission.health.WRITE_CYCLING_PEDALING_CADENCE" />
-         <uses-permission android:name="android.permission.health.WRITE_ELEVATION_GAINED" />
-         <uses-permission android:name="android.permission.health.WRITE_STEPS" />
-         <uses-permission android:name="android.permission.health.WRITE_STEPS_CADENCE" />
-         <uses-permission android:name="android.permission.health.WRITE_HEART_RATE_VARIABILITY" />
 </manifest>

@@ -62,20 +62,12 @@ class lockscreen {
     bool virtualtreadmill_updateFTMS(unsigned short normalizeSpeed, unsigned char currentResistance,
                                      unsigned short currentCadence,
                                      unsigned short currentInclination, unsigned long long currentDistance, double elevationGain,
-                                     unsigned short currentCalories, qint32 currentSteps, unsigned short elapsedSeconds,
+                                     qint32 currentSteps, unsigned short elapsedSeconds,
                                      unsigned char deviceType);
 
     // volume
     double getVolume();
 
-    // garmin
-    bool urlParser(const char *url);
-    void garminconnect_init();
-    int getHR();
-    int getFootCad();
-    int getPower();
-    double getSpeed();
-    
     // debug
     static void debug(const char* debugstring);
     static void nslog(const char* log);
@@ -93,10 +85,6 @@ class lockscreen {
     void wahooKickrSnapBike(const char* Name, void* deviceClass);
     void writeCharacteristic(unsigned char* qdata, unsigned char length);
 
-    // Zwift Click Remote
-    void zwiftClickRemote(const char* Name, const char* UUID, void* deviceClass);
-    void zwiftClickRemote_WriteCharacteristic(unsigned char* qdata, unsigned char length, void* deviceClass);
-    
     // Zwift API
     void zwift_api_decodemessage_player(const char* data, int len);
     float zwift_api_getaltitude();
@@ -111,8 +99,6 @@ class lockscreen {
     static uint32_t zwift_hub_getCadenceFromBuffer(const QByteArray& buffer);
     
     // quick actions
-    static void set_action_profile(const char* profile);
-    static const char* get_action_profile();
 
     // multi-window detection for iPadOS
     static bool isInMultiWindowMode();

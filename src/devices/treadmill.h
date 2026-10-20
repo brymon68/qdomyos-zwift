@@ -9,8 +9,7 @@ class treadmill : public bluetoothdevice {
 
   public:
     treadmill();
-    // Arguments retained for the legacy treadmill drivers. X22i needs only motion metrics.
-    void update_metrics(bool = false, const double = 0, const bool = false);
+    void update_metrics();
     metric lastRequestedSpeed() { return RequestedSpeed; }
     QTime lastRequestedPace();
     metric lastRequestedInclination() { return RequestedInclination; }
@@ -26,7 +25,6 @@ class treadmill : public bluetoothdevice {
     metric currentGroundContact() { return GroundContactMS; }
     metric currentVerticalOscillation() { return VerticalOscillationMM; }
     metric currentStepCount() { return StepCount; }
-    virtual uint16_t watts(double weight);
     BLUETOOTH_TYPE deviceType() override;
     void clearStats() override;
     void setLap() override;
@@ -43,8 +41,6 @@ class treadmill : public bluetoothdevice {
     virtual bool autoStartWhenSpeedIsGreaterThenZero();
     static double treadmillInclinationOverride(double Inclination);
     static double treadmillInclinationOverrideReverse(double Inclination);
-    bool cadenceFromAppleWatch();
-    double calculateCadenceFromSpeed(double speed);
     virtual bool canHandleSpeedChange() { return true; }
     virtual bool canHandleInclineChange() { return true; }
     QTime speedToPace(double Speed);
@@ -87,7 +83,6 @@ class treadmill : public bluetoothdevice {
     void parseInclination(double speed);
     void parseCadence(double cadence);
     bool areInclinationSettingsDefault();
-    void evaluateStepCount();
 
 };
 

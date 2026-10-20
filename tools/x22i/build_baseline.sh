@@ -30,7 +30,7 @@ case "$X22I_VARIANT" in
 esac
 jobs=${X22I_BUILD_JOBS:-2}
 
-for command in git make python3 rsync qmake lrelease androiddeployqt javac; do
+for command in git make python3 rsync qmake androiddeployqt javac; do
     command -v "$command" >/dev/null || { echo "Missing build command: $command" >&2; exit 2; }
 done
 [[ $(qmake -query QT_VERSION) == 5.15.0 ]] || { echo "Qt 5.15.0 is required" >&2; exit 2; }
@@ -68,7 +68,6 @@ cp "$source_dir"/qt-patches/android/5.15.0/jar/* "$QT_ANDROID_DIR/jar/"
 # build directory so the dependency checkout remains unchanged.
 rsync -a --exclude .git "$source_dir/src/qthttpserver/" "$output_dir/httpserver-source/"
 cp "$source_dir"/qHttpServerBin/5.15.2/headers/* "$output_dir/httpserver-source/src/3rdparty/http-parser/"
-lrelease "$source_dir/src/qdomyos-zwift.pri"
 
 cd "$output_dir/httpserver"
 # The copy has no .git metadata; request Qt forwarding-header generation explicitly.

@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.12
 import QtGraphicalEffects 1.12
-import Qt.labs.settings 1.0
 
 Page {
 
@@ -17,18 +16,10 @@ Page {
     property alias lap: lap
     property alias row: row
 
-    Settings {
-	     id: settings
-		  property real ui_zoom: 100.0
-		  property bool theme_tile_icon_enabled: true
-		  property string theme_background_color: "#303030"
-		}
-
     Item {
         width: parent.width
         height: rootItem.topBarHeight
         id: topBar
-        visible: !window.lockTiles
 
         Row {
             id: row
@@ -41,7 +32,7 @@ Page {
             Rectangle {
                 width: 50
                 height: row.height
-					 color: settings.theme_background_color
+					 color: "#303030"
                 Accessible.ignored: true
 
                 Column {
@@ -57,7 +48,7 @@ Page {
                     Rectangle {
                         width: 50
                         height: row.height
-                        color: settings.theme_background_color
+                        color: "#303030"
                         Accessible.ignored: true
 
                         Image {
@@ -71,7 +62,7 @@ Page {
 
                             // VoiceOver accessibility
                             Accessible.role: Accessible.Indicator
-                            Accessible.name: qsTr("Bluetooth connection")
+                            Accessible.name: qsTr("X22i connection")
                             Accessible.description: rootItem.device ? qsTr("Device connected") : qsTr("Device not connected")
                             Accessible.focusable: true
                         }
@@ -96,7 +87,7 @@ Page {
             Rectangle {
                 width: 120
                 height: row.height
-					 color: settings.theme_background_color
+					 color: "#303030"
                 Accessible.ignored: true
 
                 RoundButton {
@@ -126,7 +117,7 @@ Page {
             Rectangle {
                 width: 120
                 height: row.height
-					 color: settings.theme_background_color
+					 color: "#303030"
                 Accessible.ignored: true
 
                 RoundButton {
@@ -157,7 +148,7 @@ Page {
                 id: item2
                 width: 50
                 height: row.height
-					 color: settings.theme_background_color
+					 color: "#303030"
                 Accessible.ignored: true
 
                 RoundButton {
@@ -203,7 +194,7 @@ Page {
             width: parent.width
             anchors.top: row1.bottom
             anchors.topMargin: 30
-            text: qsTr("This app should automatically connect to your bike/treadmill/rower. <b>If it doesn't, please check</b>:<br>1) your Echelon/Domyos App MUST be closed while qdomyos-zwift is running;<br>2) both Bluetooth and Bluetooth permissions MUST be enabled<br>3) your bike/treadmill/rower should be turned on BEFORE starting this app<br>4) try to restart your device<br><br>If your bike/treadmill disconnects every 30 seconds try to disable the 'virtual device' setting on the left bar.<br><br>In case of issues, please feel free to contact me at roberto.viola83@gmail.com.<br><br><b>Have a nice ride!</b><br/ ><i>QZ specifically disclaims liability for<br>incidental or consequential damages and assumes<br>no responsibility or liability for any loss<br>or damage suffered by any person as a result of<br>the use or misuse of the app.</i><br><br>Roberto Viola")
+            text: "Waiting for the X22i iFIT service. Open iFIT on this treadmill, then return to X22i Test."
             wrapMode: Label.WordWrap
             visible: rootItem.labelHelp
         }

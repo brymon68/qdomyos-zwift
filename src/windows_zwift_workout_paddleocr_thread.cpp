@@ -1,5 +1,4 @@
 #include "windows_zwift_workout_paddleocr_thread.h"
-#include "devices/elliptical.h"
 #include "devices/treadmill.h"
 #if __has_include("aiserver.h")
 #include "aiserver.h"

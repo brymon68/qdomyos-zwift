@@ -16,14 +16,9 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
     QSettings settings;
     treadMill = t;
 
-    int bikeResistanceOffset =
-        settings.value(QZSettings::bike_resistance_offset, QZSettings::default_bike_resistance_offset).toInt();
-    double bikeResistanceGain =
-        settings.value(QZSettings::bike_resistance_gain_f, QZSettings::default_bike_resistance_gain_f).toDouble();
-    bool bike_cadence_sensor = settings.value(QZSettings::bike_cadence_sensor, QZSettings::default_bike_cadence_sensor).toBool();
     this->noHeartService = noHeartService;
     if (settings.value(QZSettings::dircon_yes, QZSettings::default_dircon_yes).toBool()) {
-        dirconManager = new DirconManager(t, bikeResistanceOffset, bikeResistanceGain, this);
+        dirconManager = new DirconManager(t, this);
         connect(dirconManager, SIGNAL(changeInclination(double, double)), this,
                 SIGNAL(changeInclination(double, double)));
         connect(dirconManager, SIGNAL(changeInclination(double, double)), this,
@@ -38,24 +33,12 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
     notif2ACD = new CharacteristicNotifier2ACD(t, this);
     notif2A53 = new CharacteristicNotifier2A53(t, this);
     notif2A37 = new CharacteristicNotifier2A37(t, this);
-    writeP2AD9 = new CharacteristicWriteProcessor2AD9(bikeResistanceGain, bikeResistanceOffset, t, notif2AD9, this);
+    writeP2AD9 = new CharacteristicWriteProcessor2AD9(t, notif2AD9, this);
     connect(writeP2AD9, SIGNAL(changeInclination(double, double)), this, SIGNAL(changeInclination(double, double)));
     connect(writeP2AD9, SIGNAL(slopeChanged()), this, SLOT(slopeChanged()));
     connect(writeP2AD9, SIGNAL(ftmsCharacteristicChanged(QLowEnergyCharacteristic, QByteArray)), this,
             SIGNAL(ftmsCharacteristicChanged(QLowEnergyCharacteristic, QByteArray)));
 
-#ifdef Q_OS_IOS
-#ifndef IO_UNDER_QT
-    bool ios_peloton_workaround =
-        settings.value(QZSettings::ios_peloton_workaround, QZSettings::default_ios_peloton_workaround).toBool();
-    bool garmin_bluetooth_compatibility = settings.value(QZSettings::garmin_bluetooth_compatibility, QZSettings::default_garmin_bluetooth_compatibility).toBool();
-    if (ios_peloton_workaround) {
-        qDebug() << "ios_zwift_workaround activated!";
-        h = new lockscreen();
-        h->virtualtreadmill_zwift_ios(garmin_bluetooth_compatibility, bike_cadence_sensor);
-    } else
-#endif
-#endif
     {
         //! [Advertising Data]
         advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
@@ -375,14 +358,10 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
             QObject::connect(serviceWahoo, &QLowEnergyService::characteristicChanged, this,
                              &virtualtreadmill::wahooCharacteristicChanged);
 
-        bool bluetooth_relaxed =
-            settings.value(QZSettings::bluetooth_relaxed, QZSettings::default_bluetooth_relaxed).toBool();
         QLowEnergyAdvertisingParameters pars = QLowEnergyAdvertisingParameters();
-        if (!bluetooth_relaxed) {
 #if !defined(Q_OS_LINUX) || defined(Q_OS_ANDROID)
             pars.setInterval(100, 100);
-#endif            
-        }  
+#endif
 
 #ifdef Q_OS_ANDROID
         QAndroidJniObject::callStaticMethod<void>("org/cagnulen/qdomyoszwift/BleAdvertiser",
@@ -402,10 +381,7 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
     }
 
     QObject::connect(&treadmillTimer, &QTimer::timeout, this, &virtualtreadmill::treadmillProvider);
-    if (settings.value(QZSettings::race_mode, QZSettings::default_race_mode).toBool())
-        treadmillTimer.start(100ms);
-    else
-        treadmillTimer.start(1s);
+    treadmillTimer.start(1s);
 }
 
 void virtualtreadmill::characteristicChanged(const QLowEnergyCharacteristic &characteristic,
@@ -467,14 +443,6 @@ void virtualtreadmill::wahooCharacteristicChanged(const QLowEnergyCharacteristic
 }
 
 void virtualtreadmill::reconnect() {
-    QSettings settings;
-    bool bluetooth_relaxed =
-        settings.value(QZSettings::bluetooth_relaxed, QZSettings::default_bluetooth_relaxed).toBool();
-
-    if (bluetooth_relaxed) {
-        return;
-    }
-
     qDebug() << "virtualtreadmill reconnect " << treadMill->connected();
     
     if (ftmsServiceEnable())
@@ -519,101 +487,13 @@ void virtualtreadmill::reconnect() {
 void virtualtreadmill::treadmillProvider() {
     const uint64_t slopeTimeoutSecs = 30;
     QSettings settings;
-    bool bike_cadence_sensor = settings.value(QZSettings::bike_cadence_sensor, QZSettings::default_bike_cadence_sensor).toBool();
 
     if ((uint64_t)QDateTime::currentSecsSinceEpoch() > lastSlopeChanged + slopeTimeoutSecs)
         m_autoInclinationEnabled = false;
 
-#ifdef Q_OS_IOS
-#ifndef IO_UNDER_QT
-    bool double_cadence = settings
-                              .value(QZSettings::powr_sensor_running_cadence_double,
-                                     QZSettings::default_powr_sensor_running_cadence_double)
-                              .toBool();
-    double cadence_multiplier = 2.0;
-    if (double_cadence)
-        cadence_multiplier = 1.0;
-
-    if (h) {
-        bool real_inclination_to_virtual_treamill_bridge = settings.value(QZSettings::real_inclination_to_virtual_treamill_bridge, QZSettings::default_real_inclination_to_virtual_treamill_bridge).toBool();
-        double inclination = treadMill->currentInclination().value();
-        if(real_inclination_to_virtual_treamill_bridge) {
-              double offset = settings.value(QZSettings::zwift_inclination_offset,
-                                             QZSettings::default_zwift_inclination_offset).toDouble();
-              double gain = settings.value(QZSettings::zwift_inclination_gain,
-                                           QZSettings::default_zwift_inclination_gain).toDouble();
-              inclination -= offset;
-              inclination /= gain;
-        }
-    uint16_t normalizeSpeed = (uint16_t)qRound(treadMill->currentSpeed().value() * 100);
-
-    uint16_t swiftSpeed = normalizeSpeed;
-    uint16_t swiftCadence = (uint16_t)(((treadmill *)treadMill)->currentCadence().value() * cadence_multiplier);
-    uint8_t swiftResistance = 0;
-    uint16_t swiftInclination = (uint16_t)(inclination * 10.0);
-    uint64_t swiftDistance = bike_cadence_sensor ?
-        (uint64_t)(((treadmill *)treadMill)->odometer() * 1000.0) :  // old behavior
-        (uint64_t)(((treadmill *)treadMill)->odometerFromStartup() * 1000.0);  // new behavior
-    uint16_t swiftCalories = ((treadmill *)treadMill)->calories().value();
-    qint32 swiftSteps = ((treadmill *)treadMill)->currentStepCount().value();
-
-    // Calculate Elapsed Time to pass
-    QTime swift_elapsed = treadMill->elapsedTime();
-    double swift_elapsed_seconds_double = (double)swift_elapsed.hour() * 3600.0 +
-                                          (double)swift_elapsed.minute() * 60.0 +
-                                          (double)swift_elapsed.second() +
-                                          (double)swift_elapsed.msec() / 1000.0;
-    uint16_t swiftElapsedTimeSeconds = (uint16_t)qRound(swift_elapsed_seconds_double);
-
-    if (h->virtualtreadmill_updateFTMS(  // uses @objc public func updateFTMS in virtualtreadmill_zwift.swift
-            swiftSpeed,
-            swiftResistance,
-            swiftCadence,
-            swiftInclination,
-            swiftDistance,
-            ((treadmill *)treadMill)->elevationGain().value(),  // Use QZ's calculated elevation gain
-            swiftCalories,
-            swiftSteps,
-            swiftElapsedTimeSeconds,
-            static_cast<uint8_t>(treadMill->deviceType())
-            )) {
-        h->virtualtreadmill_setHeartRate(((treadmill *)treadMill)->currentHeart().value());
-
-        lastSlopeChanged = h->virtualtreadmill_lastChangeCurrentSlope();
-
-        if ((uint64_t)QDateTime::currentSecsSinceEpoch() < lastSlopeChanged + slopeTimeoutSecs)
-            writeP2AD9->changeSlope(h->virtualtreadmill_getCurrentSlope(), 0, 0);
-        
-        // Treat FTMS speed requests as edge-triggered events. A repeated value sent later
-        // must still be honored, but the same request must not be re-applied on every tick.
-        uint64_t speedChanged = h->virtualtreadmill_lastChangeRequestedSpeed();
-        double requestedSpeed = h->virtualtreadmill_getRequestedSpeed();
-        if (speedChanged != 0 && speedChanged != lastSpeedChanged &&
-            requestedSpeed > 0 && requestedSpeed != treadMill->currentSpeed().value()) {
-            lastSpeedChanged = speedChanged;
-            if (treadMill->deviceType() == TREADMILL) {
-                ((treadmill *)treadMill)->changeSpeed(requestedSpeed);
-                qDebug() << "virtualtreadmill: Applied requested speed from FTMS:" << requestedSpeed;
-            }
-        } else if (speedChanged != 0 && speedChanged != lastSpeedChanged) {
-            lastSpeedChanged = speedChanged;
-        }
-        }
-        return;
-    }
-#endif
-#endif
-
     if (leController->state() != QLowEnergyController::ConnectedState) {
         qDebug() << QStringLiteral("virtualtreadmill connection error");
         return;
-    } else {
-        QSettings settings;
-        bool bluetooth_relaxed =
-            settings.value(QZSettings::bluetooth_relaxed, QZSettings::default_bluetooth_relaxed).toBool();
-        if (bluetooth_relaxed) {
-            leController->stopAdvertising();
-        }
     }
 
     QByteArray value;
@@ -698,7 +578,7 @@ void virtualtreadmill::treadmillProvider() {
 
     if (noHeartService == false) {
         value.clear();
-        if (notif2A53->notify(value) == CN_OK) {
+        if (notif2A37->notify(value) == CN_OK) {
             if (!serviceHR) {
                 qDebug() << QStringLiteral("serviceFIT not available");
 
@@ -729,40 +609,11 @@ bool virtualtreadmill::connected() {
     return leController->state() == QLowEnergyController::ConnectedState;
 }
 
-// Setup           |  FTMS Service | FTMS Treadmill Data | FTMS Bike | RSC | Heart
-// -------------------------------------------------------------------------------
-// iOS FTMS        |      X        |          X          |     X     |     |   X
-// iOS RSC         |      X        |                     |     X     |  X  |   X
-// Android<10 FTMS |      X        |          X          |     X     |     |   X
-// Android<10 RSC  |      X        |                     |     X     |  X  |   X
-// Android>9 FTMS  |      X        |          X          |     X     |     |
-// Android>9 RSC   |               |                     |           |  X  |
+bool virtualtreadmill::ftmsServiceEnable() { return true; }
 
-bool virtualtreadmill::ftmsServiceEnable() {
-    QSettings settings;
-    bool cadence = settings.value(QZSettings::run_cadence_sensor, QZSettings::default_run_cadence_sensor).toBool();
-    if (!cadence)
-        return true;
-    if (noHeartService == false)
-        return true;
-    return false;
-}
+bool virtualtreadmill::ftmsTreadmillEnable() { return true; }
 
-bool virtualtreadmill::ftmsTreadmillEnable() {
-    QSettings settings;
-    bool cadence = settings.value(QZSettings::run_cadence_sensor, QZSettings::default_run_cadence_sensor).toBool();
-    if (!cadence)
-        return true;
-    return false;
-}
-
-bool virtualtreadmill::RSCEnable() {
-    QSettings settings;
-    bool cadence = settings.value(QZSettings::run_cadence_sensor, QZSettings::default_run_cadence_sensor).toBool();
-    if (cadence)
-        return true;
-    return false;
-}
+bool virtualtreadmill::RSCEnable() { return false; }
 
 void virtualtreadmill::dirconChangedInclination(double grade, double percentage) {
     Q_UNUSED(grade);

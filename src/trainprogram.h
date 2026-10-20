@@ -7,6 +7,7 @@
 #include <QSet>
 #include <QTime>
 #include <QTimer>
+#include <QUdpSocket>
 
 #ifdef Q_OS_IOS
 #include "ios/lockscreen.h"
@@ -88,7 +89,6 @@ class trainprogram : public QObject {
     static trainprogram *load(const QString &filename, bluetooth *b, QString Extension);
     static QList<trainrow> loadXML(const QString &filename, BLUETOOTH_TYPE device_type);
     static bool saveXML(const QString &filename, const QList<trainrow> &rows, BLUETOOTH_TYPE device_type = UNKNOWN);
-    static bool hasTargetPower(const QString &filename);
     static QString deviceTypeToXmlKey(BLUETOOTH_TYPE type);
     static BLUETOOTH_TYPE deviceTypeFromXmlKey(const QString &key);
     static BLUETOOTH_TYPE xmlDeviceType(const QString &filename, BLUETOOTH_TYPE fallback = UNKNOWN);
@@ -116,7 +116,6 @@ class trainprogram : public QObject {
     int TotalGPXSecs();
     double weightedInclination(int step);
     double medianInclination(int step);
-    bool overridePowerForCurrentRow(double power);
     bool overrideZoneHRForCurrentRow(uint8_t zone);
     bool advanceLapButtonStep();
     static int firstBlockingLapButtonRow(const QList<trainrow> &rows, int currentStep, int candidateStep);
@@ -162,7 +161,6 @@ class trainprogram : public QObject {
     void scheduler();
 
 private slots:
-    void pelotonOCRprocessPendingDatagrams();
 
   signals:
     void start();
@@ -174,7 +172,6 @@ private slots:
     void changeResistance(resistance_t resistance);
     void changeRequestedPelotonResistance(int8_t resistance);
     void changeCadence(int16_t cadence);
-    void changePower(int32_t power);
     void changeSpeedAndInclination(double speed, double inclination);
     void changeGeoPosition(QGeoCoordinate p, double azimuth, double avgAzimuthNext300Meters);
     void changeTimestamp(QTime source, QTime actual);
@@ -211,13 +208,10 @@ private slots:
     QTime lastCurrentStepTime = QTime(0, 0, 0);
     int lastLapButtonToastStep = -1;
     int lastLapButtonToastTick = -30;
-    
+
     int64_t currentTimerJitter = 0;
     QDateTime lastSchedulerCall = QDateTime::currentDateTime();
 
-    QUdpSocket* pelotonOCRsocket = nullptr;
-    void pelotonOCRcomputeTime(QString t);
-    
     AuthToken* zwift_auth_token = nullptr;
     World* zwift_world = nullptr;
     int zwift_player_id = -1;

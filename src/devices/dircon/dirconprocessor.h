@@ -81,7 +81,6 @@ class DirconProcessor : public QObject {
     QMdnsEngine::Provider *mdnsProvider = 0;
     QMdnsEngine::Hostname *mdnsHostname = 0;
     QHash<QTcpSocket *, DirconProcessorClient *> clientsMap;
-    bool rouvy_compatibility = false;
     bool initServer();
     void initAdvertising();
     DirconPacket processPacket(DirconProcessorClient *client, const DirconPacket &pkt);

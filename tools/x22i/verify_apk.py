@@ -53,6 +53,9 @@ def verify_apk(path, no_fan=False, no_purchasing=False):
             checks.append(("Removed ANT and treadmill power code", (
                 "antObject", "antbike", "strydrunpowersensor", "getCurrentWatts",
                 "treadmill_follow_wattage")))
+            checks.append(("Removed equipment, localization and profiles", (
+                "kingsmithr2treadmill", "kineticbike", "domyosbike", "GarminConnect",
+                "WebTranslation", "cryptoKeySettingsProfiles", "profile_open_clicked")))
             if no_fan:
                 checks.append(("Fan support", (
                     "changeFanSpeed", "fanSpeedChanged", "fitmetria_fanfit", "wahookickrheadwind",
@@ -64,7 +67,8 @@ def verify_apk(path, no_fan=False, no_purchasing=False):
                     if any(marker.encode(encoding) in payload for encoding in ("utf-8", "utf-16-le")):
                         errors.append(feature + " remains in the application library: " + marker)
         markers = ["com/dsi/ant/", "org/cagnulen/qdomyoszwift/ChannelService",
-                   "WattsServiceGrpc", "ConstantWattsServiceGrpc", "getCurrentWatts"]
+                   "WattsServiceGrpc", "ConstantWattsServiceGrpc", "getCurrentWatts",
+                   "ResistanceServiceGrpc", "StrokesServiceGrpc", "PaceServiceGrpc", "RpmServiceGrpc"]
         if no_fan:
             markers.extend(("FanStateService", "setFanSpeed", "getCurrentFanSpeed"))
         if no_purchasing:

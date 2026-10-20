@@ -7,7 +7,6 @@
 #include <ostream>
 #include <QDir>
 
-
 #include "fit_date_time.hpp"
 #include "fit_encode.hpp"
 #include "fit_hrv_mesg.hpp"
@@ -33,10 +32,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
                 uint32_t processFlag, FIT_SPORT overrideSport, QString workoutName, QString bluetooth_device_name,
                 QString workoutSource, QString pelotonWorkoutId, QString pelotonUrl, QString trainingProgramFile) {
     QSettings settings;
-    bool strava_virtual_activity =
-        settings.value(QZSettings::strava_virtual_activity, QZSettings::default_strava_virtual_activity).toBool();
-    bool strava_treadmill =
-        settings.value(QZSettings::strava_treadmill, QZSettings::default_strava_treadmill).toBool();
     bool treadmill_force_running_activity =
         settings
             .value(QZSettings::treadmill_force_running_activity,
@@ -72,79 +67,22 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
         return;
     }
 
-    bool fit_file_garmin_device_training_effect = settings.value(QZSettings::fit_file_garmin_device_training_effect, QZSettings::default_fit_file_garmin_device_training_effect).toBool();
-    int fit_file_garmin_device_training_effect_device = settings.value(QZSettings::fit_file_garmin_device_training_effect_device, QZSettings::default_fit_file_garmin_device_training_effect_device).toInt();
-    uint32_t garmin_device_serial = settings.value(QZSettings::garmin_device_serial, QZSettings::default_garmin_device_serial).toUInt();
-    bool is_zwift_device = (fit_file_garmin_device_training_effect_device == 99999);
-    bool is_tacx_device = (fit_file_garmin_device_training_effect_device == 88888);
     fit::FileIdMesg fileIdMesg; // Every FIT file requires a File ID message
     fileIdMesg.SetType(FIT_FILE_ACTIVITY);
-    if(bluetooth_device_name.toUpper().startsWith("DOMYOS") && !is_zwift_device && !is_tacx_device && !fit_file_garmin_device_training_effect)
-        fileIdMesg.SetManufacturer(FIT_MANUFACTURER_DECATHLON);
-    else {
-        if(is_zwift_device)
-            fileIdMesg.SetManufacturer(FIT_MANUFACTURER_ZWIFT);
-        else if(is_tacx_device)
-            fileIdMesg.SetManufacturer(FIT_MANUFACTURER_TACX);
-        else if(fit_file_garmin_device_training_effect)
-            fileIdMesg.SetManufacturer(FIT_MANUFACTURER_GARMIN);
-        else
-            fileIdMesg.SetManufacturer(FIT_MANUFACTURER_DEVELOPMENT);
-    }
-    if(fit_file_garmin_device_training_effect || is_zwift_device || is_tacx_device) {
-        if(is_zwift_device)
-            fileIdMesg.SetProduct(3288);
-        else if(is_tacx_device)
-            fileIdMesg.SetProduct(20533);
-        else
-            fileIdMesg.SetProduct(fit_file_garmin_device_training_effect_device);
-        fileIdMesg.SetSerialNumber(garmin_device_serial);
-    } else {
-        fileIdMesg.SetProduct(1);
-        fileIdMesg.SetSerialNumber(12345);
-    }
+    fileIdMesg.SetManufacturer(FIT_MANUFACTURER_DEVELOPMENT);
+    fileIdMesg.SetProduct(1);
+    fileIdMesg.SetSerialNumber(12345);
     fileIdMesg.SetTimeCreated(session.at(firstRealIndex).time.toSecsSinceEpoch() - 631065600L);
 
-    fit::UserProfileMesg userMesg;
-    userMesg.SetWeight(settings.value(QZSettings::weight, QZSettings::default_weight).toFloat());
-    userMesg.SetAge(settings.value(QZSettings::age, QZSettings::default_age).toUInt());
-    userMesg.SetGender(settings.value(QZSettings::sex, QZSettings::default_sex).toString().startsWith(QZSettings::default_sex) ? FIT_GENDER_MALE
-                                                                                                   : FIT_GENDER_FEMALE);
-    userMesg.SetFriendlyName(
-        settings.value(QZSettings::user_nickname, QZSettings::default_user_nickname).toString().toStdWString());
-
     fit::FileCreatorMesg fileCreatorMesg;
-    if(fit_file_garmin_device_training_effect) {
-        fileCreatorMesg.SetSoftwareVersion(975);
-        fileCreatorMesg.SetHardwareVersion(255);
-    } else {
-        fileCreatorMesg.SetSoftwareVersion(2119);
-    }
+    fileCreatorMesg.SetSoftwareVersion(2119);
 
     fit::DeviceInfoMesg deviceInfoMesg;
     deviceInfoMesg.SetDeviceIndex(FIT_DEVICE_INDEX_CREATOR);
-    if(is_zwift_device) {
-        deviceInfoMesg.SetManufacturer(FIT_MANUFACTURER_ZWIFT);
-        deviceInfoMesg.SetSerialNumber(garmin_device_serial);
-        deviceInfoMesg.SetProduct(3288);
-        deviceInfoMesg.SetSoftwareVersion(21.19);
-    } else if(is_tacx_device) {
-        deviceInfoMesg.SetManufacturer(FIT_MANUFACTURER_TACX);
-        deviceInfoMesg.SetSerialNumber(garmin_device_serial);
-        deviceInfoMesg.SetProduct(20533);
-        deviceInfoMesg.SetSoftwareVersion(1.30);
-    } else if(fit_file_garmin_device_training_effect) {
-        deviceInfoMesg.SetManufacturer(FIT_MANUFACTURER_GARMIN);
-        deviceInfoMesg.SetSerialNumber(garmin_device_serial);
-        deviceInfoMesg.SetProduct(fit_file_garmin_device_training_effect_device);
-        deviceInfoMesg.SetGarminProduct(fit_file_garmin_device_training_effect_device);
-        deviceInfoMesg.SetSoftwareVersion(21.19);
-    } else {
-        deviceInfoMesg.SetManufacturer(FIT_MANUFACTURER_DEVELOPMENT);
-        deviceInfoMesg.SetSerialNumber(12345);
-        deviceInfoMesg.SetProduct(1);
-        deviceInfoMesg.SetSoftwareVersion(21.19);
-    }
+    deviceInfoMesg.SetManufacturer(FIT_MANUFACTURER_DEVELOPMENT);
+    deviceInfoMesg.SetSerialNumber(12345);
+    deviceInfoMesg.SetProduct(1);
+    deviceInfoMesg.SetSoftwareVersion(21.19);
     deviceInfoMesg.SetSourceType(FIT_SOURCE_TYPE_LOCAL);
 
     bool gps_data = false;
@@ -155,9 +93,7 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
     int lap_index = 0;
     double speed_avg = 0;
 
-    // Variables for training load calculation
-    double hr_sum = 0;
-    int hr_count = 0;
+    // Heart-rate summaries.
     uint8_t min_hr = 255;
     uint8_t max_hr = 0;
 
@@ -197,10 +133,7 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
             speed_acc += session.at(i).speed;
         }
 
-        // Collect heart rate data for training load
         if (session.at(i).heart > 0) {
-            hr_sum += session.at(i).heart;
-            hr_count++;
             if (session.at(i).heart < min_hr) {
                 min_hr = session.at(i).heart;
             }
@@ -236,62 +169,8 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
         qDebug() << "average speed from the fit file" << speed_avg;
     }
 
-    // Calculate training load from heart rate
-    float training_load = 0.0f;
-    uint32_t duration_seconds = session.last().elapsedTime;
-
-    // Calculate TRIMP if heart rate data is available
-    if (hr_count > 0) {
-        double avg_hr = hr_sum / hr_count;
-        uint32_t duration_minutes = duration_seconds / 60;
-
-        // Get max HR: use override if enabled, otherwise calculate from age
-        bool max_hr_override_enabled = settings.value(QZSettings::heart_max_override_enable,
-                                                       QZSettings::default_heart_max_override_enable).toBool();
-        uint8_t max_hr;
-        if (max_hr_override_enabled) {
-            max_hr = settings.value(QZSettings::heart_max_override_value,
-                                   QZSettings::default_heart_max_override_value).toUInt();
-        } else {
-            uint8_t user_age = settings.value(QZSettings::age, QZSettings::default_age).toUInt();
-            max_hr = 220 - user_age;
-        }
-
-        // Get resting HR from settings
-        uint8_t resting_hr = settings.value(QZSettings::heart_rate_resting,
-                                            QZSettings::default_heart_rate_resting).toUInt();
-
-        // Bannister's TRIMP formula: D * HR_ratio * exp(b * HR_ratio)
-        // where HR_ratio = (avg_hr - resting_hr) / (max_hr - resting_hr)
-        //
-        // COEFFICIENT SELECTION:
-        // Standard Bannister formula uses b = 1.92 (men) and b = 1.67 (women)
-        // However, Garmin devices (Fenix, etc.) appear to use b ≈ 1.67 for all users
-        // to match Garmin's training load calculations more closely.
-        // We use b = 1.67 for everyone to ensure compatibility with Garmin Connect's
-        // acute training load and training status features.
-        double hr_ratio = 0;
-        if (max_hr > resting_hr) {
-            hr_ratio = (avg_hr - resting_hr) / (double)(max_hr - resting_hr);
-        }
-
-        // Use coefficient 1.67 (matches Garmin implementation)
-        double b = 1.67;
-
-        // Calculate TRIMP
-        if (hr_ratio > 0 && hr_ratio < 2.0) {  // Sanity check
-            training_load = duration_minutes * hr_ratio * std::exp(b * hr_ratio);
-            qDebug() << "Training Load (TRIMP) calculated:" << training_load
-                     << "Duration:" << duration_minutes << "min"
-                     << "Avg HR:" << avg_hr
-                     << "Max HR:" << max_hr << (max_hr_override_enabled ? "(override)" : "(calculated)")
-                     << "Resting HR:" << resting_hr;
-        }
-    }
-
     encode.Open(file);
     encode.Write(fileIdMesg);
-    encode.Write(userMesg);
 
     // Declare developer field descriptions (but don't write them yet)
     fit::FieldDescriptionMesg activityTitle;
@@ -372,17 +251,8 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
     sessionMesg.SetTrigger(FIT_SESSION_TRIGGER_ACTIVITY_END);
     sessionMesg.SetMessageIndex(FIT_MESSAGE_INDEX_RESERVED);
 
-    // Set training load in FIT file
-    // Always set training_load_peak (Garmin uses this for acute training load)
-    // COMMENTED OUT: Garmin Connect doesn't properly reflect these values
-    // Moving to developer data message instead
-    if (training_load > 0) {
-        //sessionMesg.SetTrainingLoadPeak(training_load);
-        qDebug() << "Training load will be stored in developer data:" << training_load;
-    }
-
     const FIT_SPORT treadmill_activity_sport =
-        (speed_avg == 0 || speed_avg > 6.5 || strava_virtual_activity || treadmill_force_running_activity)
+        (speed_avg == 0 || speed_avg > 6.5 || treadmill_force_running_activity)
             ? FIT_SPORT_RUNNING
             : FIT_SPORT_WALKING;
 
@@ -393,23 +263,10 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
 
         sessionMesg.SetSport(treadmill_activity_sport);
 
-        if (strava_virtual_activity) {
-            sessionMesg.SetSubSport(FIT_SUB_SPORT_VIRTUAL_ACTIVITY);
-        } else {
-            if(strava_treadmill)
-                sessionMesg.SetSubSport(FIT_SUB_SPORT_TREADMILL);
-        }
+        sessionMesg.SetSubSport(FIT_SUB_SPORT_TREADMILL);
     } else if (type == ELLIPTICAL) {
-        if (strava_virtual_activity) {
-            if (speed_avg == 0 || speed_avg > 6.5)
-                sessionMesg.SetSport(FIT_SPORT_RUNNING);
-            else
-                sessionMesg.SetSport(FIT_SPORT_WALKING);
-            sessionMesg.SetSubSport(FIT_SUB_SPORT_VIRTUAL_ACTIVITY);
-        } else {
-            sessionMesg.SetSport(FIT_SPORT_FITNESS_EQUIPMENT);
-            sessionMesg.SetSubSport(FIT_SUB_SPORT_ELLIPTICAL);
-        }
+        sessionMesg.SetSport(FIT_SPORT_FITNESS_EQUIPMENT);
+        sessionMesg.SetSubSport(FIT_SUB_SPORT_ELLIPTICAL);
     } else if (type == ROWING) {
 
         sessionMesg.SetSport(FIT_SPORT_ROWING);
@@ -444,9 +301,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
     } else {
 
         sessionMesg.SetSport(FIT_SPORT_CYCLING);
-        if (strava_virtual_activity) {
-            sessionMesg.SetSubSport(FIT_SUB_SPORT_VIRTUAL_ACTIVITY);
-        }
     }
 
     // Then, override the sport if requested (keeping the subsport from above)
@@ -623,7 +477,7 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
     encode.Write(fileCreatorMesg);
     encode.Write(devIdMesg);
     encode.Write(coreDevIdMesg);
-    
+
     // Write developer field descriptions (declared earlier)
     encode.Write(activityTitle);
     encode.Write(targetCadenceMesg);
@@ -954,7 +808,6 @@ void qfit::save(const QString &filename, QList<SessionLine> session, BLUETOOTH_T
 }
 
 class Listener : public fit::FileIdMesgListener,
-                 public fit::UserProfileMesgListener,
                  public fit::MonitoringMesgListener,
                  public fit::DeviceInfoMesgListener,
                  public fit::MesgListener,
@@ -1067,20 +920,6 @@ class Listener : public fit::FileIdMesgListener,
             printf("   Number: %d\n", mesg.GetNumber());
     }
 
-    void OnMesg(fit::UserProfileMesg &mesg) {
-        printf("User profile:\n");
-        if (mesg.IsFriendlyNameValid())
-            // std::wcout << L"   Friendly Name: " << mesg.GetFriendlyName().c_str() << L"\n";
-            if (mesg.GetGender() == FIT_GENDER_MALE)
-                printf("   Gender: Male\n");
-        if (mesg.GetGender() == FIT_GENDER_FEMALE)
-            printf("   Gender: Female\n");
-        if (mesg.IsAgeValid())
-            printf("   Age [years]: %d\n", mesg.GetAge());
-        if (mesg.IsWeightValid())
-            printf("   Weight [kg]: %0.2f\n", mesg.GetWeight());
-    }
-
     void OnMesg(fit::DeviceInfoMesg &mesg) {
         printf("Device info:\n");
 
@@ -1119,7 +958,6 @@ class Listener : public fit::FileIdMesgListener,
         if (mesg.IsActivityTypeValid()) {
             printf("   Activity type: %d\n", mesg.GetActivityType());
         }
-
 
         switch (mesg.GetActivityType()) // The Cycling field is dynamic
         {
@@ -1227,13 +1065,13 @@ class Listener : public fit::FileIdMesgListener,
 
     void OnMesg(fit::SessionMesg &mesg) override {
         printf("Session Message:\n");
-        
+
         // Extract sport type from SessionMesg
         if (sport != nullptr && mesg.IsSportValid()) {
             *sport = mesg.GetSport();
             printf("   Sport type from session: %d\n", static_cast<int>(*sport));
         }
-        
+
         if (workoutName != nullptr) {
             for (auto devField : mesg.GetDeveloperFields()) {
                 std::string fieldName = devField.GetName();
@@ -1278,8 +1116,7 @@ void qfit::open(const QString &filename, QList<SessionLine> *output, FIT_SPORT *
     open(filename, output, sport, workoutName, nullptr, nullptr, nullptr, nullptr);
 }
 
-
-void qfit::open(const QString &filename, QList<SessionLine> *output, FIT_SPORT *sport, QString *workoutName, 
+void qfit::open(const QString &filename, QList<SessionLine> *output, FIT_SPORT *sport, QString *workoutName,
                 QString *workoutSource, QString *pelotonWorkoutId, QString *pelotonUrl, QString *trainingProgramFile) {
     std::fstream file;
 #ifdef _WIN32
@@ -1307,7 +1144,6 @@ void qfit::open(const QString &filename, QList<SessionLine> *output, FIT_SPORT *
     listener.pelotonUrl = pelotonUrl;
     listener.trainingProgramFile = trainingProgramFile;
     mesgBroadcaster.AddListener((fit::FileIdMesgListener &)listener);
-    mesgBroadcaster.AddListener((fit::UserProfileMesgListener &)listener);
     mesgBroadcaster.AddListener((fit::MonitoringMesgListener &)listener);
     mesgBroadcaster.AddListener((fit::DeviceInfoMesgListener &)listener);
     mesgBroadcaster.AddListener((fit::RecordMesgListener &)listener);

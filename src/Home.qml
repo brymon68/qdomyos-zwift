@@ -3,7 +3,6 @@ import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.12
 import QtGraphicalEffects 1.12
 import QtQuick.Window 2.12
-import Qt.labs.settings 1.0
 import Qt.labs.platform 1.1
 import QtMultimedia 5.15
 
@@ -13,7 +12,7 @@ HomeForm {
         anchors.fill: parent
         width: parent.fill
         height: parent.fill
-        color: settings.theme_background_color
+        color: "#303030"
 
         // VoiceOver accessibility - ignore decorative background
         Accessible.role: Accessible.Pane
@@ -22,24 +21,9 @@ HomeForm {
     signal start_clicked;
     signal stop_clicked;
     signal lap_clicked;
-    signal peloton_start_workout;
-    signal peloton_abort_workout;
     signal plus_clicked(string name)
     signal minus_clicked(string name)
     signal largeButton_clicked(string name)
-
-    Settings {
-        id: settings
-        property real ui_zoom: 100.0
-        property bool theme_tile_icon_enabled: true
-        property string theme_tile_background_color: "#303030"
-        property string theme_background_color: "#303030"
-        property bool theme_tile_shadow_enabled: true
-        property string theme_tile_shadow_color: "#9C27B0"
-        property int theme_tile_secondline_textsize: 12
-        property bool skipLocationServicesDialog: false
-        property bool trainprogram_sound_on_segment: false
-    }
 
     SoundEffect {
         id: trainingProgramSegmentSound
@@ -50,16 +34,6 @@ HomeForm {
     Connections {
         target: rootItem
         onTrainingProgramIntervalSoundRequested: trainingProgramSegmentSound.play()
-    }
-
-    MessageDialog {
-        id: messagePelotonAskStart
-        text: qsTr("Peloton Workout in progress")
-        informativeText: qsTr("Do you want to follow the resistance? ") + rootItem.pelotonProvider
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: {rootItem.pelotonAskStart = false; peloton_start_workout();}
-        onNoClicked: {rootItem.pelotonAskStart = false; peloton_abort_workout();}
-        visible: rootItem.pelotonAskStart
     }
 
     Popup {
@@ -115,49 +89,6 @@ HomeForm {
         onTriggered: {if(rootItem.stopRequested) {rootItem.stopRequested = false; inner_stop(); }}
     }
 
-    property bool locationServiceRequsted: false
-
-    MessageDialog {
-        id: locationServicesDialog
-        text: qsTr("Permissions Required")
-        informativeText: qsTr("QZ requires both Bluetooth and Location Services to be enabled.\nLocation Services are necessary on Android to allow the app to find Bluetooth devices.\nThe GPS will not be used.\n\nWould you like to enable them?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: {
-            locationServiceRequsted = true
-            rootItem.enableLocationServices()
-        }
-        onNoClicked: remindLocationServicesDialog.visible = true
-        visible: !rootItem.locationServices() && !locationServiceRequsted && !settings.skipLocationServicesDialog
-    }
-
-    MessageDialog {
-        id: remindLocationServicesDialog
-        text: qsTr("Reminder Preference")
-        informativeText: qsTr("Would you like to be reminded about enabling Location Services next time?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: settings.skipLocationServicesDialog = false
-        onNoClicked: settings.skipLocationServicesDialog = true
-        visible: false
-    }
-
-    MessageDialog {
-        text: qsTr("Restart the app")
-        informativeText: qsTr("To apply the changes, you need to restart the app.\nWould you like to do that now?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: Qt.callLater(Qt.quit)
-        onNoClicked: this.visible = false;
-        visible: locationServiceRequsted
-    }
-
-    Timer {
-        interval: 200; running: true; repeat: false
-        onTriggered: {
-            if(rootItem.firstRun()) {
-                stackView.push("Wizard.qml")
-            }
-        }
-    }
-
     function inner_stop() {
         stop_clicked();
         rootItem.save_screenshot();
@@ -194,15 +125,15 @@ HomeForm {
     GridView {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.fill: parent
-        cellWidth: 175 * settings.ui_zoom / 100
-        cellHeight: 130 * settings.ui_zoom / 100
+        cellWidth: 175
+        cellHeight: 130
         focus: true
         model: appModel
         leftMargin: { if(OS_VERSION === "Android") (Screen.width % cellWidth) / 2; else (parent.width % cellWidth) / 2; }
-        anchors.topMargin: (!window.lockTiles ? rootItem.topBarHeight + 30 : 0)
+        anchors.topMargin: rootItem.topBarHeight + 30
         id: gridView
         objectName: "gridview"
-        onMovementEnded: { headerToolbar.visible = (contentY == 0) || window.lockTiles; }
+        onMovementEnded: { headerToolbar.visible = (contentY == 0); }
         Screen.orientationUpdateMask:  Qt.LandscapeOrientation | Qt.PortraitOrientation
         Screen.onPrimaryOrientationChanged:{
             if(OS_VERSION === "Android")
@@ -215,8 +146,8 @@ HomeForm {
 
         delegate: Item {
             id: id1
-            width: 170 * settings.ui_zoom / 100
-            height: 125 * settings.ui_zoom / 100
+            width: 170
+            height: 125
 
             visible: visibleItem
             Component.onCompleted: console.log("completed " + objectName)
@@ -228,37 +159,20 @@ HomeForm {
             Accessible.focusable: true
 
             Behavior on x {
-                enabled: id1.state != "active"
                 NumberAnimation { duration: 400; easing.type: Easing.OutBack }
             }
 
             Behavior on y {
-                enabled: id1.state != "active"
                 NumberAnimation { duration: 400; easing.type: Easing.OutBack }
             }
 
-            SequentialAnimation on rotation {
-                NumberAnimation { to:  2; duration: 60 }
-                NumberAnimation { to: -2; duration: 120 }
-                NumberAnimation { to:  0; duration: 60 }
-                running: loc.currentId !== -1 && id1.state !== "active" && window.lockTiles
-                loops: Animation.Infinite; alwaysRunToEnd: true
-            }
-
-            states: State {
-                name: "active"; when: loc.currentId === gridId && window.lockTiles
-                PropertyChanges { target: id1; x: loc.mouseX - gridView.x - width/2; y: loc.mouseY - gridView.y - height/2; scale: 0.5; z: 10 }
-            }
-
-            transitions: Transition { NumberAnimation { property: "scale"; duration: 200} }
-
             Rectangle {
-                width: 168 * settings.ui_zoom / 100
-                height: 123 * settings.ui_zoom / 100
+                width: 168
+                height: 123
                 radius: 3
                 border.width: 1
-                border.color: (settings.theme_tile_shadow_enabled ? settings.theme_tile_shadow_color : settings.theme_tile_background_color)
-                color: settings.theme_tile_background_color
+                border.color: "#9C27B0"
+                color: "#303030"
                 id: rect
 
                 // Ignore for VoiceOver - decorative background only
@@ -266,21 +180,21 @@ HomeForm {
             }
 
             DropShadow {
-                visible: settings.theme_tile_shadow_enabled
+                visible: true
                 anchors.fill: rect
                 cached: true
                 horizontalOffset: 3
                 verticalOffset: 3
                 radius: 8.0
                 samples: 16
-                color: settings.theme_tile_shadow_color
+                color: "#9C27B0"
                 source: rect
             }
 
             Timer {
                 id: toggleIconTimer
                 interval: 500; running: true; repeat: true
-                onTriggered: { if(identificator === "inclination" && rootItem.autoInclinationEnabled()) myIcon.visible = !myIcon.visible; else myIcon.visible = settings.theme_tile_icon_enabled && !largeButton; }
+                onTriggered: { if(identificator === "inclination" && rootItem.autoInclinationEnabled()) myIcon.visible = !myIcon.visible; else myIcon.visible = !largeButton; }
             }
 
             Image {
@@ -289,10 +203,10 @@ HomeForm {
                 anchors {
                          bottom: id1.bottom
                 }
-                width: 48 * settings.ui_zoom / 100
-                height: 48 * settings.ui_zoom / 100
+                width: 48
+                height: 48
                 source: icon
-                visible: settings.theme_tile_icon_enabled && !largeButton
+                visible: !largeButton
 
                 // Ignore for VoiceOver - decorative only
                 Accessible.ignored: true
@@ -307,9 +221,9 @@ HomeForm {
                 }
                 text: value
                 horizontalAlignment: Text.AlignHCenter
-                width: Math.max(50, parent.width - (writable ? 100 * settings.ui_zoom / 100 : 12 * settings.ui_zoom / 100))
-                height: 58 * settings.ui_zoom / 100
-                font.pointSize: valueFontSize * settings.ui_zoom / 100
+                width: Math.max(50, parent.width - (writable ? 100 : 12))
+                height: 58
+                font.pointSize: valueFontSize
                 fontSizeMode: Text.Fit
                 minimumPointSize: 10
                 font.bold: true
@@ -329,9 +243,9 @@ HomeForm {
                 }
                 text: secondLine
                 horizontalAlignment: Text.AlignHCenter
-                width: Math.max(50, parent.width - 12 * settings.ui_zoom / 100)
-                height: 24 * settings.ui_zoom / 100
-                font.pointSize: settings.theme_tile_secondline_textsize * settings.ui_zoom / 100
+                width: Math.max(50, parent.width - 12)
+                height: 24
+                font.pointSize: 12
                 fontSizeMode: Text.Fit
                 minimumPointSize: 7
                 font.bold: false
@@ -344,8 +258,8 @@ HomeForm {
                 id: myText
                 anchors {
                     top: myIcon.top
-                    horizontalCenter: settings.theme_tile_icon_enabled ? undefined : parent.horizontalCenter
-                    left: settings.theme_tile_icon_enabled ? parent.left : undefined
+                    horizontalCenter: undefined
+                    left: parent.left
                 }
                 font.bold: true
                 font.pointSize: labelFontSize
@@ -353,11 +267,11 @@ HomeForm {
                 minimumPointSize: 8
                 color: "white"
                 text: name
-                horizontalAlignment: settings.theme_tile_icon_enabled ? Text.AlignLeft : Text.AlignHCenter
-                anchors.leftMargin: settings.theme_tile_icon_enabled ? 55 * settings.ui_zoom / 100 : 0
-                width: Math.max(40, parent.width - (settings.theme_tile_icon_enabled ? 61 : 12) * settings.ui_zoom / 100)
-                height: 40 * settings.ui_zoom / 100
-                anchors.topMargin: 20 * settings.ui_zoom / 100
+                horizontalAlignment: Text.AlignLeft
+                anchors.leftMargin: 55
+                width: Math.max(40, parent.width - 61)
+                height: 40
+                anchors.topMargin: 20
                 visible: !largeButton
 
                 // Ignore for VoiceOver - parent Item handles accessibility
@@ -372,8 +286,8 @@ HomeForm {
                 anchors.top: myValue.top
                 anchors.left: parent.left
                 anchors.leftMargin: 2
-                width: 48 * settings.ui_zoom / 100
-                height: 48 * settings.ui_zoom / 100
+                width: 48
+                height: 48
 
                 // VoiceOver accessibility
                 Accessible.role: Accessible.Button
@@ -391,8 +305,8 @@ HomeForm {
                 anchors.top: myValue.top
                 anchors.right: parent.right
                 anchors.rightMargin: 2
-                width: 48 * settings.ui_zoom / 100
-                height: 48 * settings.ui_zoom / 100
+                width: 48
+                height: 48
 
                 // VoiceOver accessibility
                 Accessible.role: Accessible.Button
@@ -412,7 +326,7 @@ HomeForm {
                           color: largeButtonColor
                             radius: 20
                             }
-                font.pointSize: 20 * settings.ui_zoom / 100
+                font.pointSize: 20
 
                 // VoiceOver accessibility
                 Accessible.role: Accessible.Button
@@ -537,27 +451,4 @@ HomeForm {
         }
     }
 
-    MouseArea {
-        property int currentId: -1 // Original position in model
-        property int newIndex // Current Position in model
-        property int index:  (Math.floor(gridView.width / gridView.cellWidth) * Math.floor(mouseY / gridView.cellHeight)) + Math.floor(mouseX / gridView.cellWidth)  //  gridView.indexAt(mouseX - gridView.x, mouseY - gridView.y) // Item underneath cursor
-
-        id: loc
-        enabled: window.lockTiles
-        anchors.fill: parent
-        onPressAndHold: { console.log("onPressAndHold " + index); if(index !== -1) currentId = appModel[newIndex = index].gridId; else currentId = -1; }
-        onReleased: {
-            console.log("onReleased " + currentId + " " + index );
-            if (currentId !== -1 && index !== -1 && index !== newIndex) {
-                rootItem.moveTile(appModel[currentId].name, index, newIndex);
-            } currentId = -1
-        }
-
-        onPositionChanged: {
-            console.log("onPositionChanged " + currentId + " " + index + " " + newIndex + " " + mouseX + " " + mouseY)
-            if (currentId !== -1 && index !== -1 && index !== newIndex) {
-                //appModel.move(newIndex, newIndex = index)
-            }
-        }
-    }
 }

@@ -6,11 +6,14 @@ The source was aligned with the already tested NordicTrack gRPC revision `8b78e9
 
 ## Current scope
 
-- Fan UI/settings, shortcuts, automatic rules, workout fields, MQTT/OSC/template commands, generic API, three external drivers, and fan-only JNI/Java/protobuf operations are deleted. Eight unique settings were removed; the catalog covers all 961 remaining QML settings and C++ has 967 settings. Existing obsolete saved keys can remain inert. Shared key-code enum values and the icon reused by heat-zone tiles are retained.
-- Purchasing UI, store/product objects, native and Android purchasing classes, billing dependency, and billing permission are deleted.
-- Zwift authentication and terrain polling, local iFIT gRPC, required TLS/protobuf assets, incline calibration and limits, manual controls, Bluetooth, DIRCON, and the missing-key settings preset are retained.
+- Only the X22i equipment driver is built or present under the equipment directories. DIRCON remains as a Zwift transport. Bike, rower, elliptical, other treadmill and accessory drivers, discovery/factory selection, and their tests are deleted.
+- The app connects directly to local iFIT at `127.0.0.1`. The dashboard shows speed, incline, pace, distance, elapsed time and heart rate, with Start/Pause/Stop and manual speed/incline controls.
+- UI settings are limited to 56 X22i connection, Zwift terrain, motion and calibration keys. General settings, user profiles, personal measurements, tile customization, fitness account integrations and email uploads are deleted. Local FIT/GPX files and workout editing remain.
+- Locale is fixed to US English. Translation catalogs, translator loading, web translation service, language resources and translation maintenance jobs are deleted.
+- Licensing enforcement, purchasing, fan features, ANT+, power measurement, FTP/energy calculations and related dependencies are deleted. GPL licensing and attribution remain.
+- Zwift authentication and terrain polling, local iFIT gRPC, TLS/protobuf assets, incline calibration and limits, manual controls, Bluetooth and DIRCON remain. Existing saved settings are preserved; obsolete keys are inert.
 
-Broader equipment/integration pruning, package renaming, and dashboard simplification remain in [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). This increment does not claim an X22i-only dependency graph.
+Package renaming and physical console validation remain in [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1).
 
 ## Build from this fork
 
@@ -64,7 +67,7 @@ docker run --rm --platform linux/amd64 \
   x22i-toolchain
 ```
 
-Initialize submodules and commit changes in the mounted fork first. `/LOCAL/BUILD-PARENT/output` must not exist; artifacts appear under `output/artifacts`. The source mount is writable for generated translation files, which Git ignores. The Docker image and containerized APK path have not been runtime-validated; the native workstation build is the locally verified path.
+Initialize submodules and commit changes in the mounted fork first. `/LOCAL/BUILD-PARENT/output` must not exist; artifacts appear under `output/artifacts`. The Docker image and containerized APK path have not been runtime-validated; the native workstation build is the locally verified path.
 
 ## Artifacts and verification
 
@@ -76,11 +79,11 @@ ANT+ drivers, services, SDKs, and controls have been deleted. The X22i no longer
 
 ## Settings and installation
 
-[`src/x22i_defaults.h`](../src/x22i_defaults.h) supplies 67 reviewed nonsecret settings in test builds before normal settings reads and QML startup. It only writes missing keys. Saved custom values, explicit false/zero/empty values, and private credentials take precedence. It preserves miles, local iFIT, Bluetooth/DIRCON, Zwift auto-incline, gain/calibration, the 0.5% incline step, three-second delay, bounds, and the 31-entry incline lookup table. Reset Settings still uses the inherited defaults.
+[`src/x22i_defaults.h`](../src/x22i_defaults.h) supplies 57 reviewed nonsecret settings in test builds before normal settings reads and QML startup. It only writes missing keys. Saved custom values, explicit false/zero/empty values, and private credentials take precedence. It preserves miles, local iFIT, Bluetooth/DIRCON, Zwift auto-incline, gain/calibration, the 0.5% incline step, three-second delay, bounds, and the 31-entry incline lookup table. The general Reset Settings and profile import/export actions are removed.
 
-Upgrade X22i Test with the same package and persistent signer. Do not uninstall to work around an update failure or rotate the signing key casually. Fresh installs need private Zwift authentication; credentials and the profile encryption key are never bundled.
+Upgrade X22i Test with the same package and persistent signer. Do not uninstall to work around an update failure or rotate the signing key casually. Fresh installs need private Zwift authentication; credentials are never bundled.
 
-For migration, preserve the complete native QSettings configuration, including its encryption key. A `.qzs` profile export is insufficient: it omits that key and its import skips `peloton_refreshtoken`. Use [`verify_settings.py`](../tools/x22i/verify_settings.py) privately to compare source and candidate configurations before launch; all original settings must be present and unchanged. Startup bookkeeping changes must be reviewed separately. Keep backups, raw configuration, device addresses, and unrestricted startup logs outside Git and artifact uploads.
+For migration, preserve the complete native QSettings configuration. Use [`verify_settings.py`](../tools/x22i/verify_settings.py) privately to compare source and candidate configurations before launch; all original settings must be present and unchanged, including obsolete keys. Startup bookkeeping changes must be reviewed separately. Keep backups, raw configuration, device addresses, and unrestricted startup logs outside Git and artifact uploads.
 
 Before a later installation or launch, obtain current confirmation that the owner is present and the belt is stopped. Back up the installed APK/configuration, verify the candidate's signer and actual data directories, and run only one QZ app. Both packages use the same fitness connection, and shared `Documents/QZ` storage may be selected by configuration. A package rename requires explicit migration; it is not included here.
 
@@ -100,4 +103,4 @@ The prior patch-based stripped build at recipe `a807b591fd2d12844e11da97c657d0d7
 
 Automatic incline remains Zwift authentication/polling and decode → grade gain/offset → `treadmill::changeInclination()` → NordicTrack update → JNI → `InclineService.SetIncline`. The treadmill step applies configured bounds, correction, difficulty, and rounding. Required gRPC 1.63.0/protobuf-lite 3.25.3 generation and shared TLS/session assets remain. No automatic speed or negative-incline behavior was added.
 
-Existing control limitations remain: C++ converts an absolute target to a delta and Java later adds it to its current metric; blocking RPCs share an executor without deadlines; stale metrics and queued commands lack freshness expiry; and initialization/command acknowledgments are incomplete. Legacy UDP/ADB handling remains. These are follow-up concerns, not fixes claimed by this removal. Hardware checks of downhill clamping, stop/pause, restart/reconnect, and the active Mac transport remain separate from build verification.
+Existing control limitations remain: C++ converts an absolute target to a delta and Java later adds it to its current metric; blocking RPCs share an executor without deadlines; stale metrics and queued commands lack freshness expiry; and initialization/command acknowledgments are incomplete. Legacy UDP/ADB equipment handling has been removed. These are follow-up concerns, not fixes claimed by this removal. Hardware checks of downhill clamping, stop/pause, restart/reconnect, and the active Mac transport remain separate from build verification.

@@ -4,7 +4,6 @@
 #include <QString>
 #include <QSettings>
 #include <QCoreApplication>
-#include "Devices/devicediscoveryinfo.h"
 
 /**
  * @brief The TestSettings class stores a QSettings object with what is intended to be a unique
@@ -51,12 +50,6 @@ public:
      */
     void deactivate();
 
-    /**
-     * @brief Loads the QSettings from the specified object.
-     * @param info The values to configure.
-     * @param clear Specifies whether to clear the settings first.
-     */
-    void loadFrom(const DeviceDiscoveryInfo& info, bool clear=true);
 };
 
 #endif // TESTSETTINGS_H

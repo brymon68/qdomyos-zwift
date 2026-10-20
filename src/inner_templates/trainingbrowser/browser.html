@@ -279,7 +279,6 @@
     </style>
     <script src="../chartjs/resize-observer.min.js"></script>
     <script src="../chartjs/chartjs.3.4.1.min.js"></script>
-    <script src="../i18n/i18n.js"></script>
     <script src="../workouteditor/workout-editor.js"></script>
 </head>
 <body>
@@ -287,8 +286,8 @@
         <!-- Left Panel: File Browser -->
         <div class="left-panel">
             <div class="filter-row">
-                <label data-i18n="trainingBrowser.filter">Filter:</label>
-                <input type="text" id="filterInput" placeholder="Search..." data-i18n-placeholder="trainingBrowser.searchPlaceholder">
+                <label>Filter:</label>
+                <input type="text" id="filterInput" placeholder="Search...">
                 <button id="backButton">←</button>
             </div>
             <div class="file-list" id="fileList">
@@ -299,7 +298,7 @@
         <!-- Right Panel: Preview -->
         <div class="right-panel">
             <div class="workout-info">
-                <div class="workout-title" id="workoutTitle" data-i18n="trainingBrowser.selectWorkoutPreview">Select a workout to preview</div>
+                <div class="workout-title" id="workoutTitle">Select a workout to preview</div>
                 <div class="workout-tags" id="workoutTags"></div>
             </div>
             <div id="chart-container">
@@ -311,17 +310,17 @@
 
     <!-- Bottom Bar -->
     <div class="bottom-bar">
-        <button id="otherFoldersBtn" data-i18n="trainingBrowser.otherFolders">Other Folders</button>
+        <button id="otherFoldersBtn">Other Folders</button>
     </div>
 
     <!-- Auto-start Modal Dialog -->
     <div class="modal" id="autoStartModal">
         <div class="modal-content">
-            <div class="modal-title" data-i18n="trainingBrowser.startWorkoutQuestion">Start Workout?</div>
-            <div class="modal-text" data-i18n="trainingBrowser.autoStartQuestion">Do you want to automatically start this workout?</div>
+            <div class="modal-title">Start Workout?</div>
+            <div class="modal-text">Do you want to automatically start this workout?</div>
             <div class="modal-buttons">
-                <button class="btn-yes" id="btnYes" data-i18n="common.yes">Yes</button>
-                <button class="btn-no" id="btnNo" data-i18n="common.no">No</button>
+                <button class="btn-yes" id="btnYes">Yes</button>
+                <button class="btn-no" id="btnNo">No</button>
             </div>
         </div>
     </div>
@@ -336,9 +335,7 @@
         let ws = null;
         let currentWorkoutPreview = null;
 
-        function tq(key, fallback) {
-            return window.qzTranslate ? window.qzTranslate(key, fallback) : fallback;
-        }
+
 
         // Check if running in Qt WebView (offline mode)
         window.QZ_OFFLINE = false;
@@ -352,19 +349,19 @@
         // Keys match the field names sent by the backend in the preview payload.
         var SERIES_DEFS = {
             treadmill: [
-                { key: 'speed',       labelKey: 'workoutEditor.speed',       label: 'Speed',       color: '#42a5f5', unit: 'km/h', axis: 'speedAxis',      axisLabelKey: 'workoutEditor.speedKmh',      axisLabel: 'Speed (km/h)',  axisPosition: 'left',  fill: true  },
-                { key: 'inclination', labelKey: 'workoutEditor.incline',     label: 'Incline',     color: '#26c6da', unit: '%',    axis: 'inclineAxis',    axisLabelKey: 'workoutEditor.inclinePercent', axisLabel: 'Incline (%)',   axisPosition: 'right', fill: false }
+                { key: 'speed',       label: 'Speed',       color: '#42a5f5', unit: 'km/h', axis: 'speedAxis',      axisLabel: 'Speed (km/h)',  axisPosition: 'left',  fill: true  },
+                { key: 'inclination', label: 'Incline',     color: '#26c6da', unit: '%',    axis: 'inclineAxis',    axisLabel: 'Incline (%)',   axisPosition: 'right', fill: false }
             ],
             bike: [
-                { key: 'resistance', labelKey: 'workoutEditor.resistance', label: 'Resistance',  color: '#ab47bc', unit: 'lvl',  axis: 'resistanceAxis', axisLabelKey: 'workoutEditor.resistance', axisLabel: 'Resistance',    axisPosition: 'right', fill: false },
-                { key: 'cadence',    labelKey: 'workoutEditor.cadence',    label: 'Cadence',     color: '#29b6f6', unit: 'rpm',  axis: 'cadenceAxis',    axisLabelKey: 'workoutEditor.cadenceRpm',  axisLabel: 'Cadence (rpm)', axisPosition: 'right', fill: false }
+                { key: 'resistance', label: 'Resistance',  color: '#ab47bc', unit: 'lvl',  axis: 'resistanceAxis', axisLabel: 'Resistance',    axisPosition: 'right', fill: false },
+                { key: 'cadence',    label: 'Cadence',     color: '#29b6f6', unit: 'rpm',  axis: 'cadenceAxis',    axisLabel: 'Cadence (rpm)', axisPosition: 'right', fill: false }
             ],
             elliptical: [
-                { key: 'resistance', labelKey: 'workoutEditor.resistance', label: 'Resistance',  color: '#7e57c2', unit: 'lvl',  axis: 'resistanceAxis', axisLabelKey: 'workoutEditor.resistance', axisLabel: 'Resistance',    axisPosition: 'left',  fill: true  },
-                { key: 'inclination', labelKey: 'workoutEditor.ramp',       label: 'Ramp',       color: '#66bb6a', unit: '%',    axis: 'inclineAxis',    axisLabelKey: 'workoutEditor.rampPercent', axisLabel: 'Ramp (%)',      axisPosition: 'right', fill: false }
+                { key: 'resistance', label: 'Resistance',  color: '#7e57c2', unit: 'lvl',  axis: 'resistanceAxis', axisLabel: 'Resistance',    axisPosition: 'left',  fill: true  },
+                { key: 'inclination', label: 'Ramp',       color: '#66bb6a', unit: '%',    axis: 'inclineAxis',    axisLabel: 'Ramp (%)',      axisPosition: 'right', fill: false }
             ],
             rower: [
-                { key: 'cadence', labelKey: 'workoutEditor.strokeRate', label: 'Stroke Rate', color: '#26a69a', unit: 'spm', axis: 'cadenceAxis',  axisLabelKey: 'workoutEditor.strokesPerMinute', axisLabel: 'Strokes/min',   axisPosition: 'right', fill: false }
+                { key: 'cadence', label: 'Stroke Rate', color: '#26a69a', unit: 'spm', axis: 'cadenceAxis',  axisLabel: 'Strokes/min',   axisPosition: 'right', fill: false }
             ]
         };
 
@@ -396,7 +393,6 @@
 
             ws.onopen = function() {
                 console.log('WebSocket connected');
-                sendMessage('webtranslations', {});
                 loadTrainingFolder('');
             };
 
@@ -448,9 +444,6 @@
             } else if (msgType === 'workoutpreview' || msgType === 'R_trainprogram_preview') {
                 const content = data.content || data;
                 handleWorkoutPreview(content);
-            } else if (msgType === 'R_webtranslations') {
-                window.qzSetTranslations(data.content || {});
-                updateWorkoutChartFromCurrent();
             }
         }
 
@@ -534,7 +527,7 @@
             currentWorkoutPreview = workout;
 
             // Update title and tags
-            document.getElementById('workoutTitle').textContent = workout.description || tq('workoutEditor.workoutPreview', 'Workout Preview');
+            document.getElementById('workoutTitle').textContent = workout.description || ('Workout Preview');
             document.getElementById('workoutTags').textContent = workout.tags || '';
 
             // Build normalised payload
@@ -592,11 +585,11 @@
                 if (points.length > 0) {
                     series.push({
                         key: def.key,
-                        label: tq(def.labelKey, def.label),
+                        label: (def.label),
                         color: def.color,
                         unit: def.unit,
                         axis: def.axis,
-                        axisLabel: tq(def.axisLabelKey, def.axisLabel),
+                        axisLabel: (def.axisLabel),
                         axisPosition: def.axisPosition,
                         fill: def.fill,
                         points: points

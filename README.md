@@ -2,7 +2,7 @@
 
 An Android fork of [QDomyos-Zwift](https://github.com/cagnulein/qdomyos-zwift) for a NordicTrack X22i console, with Zwift running on a Mac. It reads treadmill telemetry through the local iFIT gRPC service and preserves automatic incline following Zwift terrain. iFIT remains required.
 
-The application source lives in this repository's `src/`. The Android build compiles this checkout directly. Further device/integration pruning, a smaller dashboard, and a new package namespace remain work in [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1).
+The application source lives in this repository's `src/`. The Android build compiles this checkout directly. The app connects only to the X22i, uses US English, and shows speed, incline, pace, distance, elapsed time, and heart rate. Other equipment drivers, localization catalogs, user profiles, ANT+, power measurement, and cloud fitness accounts are removed. Zwift authentication remains for terrain incline. Package renaming and console validation remain in [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1).
 
 ## Build
 
@@ -20,7 +20,7 @@ Builds require committed source and produce an APK plus commit, checksum, manife
 
 The current app is **X22i Test**, package `org.cagnulen.qdomyoszwift.x22ibaseline`. Update it in place with the same signing key to preserve its configuration. Do not uninstall to resolve an update failure.
 
-The app supplies missing nonsecret X22i settings, including `localhost`, miles, and the accepted incline calibration. Existing saved values take precedence. A fresh install still needs private Zwift authentication. Preserve both Bluetooth and DIRCON until the active Mac connection is established. If speed connects but incline does not follow terrain, verify the saved Zwift authentication and auto-incline configuration first.
+The app supplies missing nonsecret X22i settings, including miles and the accepted incline calibration. The treadmill connection uses local iFIT at `127.0.0.1`. Existing saved values take precedence. A fresh install still needs private Zwift authentication. Preserve both Bluetooth and DIRCON until the active Mac connection is established. If speed connects but incline does not follow terrain, verify the saved Zwift authentication and auto-incline configuration first.
 
 Keep credentials and configuration backups outside Git and build artifacts. The build never installs or launches the app.
 

@@ -8,10 +8,6 @@ Item {
 
     property alias heartSeries: heartSeries
     property alias heartChart: heartChart
-    property alias cadenceSeries: cadenceSeries
-    property alias resistanceSeries: resistanceSeries
-    property alias pelotonResistanceSeries: pelotonResistanceSeries
-    property alias cadenceChart: cadenceChart
 
 
     Row {
@@ -38,16 +34,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }
-        Text {
-            anchors.top: title.bottom
-            id: instructor
-            text: rootItem.instructorName
-            font.pixelSize: 18
-            color: "white"
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
+
 
 
         ScrollView {
@@ -55,9 +42,9 @@ Item {
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: instructor.bottom
+            anchors.top: title.bottom
             anchors.bottom: parent.bottom
-            contentHeight: heartChart.height+cadenceChart.height
+            contentHeight: heartChart.height
 
 
             ChartView {
@@ -105,70 +92,7 @@ Item {
             }
 
 
-            ChartView {
-                id: cadenceChart
-                height: 400
-                width: parent.width
-                antialiasing: true
-                legend.visible: true
-                anchors.top: heartChart.bottom
-                title: "Cadence"
-                titleFont.pixelSize: 20
 
-                DateTimeAxis {
-                    id: valueAxisXCadence
-                    min: new Date(0)
-                    max: new Date(rootItem.workout_sample_points * 1000)
-                    format: "mm:ss"
-                    tickCount: 7
-                    //labelsVisible: false
-                    gridVisible: false
-                    //lineVisible: false
-                    labelsFont.pixelSize: 10
-                }
-
-                ValueAxis {
-                    id: valueAxisYCadence
-                    min: 0
-                    max: 200
-                    //tickCount: 60
-                    labelFormat: "%.0f"
-                    //labelsVisible: false
-                    gridVisible: false
-                    //lineVisible: false
-                    labelsFont.pixelSize: 10
-                }
-
-                LineSeries {
-                    name: "Cadence"
-                    id: cadenceSeries
-                    visible: true
-                    axisX: valueAxisXCadence
-                    axisY: valueAxisYCadence
-                    color: "black"
-                    width: 1
-                }
-
-                LineSeries {
-                    name: "Resistance"
-                    id: resistanceSeries
-                    visible: true
-                    axisX: valueAxisXCadence
-                    axisY: valueAxisYCadence
-                    color: "blue"
-                    width: 1
-                }
-
-                LineSeries {
-                    name: "Peloton Resistance"
-                    id: pelotonResistanceSeries
-                    visible: true
-                    axisX: valueAxisXCadence
-                    axisY: valueAxisYCadence
-                    color: "red"
-                    width: 1
-                }
-            }
         }
     }
 }

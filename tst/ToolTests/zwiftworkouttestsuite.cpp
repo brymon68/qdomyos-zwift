@@ -12,15 +12,15 @@ static const char *kRunningWorkoutXml = R"xml(<workout_file>
     <description>9-minute manual verification workout</description>
     <sportType>running</sportType>
     <workout>
-        <SteadyState Duration="60" Power="0.5" Incline="0.0"/>
-        <SteadyState Duration="60" Power="0.8" Incline="0.0"/>
-        <SteadyState Duration="60" Power="0.6" Incline="0.0"/>
-        <SteadyState Duration="60" Power="0.6" Incline="2.0"/>
-        <SteadyState Duration="60" Power="0.6" Incline="5.0"/>
-        <SteadyState Duration="60" Power="0.6" Incline="1.0"/>
-        <SteadyState Duration="60" Power="0.7" Incline="3.0"/>
-        <SteadyState Duration="60" Power="0.5" Incline="6.0"/>
-        <SteadyState Duration="60" Power="0.4" Incline="0.0"/>
+        <SteadyState Duration="60" Speed="2.0" Incline="0.0"/>
+        <SteadyState Duration="60" Speed="2.0" Incline="0.0"/>
+        <SteadyState Duration="60" Speed="2.0" Incline="0.0"/>
+        <SteadyState Duration="60" Speed="2.0" Incline="2.0"/>
+        <SteadyState Duration="60" Speed="2.0" Incline="5.0"/>
+        <SteadyState Duration="60" Speed="2.0" Incline="1.0"/>
+        <SteadyState Duration="60" Speed="2.0" Incline="3.0"/>
+        <SteadyState Duration="60" Speed="2.0" Incline="6.0"/>
+        <SteadyState Duration="60" Speed="2.0" Incline="0.0"/>
     </workout>
 </workout_file>)xml";
 
@@ -39,8 +39,8 @@ void ZwiftWorkoutTestSuite::test_xmlWorkoutFileParsesNegativeIncline() {
     static const char *kNegativeInclineWorkoutXml = R"xml(<workout_file>
         <sportType>running</sportType>
         <workout>
-            <SteadyState Duration="60" Power="0.6" Incline="-0.05"/>
-            <SteadyState Duration="60" Power="0.6" Incline="-2.0"/>
+            <SteadyState Duration="60" Speed="2.0" Incline="-0.05"/>
+            <SteadyState Duration="60" Speed="2.0" Incline="-2.0"/>
         </workout>
     </workout_file>)xml";
 
@@ -103,4 +103,22 @@ void ZwiftWorkoutTestSuite::test_xmlExtensionWorkoutFileUsesZwiftParser() {
     EXPECT_DOUBLE_EQ(program->rows.at(3).inclination, 2.0);
     EXPECT_DOUBLE_EQ(program->rows.at(7).inclination, 6.0);
     delete program;
+}
+
+TEST(ZwiftWorkoutDirectTargetsTest, RejectsRelativePaceAndPowerWithoutPartialWorkout) {
+    const QByteArray workout = R"xml(<workout_file><sportType>running</sportType><workout>
+        <SteadyState Duration="60" Speed="2.0" Incline="2"/>
+        <SteadyState Duration="60" Power="0.6" pace="2"/>
+    </workout></workout_file>)xml";
+    EXPECT_TRUE(zwiftworkout::load(workout).isEmpty());
+    EXPECT_TRUE(zwiftworkout::loadJSON(QStringLiteral(
+        "{\"sportType\":\"running\",\"workout\":[{\"type\":\"SteadyState\",\"Duration\":60,\"Power\":0.6}]}")).isEmpty());
+}
+
+TEST(ZwiftWorkoutDirectTargetsTest, JsonDirectSpeedUsesExistingSteadyStateUnits) {
+    const auto rows = zwiftworkout::loadJSON(QStringLiteral(
+        "{\"sportType\":\"running\",\"workout\":[{\"type\":\"SteadyState\",\"Duration\":60,\"Speed\":2.0,\"Incline\":2.0}]}"));
+    ASSERT_EQ(rows.size(), 1);
+    EXPECT_DOUBLE_EQ(rows.first().speed, 7.2);
+    EXPECT_DOUBLE_EQ(rows.first().inclination, 2.0);
 }

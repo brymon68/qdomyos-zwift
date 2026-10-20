@@ -5,7 +5,6 @@
 #include "definitions.h"
 #include "metric.h"
 #include "qzsettings.h"
-#include "ergtable.h"
 
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <QBluetoothDeviceInfo>
@@ -108,28 +107,6 @@ class bluetoothdevice : public QObject {
     void addCurrentDistance1s(double distance) { Distance1s += distance; }
 
     /**
-     * @brief calories Gets a metric object to get and set the amount of energy expended.
-     * Default implementation returns the protected KCal property, potentially adjusted for active calories. Units: kcal
-     * Other implementations could have different units.
-     * @return
-     */
-    virtual metric calories();
-    virtual metric activeCalories();
-    virtual metric hrCalories();
-
-    /**
-     * @brief totalCalories Gets total calories (including BMR) regardless of active calories setting.
-     * @return Total calories metric
-     */
-    virtual metric totalCalories();
-
-    /**
-     * @brief jouls Gets a metric object to get and set the number of joules expended. Units: joules
-     */
-    metric jouls();
-
-
-    /**
      * @brief elapsedTime The elapsed time for the session(?).
      */
     virtual QTime elapsedTime();
@@ -214,33 +191,6 @@ class bluetoothdevice : public QObject {
      * @brief VirtualDevice The virtual bridge to Zwift for example, or to any 3rd party app.
      */
     virtualdevice *VirtualDevice();
-
-    /**
-     * @brief watts Calculates the amount of power used. Units: watts
-     * @param weight The weight of the rider. Units: kg
-     */
-    uint16_t watts(double weight);
-
-    /**
-     * @brief wattsMetric Gets a metric object to get or set the amount of power used.  Units: watts
-     */
-    metric wattsMetric();
-
-    /**
-     * @brief wattsMetricforUi Show the wattage applying averaging in case the user requested this.  Units: watts
-     */
-    double wattsMetricforUI() {
-        QSettings settings;
-        bool power3s = settings.value(QZSettings::power_avg_3s, QZSettings::default_power_avg_3s).toBool();
-        bool power5s = settings.value(QZSettings::power_avg_5s, QZSettings::default_power_avg_5s).toBool();
-        if (power3s)
-            return wattsMetric().average3sHarmonic();
-        else if (power5s)
-            return wattsMetric().average5sHarmonic();
-        else
-            return wattsMetric().value();
-    }
-
 
     /**
      * @brief elevationGain Gets a metric object to get and set the elevation gain. Units: ?
@@ -343,24 +293,6 @@ class bluetoothdevice : public QObject {
     double inclinationDifficultOffset();
 
     /**
-     * @brief weightLoss Gets the value of the weight loss metric. Units: kg
-     * @return
-     */
-    double weightLoss() { return WeightLoss.value(); }
-
-    /**
-     * @brief wattKg Gets a metric object to get and set the watt kg of something. Units: watt kg
-     * @return
-     */
-    metric wattKg() { return WattKg; }
-
-    /**
-     * @brief currentMETS Gets a metric object to get and set the current METS (Metabolic Equivalent of Tasks)
-     * Units: METs (1 MET is approximately 3.5mL of Oxygen consumed per kg of body weight per minute)
-     */
-    metric currentMETS() { return METS; }
-
-    /**
      * @brief currentHeartZone Gets a metric object to get or set the current heart zone. Units: depends on
      * implementation.
      */
@@ -397,20 +329,6 @@ class bluetoothdevice : public QObject {
     uint32_t secondsForHeatZone(uint8_t zone);
 
     /**
-     * @brief currentPowerZone Gets a metric object to get or set the current power zome. Units: depends on
-     * implementation.
-     * @return
-     */
-    metric currentPowerZone() { return PowerZone; }
-
-    /**
-     * @brief currentPowerZone Gets a metric object to get or set the current power zome. Units: depends on
-     * implementation.
-     * @return
-     */
-    metric targetPowerZone() { return TargetPowerZone; }
-
-    /**
      * @brief setGPXFile Sets the file for GPS data exchange.
      * @param filename The file path.
      */
@@ -421,35 +339,14 @@ class bluetoothdevice : public QObject {
      */
     QString currentGPXBase64() { return gpxBase64; }
 
-    // in the future these 2 should be calculated inside the update_metrics()
-
-    /**
-     * @brief setHeartZone Set the current heart zone.
-     * This is equivalent to currentHeartZone().setvalue(hz)
-     * @param hz The heart zone. Unit: depends on implementation.
-     */
-    void setHeartZone(double hz);
-
     /**
      * @brief setHeatZone Set the current heat zone based on Heat Strain Index.
      * This is equivalent to currentHeatZone().setvalue(hz)
      * @param heatStrainIndex The heat strain index to determine zone. Unit: depends on implementation.
      */
+    void setHeartZone(double hz);
+
     void setHeatZone(double heatStrainIndex);
-
-    /**
-     * @brief setPowerZone Set the current power zone.
-     * This is equivalent to currentPowerZone().setvalue(pz)
-     * @param pz The power zone. Unit: depends on implementation.
-     */
-    void setPowerZone(double pz) { PowerZone = pz; }
-
-    /**
-     * @brief setTargetPowerZone Set the target power zone.
-     * This is equivalent to targetPowerZone().setvalue(pz)
-     * @param pz The power zone. Unit: depends on implementation.
-     */
-    void setTargetPowerZone(double pz) { TargetPowerZone = pz; }
 
     enum WORKOUT_EVENT_STATE { STARTED = 0, PAUSED = 1, RESUMED = 2, STOPPED = 3 };
 
@@ -463,17 +360,6 @@ class bluetoothdevice : public QObject {
      * @return
      */
     static QStringList metrics();
-
-    /**
-     * @brief metrics_override_heartrate Provides a way to override the metrics heart rate with another metric.
-     * Units: beats per minute
-     */
-    virtual uint8_t metrics_override_heartrate();
-
-    /**
-     * @brief metricValueForSetting Returns the current value for a metric selected by name.
-     */
-    virtual int metricValueForSetting(const QString &setting);
 
     /**
      * @brief Overridden in subclasses to specify the maximum resistance level supported by the device.
@@ -506,14 +392,12 @@ class bluetoothdevice : public QObject {
     virtual void heartRate(uint8_t heart);
     virtual void rrIntervalReceived(double rrInterval);
     virtual void cadenceSensor(uint8_t cadence);
-    virtual void powerSensor(uint16_t power);
     virtual void speedSensor(double speed);
     virtual void coreBodyTemperature(double coreBodyTemperature);
     virtual void skinTemperature(double skinTemperature);
     virtual void heatStrainIndex(double heatStrainIndex);
     virtual void inclinationSensor(double grade, double inclination);
     virtual void changeResistance(resistance_t res);
-    virtual void changePower(int32_t power);
     virtual void changeInclination(double grade, double percentage);
     virtual void changeGeoPosition(QGeoCoordinate p, double azimuth, double avgAzimuthNext300Meters);
     virtual void workoutEventStateChanged(bluetoothdevice::WORKOUT_EVENT_STATE state);
@@ -526,7 +410,6 @@ class bluetoothdevice : public QObject {
     void connectedAndDiscovered();
     void speedChanged(double speed);
     void cadenceChanged(uint8_t cadence);
-    void powerChanged(uint16_t power);
     void inclinationChanged(double grade, double percentage);
     void instantaneousStrideLengthChanged(double length);
     void groundContactChanged(double groundContact);
@@ -570,13 +453,6 @@ class bluetoothdevice : public QObject {
      * @brief moving The time spent moving in the current session. Units: seconds
      */
     metric moving; // moving time
-
-    /**
-     * @brief KCal The number of kilocalories expended in the session. Units: kcal
-     */
-    metric KCal;
-    metric activeKCal;
-    metric hrKCal;
 
     /**
      * @brief Speed The simulated speed of the device. Units: km/h
@@ -647,11 +523,6 @@ class bluetoothdevice : public QObject {
     double m_inclination_difficult_offset = 0.0;
 
     /**
-     * @brief m_jouls The number of joules expended in the current session. Unit: joules
-     */
-    metric m_jouls;
-
-    /**
      * @brief elevationAcc The elevation gain. Units: meters
      */
     metric elevationAcc;
@@ -661,26 +532,7 @@ class bluetoothdevice : public QObject {
      */
     metric negativeElevationAcc;
 
-    /**
-     * @brief m_watt Metric to get and set the power read from the trainer or from the power sensor Unit: watts
-     */
-    metric m_watt;
     
-    /**
-     * @brief m_rawWatt Metric to get and set the power from the trainer only. Unit: watts
-     */
-    metric m_rawWatt;
-
-    /**
-     * @brief WattKg Metric to get and set the watt kg for the session (what's this?). Unit: watt kg
-     */
-    metric WattKg;
-
-    /**
-     * @brief WeightLoss Metric to get and set the lost weight in the session (?). Unit: kg
-     */
-    metric WeightLoss;
-
     /**
      * @brief The speed at which the crank is turning. Units: device-specific actions per minute
      * e.g. crank revolutions on a bike, steps on a treadmill,
@@ -692,12 +544,6 @@ class bluetoothdevice : public QObject {
      * @brief The currently requested resistance level. Expected range: 0 to maxResistance()
      */
     metric Resistance;
-
-    /**
-     * @brief METS A metric object to get and set the METS (Metabolic Equivalent of Tasks) for the session.
-     * Units: METs (1 MET is approximately 3.5mL of Oxygen consumed per kg of body weight per minute)
-     */
-    metric METS;
 
     /**
      * @brief coordinate The geolocation for the device.
@@ -754,20 +600,6 @@ class bluetoothdevice : public QObject {
      */
     metric HeatZone;
 
-    /**
-     * @brief PowerZone A metric to get and set the current power zone. Unit: depends on implementation
-     */
-    metric PowerZone;
-
-    /**
-     * @brief TargetPowerZone A metric to get and set the target power zone. Unit: depends on implementation
-     */
-    metric TargetPowerZone;
-
-    /**
-     * @brief _ergTable The current erg table
-     */
-    ergTable _ergTable;
     
     /**
      * @brief StepCount A metric to get and set the step count. Unit: step
@@ -807,29 +639,6 @@ class bluetoothdevice : public QObject {
      * @brief _firstUpdate Indicates if this is the first update.
      */
     bool _firstUpdate = true;
-
-    /**
-     * @brief update_metrics Updates the metrics given the specified inputs.
-     * @param watt_calc ??
-     * @param watts ?. Unit: watts
-     */
-    void update_metrics(bool watt_calc, const double watts, const bool from_accessory = false);
-
-    /**
-     * @brief update_hr_from_external Updates heart rate from Garmin Companion App or Apple Watch
-     */
-    void update_hr_from_external();
-
-    /**
-     * @brief update_ios_live_activity Updates iOS Live Activity with throttling (max 1 update per second)
-     */
-    void update_ios_live_activity();
-
-    /**
-     * @brief calculateMETS Calculate the METS (Metabolic Equivalent of Tasks)
-     * Units: METs (1 MET is approximately 3.5mL of Oxygen consumed per kg of body weight per minute)
-     */
-    double calculateMETS();
 
     /**
      * @brief setVirtualDevice Set the virtual device, and the way it is being used. Deletes the existing one, if

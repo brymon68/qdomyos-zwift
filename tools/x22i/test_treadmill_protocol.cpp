@@ -11,36 +11,11 @@
 #define CHARACTERISTICNOTIFIER2AD2_H
 #define CHARACTERISTICNOTIFIES2ACC_H
 #define CHARACTERISTICWRITEPROCESSOR2AD9_H
-#define ELLIPTICAL_H
-#define ROWER_H
 #define TREADMILL_H
-#define FTMSBIKE_H
 
 constexpr int CN_OK = 0, CN_INVALID = -1, CP_OK = 0, CP_INVALID = -1;
 using resistance_t = double;
 enum BLUETOOTH_TYPE { BIKE, TREADMILL, ELLIPTICAL, ROWING };
-enum FtmsControlPointCommand {
-    FTMS_REQUEST_CONTROL = 0x00,
-    FTMS_SET_TARGET_RESISTANCE_LEVEL = 0x04,
-    FTMS_SET_TARGET_POWER = 0x05,
-    FTMS_START_RESUME = 0x07,
-    FTMS_STOP_PAUSE = 0x08,
-    FTMS_SET_INDOOR_BIKE_SIMULATION_PARAMS = 0x11,
-    FTMS_RESPONSE_CODE = 0x80
-};
-enum FtmsResultCode { FTMS_SUCCESS = 0x01, FTMS_NOT_SUPPORTED = 0x02 };
-
-struct QZSettings {
-    static constexpr const char *virtual_device_rower = "virtual_device_rower";
-    static constexpr const char *powr_sensor_running_cadence_double = "powr_sensor_running_cadence_double";
-    static constexpr const char *virtualbike_forceresistance = "virtualbike_forceresistance";
-    static constexpr const char *zwift_erg = "zwift_erg";
-    static constexpr bool default_virtual_device_rower = false;
-    static constexpr bool default_powr_sensor_running_cadence_double = false;
-    static constexpr bool default_virtualbike_forceresistance = false;
-    static constexpr bool default_zwift_erg = false;
-};
-
 struct metric {
     double reading;
     double value() const { return reading; }
@@ -60,11 +35,6 @@ struct treadmill : bluetoothdevice {
     void changeSpeed(double speed) { targetSpeed = speed; }
     void changeInclination(double grade, double) { targetIncline = grade; }
 };
-struct elliptical : bluetoothdevice {
-    bool inclinationAvailableByHardware() const { return true; }
-    void changeInclination(double, double) {}
-};
-struct rower : bluetoothdevice {};
 struct QLowEnergyCharacteristic {};
 struct CharacteristicNotifier {
     CharacteristicNotifier(int, QObject *) {}
@@ -84,14 +54,14 @@ struct CharacteristicWriteProcessor {
     bluetoothdevice *Bike;
     int powerChanges = 0, slopeChanges = 0;
     int16_t lastSlope = 0;
-    CharacteristicWriteProcessor(double, int8_t, bluetoothdevice *device, QObject *) : Bike(device) {}
+    CharacteristicWriteProcessor(bluetoothdevice *device, QObject *) : Bike(device) {}
     void changePower(uint16_t) { ++powerChanges; }
     void changeSlope(int16_t slope, uint8_t, uint8_t) { ++slopeChanges; lastSlope = slope; }
 };
 struct CharacteristicWriteProcessor2AD9 : CharacteristicWriteProcessor {
     CharacteristicNotifier2AD9 *notifier;
     int forwards = 0;
-    CharacteristicWriteProcessor2AD9(double, int8_t, bluetoothdevice *, CharacteristicNotifier2AD9 *, QObject * = nullptr);
+    CharacteristicWriteProcessor2AD9(bluetoothdevice *, CharacteristicNotifier2AD9 *, QObject * = nullptr);
     int writeProcess(quint16, const QByteArray &, QByteArray &);
     void ftmsCharacteristicChanged(const QLowEnergyCharacteristic &, const QByteArray &) { ++forwards; }
 };
@@ -130,7 +100,7 @@ int main(int argc, char **argv) {
     require((features.at(4) & 0x03) == 0x03, "Speed and incline targets must remain supported");
 
     CharacteristicNotifier2AD9 responseNotifier;
-    CharacteristicWriteProcessor2AD9 control(1, 0, &device, &responseNotifier);
+    CharacteristicWriteProcessor2AD9 control(&device, &responseNotifier);
     for (const char *request : {"05fa00", "05"}) {
         QByteArray response;
         require(control.writeProcess(0x2ad9, QByteArray::fromHex(request), response) == CP_OK,

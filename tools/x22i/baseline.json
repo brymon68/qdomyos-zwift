@@ -13,5 +13,8 @@
   "fan_support": false,
   "in_app_purchasing": false,
   "ant_support": false,
-  "treadmill_power_measurement": false
+  "treadmill_power_measurement": false,
+  "equipment": "NordicTrack X22i",
+  "locale": "en_US",
+  "user_profiles": false
 }

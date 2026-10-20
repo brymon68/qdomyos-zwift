@@ -1,5 +1,5 @@
 include(../defaults.pri)
-QT += bluetooth widgets xml positioning quick networkauth websockets texttospeech location multimedia
+QT += bluetooth widgets xml positioning quick websockets texttospeech location multimedia
 QTPLUGIN += qavfmediaplayer
 QT+= charts core-private sql concurrent
 
@@ -67,7 +67,7 @@ INCLUDEPATH += qmdnsengine/src/include
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS IO_UNDER_QT SMTP_BUILD NOMINMAX
+DEFINES += QT_DEPRECATED_WARNINGS IO_UNDER_QT NOMINMAX
 
 
 # You can also make your code fail to compile if it uses deprecated APIs.
@@ -79,39 +79,8 @@ DEFINES += QT_DEPRECATED_WARNINGS IO_UNDER_QT SMTP_BUILD NOMINMAX
 # include(../qtzeroconf/qtzeroconf.pri)
 
 SOURCES += \
-    $$PWD/characteristics/characteristicnotifier0002.cpp \
-    $$PWD/characteristics/characteristicnotifier0004.cpp \
-    $$PWD/characteristics/characteristicwriteprocessor0003.cpp \
     $$PWD/androidqlog.cpp \
-    $$PWD/devices/coresensor/coresensor.cpp \
-    $$PWD/devices/crossrope/crossrope.cpp \
-    $$PWD/devices/cycleopsphantombike/cycleopsphantombike.cpp \
-    $$PWD/devices/deeruntreadmill/deerruntreadmill.cpp \
-    $$PWD/devices/elitesquarecontroller/elitesquarecontroller.cpp \
-    $$PWD/devices/focustreadmill/focustreadmill.cpp \
-    $$PWD/devices/jumprope.cpp \
-    $$PWD/devices/kineticinroadbike/SmartControl.cpp \
-    $$PWD/devices/kineticinroadbike/kineticinroadbike.cpp \
-    $$PWD/devices/lifespanbike/lifespanbike.cpp \
-    $$PWD/devices/lifespantreadmill/lifespantreadmill.cpp \
-    $$PWD/devices/moxy5sensor/moxy5sensor.cpp \
-    $$PWD/devices/nordictrackifitadbelliptical/nordictrackifitadbelliptical.cpp \
-    $$PWD/devices/nordictrackifitadbrower/nordictrackifitadbrower.cpp \
-    $$PWD/devices/pitpatbike/pitpatbike.cpp \
-    $$PWD/devices/speraxtreadmill/speraxtreadmill.cpp \
-    $$PWD/devices/sportsplusrower/sportsplusrower.cpp \
-    $$PWD/devices/sportstechrower/sportstechrower.cpp \
-    $$PWD/devices/sportstechelliptical/sportstechelliptical.cpp \
-    $$PWD/devices/cycplusbc2controller/cycplusbc2controller.cpp \
-    $$PWD/devices/sramAXSController/sramAXSController.cpp \
-    $$PWD/devices/thinkridercontroller/thinkridercontroller.cpp \
-    $$PWD/devices/stairclimber.cpp \
-    $$PWD/devices/echelonstairclimber/echelonstairclimber.cpp \
-    $$PWD/devices/sunnyfitstepper/sunnyfitstepper.cpp \
-    $$PWD/devices/technogymbike/technogymbike.cpp \
-    $$PWD/devices/trxappgateusbelliptical/trxappgateusbelliptical.cpp \
     $$PWD/fitdatabaseprocessor.cpp \
-    $$PWD/devices/trxappgateusbrower/trxappgateusbrower.cpp \
     $$PWD/logwriter.cpp \
     $$PWD/fitbackupwriter.cpp \
     $$PWD/filesearcher.cpp \
@@ -131,58 +100,18 @@ SOURCES += \
     $$PWD/workoutloaderworker.cpp \
     $$PWD/workoutmodel.cpp \
 QTelnet.cpp \
-devices/bkoolbike/bkoolbike.cpp \
-devices/csafe/csafe.cpp \
-devices/csafe/csaferunner.cpp \
-devices/csafe/csafeutility.cpp \
-devices/csafe/serialhandler.cpp \
-devices/csafe/serialport.cpp \
-devices/csafe/netserial.cpp \
-devices/csafe/kalmanfilter.cpp \
-devices/csafeelliptical/csafeelliptical.cpp \
-devices/csaferower/csaferower.cpp \
-devices/fakerower/fakerower.cpp \
-devices/proformtelnetbike/proformtelnetbike.cpp \
 virtualdevices/virtualdevice.cpp \
 androidactivityresultreceiver.cpp \
 androidadblog.cpp \
-devices/apexbike/apexbike.cpp \
-devices/volavabike/volavabike.cpp \
-handleurl.cpp \
-devices/iconceptelliptical/iconceptelliptical.cpp \
 localipaddress.cpp \
-devices/pelotonbike/pelotonbike.cpp \
-devices/schwinn170bike/schwinn170bike.cpp \
 windows_zwift_workout_paddleocr_thread.cpp \
-devices/ypooelliptical/ypooelliptical.cpp \
-devices/ziprotreadmill/ziprotreadmill.cpp \
-zwift_play/zwiftclickremote.cpp \
-devices/computrainerbike/Computrainer.cpp \
-devices/kettlerusbbike/KettlerUSB.cpp \
 PathController.cpp \
 characteristics/characteristicnotifier2a53.cpp \
-characteristics/characteristicnotifier2a5b.cpp \
 characteristics/characteristicnotifier2acc.cpp \
 characteristics/characteristicnotifier2acd.cpp \
 characteristics/characteristicnotifier2ad9.cpp \
 characteristics/characteristicwriteprocessor.cpp \
-characteristics/characteristicwriteprocessore005.cpp \
-devices/computrainerbike/computrainerbike.cpp \
-devices/kettlerusbbike/kettlerusbbike.cpp \
-devices/fakeelliptical/fakeelliptical.cpp \
-devices/faketreadmill/faketreadmill.cpp \
-devices/lifefitnesstreadmill/lifefitnesstreadmill.cpp \
-devices/mepanelbike/mepanelbike.cpp \
-devices/nautilusbike/nautilusbike.cpp \
-devices/nordictrackelliptical/nordictrackelliptical.cpp \
-devices/nordictrackifitadbbike/nordictrackifitadbbike.cpp \
 devices/nordictrackifitadbtreadmill/nordictrackifitadbtreadmill.cpp \
-devices/octaneelliptical/octaneelliptical.cpp \
-devices/octanetreadmill/octanetreadmill.cpp \
-devices/proformellipticaltrainer/proformellipticaltrainer.cpp \
-devices/proformrower/proformrower.cpp \
-devices/proformwifibike/proformwifibike.cpp \
-devices/proformwifitreadmill/proformwifitreadmill.cpp \
 qmdnsengine/src/src/abstractserver.cpp \
 qmdnsengine/src/src/bitmap.cpp \
 qmdnsengine/src/src/browser.cpp \
@@ -198,37 +127,15 @@ qmdnsengine/src/src/record.cpp \
 qmdnsengine/src/src/resolver.cpp \
 qmdnsengine/src/src/server.cpp \
 qmdnsengine/src/src/service.cpp \
-devices/activiotreadmill/activiotreadmill.cpp \
-devices/bhfitnesselliptical/bhfitnesselliptical.cpp \
-devices/bike.cpp \
 devices/bluetooth.cpp \
 devices/bluetoothdevice.cpp \
 characteristics/characteristicnotifier2a37.cpp \
-characteristics/characteristicnotifier2a63.cpp \
 characteristics/characteristicnotifier2ad2.cpp \
 characteristics/characteristicwriteprocessor2ad9.cpp \
-devices/bowflext216treadmill/bowflext216treadmill.cpp \
-devices/bowflextreadmill/bowflextreadmill.cpp \
-devices/chronobike/chronobike.cpp \
-devices/concept2skierg/concept2skierg.cpp \
-devices/cscbike/cscbike.cpp \
 devices/dircon/dirconmanager.cpp \
 devices/dircon/dirconpacket.cpp \
 devices/dircon/dirconprocessor.cpp \
-devices/domyoselliptical/domyoselliptical.cpp \
-devices/domyosrower/domyosrower.cpp \
-devices/domyostreadmill/domyostreadmill.cpp \
-devices/echelonconnectsport/echelonconnectsport.cpp \
-devices/echelonrower/echelonrower.cpp \
-devices/echelonstride/echelonstride.cpp \
-devices/eliterizer/eliterizer.cpp \
-devices/elitesterzosmart/elitesterzosmart.cpp \
-devices/elliptical.cpp \
-devices/eslinkertreadmill/eslinkertreadmill.cpp \
-devices/fakebike/fakebike.cpp \
 filedownloader.cpp \
-devices/fitplusbike/fitplusbike.cpp \
-devices/fitshowtreadmill/fitshowtreadmill.cpp \
 fit-sdk/fit.cpp \
 fit-sdk/fit_accumulated_field.cpp \
 fit-sdk/fit_accumulator.cpp \
@@ -253,96 +160,27 @@ fit-sdk/fit_mesg_with_event_broadcaster.cpp \
 fit-sdk/fit_profile.cpp \
 fit-sdk/fit_protocol_validator.cpp \
 fit-sdk/fit_unicode.cpp \
-devices/flywheelbike/flywheelbike.cpp \
-devices/ftmsbike/ftmsbike.cpp \
-devices/ftmsrower/ftmsrower.cpp \
 gpx.cpp \
-devices/heartratebelt/heartratebelt.cpp \
-homefitnessbuddy.cpp \
 homeform.cpp \
-garminconnect.cpp \
-devices/horizongr7bike/horizongr7bike.cpp \
-devices/horizontreadmill/horizontreadmill.cpp \
-devices/iconceptbike/iconceptbike.cpp \
-devices/inspirebike/inspirebike.cpp \
 keepawakehelper.cpp \
-devices/keepbike/keepbike.cpp \
-devices/kingsmithr1protreadmill/kingsmithr1protreadmill.cpp \
-devices/kingsmithr2treadmill/kingsmithr2treadmill.cpp \
 main.cpp \
-devices/mcfbike/mcfbike.cpp \
 metric.cpp \
-devices/nautiluselliptical/nautiluselliptical.cpp \
-devices/nautilustreadmill/nautilustreadmill.cpp \
-devices/npecablebike/npecablebike.cpp \
-devices/pafersbike/pafersbike.cpp \
-devices/paferstreadmill/paferstreadmill.cpp \
-peloton.cpp \
-powerzonepack.cpp \
-devices/proformbike/proformbike.cpp \
-devices/proformelliptical/proformelliptical.cpp \
-devices/proformtreadmill/proformtreadmill.cpp \
 qfit.cpp \
 qzsettings.cpp \
-devices/renphobike/renphobike.cpp \
-devices/rower.cpp \
-devices/schwinnic4bike/schwinnic4bike.cpp \
 screencapture.cpp \
 sessionline.cpp \
-devices/shuaa5treadmill/shuaa5treadmill.cpp \
 signalhandler.cpp \
-simplecrypt.cpp \
-devices/skandikawiribike/skandikawiribike.cpp \
-devices/smartrowrower/smartrowrower.cpp \
-devices/smartspin2k/smartspin2k.cpp \
-smtpclient/src/emailaddress.cpp \
-smtpclient/src/mimeattachment.cpp \
-smtpclient/src/mimecontentformatter.cpp \
-smtpclient/src/mimefile.cpp \
-smtpclient/src/mimehtml.cpp \
-smtpclient/src/mimeinlinefile.cpp \
-smtpclient/src/mimemessage.cpp \
-smtpclient/src/mimemultipart.cpp \
-smtpclient/src/mimepart.cpp \
-smtpclient/src/mimetext.cpp \
-smtpclient/src/quotedprintable.cpp \
-smtpclient/src/smtpclient.cpp \
-devices/snodebike/snodebike.cpp \
-devices/solebike/solebike.cpp \
-devices/soleelliptical/soleelliptical.cpp \
-devices/solef80treadmill/solef80treadmill.cpp \
-devices/spirittreadmill/spirittreadmill.cpp \
-devices/sportsplusbike/sportsplusbike.cpp \
-devices/sportstechbike/sportstechbike.cpp \
-devices/tacxneo2/tacxneo2.cpp \
 tcpclientinfosender.cpp \
-devices/technogymmyruntreadmill/technogymmyruntreadmill.cpp \
-devices/technogymmyruntreadmillrfcomm/technogymmyruntreadmillrfcomm.cpp \
 templateinfosender.cpp \
 templateinfosenderbuilder.cpp \
-webtranslation.cpp \
-devices/stagesbike/stagesbike.cpp \
-devices/toorxtreadmill/toorxtreadmill.cpp \
-devices/iconsolebike/iconsolebike.cpp \
 devices/treadmill.cpp \
-devices/truetreadmill/truetreadmill.cpp \
-devices/trxappgateusbbike/trxappgateusbbike.cpp \
-devices/ultrasportbike/ultrasportbike.cpp \
-virtualdevices/virtualrower.cpp \
-devices/wahookickrsnapbike/wahookickrsnapbike.cpp \
-devices/yesoulbike/yesoulbike.cpp \
 trainprogram.cpp \
-devices/trxappgateusbtreadmill/trxappgateusbtreadmill.cpp \
-virtualdevices/virtualbike.cpp \
 virtualdevices/virtualtreadmill.cpp \
-devices/m3ibike/m3ibike.cpp \
-devices/domyosbike/domyosbike.cpp \
 scanrecordresult.cpp \
 windows_zwift_incline_paddleocr_thread.cpp \
 zwiftworkout.cpp
    
 macx: SOURCES += macos/lockscreen.mm
-!ios: SOURCES += mainwindow.cpp charts.cpp
 
 #zwift api
 msvc {
@@ -357,42 +195,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 INCLUDEPATH += fit-sdk/ devices/
 
 HEADERS += \
-    $$PWD/EventHandler.h \
-    $$PWD/characteristics/characteristicnotifier0002.h \
-    $$PWD/characteristics/characteristicnotifier0004.h \
-    $$PWD/characteristics/characteristicwriteprocessor0003.h \
-    $$PWD/OAuth2.h \
-    $$PWD/devices/coresensor/coresensor.h \
-    $$PWD/devices/crossrope/crossrope.h \
-    $$PWD/devices/cycleopsphantombike/cycleopsphantombike.h \
-    $$PWD/devices/deeruntreadmill/deerruntreadmill.h \
-    $$PWD/devices/echelonstairclimber/echelonstairclimber.h \
-    $$PWD/devices/sunnyfitstepper/sunnyfitstepper.h \
-    $$PWD/devices/elitesquarecontroller/elitesquarecontroller.h \
-    $$PWD/devices/focustreadmill/focustreadmill.h \
-    $$PWD/devices/jumprope.h \
-    $$PWD/devices/kineticinroadbike/SmartControl.h \
-    $$PWD/devices/kineticinroadbike/kineticinroadbike.h \
-    $$PWD/devices/lifespanbike/lifespanbike.h \
-    $$PWD/devices/lifespantreadmill/lifespantreadmill.h \
-    $$PWD/devices/moxy5sensor/moxy5sensor.h \
-    $$PWD/devices/nordictrackifitadbelliptical/nordictrackifitadbelliptical.h \
-    $$PWD/devices/nordictrackifitadbrower/nordictrackifitadbrower.h \
-    $$PWD/devices/pitpatbike/pitpatbike.h \
-    $$PWD/devices/speraxtreadmill/speraxtreadmill.h \
-    $$PWD/devices/sportsplusrower/sportsplusrower.h \
-    $$PWD/devices/sportstechrower/sportstechrower.h \
-    $$PWD/devices/sportstechelliptical/sportstechelliptical.h \
-    $$PWD/devices/cycplusbc2controller/cycplusbc2controller.h \
-    $$PWD/devices/sramAXSController/sramAXSController.h \
-    $$PWD/devices/thinkridercontroller/thinkridercontroller.h \
-    $$PWD/devices/stairclimber.h \
-    $$PWD/devices/technogymbike/technogymbike.h \
-    $$PWD/devices/trxappgateusbelliptical/trxappgateusbelliptical.h \
-    $$PWD/devices/trxappgateusbrower/trxappgateusbrower.h \
-    $$PWD/ergtable.h \
     $$PWD/fitdatabaseprocessor.h \
-    $$PWD/inclinationresistancetable.h \
     $$PWD/logwriter.h \
     $$PWD/fitbackupwriter.h \
     $$PWD/filesearcher.h \
@@ -424,69 +227,23 @@ HEADERS += \
     $$PWD/mqtt/qmqtttopicfilter.h \
     $$PWD/mqtt/qmqtttopicname.h \
     $$PWD/mqtt/qmqtttype.h \
-    $$PWD/wheelcircumference.h \
     $$PWD/workoutloaderworker.h \
     $$PWD/workoutmodel.h \
 QTelnet.h \
-devices/bkoolbike/bkoolbike.h \
-devices/csafe/csafe.h \
-devices/csafe/csaferunner.h \
-devices/csafe/csafeutility.h \
-devices/csafe/serialhandler.h \
-devices/csafe/serialport.h \
-devices/csafe/netserial.h \
-devices/csafe/kalmanfilter.h \
-devices/csafeelliptical/csafeelliptical.h \
-devices/csaferower/csaferower.h \
-devices/proformtelnetbike/proformtelnetbike.h \
 windows_zwift_workout_paddleocr_thread.h \
-devices/fakerower/fakerower.h \
 zwift-api/PlayerStateWrapper.h \
 zwift-api/zwift_client_auth.h \
-zwift_play/abstractZapDevice.h \
-zwift_play/zapBleUuids.h \
-zwift_play/zapConstants.h \
-zwift_play/zwiftPlayDevice.h \
-zwift_play/zwiftclickremote.h \
 virtualdevices/virtualdevice.h \
 androidactivityresultreceiver.h \
 androidadblog.h \
-devices/apexbike/apexbike.h \
-devices/volavabike/volavabike.h \
-devices/discoveryoptions.h \
-handleurl.h \
-devices/iconceptelliptical/iconceptelliptical.h \
 localipaddress.h \
-devices/pelotonbike/pelotonbike.h \
-devices/schwinn170bike/schwinn170bike.h \
-devices/ypooelliptical/ypooelliptical.h \
-devices/ziprotreadmill/ziprotreadmill.h \
-devices/computrainerbike/Computrainer.h \
-devices/kettlerusbbike/KettlerUSB.h \
 PathController.h \
 characteristics/characteristicnotifier2a53.h \
-characteristics/characteristicnotifier2a5b.h \
 characteristics/characteristicnotifier2acc.h \
 characteristics/characteristicnotifier2acd.h \
 characteristics/characteristicnotifier2ad9.h \
-characteristics/characteristicwriteprocessore005.h \
-devices/computrainerbike/computrainerbike.h \
-devices/kettlerusbbike/kettlerusbbike.h \
 definitions.h \
-devices/fakeelliptical/fakeelliptical.h \
-devices/faketreadmill/faketreadmill.h \
-devices/lifefitnesstreadmill/lifefitnesstreadmill.h \
-devices/mepanelbike/mepanelbike.h \
-devices/nautilusbike/nautilusbike.h \
-devices/nordictrackelliptical/nordictrackelliptical.h \
-devices/nordictrackifitadbbike/nordictrackifitadbbike.h \
 devices/nordictrackifitadbtreadmill/nordictrackifitadbtreadmill.h \
-devices/octaneelliptical/octaneelliptical.h \
-devices/octanetreadmill/octanetreadmill.h \
-devices/proformellipticaltrainer/proformellipticaltrainer.h \
-devices/proformrower/proformrower.h \
-devices/proformwifibike/proformwifibike.h \
-devices/proformwifitreadmill/proformwifitreadmill.h \
 qmdnsengine/src/include/qmdnsengine/abstractserver.h \
 qmdnsengine/src/include/qmdnsengine/bitmap.h \
 qmdnsengine/src/include/qmdnsengine/browser.h \
@@ -514,47 +271,17 @@ qmdnsengine/src/src/record_p.h \
 qmdnsengine/src/src/resolver_p.h \
 qmdnsengine/src/src/server_p.h \
 qmdnsengine/src/src/service_p.h \
-devices/activiotreadmill/activiotreadmill.h \
-devices/bhfitnesselliptical/bhfitnesselliptical.h \
-devices/bike.h \
 devices/bluetooth.h \
 devices/bluetoothdevice.h \
 characteristics/characteristicnotifier.h \
 characteristics/characteristicnotifier2a37.h \
-characteristics/characteristicnotifier2a63.h \
 characteristics/characteristicnotifier2ad2.h \
 characteristics/characteristicwriteprocessor.h \
 characteristics/characteristicwriteprocessor2ad9.h \
-devices/bowflext216treadmill/bowflext216treadmill.h \
-devices/bowflextreadmill/bowflextreadmill.h \
-devices/chronobike/chronobike.h \
-devices/concept2skierg/concept2skierg.h \
-devices/cscbike/cscbike.h \
 devices/dircon/dirconmanager.h \
 devices/dircon/dirconpacket.h \
 devices/dircon/dirconprocessor.h \
-devices/domyoselliptical/domyoselliptical.h \
-devices/domyosrower/domyosrower.h \
-devices/domyostreadmill/domyostreadmill.h \
-devices/echelonconnectsport/echelonconnectsport.h \
-devices/echelonrower/echelonrower.h \
-devices/echelonstride/echelonstride.h \
-devices/eliterizer/eliterizer.h \
-devices/elitesterzosmart/elitesterzosmart.h \
-devices/elliptical.h \
-devices/eslinkertreadmill/eslinkertreadmill.h \
-devices/fakebike/fakebike.h \
 filedownloader.h \
-devices/fitplusbike/fitplusbike.h \
-devices/ftmsrower/ftmsrower.h \
-homefitnessbuddy.h \
-devices/horizongr7bike/horizongr7bike.h \
-devices/iconceptbike/iconceptbike.h \
-devices/keepbike/keepbike.h \
-devices/kingsmithr1protreadmill/kingsmithr1protreadmill.h \
-devices/kingsmithr2treadmill/kingsmithr2treadmill.h \
-devices/m3ibike/m3ibike.h \
-devices/fitshowtreadmill/fitshowtreadmill.h \
 fit-sdk/FitDecode.h \
 fit-sdk/FitDeveloperField.h \
 fit-sdk/FitEncode.h \
@@ -772,93 +499,29 @@ fit-sdk/fit_workout_step_mesg.hpp \
 fit-sdk/fit_workout_step_mesg_listener.hpp \
 fit-sdk/fit_zones_target_mesg.hpp \
 fit-sdk/fit_zones_target_mesg_listener.hpp \
-devices/flywheelbike/flywheelbike.h \
-devices/ftmsbike/ftmsbike.h \
-devices/ftmsbike/speedracex_defaults.h \
-devices/heartratebelt/heartratebelt.h \
 homeform.h \
-garminconnect.h \
-devices/horizontreadmill/horizontreadmill.h \
-devices/inspirebike/inspirebike.h \
 ios/lockscreen.h \
 keepawakehelper.h \
 macos/lockscreen.h \
 ios/M3iIOS-Interface.h \
 material.h \
-devices/mcfbike/mcfbike.h \
 metric.h \
-devices/nautiluselliptical/nautiluselliptical.h \
-devices/nautilustreadmill/nautilustreadmill.h \
-devices/npecablebike/npecablebike.h \
-devices/pafersbike/pafersbike.h \
-devices/paferstreadmill/paferstreadmill.h \
-peloton.h \
-powerzonepack.h \
-devices/proformbike/proformbike.h \
-devices/proformelliptical/proformelliptical.h \
-devices/proformtreadmill/proformtreadmill.h \
 qdebugfixup.h \
 qfit.h \
 qmdnsengine_export.h \
 qzsettings.h \
-devices/renphobike/renphobike.h \
-devices/rower.h \
-devices/schwinnic4bike/schwinnic4bike.h \
 screencapture.h \
 sessionline.h \
-devices/shuaa5treadmill/shuaa5treadmill.h \
 signalhandler.h \
-simplecrypt.h \
-devices/skandikawiribike/skandikawiribike.h \
-devices/smartrowrower/smartrowrower.h \
-devices/smartspin2k/smartspin2k.h \
-smtpclient/src/SmtpMime \
-smtpclient/src/emailaddress.h \
-smtpclient/src/mimeattachment.h \
-smtpclient/src/mimecontentformatter.h \
-smtpclient/src/mimefile.h \
-smtpclient/src/mimehtml.h \
-smtpclient/src/mimeinlinefile.h \
-smtpclient/src/mimemessage.h \
-smtpclient/src/mimemultipart.h \
-smtpclient/src/mimepart.h \
-smtpclient/src/mimetext.h \
-smtpclient/src/quotedprintable.h \
-smtpclient/src/smtpclient.h \
-smtpclient/src/smtpexports.h \
-devices/snodebike/snodebike.h \
-devices/solebike/solebike.h \
-devices/soleelliptical/soleelliptical.h \
-devices/solef80treadmill/solef80treadmill.h \
-devices/spirittreadmill/spirittreadmill.h \
-devices/sportsplusbike/sportsplusbike.h \
-devices/sportstechbike/sportstechbike.h \
-devices/tacxneo2/tacxneo2.h \
 tcpclientinfosender.h \
-devices/technogymmyruntreadmill/technogymmyruntreadmill.h \
-devices/technogymmyruntreadmillrfcomm/technogymmyruntreadmillrfcomm.h \
 templateinfosender.h \
 templateinfosenderbuilder.h \
-webtranslation.h \
-devices/stagesbike/stagesbike.h \
-devices/toorxtreadmill/toorxtreadmill.h \
-devices/iconsolebike/iconsolebike.h \
 gpx.h \
 devices/treadmill.h \
-mainwindow.h \
 trainprogram.h \
-devices/truetreadmill/truetreadmill.h \
-devices/trxappgateusbbike/trxappgateusbbike.h \
-devices/trxappgateusbtreadmill/trxappgateusbtreadmill.h \
-devices/ultrasportbike/ultrasportbike.h \
-virtualdevices/virtualbike.h \
-virtualdevices/virtualrower.h \
 virtualdevices/virtualtreadmill.h \
-devices/domyosbike/domyosbike.h \
-devices/wahookickrsnapbike/wahookickrsnapbike.h \
 wobjectdefs.h \
 wobjectimpl.h \
-devices/yesoulbike/yesoulbike.h \
 scanrecordresult.h \
 windows_zwift_incline_paddleocr_thread.h \
 zwiftworkout.h
@@ -866,248 +529,28 @@ zwiftworkout.h
 
 exists(secret.h): HEADERS += secret.h
 
-!ios: HEADERS += charts.h
-
-!ios: FORMS += \
-   charts.ui \
-	mainwindow.ui
-
-# Translation files - 30 most used languages worldwide
-CONFIG += lrelease
-LRELEASE_DIR = $$PWD/translations
-
-TRANSLATIONS += \
-    $$PWD/translations/qdomyos-zwift_it.ts \
-    $$PWD/translations/qdomyos-zwift_de.ts \
-    $$PWD/translations/qdomyos-zwift_fr.ts \
-    $$PWD/translations/qdomyos-zwift_es.ts \
-    $$PWD/translations/qdomyos-zwift_pt.ts \
-    $$PWD/translations/qdomyos-zwift_pt_BR.ts \
-    $$PWD/translations/qdomyos-zwift_ru.ts \
-    $$PWD/translations/qdomyos-zwift_zh_CN.ts \
-    $$PWD/translations/qdomyos-zwift_zh_TW.ts \
-    $$PWD/translations/qdomyos-zwift_ja.ts \
-    $$PWD/translations/qdomyos-zwift_ko.ts \
-    $$PWD/translations/qdomyos-zwift_ar.ts \
-    $$PWD/translations/qdomyos-zwift_hi.ts \
-    $$PWD/translations/qdomyos-zwift_tr.ts \
-    $$PWD/translations/qdomyos-zwift_vi.ts \
-    $$PWD/translations/qdomyos-zwift_pl.ts \
-    $$PWD/translations/qdomyos-zwift_uk.ts \
-    $$PWD/translations/qdomyos-zwift_nl.ts \
-    $$PWD/translations/qdomyos-zwift_th.ts \
-    $$PWD/translations/qdomyos-zwift_id.ts \
-    $$PWD/translations/qdomyos-zwift_ro.ts \
-    $$PWD/translations/qdomyos-zwift_cs.ts \
-    $$PWD/translations/qdomyos-zwift_el.ts \
-    $$PWD/translations/qdomyos-zwift_sv.ts \
-    $$PWD/translations/qdomyos-zwift_hu.ts \
-    $$PWD/translations/qdomyos-zwift_fi.ts \
-    $$PWD/translations/qdomyos-zwift_no.ts \
-    $$PWD/translations/qdomyos-zwift_da.ts \
-    $$PWD/translations/qdomyos-zwift_he.ts \
-    $$PWD/translations/qdomyos-zwift_ca.ts
-
-# Qt compiles .ts to .qm files before building the resource file.
-# .qm files are ignored by git and embedded through translations.qrc.
-
 RESOURCES += \
-   icons.qrc \
-	qml.qrc \
-	translations.qrc
+    icons.qrc \
+    qml.qrc
 
 DISTFILES += \
     $$PWD/android/assets/ca_cert.pem \
     $$PWD/android/assets/client_cert.pem \
     $$PWD/android/assets/client_key.pem \
-    $$PWD/android/libs/ciq-companion-app-sdk-2.0.3.aar \
-    $$PWD/android/libs/zaplibrary-debug.aar \
-    $$PWD/android/proto/activitylog/ActivityLog.proto \
-    $$PWD/android/proto/activitylog/ActivityLogError.proto \
-    $$PWD/android/proto/activitylog/ActivityLogEvent.proto \
-    $$PWD/android/proto/activitylog/ActivityLogMetadata.proto \
-    $$PWD/android/proto/activitylog/ActivityLogService.proto \
-    $$PWD/android/proto/activitylog/ActivityLogStats.proto \
-    $$PWD/android/proto/activitylog/ActivityLogSummary.proto \
-    $$PWD/android/proto/activitylog/ActivityLogUtils.proto \
-    $$PWD/android/proto/appnavigation/AppNavigationService.proto \
-    $$PWD/android/proto/appnavigation/ForegroundClasses.proto \
-    $$PWD/android/proto/appnavigation/ForegroundFqns.proto \
-    $$PWD/android/proto/appnavigation/ForegroundRequest.proto \
-    $$PWD/android/proto/appnavigation/TouchEvent.proto \
-    $$PWD/android/proto/appstore/AppStoreActionRequest.proto \
-    $$PWD/android/proto/appstore/AppStoreApp.proto \
-    $$PWD/android/proto/appstore/AppStoreAppStatus.proto \
-    $$PWD/android/proto/appstore/AppStoreService.proto \
-    $$PWD/android/proto/appstore/AppStoreState.proto \
-    $$PWD/android/proto/appstore/StorageStats.proto \
-    $$PWD/android/proto/auth/AuthError.proto \
-    $$PWD/android/proto/auth/AuthService.proto \
-    $$PWD/android/proto/bluetooth/BluetoothConnectionState.proto \
-    $$PWD/android/proto/bluetooth/BluetoothDevice.proto \
-    $$PWD/android/proto/bluetooth/BluetoothDeviceType.proto \
-    $$PWD/android/proto/bluetooth/BluetoothService.proto \
-    $$PWD/android/proto/client_analytics.proto \
-    $$PWD/android/proto/club/ClubSettingsService.proto \
-    $$PWD/android/proto/console/ConsoleError.proto \
-    $$PWD/android/proto/console/ConsoleInfo.proto \
-    $$PWD/android/proto/console/ConsoleService.proto \
-    $$PWD/android/proto/console/ConsoleState.proto \
-    $$PWD/android/proto/console/ConsoleType.proto \
-    $$PWD/android/proto/console/calibration/InclineCalibration.proto \
-    $$PWD/android/proto/console/calibration/InclineCalibrationService.proto \
-    $$PWD/android/proto/console/calibration/ThrottleCalibration.proto \
-    $$PWD/android/proto/console/calibration/ThrottleCalibrationService.proto \
-    $$PWD/android/proto/console/idlelockout/IdleModeLockout.proto \
-    $$PWD/android/proto/console/idlelockout/IdleModeLockoutService.proto \
-    $$PWD/android/proto/console/keypress/KeyCode.proto \
-    $$PWD/android/proto/console/keypress/KeyPress.proto \
-    $$PWD/android/proto/console/keypress/KeyPressService.proto \
-    $$PWD/android/proto/console/proximity/ProximitySensingService.proto \
-    $$PWD/android/proto/console/sleep/SleepState.proto \
-    $$PWD/android/proto/console/sleep/SleepStateService.proto \
-    $$PWD/android/proto/console/spoofing/ConsoleSpoofingService.proto \
-    $$PWD/android/proto/console/spoofing/SpoofPartNumberResult.proto \
-    $$PWD/android/proto/console/tdf/TDFChainRingConfig.proto \
-    $$PWD/android/proto/console/tdf/TDFGear.proto \
-    $$PWD/android/proto/console/tdf/TDFGearConfig.proto \
-    $$PWD/android/proto/console/tdf/TDFGearService.proto \
-    $$PWD/android/proto/console/tdf/TDFRearCassetteConfig.proto \
-    $$PWD/android/proto/console/update/FirmwareType.proto \
-    $$PWD/android/proto/console/update/FirmwareUpdateFile.proto \
-    $$PWD/android/proto/console/update/FirmwareUpdateService.proto \
-    $$PWD/android/proto/console/update/FirmwareUpdateState.proto \
-    $$PWD/android/proto/console/update/FirmwareUpdateStatus.proto \
-    $$PWD/android/proto/console/useractivity/UserActivity.proto \
-    $$PWD/android/proto/console/useractivity/UserActivityService.proto \
-    $$PWD/android/proto/console/virtualdmk/VirtualDMKService.proto \
-    $$PWD/android/proto/featuregates/FeatureGateFacet.proto \
-    $$PWD/android/proto/featuregates/FeatureGateResult.proto \
-    $$PWD/android/proto/featuregates/FeatureGateRule.proto \
-    $$PWD/android/proto/featuregates/FeatureGateService.proto \
-    $$PWD/android/proto/featuregates/GatedFeature.proto \
-    $$PWD/android/proto/firebase/perf/v1/perf_metric.proto \
-    $$PWD/android/proto/google/protobuf/any.proto \
-    $$PWD/android/proto/google/protobuf/api.proto \
-    $$PWD/android/proto/google/protobuf/duration.proto \
-    $$PWD/android/proto/google/protobuf/empty.proto \
-    $$PWD/android/proto/google/protobuf/field_mask.proto \
-    $$PWD/android/proto/google/protobuf/source_context.proto \
-    $$PWD/android/proto/google/protobuf/struct.proto \
-    $$PWD/android/proto/google/protobuf/timestamp.proto \
-    $$PWD/android/proto/google/protobuf/type.proto \
-    $$PWD/android/proto/google/protobuf/wrappers.proto \
-    $$PWD/android/proto/settings/BrightnessService.proto \
-    $$PWD/android/proto/settings/DemoModeService.proto \
-    $$PWD/android/proto/settings/MaxSpeedService.proto \
-    $$PWD/android/proto/settings/Settings.proto \
-    $$PWD/android/proto/settings/SystemUnitsService.proto \
-    $$PWD/android/proto/settings/TimeZoneService.proto \
-    $$PWD/android/proto/settings/VideoQualityService.proto \
-    $$PWD/android/proto/settings/VolumeService.proto \
-    $$PWD/android/proto/settings/hdmi/HdmiSoundService.proto \
-    $$PWD/android/proto/settings/heartrate/HeartRateSettings.proto \
-    $$PWD/android/proto/settings/heartrate/HeartRateSettingsService.proto \
-    $$PWD/android/proto/settings/heartrate/HeartRateZone.proto \
-    $$PWD/android/proto/settings/heartrate/HeartRateZoneNumber.proto \
-    $$PWD/android/proto/settings/lighting/LightingService.proto \
-    $$PWD/android/proto/speedservice.protoset \
-    $$PWD/android/proto/user/Address.proto \
-    $$PWD/android/proto/user/Birthday.proto \
-    $$PWD/android/proto/user/EmailAddress.proto \
-    $$PWD/android/proto/user/Gender.proto \
-    $$PWD/android/proto/user/Height.proto \
-    $$PWD/android/proto/user/LatestAcceptedTermsVersion.proto \
-    $$PWD/android/proto/user/Name.proto \
-    $$PWD/android/proto/user/RequiredTermsVersion.proto \
-    $$PWD/android/proto/user/SubscriptionProvider.proto \
-    $$PWD/android/proto/user/User.proto \
-    $$PWD/android/proto/user/UserError.proto \
-    $$PWD/android/proto/user/UserInvited.proto \
-    $$PWD/android/proto/user/UserInvitedList.proto \
-    $$PWD/android/proto/user/UserList.proto \
-    $$PWD/android/proto/user/UserService.proto \
-    $$PWD/android/proto/user/UserTier.proto \
-    $$PWD/android/proto/user/WarningAcceptance.proto \
-    $$PWD/android/proto/user/Weight.proto \
-    $$PWD/android/proto/util/ConnectionError.proto \
-    $$PWD/android/proto/util/IFitError.proto \
-    $$PWD/android/proto/util/InputError.proto \
-    $$PWD/android/proto/util/NetworkError.proto \
-    $$PWD/android/proto/util/Util.proto \
-    $$PWD/android/proto/workout/CadenceService.proto \
-    $$PWD/android/proto/workout/CaloriesBurnedService.proto \
-    $$PWD/android/proto/workout/CaloriesPerHourService.proto \
-    $$PWD/android/proto/workout/DistanceService.proto \
-    $$PWD/android/proto/workout/ElapsedTimeService.proto \
-    $$PWD/android/proto/workout/ElevationService.proto \
-    $$PWD/android/proto/workout/FiveHundredSplitService.proto \
-    $$PWD/android/proto/workout/GearService.proto \
-    $$PWD/android/proto/workout/HeartRateService.proto \
-    $$PWD/android/proto/workout/InclineService.proto \
-    $$PWD/android/proto/workout/LapTimeService.proto \
-    $$PWD/android/proto/workout/MapWorkoutService.proto \
-    $$PWD/android/proto/workout/PauseTimeRemainingService.proto \
-    $$PWD/android/proto/workout/ProgrammedWorkoutSessionError.proto \
-    $$PWD/android/proto/workout/ProgrammedWorkoutSessionService.proto \
-    $$PWD/android/proto/workout/ResistanceService.proto \
-    $$PWD/android/proto/workout/RingService.proto \
-    $$PWD/android/proto/workout/RpmService.proto \
-    $$PWD/android/proto/workout/SmartAdjustService.proto \
-    $$PWD/android/proto/workout/SpeedService.proto \
-    $$PWD/android/proto/workout/StepCountService.proto \
-    $$PWD/android/proto/workout/StrokesPerMinuteService.proto \
-    $$PWD/android/proto/workout/StrokesService.proto \
-    $$PWD/android/proto/workout/WorkoutError.proto \
-    $$PWD/android/proto/workout/WorkoutResult.proto \
-    $$PWD/android/proto/workout/WorkoutService.proto \
-    $$PWD/android/proto/workout/WorkoutState.proto \
-    $$PWD/android/proto/workout/activepulse/ActivePulseActiveState.proto \
-    $$PWD/android/proto/workout/activepulse/ActivePulseScalingState.proto \
-    $$PWD/android/proto/workout/activepulse/ActivePulseService.proto \
-    $$PWD/android/proto/workout/activepulse/ActivePulseState.proto \
-    $$PWD/android/proto/workout/data/Control.proto \
-    $$PWD/android/proto/workout/data/ControlType.proto \
-    $$PWD/android/proto/workout/data/ItemType.proto \
-    $$PWD/android/proto/workout/data/RingState.proto \
-    $$PWD/android/proto/workout/data/ScaledControls.proto \
-    $$PWD/android/proto/workout/data/Workout.proto \
-    $$PWD/android/proto/workout/data/WorkoutCategory.proto \
-    $$PWD/android/proto/workout/data/WorkoutFilter.proto \
-    $$PWD/android/proto/workout/data/WorkoutSegmentDescriptor.proto \
-    $$PWD/android/proto/workout/data/WorkoutSessionItem.proto \
-    $$PWD/android/proto/workout/data/WorkoutSessionState.proto \
-    $$PWD/android/proto/workout/data/WorkoutTargetType.proto \
-    $$PWD/android/proto/workout/data/WorkoutType.proto \
-    $$PWD/android/proto/workout/data/map/MapCoordinate.proto \
-    $$PWD/android/proto/workout/data/map/MapViewType.proto \
-    $$PWD/android/proto/workout/data/recovery/RecoveredSession.proto \
-    $$PWD/android/proto/workout/data/recovery/RecoveredWorkoutSessionItem.proto \
-    $$PWD/android/proto/workout/data/video/MusicRegion.proto \
-    $$PWD/android/proto/workout/data/video/Sources.proto \
-    $$PWD/android/proto/workout/data/video/VideoSourceHls.proto \
-    $$PWD/android/proto/workout/data/video/VideoSourceStream.proto \
     $$PWD/android/res/xml/device_filter.xml \
     $$PWD/android/src/BleAdvertiser.java \
    $$PWD/android/src/CSafeRowerUSBHID.java \
     $$PWD/android/src/ContentHelper.java \
     $$PWD/android/src/CustomQtActivity.java \
-    $$PWD/android/src/Garmin.java \
     $$PWD/android/src/GrpcTreadmillService.java \
    $$PWD/android/src/HidBridge.java \
-    $$PWD/android/src/IQMessageReceiverWrapper.java \
     $$PWD/android/src/LocationHelper.java \
-    $$PWD/android/src/MediaButtonReceiver.java \
     $$PWD/android/src/MediaProjection.java \
     $$PWD/android/src/NotificationUtils.java \
     $$PWD/android/src/QLog.java \
     $$PWD/android/src/ScreenCaptureService.java \
     $$PWD/android/src/Shortcuts.java \
-    $$PWD/android/src/WearableController.java \
-    $$PWD/android/src/WearableMessageListenerService.java \
-    $$PWD/android/src/ZapClickLayer.java \
     $$PWD/android/src/ZwiftAPI.java \
-    $$PWD/android/src/ZwiftHubBike.java \
     $$PWD/android/src/main/proto/zwift_hub.proto \
     $$PWD/android/src/main/proto/zwift_messages.proto \
     .clang-format \

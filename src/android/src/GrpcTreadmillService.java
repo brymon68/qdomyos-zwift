@@ -37,22 +37,13 @@ import com.ifit.glassos.workout.SpeedRequest;
 import com.ifit.glassos.workout.InclineMetric;
 import com.ifit.glassos.workout.InclineServiceGrpc;
 import com.ifit.glassos.workout.InclineRequest;
-import com.ifit.glassos.workout.ResistanceMetric;
-import com.ifit.glassos.workout.ResistanceServiceGrpc;
-import com.ifit.glassos.workout.ResistanceRequest;
 import com.ifit.glassos.workout.CadenceMetric;
 import com.ifit.glassos.workout.CadenceServiceGrpc;
-import com.ifit.glassos.workout.RpmMetric;
-import com.ifit.glassos.workout.RpmServiceGrpc;
 import com.ifit.glassos.workout.WorkoutServiceGrpc;
 import com.ifit.glassos.workout.WorkoutResult;
 import com.ifit.glassos.workout.StartWorkoutResponse;
 import com.ifit.glassos.workout.WorkoutState;
 import com.ifit.glassos.workout.WorkoutStateMessage;
-import com.ifit.glassos.workout.StrokesMetric;
-import com.ifit.glassos.workout.StrokesServiceGrpc;
-import com.ifit.glassos.workout.PaceMetric;
-import com.ifit.glassos.workout.PaceServiceGrpc;
 import com.ifit.glassos.workout.HeartRateMetric;
 import com.ifit.glassos.workout.HeartRateServiceGrpc;
 
@@ -90,12 +81,8 @@ public class GrpcTreadmillService {
     private ManagedChannel channel;
     private SpeedServiceGrpc.SpeedServiceBlockingStub speedStub;
     private InclineServiceGrpc.InclineServiceBlockingStub inclineStub;
-    private ResistanceServiceGrpc.ResistanceServiceBlockingStub resistanceStub;
     private CadenceServiceGrpc.CadenceServiceBlockingStub cadenceStub;
-    private RpmServiceGrpc.RpmServiceBlockingStub rpmStub;
     private WorkoutServiceGrpc.WorkoutServiceBlockingStub workoutStub;
-    private StrokesServiceGrpc.StrokesServiceBlockingStub strokesStub;
-    private PaceServiceGrpc.PaceServiceBlockingStub paceStub;
     private HeartRateServiceGrpc.HeartRateServiceBlockingStub heartRateStub;
 
     // Control flags and current values
@@ -105,13 +92,7 @@ public class GrpcTreadmillService {
     private ConcurrentLinkedQueue<StateTransition> stateChangeQueue = new ConcurrentLinkedQueue<>();
     private volatile double currentSpeed = 0.0;
     private volatile double currentIncline = 0.0;
-    private volatile double currentResistance = 0.0;
     private volatile double currentCadence = 0.0;
-    private volatile double currentRpm = 0.0;
-    private volatile double currentStrokesCount = 0.0;
-    private volatile double currentStrokesLength = 0.0;
-    private volatile int currentPaceSeconds = 0;
-    private volatile int currentLast500mPaceSeconds = 0;
     private volatile double currentHeartRate = 0.0;
 
     // Context for accessing assets
@@ -121,11 +102,7 @@ public class GrpcTreadmillService {
     public interface MetricsListener {
         void onSpeedUpdated(double speed);
         void onInclineUpdated(double incline);
-        void onResistanceUpdated(double resistance);
         void onCadenceUpdated(double cadence);
-        void onRpmUpdated(double rpm);
-        void onStrokesUpdated(double strokesCount, double strokesLength);
-        void onPaceUpdated(int paceSeconds, int last500mPaceSeconds);
         void onHeartRateUpdated(double heartRate);
         void onWorkoutStateChanged(int workoutState);
         void onError(String metric, String error);
@@ -283,30 +260,6 @@ public class GrpcTreadmillService {
         });
     }
 
-    private void adjustResistanceInstance(double delta) {
-        executorService.execute(() -> {
-            try {
-                double newResistance = Math.max(0.0, currentResistance + delta);
-                
-                Metadata headers = createHeaders();
-                ResistanceServiceGrpc.ResistanceServiceBlockingStub stubWithHeaders = resistanceStub.withInterceptors(
-                        MetadataUtils.newAttachHeadersInterceptor(headers)
-                );
-                
-                ResistanceRequest request = ResistanceRequest.newBuilder().setResistance(newResistance).build();
-                stubWithHeaders.setResistance(request);
-                
-                QLog.d(TAG, String.format("Set resistance to %.0f level", newResistance));
-                
-            } catch (Exception e) {
-                QLog.e(TAG, "Failed to set resistance", e);
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onError("resistance", e.getMessage()));
-                }
-            }
-        });
-    }
-
     private void shutdownInstance() {
         stopMetricsUpdates();
         stopWorkoutStateMonitoringInstance();
@@ -384,12 +337,8 @@ public class GrpcTreadmillService {
 
         speedStub = SpeedServiceGrpc.newBlockingStub(channel);
         inclineStub = InclineServiceGrpc.newBlockingStub(channel);
-        resistanceStub = ResistanceServiceGrpc.newBlockingStub(channel);
         cadenceStub = CadenceServiceGrpc.newBlockingStub(channel);
-        rpmStub = RpmServiceGrpc.newBlockingStub(channel);
         workoutStub = WorkoutServiceGrpc.newBlockingStub(channel);
-        strokesStub = StrokesServiceGrpc.newBlockingStub(channel);
-        paceStub = PaceServiceGrpc.newBlockingStub(channel);
         heartRateStub = HeartRateServiceGrpc.newBlockingStub(channel);
 
         QLog.i(TAG, "gRPC connection initialized with client certificates");
@@ -532,60 +481,6 @@ public class GrpcTreadmillService {
                 }
             }
 
-            // Fetch resistance
-            try {
-                long resistanceStartTime = System.currentTimeMillis();
-                ResistanceServiceGrpc.ResistanceServiceBlockingStub resistanceStubWithHeaders = resistanceStub.withInterceptors(
-                        MetadataUtils.newAttachHeadersInterceptor(headers)
-                );
-                long resistanceInterceptorTime = System.currentTimeMillis();
-                QLog.d(TAG, "Resistance interceptor setup took: " + (resistanceInterceptorTime - resistanceStartTime) + "ms");
-                
-                ResistanceMetric resistanceResponse = resistanceStubWithHeaders.getResistance(request);
-                long resistanceCallTime = System.currentTimeMillis();
-                QLog.d(TAG, "Resistance gRPC call took: " + (resistanceCallTime - resistanceInterceptorTime) + "ms");
-                
-                currentResistance = resistanceResponse.getLastResistance();
-                
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onResistanceUpdated(currentResistance));
-                }
-                long resistanceEndTime = System.currentTimeMillis();
-                QLog.d(TAG, "Resistance total processing took: " + (resistanceEndTime - resistanceStartTime) + "ms");
-            } catch (Exception e) {
-                QLog.w(TAG, "Failed to fetch resistance", e);
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onError("resistance", "Error"));
-                }
-            }
-
-            // Fetch RPM (for bikes)
-            try {
-                long rpmStartTime = System.currentTimeMillis();
-                RpmServiceGrpc.RpmServiceBlockingStub rpmStubWithHeaders = rpmStub.withInterceptors(
-                        MetadataUtils.newAttachHeadersInterceptor(headers)
-                );
-                long rpmInterceptorTime = System.currentTimeMillis();
-                QLog.d(TAG, "RPM interceptor setup took: " + (rpmInterceptorTime - rpmStartTime) + "ms");
-                
-                RpmMetric rpmResponse = rpmStubWithHeaders.getRpm(request);
-                long rpmCallTime = System.currentTimeMillis();
-                QLog.d(TAG, "RPM gRPC call took: " + (rpmCallTime - rpmInterceptorTime) + "ms");
-                
-                currentRpm = rpmResponse.getLastRpm();
-                
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onRpmUpdated(currentRpm));
-                }
-                long rpmEndTime = System.currentTimeMillis();
-                QLog.d(TAG, "RPM total processing took: " + (rpmEndTime - rpmStartTime) + "ms");
-            } catch (Exception e) {
-                QLog.w(TAG, "Failed to fetch RPM", e);
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onError("rpm", "Error"));
-                }
-            }
-
             // Fetch cadence (for treadmills)
             try {
                 long cadenceStartTime = System.currentTimeMillis();
@@ -610,62 +505,6 @@ public class GrpcTreadmillService {
                 QLog.w(TAG, "Failed to fetch cadence", e);
                 if (metricsListener != null) {
                     mainHandler.post(() -> metricsListener.onError("cadence", "Error"));
-                }
-            }
-
-            // Fetch strokes (for rowers)
-            try {
-                long strokesStartTime = System.currentTimeMillis();
-                StrokesServiceGrpc.StrokesServiceBlockingStub strokesStubWithHeaders = strokesStub.withInterceptors(
-                        MetadataUtils.newAttachHeadersInterceptor(headers)
-                );
-                long strokesInterceptorTime = System.currentTimeMillis();
-                QLog.d(TAG, "Strokes interceptor setup took: " + (strokesInterceptorTime - strokesStartTime) + "ms");
-
-                StrokesMetric strokesResponse = strokesStubWithHeaders.getStrokes(request);
-                long strokesCallTime = System.currentTimeMillis();
-                QLog.d(TAG, "Strokes gRPC call took: " + (strokesCallTime - strokesInterceptorTime) + "ms");
-
-                currentStrokesCount = strokesResponse.getStrokesCount();
-                currentStrokesLength = strokesResponse.getStrokesLength();
-
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onStrokesUpdated(currentStrokesCount, currentStrokesLength));
-                }
-                long strokesEndTime = System.currentTimeMillis();
-                QLog.d(TAG, "Strokes total processing took: " + (strokesEndTime - strokesStartTime) + "ms");
-            } catch (Exception e) {
-                QLog.w(TAG, "Failed to fetch strokes", e);
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onError("strokes", "Error"));
-                }
-            }
-
-            // Fetch pace (for rowers)
-            try {
-                long paceStartTime = System.currentTimeMillis();
-                PaceServiceGrpc.PaceServiceBlockingStub paceStubWithHeaders = paceStub.withInterceptors(
-                        MetadataUtils.newAttachHeadersInterceptor(headers)
-                );
-                long paceInterceptorTime = System.currentTimeMillis();
-                QLog.d(TAG, "Pace interceptor setup took: " + (paceInterceptorTime - paceStartTime) + "ms");
-
-                PaceMetric paceResponse = paceStubWithHeaders.getPace(request);
-                long paceCallTime = System.currentTimeMillis();
-                QLog.d(TAG, "Pace gRPC call took: " + (paceCallTime - paceInterceptorTime) + "ms");
-
-                currentPaceSeconds = paceResponse.getCurrentPaceSeconds();
-                currentLast500mPaceSeconds = paceResponse.getLastPaceSeconds();
-
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onPaceUpdated(currentPaceSeconds, currentLast500mPaceSeconds));
-                }
-                long paceEndTime = System.currentTimeMillis();
-                QLog.d(TAG, "Pace total processing took: " + (paceEndTime - paceStartTime) + "ms");
-            } catch (Exception e) {
-                QLog.w(TAG, "Failed to fetch pace", e);
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onError("pace", "Error"));
                 }
             }
 
@@ -710,7 +549,6 @@ public class GrpcTreadmillService {
                 mainHandler.post(() -> {
                     metricsListener.onError("speed", "Error");
                     metricsListener.onError("inclination", "Error");
-                    metricsListener.onError("resistance", "Error");
                     metricsListener.onError("cadence", "Error");
                 });
             }
@@ -783,49 +621,6 @@ public class GrpcTreadmillService {
         return 0.0;
     }
     
-    public static double getCurrentRpm() {
-        if (instance != null) {
-            return instance.currentRpm;
-        }
-        return 0.0;
-    }
-    
-    
-    public static double getCurrentResistance() {
-        if (instance != null) {
-            return instance.currentResistance;
-        }
-        return 0.0;
-    }
-
-    public static double getCurrentStrokesCount() {
-        if (instance != null) {
-            return instance.currentStrokesCount;
-        }
-        return 0.0;
-    }
-
-    public static double getCurrentStrokesLength() {
-        if (instance != null) {
-            return instance.currentStrokesLength;
-        }
-        return 0.0;
-    }
-
-    public static int getCurrentPaceSeconds() {
-        if (instance != null) {
-            return instance.currentPaceSeconds;
-        }
-        return 0;
-    }
-
-    public static int getCurrentLast500mPaceSeconds() {
-        if (instance != null) {
-            return instance.currentLast500mPaceSeconds;
-        }
-        return 0;
-    }
-
     public static double getCurrentHeartRate() {
         if (instance != null) {
             return instance.currentHeartRate;
@@ -844,14 +639,6 @@ public class GrpcTreadmillService {
     public static void adjustIncline(double delta) {
         if (instance != null) {
             instance.adjustInclineInstance(delta);
-        } else {
-            QLog.e(TAG, "Service not initialized. Call initialize() first.");
-        }
-    }
-    
-    public static void adjustResistance(double delta) {
-        if (instance != null) {
-            instance.adjustResistanceInstance(delta);
         } else {
             QLog.e(TAG, "Service not initialized. Call initialize() first.");
         }

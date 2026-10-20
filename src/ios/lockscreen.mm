@@ -5,7 +5,6 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import <WebKit/WKWebsiteDataStore.h>
 #import <AVFoundation/AVFoundation.h>
-#import <ConnectIQ/ConnectIQ.h>
 #import "qdomyoszwift-Swift2.h"
 #import "swiftDebug.h"
 #import "swiftDebugBridge.h"
@@ -14,7 +13,6 @@
 #include <QDebug>
 #include "ios/AdbClient.h"
 #include "ios/ios_echelonconnectsport.h"
-#include "ios/ios_zwiftclickremote.h"
 #include "ios/ios_liveactivity.h"
 
 @class virtualbike_ios_swift;
@@ -31,7 +29,6 @@ static virtualrower_zwift* _virtualrower = nil;
 static virtualtreadmill_zwift* _virtualtreadmill_zwift = nil;
 static WorkoutTracking* workoutTracking = nil;
 
-static GarminConnect* Garmin = 0;
 
 static AdbClient *_adb = 0;
 
@@ -53,7 +50,6 @@ static ios_echelonconnectsport* ios_echelonConnectSport = nil;
 
 static zwift_protobuf_layer* zwiftProtobufLayer = nil;
 
-static NSString* profile_selected;
 
 bool lockscreen::appleWatchAppInstalled() {
     static int lastState = -1; // -1 = not initialized, 0 = not supported/not paired, 1 = paired but no app, 2 = paired with app
@@ -108,9 +104,6 @@ void lockscreen::request()
     h = [[healthkit alloc] init];
     [h request];
     zwiftProtobufLayer = [[zwift_protobuf_layer alloc] init];
-    if (@available(iOS 13, *)) {
-        Garmin = [[GarminConnect alloc] init];
-    }
     // just to be sure, I built the library for iOS17 only but theorically we can use any iOS version
     if (@available(iOS 17, *)) {
         workoutTracking = [[WorkoutTracking alloc] init];
@@ -349,7 +342,7 @@ uint64_t lockscreen::virtualtreadmill_lastChangeRequestedSpeed()
     return 0;
 }
 
-bool lockscreen::virtualtreadmill_updateFTMS(UInt16 normalizeSpeed, UInt8 currentResistance, UInt16 currentCadence, UInt16 currentInclination, UInt64 currentDistance, double elevationGain, unsigned short currentCalories, qint32 currentSteps,  unsigned short elapsedSeconds, UInt8 deviceType)
+bool lockscreen::virtualtreadmill_updateFTMS(UInt16 normalizeSpeed, UInt8 currentResistance, UInt16 currentCadence, UInt16 currentInclination, UInt64 currentDistance, double elevationGain, qint32 currentSteps,  unsigned short elapsedSeconds, UInt8 deviceType)
 {
     if(_virtualtreadmill_zwift != nil)
         return [_virtualtreadmill_zwift updateFTMSWithNormalizeSpeed:normalizeSpeed currentCadence:currentCadence currentResistance:currentResistance currentInclination:currentInclination currentDistance:currentDistance elapsedTimeSeconds:elapsedSeconds];
@@ -380,35 +373,6 @@ int lockscreen::virtualrower_getLastFTMSMessage(unsigned char* message) {
     return 0;
 }
 
-void lockscreen::garminconnect_init() {
-    [[ConnectIQ sharedInstance] initializeWithUrlScheme:@"org.cagnulein.connectiqcomms-ciq"
-                                 uiOverrideDelegate:nil];
-    
-    [[ConnectIQ sharedInstance] showConnectIQDeviceSelection];
-}
-
-bool lockscreen::urlParser(const char *url) {
-    NSString *sURL = [NSString stringWithCString:url encoding:NSASCIIStringEncoding];
-    NSURL *URL = [NSURL URLWithString:[sURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    [Garmin urlParser: URL];
-}
-
-int lockscreen::getHR() {
-    return [Garmin getHR];
-}
-
-int lockscreen::getFootCad() {
-    return [Garmin getFootCad];
-}
-
-int lockscreen::getPower() {
-    return [Garmin getPower];
-}
-
-double lockscreen::getSpeed() {
-    return [Garmin getSpeed];
-}
-
 // getVolume
 
 double lockscreen::getVolume()
@@ -435,13 +399,7 @@ void lockscreen::nslog(const char* log) {
     NSLog(@"%@", string);
 }
 
-void lockscreen::set_action_profile(const char* profile) {
-    profile_selected = [[NSString alloc] initWithUTF8String:profile];
-}
 
-const char* lockscreen::get_action_profile() {
-    return [profile_selected UTF8String];
-}
 
 void lockscreen::adb_connect(const char*  IP) {
     if(_adb == 0) {
@@ -589,40 +547,6 @@ uint32_t lockscreen::zwift_hub_getCadenceFromBuffer(const QByteArray& buffer) {
     
     uint32_t cadence = [ZwiftHubBike getCadenceFromBufferWithBuffer:data];
     return cadence;
-}
-
-static NSMutableDictionary<NSValue*, ios_zwiftclickremote*>* ios_zwiftClickRemotes = nil;
-
-void lockscreen::zwiftClickRemote(const char* Name, const char* UUID, void* deviceClass) {
-    NSString *deviceName = [NSString stringWithCString:Name encoding:NSASCIIStringEncoding];
-    NSString *deviceUUID = [NSString stringWithCString:UUID encoding:NSASCIIStringEncoding];
-    
-    // Initialize the dictionary if needed
-    if (ios_zwiftClickRemotes == nil) {
-        ios_zwiftClickRemotes = [[NSMutableDictionary alloc] init];
-    }
-    
-    // Create a key using the pointer value
-    NSValue *key = [NSValue valueWithPointer:deviceClass];
-    
-    // Create a new instance for this device, passing both name and UUID
-    ios_zwiftclickremote *remote = [[ios_zwiftclickremote alloc] initWithNameAndUUID:deviceName uuid:deviceUUID qtDevice:deviceClass];
-    
-    // Store in dictionary using the device pointer as key
-    [ios_zwiftClickRemotes setObject:remote forKey:key];
-}
-
-
-void lockscreen::zwiftClickRemote_WriteCharacteristic(unsigned char* qdata, unsigned char length, void* deviceClass) {
-    if (ios_zwiftClickRemotes == nil) return;
-
-    // Get the specific remote for this device
-    NSValue *key = [NSValue valueWithPointer:deviceClass];
-    ios_zwiftclickremote *remote = [ios_zwiftClickRemotes objectForKey:key];
-
-    if(remote) {
-        [remote writeCharacteristic:qdata length:length];
-    }
 }
 
 bool lockscreen::isInMultiWindowMode() {

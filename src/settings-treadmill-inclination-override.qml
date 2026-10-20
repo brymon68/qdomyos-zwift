@@ -47,8 +47,8 @@ ScrollView {
         property double treadmill_inclination_override_145: 14.5
         property double treadmill_inclination_override_150: 15.0
 
-        property double treadmill_inclination_ovveride_gain: 1.0
-        property double treadmill_inclination_ovveride_offset: 0.0
+        property double treadmill_inclination_ovveride_gain: 0.01
+        property double treadmill_inclination_ovveride_offset: 0.1
     }
 
 

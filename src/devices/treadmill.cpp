@@ -1,10 +1,4 @@
 #include "treadmill.h"
-#ifdef Q_OS_ANDROID
-#include <QAndroidJniObject>
-#endif
-#ifdef Q_OS_IOS
-#include "ios/lockscreen.h"
-#endif
 #include <QSettings>
 #include <cmath>
 
@@ -89,7 +83,7 @@ BLUETOOTH_TYPE treadmill::deviceType() { return TREADMILL; }
 double treadmill::minStepInclination() { return 0.5; }
 double treadmill::minStepSpeed() { return 0.5; }
 
-void treadmill::update_metrics(bool, const double, const bool) {
+void treadmill::update_metrics() {
 
     QDateTime current = QDateTime::currentDateTime();
     double deltaTime = (((double)_lastTimeUpdate.msecsTo(current)) / ((double)1000.0));
@@ -115,12 +109,7 @@ void treadmill::update_metrics(bool, const double, const bool) {
     _lastTimeUpdate = current;
     _firstUpdate = false;
 
-    // Update iOS Live Activity with throttling
-    update_ios_live_activity();
 }
-
-// Retained for legacy treadmill drivers that provide their own telemetry.
-uint16_t treadmill::watts(double) { return m_watt.value(); }
 
 void treadmill::clearStats() {
 
@@ -129,7 +118,6 @@ void treadmill::clearStats() {
     Speed.clear(false);
     rawSpeed.clear(false);
     rawInclination.clear(false);
-    KCal.clear(true);
     Distance.clear(true);
     Distance1s.clear(true);
     Heart.clear(false);
@@ -151,7 +139,6 @@ void treadmill::setPaused(bool p) {
     Speed.setPaused(p);
     rawSpeed.setPaused(p);
     rawInclination.setPaused(p);
-    KCal.setPaused(p);
     Distance.setPaused(p);
     Distance1s.setPaused(p);
     Heart.setPaused(p);
@@ -169,7 +156,6 @@ void treadmill::setLap() {
     Speed.setLap(false);
     rawSpeed.setLap(false);
     rawInclination.setLap(false);
-    KCal.setLap(true);
     Distance.setLap(true);
     Distance1s.setLap(true);
     Heart.setLap(false);
@@ -447,143 +433,6 @@ double treadmill::treadmillInclinationOverride(double Inclination) {
             .toDouble();
     }
     return Inclination;
-}
-
-void treadmill::evaluateStepCount() {
-    // Auto-detect cadence format: if per-leg, needs doubling for step count
-    // Running (>6 km/h): double if cadence < 120
-    // Walking (<6 km/h): double if cadence < 60
-    double effectiveCadence = Cadence.value();
-
-    if (Speed.value() > 6.0 && Cadence.value() < 120 && Cadence.value() > 0) {
-        // Running: likely per-leg cadence, double it
-        effectiveCadence = Cadence.value() * 2;
-    } else if (Speed.value() > 0 && Speed.value() <= 6.0 && Cadence.value() < 60 && Cadence.value() > 0) {
-        // Walking: likely per-leg cadence, double it
-        effectiveCadence = Cadence.value() * 2;
-    }
-
-    QSettings settings;
-    double step_gain = settings.value(QZSettings::step_gain, QZSettings::default_step_gain).toDouble();
-
-    StepCount += (Cadence.lastChanged().msecsTo(QDateTime::currentDateTime())) * (effectiveCadence / 60000) * step_gain;
-}
-
-bool treadmill::cadenceFromAppleWatch() {
-    QSettings settings;
-#ifdef Q_OS_IOS
-#ifndef IO_UNDER_QT
-    lockscreen h;
-    if (settings.value(QZSettings::garmin_companion, QZSettings::default_garmin_companion).toBool()) {
-        long garminCadence = h.getFootCad();
-        qDebug() << QStringLiteral("Current Garmin Cadence: ") << QString::number(garminCadence);
-        // Ignore transient Garmin cadence spikes while the treadmill is not moving yet.
-        if (garminCadence > 0 && Speed.value() > 0.0) {
-            evaluateStepCount();
-            Cadence = garminCadence;
-            return true;
-        }
-        return false;
-    } else if (h.appleWatchAppInstalled()) {
-        long appleWatchCadence = h.stepCadence();
-        qDebug() << QStringLiteral("Current Cadence: ") << QString::number(appleWatchCadence);
-        // Slow-jogging mode: derive Speed from Apple Watch cadence when running on Fake
-        // Treadmill. Gated on both toggles so this only runs in the explicit Fake Treadmill
-        // use case and does not affect normal treadmill users by default.
-        const bool appleWatchTreadmillSpeed =
-            settings.value(QZSettings::applewatch_as_treadmill_speed,
-                           QZSettings::default_applewatch_as_treadmill_speed).toBool() &&
-            settings.value(QZSettings::fakedevice_treadmill,
-                           QZSettings::default_fakedevice_treadmill).toBool();
-        if (appleWatchCadence > 0) {
-            evaluateStepCount();
-            const double cadence_gain =
-                settings.value(QZSettings::cadence_gain,
-                               QZSettings::default_cadence_gain).toDouble();
-            const double cadence_offset =
-                settings.value(QZSettings::cadence_offset,
-                               QZSettings::default_cadence_offset).toDouble();
-            Cadence = (appleWatchCadence * cadence_gain) + cadence_offset;
-            if (appleWatchTreadmillSpeed) {
-                const double ratio =
-                    settings.value(QZSettings::cadence_sensor_speed_ratio,
-                                   QZSettings::default_cadence_sensor_speed_ratio).toDouble();
-                Speed = appleWatchCadence * (ratio > 0.0 ? ratio : 0.0);
-            }
-            return true;
-        }
-        if (appleWatchCadence == 0 && appleWatchTreadmillSpeed) {
-            // Cadence reported as exactly zero (user stopped); zero Speed too so the virtual
-            // treadmill broadcast doesn't ghost the previous value. Negative values are
-            // treated as "no fresh sample" and leave Speed unchanged.
-            Speed = 0;
-        }
-        return false;
-    }
-#endif
-#endif
-
-#ifdef Q_OS_ANDROID
-    if (settings.value(QZSettings::garmin_companion, QZSettings::default_garmin_companion).toBool()) {
-        jint garminCadence =
-            QAndroidJniObject::callStaticMethod<jint>("org/cagnulen/qdomyoszwift/Garmin", "getFootCad", "()I");
-        qDebug() << QStringLiteral("Current Garmin Cadence: ") << QString::number(garminCadence);
-        // Ignore transient Garmin cadence spikes while the treadmill is not moving yet.
-        if (garminCadence > 0 && Speed.value() > 0.0) {
-            evaluateStepCount();
-            Cadence = garminCadence;
-            return true;
-        }
-        return false;
-    }
-#endif    
-
-    return false;
-}
-
-double treadmill::calculateCadenceFromSpeed(double speed) {
-    QSettings settings;
-
-    // Return 0 if speed is too low (walking or stopped)
-    if (speed < 0.1) {
-        return 0.0;
-    }
-
-    // Get user height in meters
-    double heightCm = settings.value(QZSettings::height, QZSettings::default_height).toDouble();
-    double heightM = heightCm / 100.0;
-
-    // Get user gender
-    QString gender = settings.value(QZSettings::sex, QZSettings::default_sex).toString();
-
-    // Calculate stride length from height based on gender
-    // Male: height × 0.415, Female: height × 0.413
-    double strideLengthM;
-    if (gender.compare(QStringLiteral("Male"), Qt::CaseInsensitive) == 0) {
-        strideLengthM = heightM * 0.415;
-    } else {
-        strideLengthM = heightM * 0.413;
-    }
-
-    // If stride length is available from external sensor, use that instead
-    if (instantaneousStrideLengthCMAvailableFromDevice && InstantaneousStrideLengthCM.value() > 0) {
-        strideLengthM = InstantaneousStrideLengthCM.value() / 100.0;
-    }
-
-    // Calculate cadence: SPM = (speed_m/s / stride_length_m) × 60
-    // speed is in km/h, convert to m/s
-    double speedMs = speed * 1000.0 / 3600.0;  // km/h to m/s
-    double calculatedCadence = (speedMs / strideLengthM) * 60.0;
-    const double cadence_gain =
-        settings.value(QZSettings::cadence_gain, QZSettings::default_cadence_gain).toDouble();
-    const double cadence_offset =
-        settings.value(QZSettings::cadence_offset, QZSettings::default_cadence_offset).toDouble();
-    calculatedCadence = (calculatedCadence * cadence_gain) + cadence_offset;
-
-    qDebug() << "Calculated Cadence from Speed:" << calculatedCadence
-             << "SPM (speed:" << speed << "km/h, stride:" << (strideLengthM * 100) << "cm)";
-
-    return calculatedCadence;
 }
 
 QTime treadmill::lastRequestedPace() {

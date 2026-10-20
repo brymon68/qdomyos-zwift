@@ -51,7 +51,7 @@ WorkoutModel::WorkoutModel(const QString& dbPath, QObject *parent)
 
     // Initial load
     refresh();
-    
+
     // Calculate initial streaks from existing data
     calculateStreaks();
 }
@@ -73,14 +73,14 @@ void WorkoutModel::refresh() {
 void WorkoutModel::onWorkoutsLoaded(const QList<QVariantMap>& workouts) {
     beginResetModel();
     m_allWorkouts = workouts;
-    
+
     // Apply current filter if active
     if (m_isDateFiltered) {
         applyDateFilter();
     } else {
         m_workouts = workouts;
     }
-    
+
     endResetModel();
 
     // Calculate streaks after loading workouts (always use all workouts for streaks)
@@ -294,14 +294,14 @@ void WorkoutModel::setDateFilter(const QString& dateString) {
 
 void WorkoutModel::clearDateFilter() {
     if (!m_isDateFiltered) return;
-    
+
     m_isDateFiltered = false;
     m_filteredDate = QDate();
-    
+
     beginResetModel();
     m_workouts = m_allWorkouts;
     endResetModel();
-    
+
     emit dateFilterChanged();
 }
 
@@ -310,17 +310,17 @@ void WorkoutModel::applyDateFilter() {
         m_workouts = m_allWorkouts;
         return;
     }
-    
+
     m_workouts.clear();
     QString targetDateStr = m_filteredDate.toString("yyyy-MM-dd");
-    
+
     for (const QVariantMap& workout : m_allWorkouts) {
         QString workoutDateStr = workout["date"].toString();
-        
+
         // Use the same logic as getWorkoutDates to extract the date
         QDateTime workoutDateTime = QDateTime::fromString(workoutDateStr, Qt::ISODate);
         QDate workoutDate;
-        
+
         if (workoutDateTime.isValid()) {
             // Convert to local time to get the correct date
             workoutDate = workoutDateTime.toLocalTime().date();
@@ -328,7 +328,7 @@ void WorkoutModel::applyDateFilter() {
             // Try parsing as date only if datetime parsing fails
             workoutDate = QDate::fromString(workoutDateStr, "yyyy-MM-dd");
         }
-        
+
         if (workoutDate.isValid() && workoutDate.toString("yyyy-MM-dd") == targetDateStr) {
             m_workouts.append(workout);
         }
@@ -338,14 +338,14 @@ void WorkoutModel::applyDateFilter() {
 QStringList WorkoutModel::getWorkoutDates() {
     QStringList dates;
     QSet<QString> uniqueDates;
-    
+
     for (const QVariantMap& workout : m_allWorkouts) {
         QString dateStr = workout["date"].toString();
-        
+
         // Use QDateTime::toLocalTime() to avoid timezone issues
         QDateTime workoutDateTime = QDateTime::fromString(dateStr, Qt::ISODate);
         QDate workoutDate;
-        
+
         if (workoutDateTime.isValid()) {
             // Convert to local time to get the correct date
             workoutDate = workoutDateTime.toLocalTime().date();
@@ -353,7 +353,7 @@ QStringList WorkoutModel::getWorkoutDates() {
             // Try parsing as date only if datetime parsing fails
             workoutDate = QDate::fromString(dateStr, "yyyy-MM-dd");
         }
-        
+
         if (workoutDate.isValid()) {
             QString dateString = workoutDate.toString("yyyy-MM-dd");
             if (!uniqueDates.contains(dateString)) {
@@ -362,7 +362,7 @@ QStringList WorkoutModel::getWorkoutDates() {
             }
         }
     }
-    
+
     std::sort(dates.begin(), dates.end());
     qDebug() << "getWorkoutDates returning:" << dates;
     return dates;
@@ -372,25 +372,19 @@ QString WorkoutModel::getWorkoutSource(int workoutId) {
     QSqlQuery query(m_db);
     query.prepare("SELECT workout_source, training_program_file FROM workouts WHERE id = ?");
     query.addBindValue(workoutId);
-    
+
     if (query.exec() && query.next()) {
         QString result = query.value("workout_source").toString();
         QString trainingProgramFile = query.value("training_program_file").toString();
-        
+
         qDebug() << "WorkoutModel::getWorkoutSource for ID" << workoutId << "returned:" << result;
         qDebug() << "Training program file:" << trainingProgramFile;
-        
+
         if (result.isEmpty()) {
             qDebug() << "Empty workout_source, using default QZ";
             result = "QZ";
         }
-        
-        // Check if this should be marked as ERG mode based on training program
-        if (result == "QZ" && !trainingProgramFile.isEmpty() && trainprogram::hasTargetPower(trainingProgramFile)) {
-            qDebug() << "Training program has target power > 0, returning ERG";
-            return "ERG";
-        }
-        
+
         return result;
     }
     qDebug() << "WorkoutModel::getWorkoutSource query failed for ID" << workoutId << "- error:" << query.lastError().text();
@@ -401,7 +395,7 @@ QString WorkoutModel::getPelotonUrl(int workoutId) {
     QSqlQuery query(m_db);
     query.prepare("SELECT peloton_url FROM workouts WHERE id = ?");
     query.addBindValue(workoutId);
-    
+
     if (query.exec() && query.next()) {
         return query.value("peloton_url").toString();
     }
@@ -412,7 +406,7 @@ bool WorkoutModel::hasTrainingProgram(int workoutId) {
     QSqlQuery query(m_db);
     query.prepare("SELECT training_program_file FROM workouts WHERE id = ?");
     query.addBindValue(workoutId);
-    
+
     if (query.exec() && query.next()) {
         QString filename = query.value("training_program_file").toString();
         if (!filename.isEmpty()) {
@@ -435,7 +429,7 @@ bool WorkoutModel::loadTrainingProgram(int workoutId) {
     QSqlQuery query(m_db);
     query.prepare("SELECT training_program_file FROM workouts WHERE id = ?");
     query.addBindValue(workoutId);
-    
+
     if (query.exec() && query.next()) {
         QString filename = query.value("training_program_file").toString();
         if (!filename.isEmpty() && QFile::exists(filename)) {
@@ -458,7 +452,7 @@ void WorkoutModel::calculateStreaks() {
     QSqlQuery query(m_db);
     query.prepare("SELECT DISTINCT DATE(start_time) as workout_date FROM workouts "
                   "ORDER BY workout_date DESC");
-    
+
     if (!query.exec()) {
         qDebug() << "Failed to calculate streaks:" << query.lastError().text();
         return;
@@ -482,12 +476,12 @@ void WorkoutModel::calculateStreaks() {
     // Calculate current streak (consecutive days from today backwards)
     QDate today = QDate::currentDate();
     int currentStreak = 0;
-    
+
     // Check if today has a workout
     if (workoutDates.contains(today)) {
         currentStreak = 1;
         QDate checkDate = today.addDays(-1);
-        
+
         while (workoutDates.contains(checkDate)) {
             currentStreak++;
             checkDate = checkDate.addDays(-1);
@@ -498,7 +492,7 @@ void WorkoutModel::calculateStreaks() {
         if (workoutDates.contains(yesterday)) {
             currentStreak = 1;
             QDate checkDate = yesterday.addDays(-1);
-            
+
             while (workoutDates.contains(checkDate)) {
                 currentStreak++;
                 checkDate = checkDate.addDays(-1);
@@ -509,14 +503,14 @@ void WorkoutModel::calculateStreaks() {
     // Calculate longest streak ever
     int longestStreak = 0;
     int tempStreak = 1;
-    
+
     if (!workoutDates.isEmpty()) {
         longestStreak = 1; // At least one workout exists
-        
+
         for (int i = 1; i < workoutDates.size(); i++) {
             QDate currentDate = workoutDates[i];
             QDate previousDate = workoutDates[i-1];
-            
+
             // Check if dates are consecutive (previous date should be exactly one day before current)
             if (currentDate.addDays(1) == previousDate) {
                 tempStreak++;
@@ -533,11 +527,11 @@ void WorkoutModel::calculateStreaks() {
     m_currentStreak = currentStreak;
     m_longestStreak = longestStreak;
     m_streakMessage = newMessage;
-    
+
     if (changed) {
         emit streakChanged();
     }
-    
+
     qDebug() << "Streak calculation: Current=" << m_currentStreak << "Longest=" << m_longestStreak;
 }
 

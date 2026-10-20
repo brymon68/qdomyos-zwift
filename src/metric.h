@@ -13,7 +13,6 @@ class metric {
     typedef enum _metric_type {
 
         METRIC_OTHER = 0,
-        METRIC_WATT = 1,
         METRIC_SPEED = 2,
         METRIC_ELAPSED = 3,
     } _metric_type;
@@ -48,16 +47,6 @@ class metric {
     void setPaused(bool p);
     void setLap(bool accumulator);
 
-    static double calculateMaxSpeedFromPower(double power, double inclination);
-    static double calculatePowerFromSpeed(double speed, double inclination);
-    static double calculateSpeedFromPower(double power, double inclination, double speed, double deltaTimeSeconds,
-                                          double speedLimit);
-    static double calculateWeightLoss(double kcal);
-    static double calculateKCalfromHR(double HR_AVG, double elapsed);
-    static double calculateBMR();
-    static double calculateActiveKCal(double totalKCal, double elapsed);
-
-    
   private:
     double m_value = 0;
     double m_totValue = 0;

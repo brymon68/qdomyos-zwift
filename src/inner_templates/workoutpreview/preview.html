@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Workout Preview</title>
-    <script src="../i18n/i18n.js"></script>
     <style>
         * {
             margin: 0;
@@ -44,9 +43,7 @@
         let chart = null;
         let miles = 1; // 1 = km, 0.621371 = miles
 
-        function tq(key, fallback) {
-            return window.qzTranslate ? window.qzTranslate(key, fallback) : fallback;
-        }
+
 
         function openEndedSegmentStyle(ctx) {
             return (ctx.p0.raw && ctx.p0.raw.openEnded) ||
@@ -88,7 +85,7 @@
             // Add cadence as secondary metric for bikes
             if (deviceType === 'bike' && workoutData.cadence && workoutData.cadence.length > 0) {
                 datasets.push({
-                    label: tq('chart.cadenceRpmUpper', 'Cadence (RPM)'),
+                    label: ('Cadence (RPM)'),
                     data: workoutData.cadence,
                     borderColor: '#f59e0b',
                     backgroundColor: 'rgba(245, 158, 11, 0.1)',
@@ -106,7 +103,7 @@
             // Add inclination as secondary metric for treadmills
             if (deviceType === 'treadmill' && workoutData.inclination && workoutData.inclination.length > 0) {
                 datasets.push({
-                    label: tq('chart.inclinationPercent', 'Inclination (%)'),
+                    label: ('Inclination (%)'),
                     data: workoutData.inclination,
                     borderColor: '#10b981',
                     backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -168,7 +165,7 @@
                             type: 'linear',
                             title: {
                                 display: true,
-                                text: tq('chart.timeSeconds', 'Time (seconds)'),
+                                text: ('Time (seconds)'),
                                 color: '#666'
                             },
                             grid: {
@@ -188,7 +185,7 @@
                             position: 'left',
                             title: {
                                 display: true,
-                                text: primaryMetric ? primaryMetric.label : tq('chart.value', 'Value'),
+                                text: primaryMetric ? primaryMetric.label : ('Value'),
                                 color: '#3b82f6'
                             },
                             grid: {
@@ -205,7 +202,7 @@
                                      (deviceType === 'treadmill' && workoutData.inclination && workoutData.inclination.length > 0),
                             title: {
                                 display: true,
-                                text: deviceType === 'treadmill' ? tq('chart.inclinationPercent', 'Inclination (%)') : tq('chart.cadenceRpmUpper', 'Cadence (RPM)'),
+                                text: deviceType === 'treadmill' ? ('Inclination (%)') : ('Cadence (RPM)'),
                                 color: deviceType === 'treadmill' ? '#10b981' : '#f59e0b'
                             },
                             grid: {
@@ -225,19 +222,19 @@
             const { speed, resistance } = workoutData;
             if ((deviceType === 'elliptical' || deviceType === 'rower') && resistance && resistance.length > 0) {
                 return {
-                    label: tq('workoutEditor.resistance', 'Resistance'),
+                    label: ('Resistance'),
                     data: resistance
                 };
             }
             if (speed && speed.length > 0) {
                 return {
-                    label: miles === 1 ? tq('workoutEditor.speedKmh', 'Speed (km/h)') : tq('workoutEditor.speedMph', 'Speed (mph)'),
+                    label: miles === 1 ? ('Speed (km/h)') : ('Speed (mph)'),
                     data: speed.map(point => ({ x: point.x, y: point.y * miles }))
                 };
             }
             if (resistance && resistance.length > 0) {
                 return {
-                    label: tq('workoutEditor.resistance', 'Resistance'),
+                    label: ('Resistance'),
                     data: resistance
                 };
             }
@@ -274,7 +271,6 @@
 
             ws.onopen = function() {
                 console.log('WebSocket connected');
-                ws.send(JSON.stringify({ msg: 'webtranslations', content: {} }));
 
                 // Request initial data
                 requestWorkoutPreview();
@@ -318,9 +314,6 @@
             if (msgType === 'workoutpreview' || msgType === 'R_workoutpreview') {
                 const content = data.content || data;
                 updateWorkoutFromData(content);
-            } else if (msgType === 'R_webtranslations') {
-                window.qzSetTranslations(data.content || {});
-                lastDataHash = null;
             }
         }
 

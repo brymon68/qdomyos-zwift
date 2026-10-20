@@ -7,59 +7,53 @@
         programFiles: {}, // Map of program name -> file object (with url, path, etc.)
         showAdvanced: false,
         lastSaved: '',
-        loading: false,
-        translations: {}
+        loading: false
     };
 
     const selectors = {};
     const DEVICE_KEYS = ['bike', 'treadmill', 'elliptical', 'rower', 'jumprope', 'stairclimber'];
 
-    function t(key, fallback) {
-        if (window.qzTranslate) {
-            return window.qzTranslate(key, fallback);
-        }
-        return fallback || key;
-    }
+
 
     const FIELD_DEFS = [
-        { key: 'name', labelKey: 'workoutEditor.label', label: 'Label', type: 'text', group: 'basic', devices: 'all' },
-        { key: 'duration', labelKey: 'workoutEditor.duration', label: 'Duration', type: 'duration', group: 'basic', devices: 'all' },
-        { key: 'distance', labelKey: 'workoutEditor.distance', label: 'Distance', type: 'number', unitKey: 'distance', step: 0.1, min: 0, group: 'basic', devices: 'all', defaultValue: -1 },
-        { key: 'speed', labelKey: 'workoutEditor.speed', label: 'Speed', type: 'number', unitKey: 'speed', step: 0.1, min: 0, group: 'basic', devices: ['treadmill'], defaultValue: () => state.miles ? 6.0 : 9.5 },
-        { key: 'pace', labelKey: 'workoutEditor.pace', label: 'Pace', type: 'pace', unitKey: 'pace', group: 'basic', devices: ['treadmill'], syncWith: 'speed' },
-        { key: 'inclination', labelKey: 'workoutEditor.incline', label: 'Incline', type: 'number', unitSuffix: '%', step: 0.5, min: -10, max: 30, group: 'basic', devices: ['treadmill', 'elliptical'], defaultValue: 1.0 },
-        { key: 'resistance', labelKey: 'workoutEditor.resistance', label: 'Resistance', type: 'number', step: 1, min: 0, max: 100, group: 'basic', devices: ['bike', 'elliptical'], defaultValue: 20 },
-        { key: 'cadence', labelKey: 'workoutEditor.cadence', label: 'Cadence', type: 'number', unitSuffix: 'rpm', min: 0, max: 240, group: 'basic', devices: ['bike', 'elliptical', 'rower'], defaultValue: 80 },
-        { key: 'power', labelKey: 'workoutEditor.power', label: 'Power', type: 'number', unitSuffix: 'W', min: 0, max: 2000, group: 'basic', devices: ['bike', 'rower'], defaultValue: 150 },
-        { key: 'forcespeed', labelKey: 'workoutEditor.forceSpeed', label: 'Force Speed', type: 'bool', group: 'basic', devices: ['treadmill'], linkedTo: 'speed' },
-        { key: 'requested_peloton_resistance', labelKey: 'workoutEditor.pelotonResistance', label: 'Peloton Res.', type: 'number', min: -1, max: 100, group: 'advanced', devices: ['bike'] },
-        { key: 'loopTimeHR', labelKey: 'workoutEditor.hrLoop', label: 'HR Loop (s)', type: 'number', min: 1, max: 60, group: 'advanced', devices: 'all' },
-        { key: 'zoneHR', labelKey: 'workoutEditor.hrZone', label: 'HR Zone', type: 'number', min: -1, max: 5, group: 'advanced', devices: 'all' },
-        { key: 'HRmin', labelKey: 'workoutEditor.hrMin', label: 'HR Min', type: 'number', min: -1, max: 240, group: 'advanced', devices: 'all' },
-        { key: 'HRmax', labelKey: 'workoutEditor.hrMax', label: 'HR Max', type: 'number', min: -1, max: 240, group: 'advanced', devices: 'all' },
-        { key: 'minSpeed', labelKey: 'workoutEditor.minSpeed', label: 'Min Speed', type: 'number', unitKey: 'speed', group: 'advanced', devices: ['treadmill', 'bike'] },
-        { key: 'maxSpeed', labelKey: 'workoutEditor.maxSpeed', label: 'Max Speed', type: 'number', unitKey: 'speed', group: 'advanced', devices: ['treadmill', 'bike'] },
-        { key: 'maxResistance', labelKey: 'workoutEditor.maxResistance', label: 'Max Resistance', type: 'number', min: -1, max: 100, group: 'advanced', devices: ['bike', 'elliptical'] },
+        { key: 'name', label: 'Label', type: 'text', group: 'basic', devices: 'all' },
+        { key: 'duration', label: 'Duration', type: 'duration', group: 'basic', devices: 'all' },
+        { key: 'distance', label: 'Distance', type: 'number', unitKey: 'distance', step: 0.1, min: 0, group: 'basic', devices: 'all', defaultValue: -1 },
+        { key: 'speed', label: 'Speed', type: 'number', unitKey: 'speed', step: 0.1, min: 0, group: 'basic', devices: ['treadmill'], defaultValue: () => state.miles ? 6.0 : 9.5 },
+        { key: 'pace', label: 'Pace', type: 'pace', unitKey: 'pace', group: 'basic', devices: ['treadmill'], syncWith: 'speed' },
+        { key: 'inclination', label: 'Incline', type: 'number', unitSuffix: '%', step: 0.5, min: -10, max: 30, group: 'basic', devices: ['treadmill', 'elliptical'], defaultValue: 1.0 },
+        { key: 'resistance', label: 'Resistance', type: 'number', step: 1, min: 0, max: 100, group: 'basic', devices: ['bike', 'elliptical'], defaultValue: 20 },
+        { key: 'cadence', label: 'Cadence', type: 'number', unitSuffix: 'rpm', min: 0, max: 240, group: 'basic', devices: ['bike', 'elliptical', 'rower'], defaultValue: 80 },
+        { key: 'power', label: 'Power', type: 'number', unitSuffix: 'W', min: 0, max: 2000, group: 'basic', devices: ['bike', 'rower'], defaultValue: 150 },
+        { key: 'forcespeed', label: 'Force Speed', type: 'bool', group: 'basic', devices: ['treadmill'], linkedTo: 'speed' },
+        { key: 'requested_peloton_resistance', label: 'Peloton Res.', type: 'number', min: -1, max: 100, group: 'advanced', devices: ['bike'] },
+        { key: 'loopTimeHR', label: 'HR Loop (s)', type: 'number', min: 1, max: 60, group: 'advanced', devices: 'all' },
+        { key: 'zoneHR', label: 'HR Zone', type: 'number', min: -1, max: 5, group: 'advanced', devices: 'all' },
+        { key: 'HRmin', label: 'HR Min', type: 'number', min: -1, max: 240, group: 'advanced', devices: 'all' },
+        { key: 'HRmax', label: 'HR Max', type: 'number', min: -1, max: 240, group: 'advanced', devices: 'all' },
+        { key: 'minSpeed', label: 'Min Speed', type: 'number', unitKey: 'speed', group: 'advanced', devices: ['treadmill', 'bike'] },
+        { key: 'maxSpeed', label: 'Max Speed', type: 'number', unitKey: 'speed', group: 'advanced', devices: ['treadmill', 'bike'] },
+        { key: 'maxResistance', label: 'Max Resistance', type: 'number', min: -1, max: 100, group: 'advanced', devices: ['bike', 'elliptical'] },
         { key: 'mets', label: 'METS', type: 'number', min: -1, max: 40, group: 'advanced', devices: 'all' }
     ];
 
     const SERIES_DEFS = {
         treadmill: [
-            { key: 'speed', label: () => t('workoutEditor.speed', 'Speed'), color: '#42a5f5', unit: () => state.miles ? 'mph' : 'km/h', axis: 'speedAxis', axisLabel: () => state.miles ? t('workoutEditor.speedMph', 'Speed (mph)') : t('workoutEditor.speedKmh', 'Speed (km/h)'), axisPosition: 'left' },
-            { key: 'inclination', label: () => t('workoutEditor.incline', 'Incline'), color: '#26c6da', unit: () => '%', axis: 'inclineAxis', axisLabel: () => t('workoutEditor.inclinePercent', 'Incline (%)'), axisPosition: 'right' }
+            { key: 'speed', label: () => ('Speed'), color: '#42a5f5', unit: () => state.miles ? 'mph' : 'km/h', axis: 'speedAxis', axisLabel: () => state.miles ? ('Speed (mph)') : ('Speed (km/h)'), axisPosition: 'left' },
+            { key: 'inclination', label: () => ('Incline'), color: '#26c6da', unit: () => '%', axis: 'inclineAxis', axisLabel: () => ('Incline (%)'), axisPosition: 'right' }
         ],
         bike: [
-            { key: 'resistance', label: () => t('workoutEditor.resistance', 'Resistance'), color: '#ab47bc', unit: () => 'lvl', axis: 'resistanceAxis', axisLabel: () => t('workoutEditor.resistance', 'Resistance'), axisPosition: 'left' },
-            { key: 'cadence', label: () => t('workoutEditor.cadence', 'Cadence'), color: '#29b6f6', unit: () => 'rpm', axis: 'cadenceAxis', axisLabel: () => t('workoutEditor.cadenceRpm', 'Cadence (rpm)'), axisPosition: 'right' },
-            { key: 'power', label: () => t('workoutEditor.power', 'Power'), color: '#ef6c00', unit: () => 'W', axis: 'powerAxis', axisLabel: () => t('workoutEditor.powerW', 'Power (W)'), axisPosition: 'left' }
+            { key: 'resistance', label: () => ('Resistance'), color: '#ab47bc', unit: () => 'lvl', axis: 'resistanceAxis', axisLabel: () => ('Resistance'), axisPosition: 'left' },
+            { key: 'cadence', label: () => ('Cadence'), color: '#29b6f6', unit: () => 'rpm', axis: 'cadenceAxis', axisLabel: () => ('Cadence (rpm)'), axisPosition: 'right' },
+            { key: 'power', label: () => ('Power'), color: '#ef6c00', unit: () => 'W', axis: 'powerAxis', axisLabel: () => ('Power (W)'), axisPosition: 'left' }
         ],
         elliptical: [
-            { key: 'resistance', label: () => t('workoutEditor.resistance', 'Resistance'), color: '#7e57c2', unit: () => 'lvl', axis: 'resistanceAxis', axisLabel: () => t('workoutEditor.resistance', 'Resistance'), axisPosition: 'left' },
-            { key: 'inclination', label: () => t('workoutEditor.ramp', 'Ramp'), color: '#66bb6a', unit: () => '%', axis: 'inclineAxis', axisLabel: () => t('workoutEditor.rampPercent', 'Ramp (%)'), axisPosition: 'right' }
+            { key: 'resistance', label: () => ('Resistance'), color: '#7e57c2', unit: () => 'lvl', axis: 'resistanceAxis', axisLabel: () => ('Resistance'), axisPosition: 'left' },
+            { key: 'inclination', label: () => ('Ramp'), color: '#66bb6a', unit: () => '%', axis: 'inclineAxis', axisLabel: () => ('Ramp (%)'), axisPosition: 'right' }
         ],
         rower: [
-            { key: 'power', label: () => t('workoutEditor.power', 'Power'), color: '#fb8c00', unit: () => 'W', axis: 'powerAxis', axisLabel: () => t('workoutEditor.powerW', 'Power (W)'), axisPosition: 'left' },
-            { key: 'cadence', label: () => t('workoutEditor.strokeRate', 'Stroke Rate'), color: '#26a69a', unit: () => 'spm', axis: 'cadenceAxis', axisLabel: () => t('workoutEditor.strokesPerMinute', 'Strokes/min'), axisPosition: 'right' }
+            { key: 'power', label: () => ('Power'), color: '#fb8c00', unit: () => 'W', axis: 'powerAxis', axisLabel: () => ('Power (W)'), axisPosition: 'left' },
+            { key: 'cadence', label: () => ('Stroke Rate'), color: '#26a69a', unit: () => 'spm', axis: 'cadenceAxis', axisLabel: () => ('Strokes/min'), axisPosition: 'right' }
         ],
         jumprope: [],
         stairclimber: []
@@ -122,8 +116,8 @@
                 }
 
                 // Set button labels
-                this.elements.cancelBtn.textContent = options.cancelLabel || t('common.cancel', 'Cancel');
-                this.elements.confirmBtn.textContent = options.confirmLabel || t('common.ok', 'OK');
+                this.elements.cancelBtn.textContent = options.cancelLabel || ('Cancel');
+                this.elements.confirmBtn.textContent = options.confirmLabel || ('OK');
 
                 // Show dialog
                 this.elements.container.classList.remove('hidden');
@@ -170,12 +164,12 @@
             });
         },
 
-        confirm(message, title = t('common.confirm', 'Confirm')) {
+        confirm(message, title = ('Confirm')) {
             console.log('[dialog.confirm] Message:', message);
             return this.show(title, message, { showCancel: true });
         },
 
-        prompt(message, defaultValue = '', title = t('common.input', 'Input')) {
+        prompt(message, defaultValue = '', title = ('Input')) {
             console.log('[dialog.prompt] Message:', message, 'Default:', defaultValue);
             return this.show(title, message, {
                 input: true,
@@ -184,7 +178,7 @@
             });
         },
 
-        alert(message, title = t('common.alert', 'Alert')) {
+        alert(message, title = ('Alert')) {
             console.log('[dialog.alert] Message:', message);
             return this.show(title, message, { showCancel: false });
         }
@@ -195,7 +189,7 @@
         bindEvents();
         bootstrap();
         if (window.QZ_OFFLINE) {
-            announce(t('workoutEditor.offlineLoadSaveStartDisabled', 'Offline mode: load/save/start disabled'), true);
+            announce(('Offline mode: load/save/start disabled'), true);
             updateControls();
         }
     });
@@ -242,7 +236,7 @@
         });
         selectors.addInterval.addEventListener('click', () => {
             addInterval();
-            announce(t('workoutEditor.intervalAdded', 'Interval added'));
+            announce(('Interval added'));
         });
         selectors.repeatSelection.addEventListener('click', () => {
             console.log('[button] Repeat Selection button clicked');
@@ -250,7 +244,7 @@
         });
         selectors.clearIntervals.addEventListener('click', async () => {
             if (state.intervals.length) {
-                const confirmed = await dialog.confirm(t('workoutEditor.removeAllIntervals', 'Remove all intervals?'));
+                const confirmed = await dialog.confirm(('Remove all intervals?'));
                 if (!confirmed) {
                     return;
                 }
@@ -271,38 +265,38 @@
             updateChart();
             updateStatus();
             updateControls();
-                announce(t('workoutEditor.newWorkoutReady', 'New workout ready'));
+                announce(('New workout ready'));
         });
         selectors.pasteClipboard.addEventListener('click', () => pasteXmlFromClipboard());
         selectors.saveWorkout.addEventListener('click', () => saveWorkflow(false));
         selectors.saveStartWorkout.addEventListener('click', () => saveWorkflow(true));
         selectors.loadProgram.addEventListener('click', () => {
             if (window.QZ_OFFLINE) {
-                announce(t('workoutEditor.offlineCannotLoad', 'Offline: cannot load workouts'), true);
+                announce(('Offline: cannot load workouts'), true);
                 return;
             }
             const name = selectors.programSelect.value;
             if (!name) {
-                announce(t('workoutEditor.selectWorkoutLoad', 'Select a workout to load'), true);
+                announce(('Select a workout to load'), true);
                 return;
             }
             loadProgram(name);
         });
         selectors.deleteProgram.addEventListener('click', () => {
             if (window.QZ_OFFLINE) {
-                announce(t('workoutEditor.offlineCannotDelete', 'Offline: cannot delete workouts'), true);
+                announce(('Offline: cannot delete workouts'), true);
                 return;
             }
             const name = selectors.programSelect.value;
             if (!name) {
-                announce(t('workoutEditor.selectWorkoutDelete', 'Select a workout to delete'), true);
+                announce(('Select a workout to delete'), true);
                 return;
             }
             deleteProgram(name);
         });
         selectors.refreshPrograms.addEventListener('click', () => {
             if (window.QZ_OFFLINE) {
-                announce(t('workoutEditor.offlineCannotRefresh', 'Offline: cannot refresh list'), true);
+                announce(('Offline: cannot refresh list'), true);
                 return;
             }
             refreshProgramList();
@@ -339,10 +333,6 @@
                 return;
             }
             state.miles = !!content.miles;
-            state.translations = content.translations || {};
-            if (window.qzSetTranslations) {
-                window.qzSetTranslations(state.translations);
-            }
             const envDevice = normalizeDevice(content.device);
             if (envDevice) {
                 state.device = envDevice;
@@ -350,7 +340,7 @@
             selectors.device.value = state.device;
         }).catch(err => {
             console.error(err);
-            announce(t('workoutEditor.environmentNotAvailable', 'Environment not available'), true);
+            announce(('Environment not available'), true);
         });
     }
 
@@ -378,7 +368,7 @@
             updateControls();
         }).catch(err => {
             console.error(err);
-            announce(t('workoutEditor.cannotLoadProgramList', 'Cannot load program list'), true);
+            announce(('Cannot load program list'), true);
         });
     }
 
@@ -386,7 +376,7 @@
         selectors.programSelect.innerHTML = '';
         const placeholder = document.createElement('option');
         placeholder.value = '';
-        placeholder.textContent = state.programs.length ? t('workoutEditor.selectSavedWorkout', 'Select saved workout') : t('workoutEditor.noSavedWorkouts', 'No saved workouts');
+        placeholder.textContent = state.programs.length ? ('Select saved workout') : ('No saved workouts');
         selectors.programSelect.appendChild(placeholder);
         state.programs.sort((a, b) => a.localeCompare(b));
         state.programs.forEach(name => {
@@ -405,7 +395,7 @@
         // Get file URL from stored program files
         const fileObj = state.programFiles[name];
         if (!fileObj || !fileObj.url) {
-            announce(t('workoutEditor.cannotFindWorkoutFile', 'Cannot find workout file'), true);
+            announce(('Cannot find workout file'), true);
             setWorking(false);
             return;
         }
@@ -420,14 +410,14 @@
                 .then(content => {
                     const rows = Array.isArray(content && content.list) ? content.list : [];
                     if (!rows.length) {
-                        announce(t('workoutEditor.workoutEmptyCannotRead', 'Workout is empty or cannot be read'), true);
+                        announce(('Workout is empty or cannot be read'), true);
                         return;
                     }
                     applyLoadedRows(rows, name, `Loaded ${name}`, normalizeDevice(content.device));
                 })
                 .catch(err => {
                     console.error(err);
-                    announce(t('workoutEditor.unableLoadWorkout', 'Unable to load workout'), true);
+                    announce(('Unable to load workout'), true);
                 })
                 .finally(() => setWorking(false));
         }, 300); // Give backend time to load the file
@@ -448,7 +438,7 @@
 
     function pasteXmlFromClipboard() {
         if (window.QZ_OFFLINE) {
-            announce(t('workoutEditor.offlineCannotReadClipboard', 'Offline: cannot read clipboard'), true);
+            announce(('Offline: cannot read clipboard'), true);
             return;
         }
 
@@ -457,30 +447,30 @@
         sendMessage('pastetrainingprogramclipboard', { name: fallbackName }, 'R_pastetrainingprogramclipboard')
             .then(content => {
                 if (!content || !content.ok) {
-                    announce((content && content.message) || t('workoutEditor.unablePasteClipboard', 'Unable to paste XML from clipboard'), true);
+                    announce((content && content.message) || ('Unable to paste XML from clipboard'), true);
                     return;
                 }
 
                 const rows = Array.isArray(content.list) ? content.list : [];
                 if (!rows.length) {
-                    announce(t('workoutEditor.clipboardXmlEmpty', 'Clipboard XML is empty or cannot be read'), true);
+                    announce(('Clipboard XML is empty or cannot be read'), true);
                     return;
                 }
 
-                applyLoadedRows(rows, content.name || fallbackName || 'Clipboard_Workout.xml', t('workoutEditor.workoutPastedClipboard', 'Workout pasted from clipboard'));
+                applyLoadedRows(rows, content.name || fallbackName || 'Clipboard_Workout.xml', ('Workout pasted from clipboard'));
                 refreshProgramList();
             })
             .catch(err => {
                 console.error(err);
-                announce(t('workoutEditor.unablePasteClipboard', 'Unable to paste XML from clipboard'), true);
+                announce(('Unable to paste XML from clipboard'), true);
             })
             .finally(() => setWorking(false));
     }
 
     async function deleteProgram(name) {
         const confirmed = await dialog.confirm(
-            t('workoutEditor.deleteWorkoutConfirm', 'Are you sure you want to delete "{name}"? This cannot be undone.').replace('{name}', name),
-            t('workoutEditor.deleteWorkoutTitle', 'Delete Workout')
+            ('Are you sure you want to delete "{name}"? This cannot be undone.').replace('{name}', name),
+            ('Delete Workout')
         );
         if (!confirmed) {
             return;
@@ -491,7 +481,7 @@
         // Get file URL from stored program files
         const fileObj = state.programFiles[name];
         if (!fileObj || !fileObj.url) {
-            announce(t('workoutEditor.cannotFindWorkoutFile', 'Cannot find workout file'), true);
+            announce(('Cannot find workout file'), true);
             setWorking(false);
             return;
         }
@@ -510,12 +500,12 @@
                     // Refresh the program list
                     return refreshProgramList();
                 } else {
-                    announce(t('workoutEditor.failedDeleteWorkout', 'Failed to delete workout'), true);
+                    announce(('Failed to delete workout'), true);
                 }
             })
             .catch(err => {
                 console.error('[deleteProgram] Error:', err);
-                announce(t('workoutEditor.unableDeleteWorkout', 'Unable to delete workout'), true);
+                announce(('Unable to delete workout'), true);
             })
             .finally(() => setWorking(false));
     }
@@ -745,7 +735,7 @@
             const selectBox = document.createElement('input');
             selectBox.type = 'checkbox';
             selectBox.checked = !!row.__selected;
-            selectBox.title = t('workoutEditor.selectInterval', 'Select interval');
+            selectBox.title = ('Select interval');
             selectBox.addEventListener('change', event => {
                 row.__selected = event.target.checked;
                 card.classList.toggle('selected', row.__selected);
@@ -756,7 +746,7 @@
 
             const title = document.createElement('div');
             title.className = 'card-header-name';
-            title.textContent = row.name ? `${row.name}` : t('workoutEditor.intervalNumber', 'Interval {number}').replace('{number}', index + 1);
+            title.textContent = row.name ? `${row.name}` : ('Interval {number}').replace('{number}', index + 1);
             headerLeft.appendChild(title);
 
             header.appendChild(headerLeft);
@@ -765,8 +755,8 @@
             actions.className = 'card-actions';
             actions.appendChild(actionButton('↑', () => moveInterval(index, -1), index === 0));
             actions.appendChild(actionButton('↓', () => moveInterval(index, 1), index === state.intervals.length - 1));
-            actions.appendChild(actionButton(t('common.copy', 'Copy'), () => duplicateInterval(index)));
-            actions.appendChild(actionButton(t('common.del', 'Del'), () => removeInterval(index), state.intervals.length === 1));
+            actions.appendChild(actionButton(('Copy'), () => duplicateInterval(index)));
+            actions.appendChild(actionButton(('Del'), () => removeInterval(index), state.intervals.length === 1));
             header.appendChild(actions);
             card.appendChild(header);
 
@@ -890,13 +880,13 @@
                         const decreaseBtn = document.createElement('button');
                         decreaseBtn.textContent = '-';
                         decreaseBtn.type = 'button';
-                        decreaseBtn.title = t('common.decrease', 'Decrease');
+                        decreaseBtn.title = ('Decrease');
                         decreaseBtn.addEventListener('click', () => handleIncrement(input, field, -1));
 
                         const increaseBtn = document.createElement('button');
                         increaseBtn.textContent = '+';
                         increaseBtn.type = 'button';
-                        increaseBtn.title = t('common.increase', 'Increase');
+                        increaseBtn.title = ('Increase');
                         increaseBtn.addEventListener('click', () => handleIncrement(input, field, 1));
 
                         inputWrapper.appendChild(decreaseBtn);
@@ -932,7 +922,7 @@
         if (typeof field.label === 'function') {
             return field.label();
         }
-        const label = field.labelKey ? t(field.labelKey, field.label) : field.label;
+        const label = field.label;
         if (field.unitKey === 'distance') {
             return `${label} (${state.miles ? 'mi' : 'km'})`;
         }
@@ -1097,7 +1087,7 @@
     function duplicateInterval(index) {
         const original = state.intervals[index];
         const copy = cloneInterval(original);
-        copy.name = `${original.name || t('workoutEditor.intervalNumber', 'Interval {number}').replace('{number}', index + 1)} ${t('common.copyLower', 'copy')}`;
+        copy.name = `${original.name || ('Interval {number}').replace('{number}', index + 1)} ${('copy')}`;
         state.intervals.splice(index + 1, 0, copy);
         renderIntervals();
         updateChart();
@@ -1106,7 +1096,7 @@
 
     function removeInterval(index) {
         if (state.intervals.length === 1) {
-            announce(t('workoutEditor.cannotRemoveOnlyInterval', 'Cannot remove the only interval'), true);
+            announce(('Cannot remove the only interval'), true);
             return;
         }
         state.intervals.splice(index, 1);
@@ -1118,7 +1108,7 @@
     function saveWorkflow(startAfter) {
         console.log('[saveWorkflow] Called with startAfter:', startAfter);
         if (window.QZ_OFFLINE) {
-            announce(t('workoutEditor.offlineCannotSave', 'Offline: cannot save workouts'), true);
+            announce(('Offline: cannot save workouts'), true);
             return;
         }
         const payload = buildPayload();
@@ -1131,12 +1121,12 @@
         sendMessage('savetrainingprogram', payload, 'R_savetrainingprogram').then(content => {
             console.log('[saveWorkflow] Save response:', content);
             if (!content) {
-                announce(t('workoutEditor.saveFailed', 'Save failed'), true);
+                announce(('Save failed'), true);
                 return;
             }
             state.lastSaved = payload.name;
             selectors.name.value = payload.name;
-            announce(t('workoutEditor.savedName', 'Saved {name}').replace('{name}', payload.name));
+            announce(('Saved {name}').replace('{name}', payload.name));
 
             console.log('[saveWorkflow] Refreshing program list...');
             return refreshProgramList().then(() => {
@@ -1182,7 +1172,7 @@
                                 console.log('[saveWorkflow] File found after retry as:', retryFileName);
                                 return startProgram(retryFileName);
                             } else {
-                                announce(t('workoutEditor.workoutFileNotReady', 'Workout file not ready, please try again'), true);
+                                announce(('Workout file not ready, please try again'), true);
                                 console.error('[saveWorkflow] File not found in programs list after save and retry');
                                 console.error('[saveWorkflow] Available files:', Object.keys(state.programFiles));
                                 console.error('[saveWorkflow] Looking for:', payload.name, 'or', payload.name + '.xml', 'or', payload.name + '.zwo');
@@ -1195,14 +1185,14 @@
             });
         }).catch(err => {
             console.error('[saveWorkflow] Error:', err);
-            announce(t('workoutEditor.unableSaveWorkout', 'Unable to save workout'), true);
+            announce(('Unable to save workout'), true);
         }).finally(() => setWorking(false));
     }
 
     function startProgram(name) {
         console.log('[startProgram] Called with name:', name);
         if (window.QZ_OFFLINE) {
-            announce(t('workoutEditor.offlineCannotStart', 'Offline: cannot start workouts'), true);
+            announce(('Offline: cannot start workouts'), true);
             return Promise.resolve();
         }
 
@@ -1211,7 +1201,7 @@
         console.log('[startProgram] fileObj:', fileObj);
         if (!fileObj || !fileObj.url) {
             console.error('[startProgram] Cannot find workout file for:', name);
-            announce(t('workoutEditor.cannotFindWorkoutFile', 'Cannot find workout file'), true);
+            announce(('Cannot find workout file'), true);
             return Promise.resolve();
         }
 
@@ -1222,7 +1212,7 @@
         setTimeout(() => {
             console.log('[startProgram] Sending trainprogram_autostart_requested');
             sendMessage('trainprogram_autostart_requested', {});
-            announce(t('workoutEditor.workoutStarted', 'Workout started'));
+            announce(('Workout started'));
         }, 100);
 
         return Promise.resolve();
@@ -1232,7 +1222,7 @@
         const nameInput = selectors.name.value.trim();
         const sanitized = sanitizeName(nameInput || state.lastSaved || 'Workout');
         if (!state.intervals.length) {
-            announce(t('workoutEditor.addAtLeastOneInterval', 'Add at least one interval'), true);
+            announce(('Add at least one interval'), true);
             return null;
         }
         const list = [];
@@ -1243,14 +1233,14 @@
             if (durationEnabled) {
                 const durationSec = parseDuration(interval.duration);
                 if (!durationSec) {
-                    announce(t('workoutEditor.invalidDuration', 'Invalid duration in intervals'), true);
+                    announce(('Invalid duration in intervals'), true);
                     return null;
                 }
                 row.duration = formatDuration(durationSec);
             } else {
                 const distance = Number(interval.distance);
                 if (!distanceEnabled || !isFinite(distance) || distance <= 0) {
-                    announce(t('workoutEditor.enableDurationOrDistance', 'Enable duration or enter a valid distance'), true);
+                    announce(('Enable duration or enter a valid distance'), true);
                     return null;
                 }
             }
@@ -1506,17 +1496,17 @@
     function devicePrettyName(key) {
         switch (key) {
         case 'bike':
-            return t('device.bike', 'Bike');
+            return ('Bike');
         case 'elliptical':
-            return t('device.elliptical', 'Elliptical');
+            return ('Elliptical');
         case 'rower':
-            return t('device.rower', 'Rower');
+            return ('Rower');
         case 'jumprope':
-            return t('device.jumprope', 'Jump Rope');
+            return ('Jump Rope');
         case 'stairclimber':
-            return t('device.stairclimber', 'Stair Climber');
+            return ('Stair Climber');
         default:
-            return t('device.treadmill', 'Treadmill');
+            return ('Treadmill');
         }
     }
 
@@ -1564,7 +1554,7 @@
             console.log('[repeatSelection] Selected indices:', selected);
 
             if (!selected.length) {
-            announce(t('workoutEditor.selectConsecutiveFirst', 'Select one or more consecutive intervals first'), true);
+            announce(('Select one or more consecutive intervals first'), true);
                 console.log('[repeatSelection] No intervals selected');
                 return;
             }
@@ -1572,7 +1562,7 @@
             selected.sort((a, b) => a - b);
             for (let i = 1; i < selected.length; i++) {
                 if (selected[i] !== selected[i - 1] + 1) {
-                    announce(t('workoutEditor.selectionMustBeConsecutive', 'Selection must be consecutive'), true);
+                    announce(('Selection must be consecutive'), true);
                     console.log('[repeatSelection] Selection not consecutive');
                     return;
                 }
@@ -1580,14 +1570,14 @@
 
             console.log('[repeatSelection] Prompting for repeat count');
             const promptValue = await dialog.prompt(
-                t('workoutEditor.repeatBlockPrompt', 'Repeat block how many times (total cycles)?'),
+                ('Repeat block how many times (total cycles)?'),
                 '2',
-                t('workoutEditor.repeatSelection', 'Repeat Selection')
+                ('Repeat Selection')
             );
             console.log('[repeatSelection] Prompt returned:', promptValue);
 
             if (promptValue === null || promptValue === '') {
-                announce(t('workoutEditor.repeatCancelled', 'Repeat cancelled'), false);
+                announce(('Repeat cancelled'), false);
                 console.log('[repeatSelection] User cancelled or empty input');
                 return;
             }
@@ -1596,7 +1586,7 @@
             console.log('[repeatSelection] Parsed times:', times);
 
             if (Number.isNaN(times) || times < 2) {
-                announce(t('workoutEditor.enterNumberGreaterThanOne', 'Enter a number greater than 1'), true);
+                announce(('Enter a number greater than 1'), true);
                 console.log('[repeatSelection] Invalid repeat count:', times);
                 return;
             }
@@ -1629,7 +1619,7 @@
             console.log('[repeatSelection]', message);
         } catch (error) {
             console.error('[repeatSelection] Error:', error);
-            announce(t('workoutEditor.errorRepeatingSelection', 'Error repeating selection: {message}').replace('{message}', error.message), true);
+            announce(('Error repeating selection: {message}').replace('{message}', error.message), true);
         }
     }
 

@@ -15,16 +15,11 @@ static void require(bool condition, const char *message) {
 
 static QStringList expectedKeys() {
     QStringList keys = {
-        "nordictrack_2950_ip",
-        "nordictrack_x22i",
-        "nordictrack_ifit_adb_remote",
         "miles_unit",
         "dircon_yes",
         "dircon_server_base_port",
         "virtual_device_bluetooth",
         "virtual_device_enabled",
-        "virtual_device_force_bike",
-        "virtual_device_force_treadmill",
         "zwift_api_autoinclination",
         "zwift_api_poll",
         "zwift_inclination_gain",
@@ -35,11 +30,6 @@ static QStringList expectedKeys() {
         "speed_gain",
         "speed_offset",
         "treadmill_force_speed",
-        "zwift_ocr",
-        "zwift_workout_ocr",
-        "zwift_ocr_climb_portal",
-        "heart_rate_belt_name",
-        "cadence_sensor_name",
         "treadmill_inclination_ovveride_gain",
         "treadmill_inclination_ovveride_offset",
         "treadmill_step_incline",
@@ -70,14 +60,8 @@ static void requireNumber(QSettings &settings, const char *key, double expected)
 static void checkFreshSettings(QSettings &settings) {
     QStringList actualKeys = settings.allKeys();
     actualKeys.sort();
-    require(actualKeys == expectedKeys() && actualKeys.size() == 67,
-            "Fresh settings do not match the exact 67-key public allowlist.");
-    require(settings.value("nordictrack_2950_ip").toString() == QStringLiteral("localhost"),
-            "The fresh treadmill connection is not localhost.");
-    require(settings.value("nordictrack_x22i").toBool(),
-            "The X22i model is not enabled.");
-    require(!settings.value("nordictrack_ifit_adb_remote").toBool(),
-            "The legacy ADB connection is unexpectedly enabled.");
+    require(actualKeys == expectedKeys() && actualKeys.size() == 57,
+            "Fresh settings do not match the exact 57-key public allowlist.");
     require(settings.value("miles_unit").toBool(),
             "The fresh unit preference is incorrect.");
     require(settings.value("dircon_yes").toBool() &&
@@ -153,10 +137,9 @@ int main(int argc, char *argv[]) {
             {QStringLiteral("treadmill_step_incline"), 0.25},
             {QStringLiteral("zwift_api_autoinclination"), false},
             {QStringLiteral("zwift_inclination_gain"), 0.0},
-            {QStringLiteral("nordictrack_2950_ip"), QStringLiteral("")},
             {QStringLiteral("treadmill_inclination_override_55"), 4.25},
             {QStringLiteral("zwift_username"), QStringLiteral("synthetic-user@example.invalid")},
-            {QStringLiteral("zwift_password"), QStringLiteral("synthetic-test-password")},
+            {QStringLiteral("zwift_password"), QStringLiteral("")},
             {QStringLiteral("app_opening"), 17},
         };
         QStringList savedKeys = expectedKeys();
