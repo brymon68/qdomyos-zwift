@@ -54,8 +54,8 @@ CI runs the Python checks and a native QtCore test of settings preservation befo
 The optional image contains the toolchain only. With rootless Docker:
 
 ```sh
-docker build -t x22i-toolchain docker/x22i
-docker run --rm \
+docker build --platform linux/amd64 -t x22i-toolchain docker/x22i
+docker run --rm --platform linux/amd64 \
   --mount type=bind,src=/LOCAL/FORK-CHECKOUT,dst=/source \
   --mount type=bind,src=/LOCAL/BUILD-PARENT,dst=/build \
   --mount type=bind,src=/PRIVATE/x22i-test.p12,dst=/run/secrets/test.p12,readonly \
@@ -84,6 +84,10 @@ For migration, preserve the complete native QSettings configuration, including i
 Before a later installation or launch, obtain current confirmation that the owner is present and the belt is stopped. Back up the installed APK/configuration, verify the candidate's signer and actual data directories, and run only one QZ app. Both packages use the same fitness connection, and shared `Documents/QZ` storage may be selected by configuration. A package rename requires explicit migration; it is not included here.
 
 ## Recorded device and build results
+
+The **direct-source build** from fork commit `b708868f34bf9ea43527b25310a3b2c9db39a26d` passed on October 20, 2026. It built native C++, Java, and protobuf from this checkout, then passed ARM64 payload, manifest, removed-feature, and v1/v2 signature checks. The persistent signer, defaults header, and GPL license matched. All 40 Python tests, modified QML syntax checks, and catalog count checks passed. The checkout remained clean after building.
+
+The resulting APK is **50,665,826 bytes**, SHA-256 **`4615f4bb88f754ef5852739be7c47fba20385a37f70a82fa5a3ab4480b1b830f`**. Its source and recipe provenance both identify the fork commit, with no source patch. It has not been installed. A comparison of 1,775 source files with the previous stripped build found no differences beyond the separately reviewed build-variant integration files.
 
 On October 20, 2026, the separate baseline was installed from [CI run 39365509040, attempt 2](https://github.com/brymon68/qdomyos-zwift/actions/runs/39365509040/attempts/2). All **861 saved settings** were migrated with exact readback. The owner then confirmed auto-incline and the overall app were working. The original QZ installation and private rollback backup remain available.
 
