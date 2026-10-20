@@ -16,7 +16,7 @@ This is the first-phase build and migration tooling for [issue #1](https://githu
 | Installed rollback APK size | 43,557,271 bytes |
 | Upgrade compatibility | Signing certificate differs from installed APK |
 
-The installed APK was backed up privately and its checksum verified against the console. The existing 861-setting backup still matches its recorded checksum. The baseline's iFIT TLS assets match those in the installed APK. No app was installed, launched, or stopped, and no physical controls were exercised. The existing QZ process was stopped when inspected, so no runtime memory/startup comparison was recorded.
+The installed APK was backed up privately and its checksum verified against the console. The existing 861-setting backup still matches its recorded checksum. The baseline's iFIT TLS assets match those in the installed APK. No app was installed, launched, or stopped, and no physical controls were exercised. The existing QZ process was not running when inspected, so no runtime memory/startup comparison was recorded.
 
 This baseline is larger than the installed January build; feature removal has not begun. Its new debug signer cannot update the existing package in place. The owner selected a separately identified test app to preserve the original installation. Do not use this successful build as evidence that device acceptance checks passed.
 
@@ -75,6 +75,10 @@ The build records the final manifest and checks package identity, launcher ident
 
 The existing **861 settings** are the migration source of truth. Newer defaults must not replace them. Preserve every backed-up value, including credentials, selected devices, transport settings, incline limits, Zwift gain/offset and negative-incline behavior, difficulty settings, and calibration. Keep the complete inclination override table and its gain/offset keys even though this baseline's NordicTrack gRPC path does not call `treadmillInclinationOverride()`.
 
+Use the complete native QSettings configuration for migration. A `.qzs` profile export encrypts password/token fields with `cryptoKeySettingsProfiles` but omits that key; import also skips `peloton_refreshtoken`. Profile export/import therefore cannot establish an exact settings migration. Preserve the original configuration's encryption key along with its other values.
+
+Verify the data-directory selection before first launch. The pinned app uses shared `Documents/QZ` when `android_documents_folder` is enabled or Android is at least 14; otherwise it uses context-derived app storage. Startup migration can copy and then delete files from the old profile directory. A separate application ID alone does not guarantee profile/database isolation.
+
 Before replacing the installation:
 
 1. Stop QZ and privately back up the installed APK (and all installed split APKs, if present), settings, and relevant profiles using the device's verified access method. Do not assume that `run-as` or direct access to app-private files works.
@@ -93,7 +97,7 @@ adb shell pm path org.cagnulen.qdomyoszwift
 python3 tools/x22i/verify_settings.py /PRIVATE/BACKUP/settings.conf /PRIVATE/CANDIDATE/settings.conf
 ```
 
-The settings comparison must report all **861 source settings preserved**, with **zero missing and zero changed**, and exit successfully. Added settings are counted separately; they do not permit replacing original values. This compares stored INI text, not effective runtime settings. Recheck after first launch and exercise the important settings on hardware. Keep backups and exports outside the repository and CI artifacts; do not attach their contents to issues or logs.
+Before first launch, the settings comparison must report all **861 source settings preserved**, with **zero missing and zero changed**, and exit successfully. Added settings are counted separately; they do not permit replacing original values. This compares stored INI text, not effective runtime settings. Recheck after first launch and privately review every difference: the pinned app increments `app_opening` on startup, so runtime bookkeeping can change even when migration was exact. Do not silently ignore differences or overwrite the original backup. Exercise the important settings on hardware. Keep backups and exports outside the repository and CI artifacts; do not attach their contents to issues or logs. Avoid collecting unrestricted startup logs: this baseline logs many setting values.
 
 ## Behavior retained and known limits
 
