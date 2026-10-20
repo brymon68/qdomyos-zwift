@@ -1,6 +1,23 @@
 # X22i Android baseline
 
-This is the first-phase build and migration tooling for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). The pinned ARM64 baseline builds successfully. Installation, settings migration, and physical treadmill comparison remain to be demonstrated. Packaging checks alone do not establish device behavior.
+This is the first-phase build and migration tooling for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). The pinned ARM64 baseline and separate X22i Test app build successfully. Installation, settings migration, and physical treadmill comparison remain to be demonstrated. Packaging checks alone do not establish device behavior.
+
+## Verified separate test app: 2026-10-20 UTC
+
+[GitHub Actions run 39365509040, attempt 2](https://github.com/brymon68/qdomyos-zwift/actions/runs/39365509040/attempts/2) passed using build recipe commit `db25d3b7294f4bb576d5f678629577591d5113f1`. All 36 settings/privacy, APK, and manifest-check tests passed. The downloaded APK independently passed the payload and manifest checks; its checksum matched the provenance and its certificate matched the backed-up persistent test key.
+
+| Measurement | Result |
+|---|---|
+| APK size | 50,994,070 bytes |
+| Native architectures | `arm64-v8a` only |
+| Package/version | `org.cagnulen.qdomyoszwift.x22ibaseline`, 2.21.5 / 1403 |
+| Launcher label | X22i Test |
+| APK SHA-256 | `24aa9d15a4cce01ed403485311bf7c94d196b7a2c732f6390015b5b957b28ecb` |
+| Signing certificate SHA-256 | `38a1ec468bd45b37b20e7477613b9951aae24c3171673a5a6186abe7f3c7167d` |
+| Signature verification | v1 and v2 passed |
+| Provider authorities | Both use the separate test package prefix |
+
+The first attempt was cancelled during active Gradle processing after native compilation completed. The retry finished in approximately 14 minutes. No installation or launch was performed as part of this build verification. The original app remains installed; settings migration and on-device acceptance are still pending.
 
 ## Verified build: 2026-10-20 UTC
 
