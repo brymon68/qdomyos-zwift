@@ -51,7 +51,6 @@
         <file>inner_templates/googlemaps/marker.png</file>
         <file>NewPageElement.qml</file>
         <file>inner_templates/googlemaps/jquery-3.6.0.min.js</file>
-        <file>inner_templates/googlemaps/bike.js</file>
         <file>inner_templates/googlemaps/chart.js</file>
         <file>inner_templates/googlemaps/chartjs.3.4.1.min.js</file>
         <file>inner_templates/googlemaps/chartjs-adapter-moment.js</file>

@@ -1,81 +1,29 @@
 (function () {
     const state = {
-        miles: false,
-        device: 'bike',
+        miles: true,
         intervals: [],
         programs: [],
         programFiles: {}, // Map of program name -> file object (with url, path, etc.)
-        showAdvanced: false,
         lastSaved: '',
         loading: false
     };
 
     const selectors = {};
-    const DEVICE_KEYS = ['bike', 'treadmill', 'elliptical', 'rower', 'jumprope', 'stairclimber'];
-
-
-
     const FIELD_DEFS = [
-        { key: 'name', label: 'Label', type: 'text', group: 'basic', devices: 'all' },
-        { key: 'duration', label: 'Duration', type: 'duration', group: 'basic', devices: 'all' },
-        { key: 'distance', label: 'Distance', type: 'number', unitKey: 'distance', step: 0.1, min: 0, group: 'basic', devices: 'all', defaultValue: -1 },
-        { key: 'speed', label: 'Speed', type: 'number', unitKey: 'speed', step: 0.1, min: 0, group: 'basic', devices: ['treadmill'], defaultValue: () => state.miles ? 6.0 : 9.5 },
-        { key: 'pace', label: 'Pace', type: 'pace', unitKey: 'pace', group: 'basic', devices: ['treadmill'], syncWith: 'speed' },
-        { key: 'inclination', label: 'Incline', type: 'number', unitSuffix: '%', step: 0.5, min: -10, max: 30, group: 'basic', devices: ['treadmill', 'elliptical'], defaultValue: 1.0 },
-        { key: 'resistance', label: 'Resistance', type: 'number', step: 1, min: 0, max: 100, group: 'basic', devices: ['bike', 'elliptical'], defaultValue: 20 },
-        { key: 'cadence', label: 'Cadence', type: 'number', unitSuffix: 'rpm', min: 0, max: 240, group: 'basic', devices: ['bike', 'elliptical', 'rower'], defaultValue: 80 },
-        { key: 'power', label: 'Power', type: 'number', unitSuffix: 'W', min: 0, max: 2000, group: 'basic', devices: ['bike', 'rower'], defaultValue: 150 },
-        { key: 'forcespeed', label: 'Force Speed', type: 'bool', group: 'basic', devices: ['treadmill'], linkedTo: 'speed' },
-        { key: 'requested_peloton_resistance', label: 'Peloton Res.', type: 'number', min: -1, max: 100, group: 'advanced', devices: ['bike'] },
-        { key: 'loopTimeHR', label: 'HR Loop (s)', type: 'number', min: 1, max: 60, group: 'advanced', devices: 'all' },
-        { key: 'zoneHR', label: 'HR Zone', type: 'number', min: -1, max: 5, group: 'advanced', devices: 'all' },
-        { key: 'HRmin', label: 'HR Min', type: 'number', min: -1, max: 240, group: 'advanced', devices: 'all' },
-        { key: 'HRmax', label: 'HR Max', type: 'number', min: -1, max: 240, group: 'advanced', devices: 'all' },
-        { key: 'minSpeed', label: 'Min Speed', type: 'number', unitKey: 'speed', group: 'advanced', devices: ['treadmill', 'bike'] },
-        { key: 'maxSpeed', label: 'Max Speed', type: 'number', unitKey: 'speed', group: 'advanced', devices: ['treadmill', 'bike'] },
-        { key: 'maxResistance', label: 'Max Resistance', type: 'number', min: -1, max: 100, group: 'advanced', devices: ['bike', 'elliptical'] },
-        { key: 'mets', label: 'METS', type: 'number', min: -1, max: 40, group: 'advanced', devices: 'all' }
+        { key: 'name', label: 'Label', type: 'text' },
+        { key: 'duration', label: 'Duration', type: 'duration' },
+        { key: 'distance', label: 'Distance', type: 'number', unitKey: 'distance', step: 0.1, min: 0, defaultValue: -1 },
+        { key: 'speed', label: 'Speed', type: 'number', unitKey: 'speed', step: 0.1, min: 0, defaultValue: () => state.miles ? 6.0 : 9.5 },
+        { key: 'inclination', label: 'Incline', type: 'number', unitSuffix: '%', step: 0.5, min: -10, max: 30, defaultValue: 1.0 },
+        { key: 'forcespeed', type: 'bool', linkedTo: 'speed' }
     ];
 
-    const SERIES_DEFS = {
-        treadmill: [
-            { key: 'speed', label: () => ('Speed'), color: '#42a5f5', unit: () => state.miles ? 'mph' : 'km/h', axis: 'speedAxis', axisLabel: () => state.miles ? ('Speed (mph)') : ('Speed (km/h)'), axisPosition: 'left' },
-            { key: 'inclination', label: () => ('Incline'), color: '#26c6da', unit: () => '%', axis: 'inclineAxis', axisLabel: () => ('Incline (%)'), axisPosition: 'right' }
-        ],
-        bike: [
-            { key: 'resistance', label: () => ('Resistance'), color: '#ab47bc', unit: () => 'lvl', axis: 'resistanceAxis', axisLabel: () => ('Resistance'), axisPosition: 'left' },
-            { key: 'cadence', label: () => ('Cadence'), color: '#29b6f6', unit: () => 'rpm', axis: 'cadenceAxis', axisLabel: () => ('Cadence (rpm)'), axisPosition: 'right' },
-            { key: 'power', label: () => ('Power'), color: '#ef6c00', unit: () => 'W', axis: 'powerAxis', axisLabel: () => ('Power (W)'), axisPosition: 'left' }
-        ],
-        elliptical: [
-            { key: 'resistance', label: () => ('Resistance'), color: '#7e57c2', unit: () => 'lvl', axis: 'resistanceAxis', axisLabel: () => ('Resistance'), axisPosition: 'left' },
-            { key: 'inclination', label: () => ('Ramp'), color: '#66bb6a', unit: () => '%', axis: 'inclineAxis', axisLabel: () => ('Ramp (%)'), axisPosition: 'right' }
-        ],
-        rower: [
-            { key: 'power', label: () => ('Power'), color: '#fb8c00', unit: () => 'W', axis: 'powerAxis', axisLabel: () => ('Power (W)'), axisPosition: 'left' },
-            { key: 'cadence', label: () => ('Stroke Rate'), color: '#26a69a', unit: () => 'spm', axis: 'cadenceAxis', axisLabel: () => ('Strokes/min'), axisPosition: 'right' }
-        ],
-        jumprope: [],
-        stairclimber: []
-    };
+    const SERIES_DEFS = [
+        { key: 'speed', label: () => 'Speed', color: '#42a5f5', unit: () => state.miles ? 'mph' : 'km/h', axis: 'speedAxis', axisLabel: () => state.miles ? 'Speed (mph)' : 'Speed (km/h)', axisPosition: 'left' },
+        { key: 'inclination', label: () => 'Incline', color: '#26c6da', unit: () => '%', axis: 'inclineAxis', axisLabel: () => 'Incline (%)', axisPosition: 'right' }
+    ];
 
-    // Default values that indicate a field should not be enabled
-    const DEFAULT_DISABLED_VALUES = {
-        distance: -1,
-        speed: -1,
-        cadence: -1,
-        resistance: -1,
-        power: -1,
-        inclination: -200,
-        requested_peloton_resistance: -1,
-        zoneHR: -1,
-        HRmin: -1,
-        HRmax: -1,
-        minSpeed: -1,
-        maxSpeed: -1,
-        maxResistance: -1,
-        mets: -1
-    };
+    const DEFAULT_DISABLED_VALUES = { distance: -1, speed: -1, inclination: -200 };
 
     // Custom dialog system for iOS WebView compatibility
     // iOS WebView doesn't properly support prompt() and confirm()
@@ -196,8 +144,6 @@
 
     function cacheDom() {
         selectors.name = document.getElementById('workoutName');
-        selectors.device = document.getElementById('deviceSelect');
-        selectors.advanced = document.getElementById('advancedToggle');
         selectors.intervalList = document.getElementById('intervalList');
         selectors.addInterval = document.getElementById('addInterval');
         selectors.repeatSelection = document.getElementById('repeatSelection');
@@ -220,20 +166,6 @@
     }
 
     function bindEvents() {
-        selectors.device.addEventListener('change', () => {
-            if (window.QZ_OFFLINE) {
-                state.device = selectors.device.value;
-                renderIntervals();
-                updateChart();
-                return;
-            }
-            setDevice(selectors.device.value);
-        });
-        selectors.advanced.addEventListener('change', () => {
-            state.showAdvanced = selectors.advanced.checked;
-            renderIntervals();
-            updateChart();
-        });
         selectors.addInterval.addEventListener('click', () => {
             addInterval();
             announce(('Interval added'));
@@ -316,7 +248,7 @@
 
         // Then fetch environment and programs in background
         Promise.allSettled([fetchEnvironment(), refreshProgramList()]).then(() => {
-            // Re-render after fetching environment (in case device changed)
+            // Refresh units after fetching the app settings.
             renderIntervals();
             updateChart();
             updateStatus();
@@ -332,12 +264,16 @@
             if (!content) {
                 return;
             }
-            state.miles = !!content.miles;
-            const envDevice = normalizeDevice(content.device);
-            if (envDevice) {
-                state.device = envDevice;
+            const miles = !!content.miles;
+            if (miles !== state.miles) {
+                const factor = miles ? 1 / 1.60934 : 1.60934;
+                state.intervals.forEach(row => {
+                    ['speed', 'distance'].forEach(key => {
+                        if (typeof row[key] === 'number' && row[key] >= 0) row[key] *= factor;
+                    });
+                });
             }
-            selectors.device.value = state.device;
+            state.miles = miles;
         }).catch(err => {
             console.error(err);
             announce(('Environment not available'), true);
@@ -413,7 +349,7 @@
                         announce(('Workout is empty or cannot be read'), true);
                         return;
                     }
-                    applyLoadedRows(rows, name, `Loaded ${name}`, normalizeDevice(content.device));
+                    applyLoadedRows(rows, name, `Loaded ${name}`);
                 })
                 .catch(err => {
                     console.error(err);
@@ -423,10 +359,8 @@
         }, 300); // Give backend time to load the file
     }
 
-    function applyLoadedRows(rows, name, message, deviceHint) {
+    function applyLoadedRows(rows, name, message) {
         state.intervals = rows.map((row, idx) => convertRow(row, idx));
-        state.device = deviceHint || detectDevice(state.intervals) || state.device;
-        selectors.device.value = state.device;
         selectors.name.value = name;
         state.lastSaved = name;
         renderIntervals();
@@ -588,61 +522,6 @@
         return out;
     }
 
-    function detectDevice(rows) {
-        // Helper to check if a field has a valid (non-default) value
-        const hasValidValue = (row, key) => {
-            if (row[key] === undefined || row[key] === null) return false;
-            if (DEFAULT_DISABLED_VALUES[key] !== undefined) {
-                return row[key] !== DEFAULT_DISABLED_VALUES[key];
-            }
-            return true;
-        };
-
-        // Check for elliptical before treadmill because elliptical rows also use inclination.
-        for (const row of rows) {
-            if ((hasValidValue(row, 'resistance') || hasValidValue(row, 'maxResistance')) &&
-                hasValidValue(row, 'inclination')) {
-                return 'elliptical';
-            }
-        }
-
-        // Check for treadmill: has speed or inclination
-        for (const row of rows) {
-            if (hasValidValue(row, 'speed') || hasValidValue(row, 'inclination')) {
-                return 'treadmill';
-            }
-        }
-
-        // Check for bike: has resistance without treadmill-style incline
-        for (const row of rows) {
-            if (hasValidValue(row, 'resistance') || hasValidValue(row, 'maxResistance')) {
-                return 'bike';
-            }
-        }
-
-        // Check for rower/bike: has power
-        for (const row of rows) {
-            if (hasValidValue(row, 'power')) {
-                if (hasValidValue(row, 'cadence') && !rows.some(r => hasValidValue(r, 'resistance'))) {
-                    return 'rower';
-                }
-                return 'bike';
-            }
-        }
-
-        return null;
-    }
-
-    function setDevice(key) {
-        if (!normalizeDevice(key)) {
-            return;
-        }
-        state.device = key;
-        selectors.device.value = key;
-        renderIntervals();
-        updateChart();
-    }
-
     function addInterval(afterIndex) {
         const interval = createInterval(state.intervals.length + 1);
         if (typeof afterIndex === 'number' && afterIndex >= 0) {
@@ -668,44 +547,12 @@
             }
         });
 
-        switch (state.device) {
-        case 'bike':
-            base.resistance = 20;
-            base.__enabled_resistance = true;
-            base.cadence = 80;
-            base.__enabled_cadence = true;
-            base.power = 180;
-            base.__enabled_power = false; // disabled by default, user chooses resistance OR power
-            break;
-        case 'elliptical':
-            base.resistance = 12;
-            base.__enabled_resistance = true;
-            base.inclination = 5;
-            base.__enabled_inclination = true;
-            base.cadence = 60;
-            base.__enabled_cadence = true;
-            break;
-        case 'rower':
-            base.power = 180;
-            base.__enabled_power = true;
-            base.cadence = 28;
-            base.__enabled_cadence = true;
-            break;
-        case 'treadmill':
-            base.speed = state.miles ? 6.0 : 9.5;
-            base.__enabled_speed = true;
-            base.inclination = 1.0;
-            base.__enabled_inclination = true;
-            base.__enabled_duration = true;
-            base.__enabled_distance = false;
-            break;
-        case 'jumprope':
-        case 'stairclimber':
-        default:
-            base.__enabled_duration = true;
-            base.__enabled_distance = false;
-            break;
-        }
+        base.speed = state.miles ? 6.0 : 9.5;
+        base.__enabled_speed = true;
+        base.inclination = 1.0;
+        base.__enabled_inclination = true;
+        base.__enabled_duration = true;
+        base.__enabled_distance = false;
         base.__selected = false;
         return base;
     }
@@ -764,28 +611,24 @@
             grid.className = 'field-grid';
 
             FIELD_DEFS.forEach(field => {
-                if (!shouldRenderField(field)) {
-                    return;
-                }
                 // Skip linked fields entirely from UI rendering
                 if (field.linkedTo) {
                     return;
                 }
                 const value = row[field.key];
-                // For pace field, use speed's enabled state
-                const isEnabled = field.syncWith ? (row['__enabled_' + field.syncWith] !== false) : (row['__enabled_' + field.key] !== false);
+                const isEnabled = row['__enabled_' + field.key] !== false;
                 const fieldWrap = document.createElement('div');
                 fieldWrap.className = 'field';
                 if (!isEnabled) {
                     fieldWrap.classList.add('disabled');
                 }
 
-                // Create label with enable/disable checkbox (except for name, linked fields, and synced fields like pace)
+                // Create a checkbox to enable or disable each target.
                 // Duration can be disabled for treadmill (mutually exclusive with distance)
                 const labelWrap = document.createElement('label');
                 labelWrap.className = 'field-label';
 
-                const allowToggle = field.key !== 'name' && !field.linkedTo && !field.syncWith;
+                const allowToggle = field.key !== 'name';
                 if (allowToggle) {
                     const enableCheckbox = document.createElement('input');
                     enableCheckbox.type = 'checkbox';
@@ -856,12 +699,6 @@
                         input.type = 'text';
                         input.value = value || '00:05:00';
                         input.placeholder = 'hh:mm:ss';
-                    } else if (field.type === 'pace') {
-                        input.type = 'text';
-                        // Calculate pace from speed
-                        const speedValue = field.syncWith ? row[field.syncWith] : null;
-                        input.value = speedValue ? speedToPace(speedValue) : '';
-                        input.placeholder = 'mm:ss';
                     } else if (field.type === 'text') {
                         input.type = 'text';
                         input.value = value || '';
@@ -872,11 +709,11 @@
                         if (field.max !== undefined) input.max = field.max;
                         input.value = value !== undefined ? value : '';
                     }
-                    // Use 'change' event for duration, pace, and number fields to prevent keyboard from closing during typing
-                    input.addEventListener(field.type === 'duration' || field.type === 'pace' || field.type === 'number' ? 'change' : 'input', handleFieldChange);
+                    // Use 'change' event for duration and number fields to prevent keyboard from closing during typing
+                    input.addEventListener(field.type === 'duration' || field.type === 'number' ? 'change' : 'input', handleFieldChange);
 
-                    // Add +/- buttons for duration, number, and pace fields
-                    if (field.type === 'duration' || field.type === 'number' || field.type === 'pace') {
+                    // Add +/- buttons for duration and number fields
+                    if (field.type === 'duration' || field.type === 'number') {
                         const decreaseBtn = document.createElement('button');
                         decreaseBtn.textContent = '-';
                         decreaseBtn.type = 'button';
@@ -907,17 +744,6 @@
         updateControls();
     }
 
-    function shouldRenderField(field) {
-        // Linked fields are shown conditionally in the render loop
-        if (field.group === 'advanced' && !state.showAdvanced) {
-            return false;
-        }
-        if (field.devices === 'all') {
-            return true;
-        }
-        return Array.isArray(field.devices) && field.devices.indexOf(state.device) >= 0;
-    }
-
     function resolveFieldLabel(field) {
         if (typeof field.label === 'function') {
             return field.label();
@@ -928,9 +754,6 @@
         }
         if (field.unitKey === 'speed') {
             return `${label} (${state.miles ? 'mph' : 'km/h'})`;
-        }
-        if (field.unitKey === 'pace') {
-            return `${label} (${state.miles ? 'min/mi' : 'min/km'})`;
         }
         if (field.unitSuffix) {
             return `${label} (${field.unitSuffix})`;
@@ -964,31 +787,9 @@
             const normalized = formatDuration(seconds);
             state.intervals[index][key] = normalized;
             target.value = normalized;
-        } else if (type === 'pace') {
-            // Format pace input as mm:ss
-            const formatted = formatPaceInput(target.value);
-            target.value = formatted;
-            // Convert pace to speed and update speed field
-            const speed = paceToSpeed(formatted);
-            if (speed > 0) {
-                // Find the syncWith field (should be 'speed')
-                const field = FIELD_DEFS.find(f => f.key === key);
-                if (field && field.syncWith) {
-                    state.intervals[index][field.syncWith] = speed;
-                }
-            }
-            // Re-render to update speed field (pace uses 'change' event so keyboard is already closed)
-            renderIntervals();
-            updateChart();
-            updateStatus();
-            return;
         } else if (type === 'number') {
             const raw = target.value;
             state.intervals[index][key] = raw === '' ? undefined : Number(raw);
-            // If this is a speed field, re-render to update pace (uses 'change' event so keyboard is already closed)
-            if (key === 'speed') {
-                renderIntervals();
-            }
         } else {
             const raw = target.value;
             state.intervals[index][key] = raw;
@@ -1019,25 +820,6 @@
             const normalized = formatDuration(newSeconds);
             state.intervals[index][key] = normalized;
             input.value = normalized;
-        } else if (type === 'pace') {
-            // Increment/decrement pace by 5 seconds
-            // Note: increasing pace value means slower (more time per distance unit)
-            const currentPace = input.value || '6:00';
-            const parts = currentPace.split(':').map(p => parseInt(p, 10) || 0);
-            const currentSeconds = (parts[0] || 0) * 60 + (parts[1] || 0);
-            const newSeconds = Math.max(60, currentSeconds + (direction * 5)); // minimum 1:00
-            const minutes = Math.floor(newSeconds / 60);
-            const seconds = newSeconds % 60;
-            const newPace = minutes + ':' + seconds.toString().padStart(2, '0');
-            input.value = newPace;
-
-            // Convert to speed and update
-            const speed = paceToSpeed(newPace);
-            if (speed > 0 && field.syncWith) {
-                state.intervals[index][field.syncWith] = speed;
-            }
-            // Re-render to update speed field
-            renderIntervals();
         } else if (type === 'number') {
             // Increment/decrement number by step or 1
             const step = field.step !== undefined ? field.step : 1;
@@ -1061,10 +843,6 @@
             state.intervals[index][key] = newValue;
             input.value = newValue;
 
-            // If this is speed, re-render to update pace
-            if (key === 'speed') {
-                renderIntervals();
-            }
         }
 
         updateChart();
@@ -1256,16 +1034,6 @@
                     return;
                 }
 
-                // Check if field is valid for current device type
-                if (!isFieldValidForDevice(field, state.device)) {
-                    return;
-                }
-
-                // Skip synced fields (like pace) - don't save them, only save the primary field (speed)
-                if (field.syncWith) {
-                    return;
-                }
-
                 // Handle linked fields: forcespeed is automatically 1 if speed is enabled
                 if (field.linkedTo) {
                     const parentEnabled = interval['__enabled_' + field.linkedTo] !== false;
@@ -1300,7 +1068,7 @@
         }
         return {
             name: sanitized,
-            device: state.device,
+            device: 'treadmill',
             list: list
         };
     }
@@ -1313,27 +1081,9 @@
         } else if (baseName.toLowerCase().endsWith('.zwo')) {
             baseName = baseName.slice(0, -4);
         }
-        return baseName.replace(/\s+/g, '_').replace(/[^A-Za-z0-9_\-]/g, '_');
-    }
-
-    function normalizeDevice(key) {
-        return DEVICE_KEYS.indexOf(key) >= 0 ? key : null;
-    }
-
-    function isFieldValidForDevice(field, deviceType) {
-        // Always allow name and duration
-        if (field.key === 'name' || field.key === 'duration') {
-            return true;
-        }
-        // Check if field is valid for all devices
-        if (field.devices === 'all') {
-            return true;
-        }
-        // Check if field is valid for the current device
-        if (Array.isArray(field.devices)) {
-            return field.devices.includes(deviceType);
-        }
-        return false;
+        return Array.from(baseName, char =>
+            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-'.includes(char) ? char : '_'
+        ).join('');
     }
 
     function updateChart() {
@@ -1344,8 +1094,7 @@
     function buildChartPayload() {
         let cursor = 0;
         const rows = [];
-        const seriesDefs = SERIES_DEFS[state.device] || [];
-        const series = seriesDefs.map(def => ({
+        const series = SERIES_DEFS.map(def => ({
             key: def.key,
             label: def.label(),
             color: def.color,
@@ -1362,7 +1111,7 @@
             const hasDistance = interval.__enabled_distance !== false && interval.distance > 0;
             const hasSpeed = interval.__enabled_speed !== false && interval.speed > 0;
 
-            if (state.device === 'treadmill' && hasDistance && hasSpeed) {
+            if (hasDistance && hasSpeed) {
                 // Calculate duration from distance and speed: duration (sec) = distance (km) / speed (km/h) * 3600
                 duration = (parseFloat(interval.distance) / parseFloat(interval.speed)) * 3600;
             } else {
@@ -1401,7 +1150,7 @@
 
         return {
             title: selectors.name.value.trim() || 'Untitled Workout',
-            subtitle: devicePrettyName(state.device),
+            subtitle: 'X22i',
             totalSeconds: cursor,
             series: series.filter(s => s.points.length),
             rows: rows
@@ -1443,71 +1192,6 @@
             return parts[0];
         }
         return 0;
-    }
-
-    // Pace conversion functions
-    function speedToPace(speed) {
-        // speed in km/h or mph -> pace in min/km or min/mi
-        if (!speed || speed <= 0) {
-            return '';
-        }
-        const minutesPerUnit = 60 / speed; // minutes per km or mile
-        const minutes = Math.floor(minutesPerUnit);
-        const seconds = Math.round((minutesPerUnit - minutes) * 60);
-        return minutes + ':' + seconds.toString().padStart(2, '0');
-    }
-
-    function paceToSpeed(paceStr) {
-        // pace in mm:ss format -> speed in km/h or mph
-        if (!paceStr) {
-            return 0;
-        }
-        const parts = paceStr.split(':').map(p => parseInt(p, 10));
-        if (parts.length !== 2 || parts.some(num => isNaN(num))) {
-            return 0;
-        }
-        const totalMinutes = parts[0] + parts[1] / 60;
-        if (totalMinutes <= 0) {
-            return 0;
-        }
-        const speed = 60 / totalMinutes;
-        return Math.round(speed * 10) / 10; // round to 1 decimal
-    }
-
-    function formatPaceInput(text) {
-        // Force mm:ss format as user types
-        if (!text) {
-            return '';
-        }
-        // Remove all non-digits
-        const digits = text.replace(/\D/g, '');
-        if (!digits) {
-            return '';
-        }
-        // Format as mm:ss
-        if (digits.length <= 2) {
-            return digits;
-        }
-        const minutes = digits.slice(0, -2);
-        const seconds = digits.slice(-2);
-        return minutes + ':' + seconds;
-    }
-
-    function devicePrettyName(key) {
-        switch (key) {
-        case 'bike':
-            return ('Bike');
-        case 'elliptical':
-            return ('Elliptical');
-        case 'rower':
-            return ('Rower');
-        case 'jumprope':
-            return ('Jump Rope');
-        case 'stairclimber':
-            return ('Stair Climber');
-        default:
-            return ('Treadmill');
-        }
     }
 
     function announce(message, error) {

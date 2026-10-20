@@ -347,23 +347,10 @@
 
         // Series definitions matching the workout editor (workout-editor-app.js SERIES_DEFS).
         // Keys match the field names sent by the backend in the preview payload.
-        var SERIES_DEFS = {
-            treadmill: [
-                { key: 'speed',       label: 'Speed',       color: '#42a5f5', unit: 'km/h', axis: 'speedAxis',      axisLabel: 'Speed (km/h)',  axisPosition: 'left',  fill: true  },
-                { key: 'inclination', label: 'Incline',     color: '#26c6da', unit: '%',    axis: 'inclineAxis',    axisLabel: 'Incline (%)',   axisPosition: 'right', fill: false }
-            ],
-            bike: [
-                { key: 'resistance', label: 'Resistance',  color: '#ab47bc', unit: 'lvl',  axis: 'resistanceAxis', axisLabel: 'Resistance',    axisPosition: 'right', fill: false },
-                { key: 'cadence',    label: 'Cadence',     color: '#29b6f6', unit: 'rpm',  axis: 'cadenceAxis',    axisLabel: 'Cadence (rpm)', axisPosition: 'right', fill: false }
-            ],
-            elliptical: [
-                { key: 'resistance', label: 'Resistance',  color: '#7e57c2', unit: 'lvl',  axis: 'resistanceAxis', axisLabel: 'Resistance',    axisPosition: 'left',  fill: true  },
-                { key: 'inclination', label: 'Ramp',       color: '#66bb6a', unit: '%',    axis: 'inclineAxis',    axisLabel: 'Ramp (%)',      axisPosition: 'right', fill: false }
-            ],
-            rower: [
-                { key: 'cadence', label: 'Stroke Rate', color: '#26a69a', unit: 'spm', axis: 'cadenceAxis',  axisLabel: 'Strokes/min',   axisPosition: 'right', fill: false }
-            ]
-        };
+        var SERIES_DEFS = [
+            { key: 'speed', label: 'Speed', color: '#42a5f5', unit: 'km/h', axis: 'speedAxis', axisLabel: 'Speed (km/h)', axisPosition: 'left', fill: true },
+            { key: 'inclination', label: 'Incline', color: '#26c6da', unit: '%', axis: 'inclineAxis', axisLabel: 'Incline (%)', axisPosition: 'right', fill: false }
+        ];
 
         // Convert a raw value array to {x, y} point objects expected by workout-editor.js.
         // Each element can already be {x, y} or a plain number (index = seconds).
@@ -535,11 +522,8 @@
                 points: workout.points || 0,
                 speed: Array.isArray(workout.speed) ? workout.speed : [],
                 inclination: Array.isArray(workout.inclination) ? workout.inclination : [],
-                resistance: Array.isArray(workout.resistance) ? workout.resistance : [],
-                cadence: Array.isArray(workout.cadence) ? workout.cadence : [],
                 segments: Array.isArray(workout.segments) ? workout.segments : [],
-                hasOpenEndedSteps: !!workout.hasOpenEndedSteps,
-                deviceType: workout.deviceType || 'bike'
+                hasOpenEndedSteps: !!workout.hasOpenEndedSteps
             };
 
             // Update chart using the shared workout-editor chart engine
@@ -556,23 +540,9 @@
         function updateWorkoutChart(workout) {
             if (!workout) return;
 
-            var hasSpeed = Array.isArray(workout.speed) && workout.speed.length > 0;
-            var hasResistance = Array.isArray(workout.resistance) && workout.resistance.length > 0;
-
-            var deviceType;
-            if (hasSpeed) {
-                deviceType = 'treadmill';
-            } else if (hasResistance) {
-                deviceType = 'elliptical';
-            } else {
-                deviceType = workout.deviceType || 'bike';
-            }
-
-            const seriesDefs = SERIES_DEFS[deviceType] || SERIES_DEFS.bike;
-
             // Derive totalSeconds from the longest non-empty array
             var totalSeconds = 0;
-            ['speed', 'inclination', 'resistance', 'cadence'].forEach(function(k) {
+            ['speed', 'inclination'].forEach(function(k) {
                 if (Array.isArray(workout[k]) && workout[k].length > totalSeconds) {
                     totalSeconds = workout[k].length;
                 }
@@ -580,7 +550,7 @@
 
             // Build series list from available data
             var series = [];
-            seriesDefs.forEach(function(def) {
+            SERIES_DEFS.forEach(function(def) {
                 var points = toPoints(workout[def.key]);
                 if (points.length > 0) {
                     series.push({

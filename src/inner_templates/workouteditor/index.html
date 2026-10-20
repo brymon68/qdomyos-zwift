@@ -36,25 +36,10 @@
                     <span>Name</span>
                     <input type="text" id="workoutName" placeholder="New workout">
                 </label>
-                <label>
-                    <span>Device</span>
-                    <select id="deviceSelect">
-                        <option value="bike">Bike</option>
-                        <option value="treadmill">Treadmill</option>
-                        <option value="elliptical">Elliptical</option>
-                        <option value="rower">Rower</option>
-                        <option value="jumprope">Jump Rope</option>
-                        <option value="stairclimber">Stair Climber</option>
-                    </select>
-                </label>
                 <button id="newWorkout" class="small">New</button>
                 <button id="pasteClipboard" class="small">Paste XML</button>
                 <button id="saveWorkout" class="primary small">Save</button>
                 <button id="saveStartWorkout" class="primary small">Save &amp; Start</button>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="advancedToggle">
-                    <span>Advanced</span>
-                </label>
             </div>
         </div>
 
@@ -98,7 +83,7 @@
         </div>
     </div>
 
-    <!-- Custom dialogs for iOS WebView compatibility -->
+    <!-- Dialogs supported by the embedded WebView. -->
     <div id="customDialog" class="custom-dialog hidden">
         <div class="custom-dialog-overlay"></div>
         <div class="custom-dialog-content">
