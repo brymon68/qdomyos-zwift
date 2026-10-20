@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# Build a disposable checkout of the pinned gRPC baseline. Never deploys an APK.
+# Build this fork checkout. Never deploys an APK.
 set -euo pipefail
 
-if [[ $# != 2 ]]; then
-    echo "Usage: bash tools/x22i/build_baseline.sh SOURCE_CHECKOUT NEW_OUTPUT_DIRECTORY" >&2
+if [[ $# != 1 ]]; then
+    echo "Usage: bash tools/x22i/build_baseline.sh NEW_OUTPUT_DIRECTORY" >&2
     exit 2
 fi
 
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-source_dir=$(realpath "$1")
-output_dir=$(realpath -m "$2")
+source_dir=$(realpath "$script_dir/../..")
+output_dir=$(realpath -m "$1")
 : "${QT_ANDROID_DIR:?Set QT_ANDROID_DIR to the Qt 5.15.0 Android installation}"
 : "${ANDROID_SDK_ROOT:?Set ANDROID_SDK_ROOT}"
 : "${JAVA_HOME:?Set JAVA_HOME to Java 17}"
@@ -18,7 +18,7 @@ export ANDROID_NDK_ROOT="$ANDROID_SDK_ROOT/ndk/21.4.7075529"
 export ANDROID_NDK="$ANDROID_NDK_ROOT"
 export ANDROID_HOME="$ANDROID_SDK_ROOT"
 export GRADLE_USER_HOME="$output_dir/gradle-cache"
-export X22I_VARIANT=${X22I_VARIANT:-baseline}
+export X22I_VARIANT=${X22I_VARIANT:-test}
 case "$X22I_VARIANT" in
     baseline) ;;
     test)
@@ -38,117 +38,50 @@ done
 [[ -d "$ANDROID_NDK_ROOT" ]] || { echo "NDK 21.4.7075529 is required" >&2; exit 2; }
 [[ ! -e "$output_dir" ]] || { echo "Use a new output directory" >&2; exit 2; }
 
-# Check the source before making the same localhost variant as the nightly.
-# No owner credentials or service secrets are needed for this build.
-python3 - "$source_dir" "$script_dir/baseline.json" <<'PY'
-import json
-import os
-import shutil
+# Build only committed fork source, with the dependency versions recorded by Git.
+# No owner credentials or service secrets are needed in the application source.
+python3 - "$source_dir" <<'PY_SOURCE'
 import subprocess
 import sys
 from pathlib import Path
 
 source = Path(sys.argv[1])
-baseline = json.loads(Path(sys.argv[2]).read_text())
 def git(*args):
     return subprocess.check_output(['git', '-C', str(source), *args], text=True).strip()
-if git('rev-parse', 'HEAD') != baseline['source_revision']:
-    raise SystemExit('Source revision does not match baseline.json')
+if Path(git('rev-parse', '--show-toplevel')).resolve() != source:
+    raise SystemExit('Run the build script from a checkout of this fork')
 if git('status', '--porcelain', '--untracked-files=normal'):
-    raise SystemExit('Use a clean, disposable source checkout')
+    raise SystemExit('Use a clean source checkout with committed changes')
 if any(line[0] != ' ' for line in subprocess.check_output(
         ['git', '-C', str(source), 'submodule', 'status', '--recursive'], text=True).splitlines()):
     raise SystemExit('Initialize all submodules at their pinned revisions')
 if (source / 'src/secret.h').exists() or (source / 'src/secrets.h').exists():
-    raise SystemExit('Private secret headers are not accepted in baseline builds')
-for name in ('remove-trial.patch', 'remove-fan.patch', 'remove-purchasing.patch'):
-    patch = Path(sys.argv[2]).with_name(name)
-    subprocess.run(['git', '-C', str(source), 'apply', '--check', str(patch)], check=True)
-    subprocess.run(['git', '-C', str(source), 'apply', str(patch)], check=True)
-replacements = {
-    'src/settings.qml': (
-        'property string nordictrack_2950_ip: ""',
-        'property string nordictrack_2950_ip: "localhost"'),
-    'src/qzsettings.cpp': (
-        'const QString QZSettings::default_nordictrack_2950_ip = QStringLiteral("");',
-        'const QString QZSettings::default_nordictrack_2950_ip = QStringLiteral("localhost");'),
-    'src/android/build.gradle': (
-        '    defaultConfig {\n        applicationId',
-        '    defaultConfig {\n        ndk { abiFilters "arm64-v8a" }\n        applicationId'),
-    'src/settings-catalog.json': (
-        '"key": "nordictrack_2950_ip",\n      "name": "Nordictrack 2950 IP",\n      "description": null,\n      "parent": "Proform/Nordictrack Options",\n      "type": "string",\n      "qmlType": "string",\n      "control": "text",\n      "visible": true,\n      "defaultValue": "",\n      "defaultExpression": "\\"\\"",',
-        '"key": "nordictrack_2950_ip",\n      "name": "Nordictrack 2950 IP",\n      "description": null,\n      "parent": "Proform/Nordictrack Options",\n      "type": "string",\n      "qmlType": "string",\n      "control": "text",\n      "visible": true,\n      "defaultValue": "localhost",\n      "defaultExpression": "\\"localhost\\"",'),
-}
-for relative, (old, new) in replacements.items():
-    path = source / relative
-    text = path.read_text()
-    if text.count(old) != 1:
-        raise SystemExit('Pinned baseline variant no longer matches expected source')
-    path.write_text(text.replace(old, new))
+    raise SystemExit('Private secret headers are not accepted in X22i builds')
+PY_SOURCE
 
-if os.environ['X22I_VARIANT'] == 'test':
-    gradle = source / 'src/android/build.gradle'
-    text = gradle.read_text()
-    original = 'applicationId = "org.cagnulen.qdomyoszwift"'
-    if text.count(original) != 1 or text.count('\nandroid {\n') != 1:
-        raise SystemExit('Expected Android package/signing configuration was not found')
-    text = text.replace(original, 'applicationId = "org.cagnulen.qdomyoszwift.x22ibaseline"')
-    signing = '''
-android {
-    signingConfigs {
-        debug {
-            storeFile file(System.getenv('X22I_SIGNING_STORE_FILE'))
-            storePassword System.getenv('X22I_SIGNING_STORE_PASSWORD')
-            keyAlias 'x22i-test'
-            keyPassword System.getenv('X22I_SIGNING_STORE_PASSWORD')
-            storeType 'PKCS12'
-        }
-    }
-'''
-    gradle.write_text(text.replace('\nandroid {\n', signing))
-    manifest = source / 'src/android/AndroidManifest.xml'
-    text = manifest.read_text()
-    for label in ('qdomyos-zwift', 'QZ'):
-        original = 'android:label="' + label + '"'
-        if text.count(original) != 1:
-            raise SystemExit('Expected application/launcher label was not found')
-        text = text.replace(original, 'android:label="X22i Test"')
-    # Keep the source manifest package, Java namespace and JNI names unchanged.
-    manifest.write_text(text)
-
-    main = source / 'src/main.cpp'
-    text = main.read_text()
-    include = '#include <QSettings>\n'
-    startup = '''    app->setApplicationName(QStringLiteral("qDomyos-Zwift"));
-
-    QSettings settings;
-'''
-    if text.count(include) != 1 or text.count(startup) != 1:
-        raise SystemExit('Expected settings initialization point was not found')
-    text = text.replace(include, include + '#include "x22i_defaults.h"\n')
-    text = text.replace(startup, startup + '    applyX22iDefaults(settings);\n')
-    main.write_text(text)
-    shutil.copyfile(Path(sys.argv[2]).with_name('x22i_defaults.h'), source / 'src/x22i_defaults.h')
-PY
-
-mkdir -p "$output_dir/httpserver" "$output_dir/native" "$output_dir/android" "$output_dir/artifacts"
-# Capture all intentional source changes before build tools generate or overlay files.
+mkdir -p "$output_dir/httpserver" "$output_dir/httpserver-source" "$output_dir/native" "$output_dir/android" "$output_dir/artifacts"
 if [[ "$X22I_VARIANT" == test ]]; then
-    git -C "$source_dir" add --intent-to-add src/x22i_defaults.h
     cp "$source_dir/src/x22i_defaults.h" "$output_dir/artifacts/"
 fi
-git -C "$source_dir" diff -- src > "$output_dir/artifacts/source.patch"
 cp "$source_dir"/qt-patches/android/5.15.0/jar/* "$QT_ANDROID_DIR/jar/"
-cp "$source_dir"/qHttpServerBin/5.15.2/headers/* "$source_dir/src/qthttpserver/src/3rdparty/http-parser/"
+# The Android-compatible HTTP parser is owned by this fork. Overlay it in the
+# build directory so the dependency checkout remains unchanged.
+rsync -a --exclude .git "$source_dir/src/qthttpserver/" "$output_dir/httpserver-source/"
+cp "$source_dir"/qHttpServerBin/5.15.2/headers/* "$output_dir/httpserver-source/src/3rdparty/http-parser/"
 lrelease "$source_dir/src/qdomyos-zwift.pri"
 
 cd "$output_dir/httpserver"
-qmake "$source_dir/src/qthttpserver" -spec android-clang ANDROID_ABIS=arm64-v8a "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+# The copy has no .git metadata; request Qt forwarding-header generation explicitly.
+qmake "$output_dir/httpserver-source" -spec android-clang ANDROID_ABIS=arm64-v8a "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT" CONFIG+=git_build
 make -j"$jobs"
 make install
 
 cd "$output_dir/native"
-qmake "$source_dir/qdomyos-zwift.pro" -spec android-clang ANDROID_ABIS=arm64-v8a "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+variant_defines=()
+if [[ "$X22I_VARIANT" == test ]]; then
+    variant_defines+=(DEFINES+=X22I_TEST)
+fi
+qmake "$source_dir/qdomyos-zwift.pro" -spec android-clang ANDROID_ABIS=arm64-v8a "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT" "${variant_defines[@]}"
 make -j"$jobs"
 make "INSTALL_ROOT=$output_dir/android" install
 rsync -a --exclude build --exclude .gradle "$source_dir/src/android/" "$output_dir/android/"
@@ -209,23 +142,20 @@ import sys
 from pathlib import Path
 scripts, source, output = map(Path, sys.argv[1:])
 info = json.loads((scripts / 'baseline.json').read_text())
-info['trial_removal_patch_sha256'] = hashlib.sha256((scripts / 'remove-trial.patch').read_bytes()).hexdigest()
-info['fan_removal_patch_sha256'] = hashlib.sha256((scripts / 'remove-fan.patch').read_bytes()).hexdigest()
-info['purchasing_removal_patch_sha256'] = hashlib.sha256((scripts / 'remove-purchasing.patch').read_bytes()).hexdigest()
-info['source_patch_sha256'] = hashlib.sha256((output / 'artifacts/source.patch').read_bytes()).hexdigest()
 info['variant'] = os.environ['X22I_VARIANT']
 if info['variant'] == 'test':
     info['package'] = 'org.cagnulen.qdomyoszwift.x22ibaseline'
     info['label'] = 'X22i Test'
     info['signing'] = 'Persistent private test key; separate from installed QZ signer'
-    info['settings_defaults_sha256'] = hashlib.sha256((scripts / 'x22i_defaults.h').read_bytes()).hexdigest()
+    info['settings_defaults_sha256'] = hashlib.sha256((source / 'src/x22i_defaults.h').read_bytes()).hexdigest()
     info['settings_defaults_policy'] = 'Fill missing nonsecret X22i settings; preserve existing saved values'
 apk = output / ('artifacts/x22i-' + info['variant'] + '-arm64.apk')
 info['apk_sha256'] = hashlib.sha256(apk.read_bytes()).hexdigest()
 info['apk_bytes'] = apk.stat().st_size
-info['build_recipe_revision'] = subprocess.check_output(['git', '-C', str(scripts), 'rev-parse', 'HEAD'], text=True).strip()
+info['source_revision'] = subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip()
+info['build_recipe_revision'] = info['source_revision']
 info['submodules'] = subprocess.check_output(['git', '-C', str(source), 'submodule', 'status', '--recursive'], text=True).splitlines()
 info['validation'] = 'Packaging checked; device behavior and migration not yet verified'
 (output / 'artifacts/build-info.json').write_text(json.dumps(info, indent=2) + '\n')
 PY
-echo "Baseline APK and provenance are ready in the output artifacts directory."
+echo "X22i APK and provenance are ready in the output artifacts directory."

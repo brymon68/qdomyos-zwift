@@ -1,6 +1,6 @@
 {
-  "repository": "cagnulein/qdomyos-zwift",
-  "source_revision": "8b78e9464c55572b9eaf816128bac905c7150a26",
+  "repository": "brymon68/qdomyos-zwift",
+  "upstream_reference_revision": "8b78e9464c55572b9eaf816128bac905c7150a26",
   "recipe_reference_revision": "3044d2d42a54d00c97e4d47f531319d07aa453fd",
   "qt_version": "5.15.0",
   "ndk_version": "21.4.7075529",
