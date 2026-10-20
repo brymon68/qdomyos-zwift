@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+# Build a disposable checkout of the pinned gRPC baseline. Never deploys an APK.
+set -euo pipefail
+
+if [[ $# != 2 ]]; then
+    echo "Usage: bash tools/x22i/build_baseline.sh SOURCE_CHECKOUT NEW_OUTPUT_DIRECTORY" >&2
+    exit 2
+fi
+
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+source_dir=$(realpath "$1")
+output_dir=$(realpath -m "$2")
+: "${QT_ANDROID_DIR:?Set QT_ANDROID_DIR to the Qt 5.15.0 Android installation}"
+: "${ANDROID_SDK_ROOT:?Set ANDROID_SDK_ROOT}"
+: "${JAVA_HOME:?Set JAVA_HOME to Java 17}"
+export PATH="$QT_ANDROID_DIR/bin:$JAVA_HOME/bin:$PATH"
+export ANDROID_NDK_ROOT="$ANDROID_SDK_ROOT/ndk/21.4.7075529"
+export ANDROID_NDK="$ANDROID_NDK_ROOT"
+export ANDROID_HOME="$ANDROID_SDK_ROOT"
+export GRADLE_USER_HOME="$output_dir/gradle-cache"
+jobs=${X22I_BUILD_JOBS:-2}
+
+for command in git make python3 rsync qmake lrelease androiddeployqt javac; do
+    command -v "$command" >/dev/null || { echo "Missing build command: $command" >&2; exit 2; }
+done
+[[ $(qmake -query QT_VERSION) == 5.15.0 ]] || { echo "Qt 5.15.0 is required" >&2; exit 2; }
+[[ $(javac -version 2>&1) == 'javac 17.'* ]] || { echo "Java 17 is required" >&2; exit 2; }
+[[ -d "$ANDROID_NDK_ROOT" ]] || { echo "NDK 21.4.7075529 is required" >&2; exit 2; }
+[[ ! -e "$output_dir" ]] || { echo "Use a new output directory" >&2; exit 2; }
+
+# Check the source before making the same localhost variant as the nightly.
+# No owner credentials or service secrets are needed for this build.
+python3 - "$source_dir" "$script_dir/baseline.json" <<'PY'
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+source = Path(sys.argv[1])
+baseline = json.loads(Path(sys.argv[2]).read_text())
+def git(*args):
+    return subprocess.check_output(['git', '-C', str(source), *args], text=True).strip()
+if git('rev-parse', 'HEAD') != baseline['source_revision']:
+    raise SystemExit('Source revision does not match baseline.json')
+if git('status', '--porcelain', '--untracked-files=normal'):
+    raise SystemExit('Use a clean, disposable source checkout')
+if any(line[0] != ' ' for line in subprocess.check_output(
+        ['git', '-C', str(source), 'submodule', 'status', '--recursive'], text=True).splitlines()):
+    raise SystemExit('Initialize all submodules at their pinned revisions')
+if (source / 'src/secret.h').exists() or (source / 'src/secrets.h').exists():
+    raise SystemExit('Private secret headers are not accepted in baseline builds')
+replacements = {
+    'src/settings.qml': (
+        'property string nordictrack_2950_ip: ""',
+        'property string nordictrack_2950_ip: "localhost"'),
+    'src/qzsettings.cpp': (
+        'const QString QZSettings::default_nordictrack_2950_ip = QStringLiteral("");',
+        'const QString QZSettings::default_nordictrack_2950_ip = QStringLiteral("localhost");'),
+    'src/android/build.gradle': (
+        '    defaultConfig {\n        applicationId',
+        '    defaultConfig {\n        ndk { abiFilters "arm64-v8a" }\n        applicationId'),
+    'src/settings-catalog.json': (
+        '"key": "nordictrack_2950_ip",\n      "name": "Nordictrack 2950 IP",\n      "description": null,\n      "parent": "Proform/Nordictrack Options",\n      "type": "string",\n      "qmlType": "string",\n      "control": "text",\n      "visible": true,\n      "defaultValue": "",\n      "defaultExpression": "\\"\\"",',
+        '"key": "nordictrack_2950_ip",\n      "name": "Nordictrack 2950 IP",\n      "description": null,\n      "parent": "Proform/Nordictrack Options",\n      "type": "string",\n      "qmlType": "string",\n      "control": "text",\n      "visible": true,\n      "defaultValue": "localhost",\n      "defaultExpression": "\\"localhost\\"",'),
+}
+for relative, (old, new) in replacements.items():
+    path = source / relative
+    text = path.read_text()
+    if text.count(old) != 1:
+        raise SystemExit('Pinned baseline variant no longer matches expected source')
+    path.write_text(text.replace(old, new))
+PY
+
+mkdir -p "$output_dir/httpserver" "$output_dir/native" "$output_dir/android" "$output_dir/artifacts"
+cp "$source_dir"/qt-patches/android/5.15.0/jar/* "$QT_ANDROID_DIR/jar/"
+cp "$source_dir"/qHttpServerBin/5.15.2/headers/* "$source_dir/src/qthttpserver/src/3rdparty/http-parser/"
+lrelease "$source_dir/src/qdomyos-zwift.pri"
+
+cd "$output_dir/httpserver"
+qmake "$source_dir/src/qthttpserver" -spec android-clang ANDROID_ABIS=arm64-v8a "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+make -j"$jobs"
+make install
+
+cd "$output_dir/native"
+# Preserve the baseline's trial behavior until physical regression checks pass.
+qmake "$source_dir/qdomyos-zwift.pro" -spec android-clang ANDROID_ABIS=arm64-v8a "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT" DEFINES+=LICENSE
+make -j"$jobs"
+make "INSTALL_ROOT=$output_dir/android" install
+rsync -a --exclude build --exclude .gradle "$source_dir/src/android/" "$output_dir/android/"
+
+python3 - "$source_dir" "$output_dir" <<'PY'
+import json
+import sys
+from pathlib import Path
+source, output = map(Path, sys.argv[1:])
+deployment = output / 'native/src/android-qdomyos-zwift-deployment-settings.json'
+data = json.loads(deployment.read_text())
+data['android-extra-libs'] = ','.join(str(source / 'android_openssl/no-asm/latest/arm64' / name)
+                                     for name in ('libcrypto_1_1.so', 'libssl_1_1.so'))
+deployment.write_text(json.dumps(data, indent=2) + '\n')
+PY
+
+# --no-build skips copyQtFiles in Qt 5.15.0; deliberately do not use it.
+androiddeployqt --input "$output_dir/native/src/android-qdomyos-zwift-deployment-settings.json" \
+    --output "$output_dir/android" --android-platform android-35 --gradle --aux-mode
+# Auxiliary mode skips copyStdCpp, so supply the runtime from the selected NDK.
+cp "$ANDROID_NDK_ROOT/sources/cxx-stl/llvm-libc++/libs/arm64-v8a/libc++_shared.so" "$output_dir/android/libs/arm64-v8a/"
+
+python3 - "$output_dir/android/gradle.properties" "$QT_ANDROID_DIR" <<'PY'
+import shutil
+import sys
+from pathlib import Path
+path = Path(sys.argv[1])
+# androiddeployqt overlays src/android again, including its four runtime folders.
+for abi in ('armeabi-v7a', 'x86', 'x86_64'):
+    directory = path.parent / 'libs' / abi
+    if directory.exists():
+        shutil.rmtree(directory)
+lines = [line for line in path.read_text().splitlines()
+         if not line.strip().startswith(('android.bundle.enableUncompressedNativeLibs=', 'qt5AndroidDir='))]
+lines.append('qt5AndroidDir=' + sys.argv[2] + '/src/android/java')
+path.write_text('\n'.join(lines) + '\n')
+PY
+cd "$output_dir/android"
+bash ./gradlew --no-daemon assembleDebug
+apk="$output_dir/android/build/outputs/apk/debug/android-debug.apk"
+python3 "$script_dir/verify_apk.py" "$apk"
+"$ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$apk" > "$output_dir/artifacts/signing.txt"
+"$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump badging "$apk" > "$output_dir/artifacts/apk-badging.txt"
+cp "$apk" "$output_dir/artifacts/x22i-baseline-arm64.apk"
+cp "$source_dir/LICENSE" "$output_dir/artifacts/LICENSE"
+git -C "$source_dir" diff -- src/settings.qml src/qzsettings.cpp src/settings-catalog.json src/android/build.gradle > "$output_dir/artifacts/source.patch"
+python3 - "$script_dir" "$source_dir" "$output_dir" <<'PY'
+import hashlib
+import json
+import subprocess
+import sys
+from pathlib import Path
+scripts, source, output = map(Path, sys.argv[1:])
+info = json.loads((scripts / 'baseline.json').read_text())
+apk = output / 'artifacts/x22i-baseline-arm64.apk'
+info['apk_sha256'] = hashlib.sha256(apk.read_bytes()).hexdigest()
+info['apk_bytes'] = apk.stat().st_size
+info['build_recipe_revision'] = subprocess.check_output(['git', '-C', str(scripts), 'rev-parse', 'HEAD'], text=True).strip()
+info['submodules'] = subprocess.check_output(['git', '-C', str(source), 'submodule', 'status', '--recursive'], text=True).splitlines()
+info['validation'] = 'Packaging checked; device behavior and migration not yet verified'
+(output / 'artifacts/build-info.json').write_text(json.dumps(info, indent=2) + '\n')
+PY
+echo "Baseline APK and provenance are ready in the output artifacts directory."
