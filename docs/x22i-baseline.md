@@ -73,6 +73,18 @@ bash tools/x22i/build_baseline.sh /LOCAL/BASELINE-SOURCE /LOCAL/NEW-BUILD-DIRECT
 
 The output directory must not exist. The script modifies the disposable source defaults, builds and checks the APK, and does not install it. Do not supply private secret headers or owner credentials.
 
+### Installed local toolchain
+
+The development workstation now has a dedicated user-local toolchain at `$HOME/.local/share/qz-x22i-toolchain`. Activate it in a Bash shell:
+
+```sh
+source "$HOME/.local/share/qz-x22i-toolchain/env.sh"
+```
+
+It provides Qt Android 5.15.0 with Charts, Network Auth, and Purchasing; Temurin Java 17.0.20.1; Android command-line tools 19.0; SDK platform 35; build tools 35.0.0; NDK 21.4.7075529; platform-tools; and GNU Make 4.4.1. The NDK supplies the C++ compiler. No system-wide packages or shell startup files were changed. `toolchain.json` and `python-packages.txt` in that directory record the installation and verification details. The activation file selects four compiler jobs.
+
+A complete local build on Ubuntu 26.04 passed on 2026-10-20 in **275 seconds**, using recipe commit `2fb1486207d5aea759cd02d797b6a23a7daac434`. Its ARM64 payload and merged manifest passed verification, both APK signature schemes v1 and v2 verified, and its signer matched the persistent test key. The APK is 50,993,897 bytes with SHA-256 `d7b56cdaf0f72609f62e4ee23d792d9acde38102d3d8ca08e118f7a3c9b37d85`. The local source, intermediates, log, and artifacts remain under the ignored `build-x22i-local/` directory. This verifies the build toolchain, not treadmill behavior.
+
 ## Separate test app
 
 The `test` variant uses application ID `org.cagnulen.qdomyoszwift.x22ibaseline` and launcher label **X22i Test**. Java namespace, source manifest package, JNI classes, QSettings organization/application names, and iFIT protocol behavior stay the same. The variant still contains the baseline trial and fan features.
