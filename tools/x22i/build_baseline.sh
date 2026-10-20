@@ -61,6 +61,9 @@ if any(line[0] != ' ' for line in subprocess.check_output(
     raise SystemExit('Initialize all submodules at their pinned revisions')
 if (source / 'src/secret.h').exists() or (source / 'src/secrets.h').exists():
     raise SystemExit('Private secret headers are not accepted in baseline builds')
+trial_patch = Path(sys.argv[2]).with_name('remove-trial.patch')
+subprocess.run(['git', '-C', str(source), 'apply', '--check', str(trial_patch)], check=True)
+subprocess.run(['git', '-C', str(source), 'apply', str(trial_patch)], check=True)
 replacements = {
     'src/settings.qml': (
         'property string nordictrack_2950_ip: ""',
@@ -138,8 +141,7 @@ make -j"$jobs"
 make install
 
 cd "$output_dir/native"
-# Preserve the baseline's trial behavior until physical regression checks pass.
-qmake "$source_dir/qdomyos-zwift.pro" -spec android-clang ANDROID_ABIS=arm64-v8a "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT" DEFINES+=LICENSE
+qmake "$source_dir/qdomyos-zwift.pro" -spec android-clang ANDROID_ABIS=arm64-v8a "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
 make -j"$jobs"
 make "INSTALL_ROOT=$output_dir/android" install
 rsync -a --exclude build --exclude .gradle "$source_dir/src/android/" "$output_dir/android/"
@@ -180,7 +182,7 @@ PY
 cd "$output_dir/android"
 bash ./gradlew --no-daemon assembleDebug
 apk="$output_dir/android/build/outputs/apk/debug/android-debug.apk"
-python3 "$script_dir/verify_apk.py" "$apk"
+python3 "$script_dir/verify_apk.py" --no-trial "$apk"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$apk" > "$output_dir/artifacts/signing.txt"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump badging "$apk" > "$output_dir/artifacts/apk-badging.txt"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump xmltree "$apk" AndroidManifest.xml > "$output_dir/artifacts/manifest-tree.txt"
@@ -196,7 +198,7 @@ if [[ "$X22I_VARIANT" == test ]]; then
     git -C "$source_dir" add --intent-to-add src/x22i_defaults.h
     cp "$source_dir/src/x22i_defaults.h" "$output_dir/artifacts/"
 fi
-git -C "$source_dir" diff -- src/main.cpp src/x22i_defaults.h src/settings.qml src/qzsettings.cpp src/settings-catalog.json src/android/build.gradle src/android/AndroidManifest.xml > "$output_dir/artifacts/source.patch"
+git -C "$source_dir" diff -- src/homeform.cpp src/homeform.h src/main.qml src/main.cpp src/x22i_defaults.h src/settings.qml src/qzsettings.cpp src/settings-catalog.json src/android/build.gradle src/android/AndroidManifest.xml > "$output_dir/artifacts/source.patch"
 python3 - "$script_dir" "$source_dir" "$output_dir" <<'PY'
 import hashlib
 import json
@@ -206,6 +208,8 @@ import sys
 from pathlib import Path
 scripts, source, output = map(Path, sys.argv[1:])
 info = json.loads((scripts / 'baseline.json').read_text())
+info['trial_removal_patch_sha256'] = hashlib.sha256((scripts / 'remove-trial.patch').read_bytes()).hexdigest()
+info['source_patch_sha256'] = hashlib.sha256((output / 'artifacts/source.patch').read_bytes()).hexdigest()
 info['variant'] = os.environ['X22I_VARIANT']
 if info['variant'] == 'test':
     info['package'] = 'org.cagnulen.qdomyoszwift.x22ibaseline'

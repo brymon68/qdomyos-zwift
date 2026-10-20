@@ -2,6 +2,14 @@
 
 This is the first-phase build and migration tooling for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). The pinned ARM64 baseline and separate X22i Test app build successfully. X22i Test is installed, its saved configuration is migrated, and the owner confirms automatic incline works after restart. The owner subsequently reported that everything is working and accepted preparing this branch's PR before feature removal and UI work. Both Mac connection transports remain supported because the active transport has not been identified.
 
+## Trial removal
+
+New builds apply [`tools/x22i/remove-trial.patch`](../tools/x22i/remove-trial.patch) to the exact tested gRPC source before building. This removes the supporter HTTP request and retries, the ten-minute expiry timer, the popup property and its C++ implementation, and the QML expiry dialog, Patreon redirect, and forced exit. The ordinary QML quit connection remains available for the existing Restart/Exit controls. The build no longer passes `DEFINES+=LICENSE`, and `build-info.json` records `trial_enforcement: false` plus the trial patch and complete source patch SHA-256 values.
+
+This increment leaves fan support, Zwift/iFIT authentication, treadmill commands, package identity, signing, and saved-setting preservation intact. The software `LICENSE` remains included. The source patch is applied to the checkout actually compiled; this repository's separate application `src/` is still not the X22i build input. Source consolidation and GitHub fork-network detachment are separate decisions.
+
+The APK check now rejects known trial symbols and the supporter endpoint in the native application library, including Qt's UTF-16 string representation. It is a regression check for this removed implementation, not proof of all runtime behavior. A physical console session beyond the former ten-minute trial plus two-minute dialog timeout remains required. Obtain a fresh owner-present, belt-stopped confirmation before installing or launching the candidate.
+
 ## Verified settings migration and auto-incline retest: 2026-10-20 UTC
 
 An initial launch before migration used a fresh configuration with only 98 settings: Zwift auto-incline was disabled, Zwift credentials were absent, and X22i was unselected. The original installation still matched the complete 861-setting backup.
@@ -59,7 +67,7 @@ This baseline is larger than the installed January build; feature removal has no
 
 [`tools/x22i/baseline.json`](../tools/x22i/baseline.json) pins application source to `cagnulein/qdomyos-zwift` revision `8b78e9464c55572b9eaf816128bac905c7150a26`. Revision `3044d2d42a54d00c97e4d47f531319d07aa453fd` is the nightly build recipe reference; it is **not** the application source pin. Each artifact records the revision of this repository's build recipe separately.
 
-The target is ARM64 (`arm64-v8a`), version **2.21.5**, version code **1403**, package **`org.cagnulen.qdomyoszwift`**. The disposable source checkout receives the documented localhost-default variant in QML, C++, and the settings catalog, plus a Gradle ARM64 filter for native dependencies. The build retains `DEFINES+=LICENSE` trial enforcement and the baseline fan implementation until the existing installation has been compared on hardware. Trial removal, feature removal, and a smaller application are later changes.
+The target is ARM64 (`arm64-v8a`), version **2.21.5**, version code **1403**, package **`org.cagnulen.qdomyoszwift`**. The disposable source checkout receives the trial-removal patch, the documented localhost-default variant in QML, C++, and the settings catalog, plus a Gradle ARM64 filter for native dependencies. Fan removal and a smaller application are later changes.
 
 The artifact bundle contains the APK, checksum/provenance in `build-info.json`, `source.patch`, signing information, package badging, and `LICENSE`. New test builds also include `x22i_defaults.h` and its SHA-256 in the provenance; the source patch includes its startup integration. The APK checker verifies required ARM64 Qt/OpenSSL/C++ libraries, QML resources, and gRPC client assets. It does not verify the entire native dependency graph, launch, TLS connectivity, or incline behavior.
 
@@ -68,13 +76,13 @@ The artifact bundle contains the APK, checksum/provenance in `build-info.json`, 
 The [workflow](../.github/workflows/x22i-baseline.yml) builds the pinned upstream checkout separately from this repository. After the workflow is available on GitHub, dispatch it on the scaffolding branch:
 
 ```sh
-gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref codex/x22i-baseline -f variant=baseline
+gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref codex/x22i-no-trial -f variant=baseline
 gh run list --repo brymon68/qdomyos-zwift --workflow x22i-baseline.yml
 gh run watch RUN_ID --repo brymon68/qdomyos-zwift
 gh run download RUN_ID --repo brymon68/qdomyos-zwift --name x22i-baseline-arm64 --dir /LOCAL/ARTIFACTS
 ```
 
-Replace `RUN_ID` and uppercase paths with local values. Matching changes pushed to `codex/x22i-baseline` build the `test` variant. Manual dispatch defaults to `test`; select `baseline` explicitly to reproduce the original package identity.
+Replace `RUN_ID` and uppercase paths with local values. Matching changes pushed to `codex/x22i-no-trial` build the `test` variant. Manual dispatch defaults to `test`; select `baseline` explicitly to reproduce the original package identity.
 
 For a local build, provide a **clean, disposable** checkout at the exact source pin with all recursive submodules initialized. Install Qt Android **5.15.0** with Qt Charts, Network Auth, and Purchasing; Java **17**; Android platform **35**; build tools **35.0.0**; NDK **21.4.7075529**; and host build tools including `make`, `python3`, and `rsync`. The source supplies Gradle **8.13**. Use a dedicated Qt installation: the script copies the baseline's patched Qt JARs into it and installs its Qt HTTP server build there.
 
@@ -139,12 +147,12 @@ A complete local build on Ubuntu 26.04 passed on 2026-10-20 in **275 seconds**, 
 
 ## Separate test app
 
-The `test` variant uses application ID `org.cagnulen.qdomyoszwift.x22ibaseline` and launcher label **X22i Test**. Java namespace, source manifest package, JNI classes, QSettings organization/application names, and iFIT protocol behavior stay the same. The variant still contains the baseline trial and fan features.
+The `test` variant uses application ID `org.cagnulen.qdomyoszwift.x22ibaseline` and launcher label **X22i Test**. Java namespace, source manifest package, JNI classes, QSettings organization/application names, and iFIT protocol behavior stay the same. The variant retains fan features; new builds remove trial enforcement.
 
 It uses a persistent private PKCS12 signing key with alias `x22i-test`, backed up outside Git with owner-only permissions. The repository secrets `X22I_TEST_KEYSTORE_BASE64` and `X22I_TEST_KEYSTORE_PASSWORD` provide this key to CI. The workflow fails when they are absent and removes its temporary key afterward. Do not rotate this key casually: future test APKs need the same signer for updates. Never upload the saved QSettings backup, Zwift credentials, or personal configuration to CI.
 
 ```sh
-gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref codex/x22i-baseline -f variant=test
+gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref codex/x22i-no-trial -f variant=test
 gh run download RUN_ID --repo brymon68/qdomyos-zwift --name x22i-test-arm64 --dir /LOCAL/TEST-ARTIFACTS
 ```
 

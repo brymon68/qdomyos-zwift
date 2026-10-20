@@ -34,13 +34,13 @@ class VerifyApkTests(unittest.TestCase):
             "assets/client_key.pem": b"SYNTHETIC_PRIVATE_KEY_NOT_FOR_OUTPUT",
         })
 
-    def run_verifier(self):
+    def run_verifier(self, *options):
         with zipfile.ZipFile(self.apk, "w") as apk:
             for name, data in self.entries.items():
                 apk.writestr(name, data)
         original = self.apk.read_bytes()
         result = subprocess.run(
-            [sys.executable, str(SCRIPT), str(self.apk)], capture_output=True, text=True, check=False,
+            [sys.executable, str(SCRIPT), *options, str(self.apk)], capture_output=True, text=True, check=False,
         )
         self.assertEqual(self.apk.read_bytes(), original)
         self.assertNotIn("SYNTHETIC_CERTIFICATE", result.stdout + result.stderr)
@@ -63,6 +63,19 @@ class VerifyApkTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertEqual(result.stdout, "")
         self.assertIn("Missing required APK entry: assets/android_rcc_bundle.rcc", result.stderr)
+
+    def test_trial_free_payload(self):
+        result = self.run_verifier("--no-trial")
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_trial_code_is_rejected_in_native_and_qt_string_encodings(self):
+        for marker in ("http://robertoviola.cloud:4010/?supporter=", "licensePopupVisible", "licenseRequest", "licenseTimeout"):
+            for encoding in ("utf-8", "utf-16-le"):
+                with self.subTest(marker=marker, encoding=encoding):
+                    self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = marker.encode(encoding)
+                    result = self.run_verifier("--no-trial")
+                    self.assertEqual(result.returncode, 1)
+                    self.assertIn("Trial enforcement remains", result.stderr)
 
     def test_missing_qt_or_runtime_library(self):
         for name in ("libQt5QuickControls2_arm64-v8a.so", "libQt5HttpServer_arm64-v8a.so", "libc++_shared.so", "libssl_1_1.so"):

@@ -12,7 +12,7 @@ on:
           - test
           - baseline
   push:
-    branches: [codex/x22i-baseline]
+    branches: [codex/x22i-no-trial]
     paths:
       - .github/workflows/x22i-baseline.yml
       - tools/x22i/**
