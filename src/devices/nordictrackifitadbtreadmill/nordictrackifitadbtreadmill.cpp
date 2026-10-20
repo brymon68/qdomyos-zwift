@@ -289,7 +289,8 @@ void nordictrackifitadbtreadmill::initializeGrpcService() {
 #ifdef Q_OS_ANDROID
     if (!grpcInitialized) {
         try {
-            const QString ip = QStringLiteral("127.0.0.1");
+            // iFIT's TLS certificate requires the localhost hostname, not its numeric address.
+            const QString host = QStringLiteral("localhost");
             
             // Set Android context first
             QAndroidJniObject::callStaticMethod<void>(
@@ -299,8 +300,8 @@ void nordictrackifitadbtreadmill::initializeGrpcService() {
                 QtAndroid::androidContext().object()
             );
             
-            // Now initialize the service with the host IP
-            QAndroidJniObject hostObj = QAndroidJniObject::fromString(ip);
+            // Now initialize the service with the local hostname.
+            QAndroidJniObject hostObj = QAndroidJniObject::fromString(host);
             QAndroidJniObject::callStaticMethod<void>(
                 "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
                 "initialize",
@@ -308,7 +309,7 @@ void nordictrackifitadbtreadmill::initializeGrpcService() {
                 hostObj.object<jstring>()
             );
             grpcInitialized = true;
-            emit debug("gRPC service initialized successfully with host: " + ip);
+            emit debug("gRPC service initialized successfully with host: " + host);
         } catch (...) {
             emit debug("Failed to initialize gRPC service");
             grpcInitialized = false;

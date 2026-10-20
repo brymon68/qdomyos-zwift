@@ -7,7 +7,7 @@ The source was aligned with the already tested NordicTrack gRPC revision `8b78e9
 ## Current scope
 
 - Only the X22i equipment driver is built or present under the equipment directories. DIRCON remains as a Zwift transport. Bike, rower, elliptical, other treadmill and accessory drivers, discovery/factory selection, and their tests are deleted.
-- The app connects directly to local iFIT at `127.0.0.1`. The dashboard shows speed, incline, pace, distance, elapsed time and heart rate, with Start/Pause/Stop and manual speed/incline controls.
+- The app connects directly to local iFIT at `localhost`. This hostname is required for TLS verification; the numeric loopback address is rejected by the console's certificate. The dashboard shows speed, incline, pace, distance, elapsed time and heart rate, with Start/Pause/Stop and manual speed/incline controls.
 - UI settings are limited to 56 X22i connection, Zwift terrain, motion and calibration keys. General settings, user profiles, personal measurements, tile customization, fitness account integrations and email uploads are deleted. Local FIT/GPX files and workout editing remain.
 - Locale is fixed to US English. Translation catalogs, translator loading, web translation service, language resources and translation maintenance jobs are deleted.
 - Licensing enforcement, purchasing, fan features, ANT+, power measurement, FTP/energy calculations and related dependencies are deleted. GPL licensing and attribution remain.
