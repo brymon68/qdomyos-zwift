@@ -196,15 +196,7 @@ void trxappgateusbtreadmill::update() {
 
             requestStop = -1;
         }
-        if (requestIncreaseFan != -1) {
-            emit debug(QStringLiteral("increasing fan speed..."));
-            // changeFanSpeed(FanSpeed + 1);
-            requestIncreaseFan = -1;
-        } else if (requestDecreaseFan != -1) {
-            emit debug(QStringLiteral("decreasing fan speed..."));
-            // changeFanSpeed(FanSpeed - 1);
-            requestDecreaseFan = -1;
-        }
+
     }
 }
 
@@ -273,7 +265,6 @@ void trxappgateusbtreadmill::characteristicChanged(const QLowEnergyCharacteristi
             Heart = GetHeartFromPacket(lastPacket);
         }
     }
-    FanSpeed = 0;
 
     QTime now = QTime::currentTime();
     if (!firstCharChanged) {

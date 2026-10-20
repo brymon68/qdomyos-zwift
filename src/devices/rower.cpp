@@ -47,7 +47,6 @@ metric rower::lastRequestedPower() { return RequestedPower; }
 metric rower::currentResistance() { return Resistance; }
 metric rower::currentStrokesCount() { return StrokesCount; }
 metric rower::currentStrokesLength() { return StrokesLength; }
-uint8_t rower::fanSpeed() { return FanSpeed; }
 bool rower::connected() { return false; }
 uint16_t rower::watts() { return 0; }
 metric rower::pelotonResistance() { return m_pelotonResistance; }

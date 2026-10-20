@@ -272,32 +272,7 @@ void domyostreadmill::forceSpeedOrIncline(double requestSpeed, double requestInc
                         false, true);
 }
 
-bool domyostreadmill::sendChangeFanSpeed(uint8_t speed) {
 
-    uint8_t fanSpeed[] = {0xf0, 0xca, 0x00, 0x00};
-
-    if (speed > 5) {
-        return false;
-    }
-
-    fanSpeed[2] = speed;
-
-    for (uint8_t i = 0; i < sizeof(fanSpeed) - 1; i++) {
-
-        fanSpeed[3] += fanSpeed[i]; // the last byte is a sort of a checksum
-    }
-
-    writeCharacteristic(fanSpeed, 4, QStringLiteral("changeFanSpeed speed=") + QString::number(speed), false, true);
-
-    return true;
-}
-
-bool domyostreadmill::changeFanSpeed(uint8_t speed) {
-
-    requestFanSpeed = speed;
-
-    return true;
-}
 
 void domyostreadmill::changeInclinationRequested(double grade, double percentage) {
     if (percentage < 0)
@@ -423,23 +398,8 @@ void domyostreadmill::update() {
                                     true);
                 requestStop = -1;
             }
-            if (requestFanSpeed != -1) {
-                emit debug(QStringLiteral("changing fan speed..."));
 
-                sendChangeFanSpeed(requestFanSpeed);
-                requestFanSpeed = -1;
-            }
-            if (requestIncreaseFan != -1) {
-                emit debug(QStringLiteral("increasing fan speed..."));
 
-                sendChangeFanSpeed(FanSpeed + 1);
-                requestIncreaseFan = -1;
-            } else if (requestDecreaseFan != -1) {
-                emit debug(QStringLiteral("decreasing fan speed..."));
-
-                sendChangeFanSpeed(FanSpeed - 1);
-                requestDecreaseFan = -1;
-            }
         }
     }
 }
@@ -518,14 +478,6 @@ void domyostreadmill::characteristicChanged(const QLowEnergyCharacteristic &char
         emit debug(QStringLiteral("stop button pressed!"));
 
         requestStop = 1;
-    } else if (value.at(22) == 0x0b) {
-        emit debug(QStringLiteral("increase speed fan pressed!"));
-
-        requestIncreaseFan = 1;
-    } else if (value.at(22) == 0x0a) {
-        emit debug(QStringLiteral("decrease speed fan pressed!"));
-
-        requestDecreaseFan = 1;
     } else if (value.at(22) == 0x08) {
         emit debug(QStringLiteral("increase speed button on console pressed!"));
         if (domyos_treadmill_buttons) {
@@ -725,7 +677,6 @@ void domyostreadmill::characteristicChanged(const QLowEnergyCharacteristic &char
 
     cadenceFromAppleWatch();
 
-    FanSpeed = value.at(23);
 
     if (!firstCharacteristicChanged) {
         if (watts(settings.value(QZSettings::weight, QZSettings::default_weight).toFloat()))

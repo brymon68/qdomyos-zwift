@@ -216,23 +216,8 @@ void kingsmithr1protreadmill::update() {
 
             requestStop = -1;
         }
-        if (requestFanSpeed != -1) {
-            emit debug(QStringLiteral("changing fan speed..."));
 
-            // sendChangeFanSpeed(requestFanSpeed);
-            requestFanSpeed = -1;
-        }
-        if (requestIncreaseFan != -1) {
-            emit debug(QStringLiteral("increasing fan speed..."));
 
-            // sendChangeFanSpeed(FanSpeed + 1);
-            requestIncreaseFan = -1;
-        } else if (requestDecreaseFan != -1) {
-            emit debug(QStringLiteral("decreasing fan speed..."));
-
-            // sendChangeFanSpeed(FanSpeed - 1);
-            requestDecreaseFan = -1;
-        }
     }
 }
 

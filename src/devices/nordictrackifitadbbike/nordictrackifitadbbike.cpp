@@ -745,11 +745,6 @@ void nordictrackifitadbbike::update() {
             emit debug(QString("gRPC Resistance: %1").arg(currentResistance));
         }
         
-        int currentFanSpeed = getGrpcFanSpeed();
-        if (currentFanSpeed != FanSpeed) {
-            FanSpeed = currentFanSpeed;
-            emit debug(QString("gRPC Fan Speed: %1").arg(currentFanSpeed));
-        }
 
         // Read heart rate from gRPC if heart rate belt is disabled
         QString heartRateBeltName = settings.value(QZSettings::heart_rate_belt_name, QZSettings::default_heart_rate_belt_name).toString();
@@ -1240,50 +1235,4 @@ void nordictrackifitadbbike::changePower(int32_t power) {
 #else
     emit debug(QString("changePower: Power request %1W (Android gRPC not available)").arg(power));
 #endif
-}
-
-bool nordictrackifitadbbike::changeFanSpeed(uint8_t speed) {
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized) {
-        setGrpcFanSpeed(static_cast<int>(speed));
-        FanSpeed = speed;
-        emit debug(QString("changeFanSpeed: Set fan speed to %1 via gRPC").arg(speed));
-        return true;
-    } else {
-        emit debug(QString("changeFanSpeed: Fan speed request %1 (gRPC not available)").arg(speed));
-        return false;
-    }
-#else
-    emit debug(QString("changeFanSpeed: Fan speed request %1 (Android gRPC not available)").arg(speed));
-    return false;
-#endif
-}
-
-void nordictrackifitadbbike::setGrpcFanSpeed(int fanSpeed) {
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized) {
-        QAndroidJniObject::callStaticMethod<void>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
-            "setFanSpeed",
-            "(I)V",
-            fanSpeed
-        );
-        emit debug(QString("Set gRPC fan speed to: %1").arg(fanSpeed));
-    }
-#endif
-}
-
-int nordictrackifitadbbike::getGrpcFanSpeed() {
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized) {
-        int fanSpeed = QAndroidJniObject::callStaticMethod<jint>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
-            "getCurrentFanSpeed",
-            "()I"
-        );
-        qDebug() << "getGrpcFanSpeed() returned:" << fanSpeed;
-        return fanSpeed;
-    }
-#endif
-    return 0;
 }

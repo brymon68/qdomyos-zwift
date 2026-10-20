@@ -567,8 +567,6 @@ homeform::homeform(QQmlApplicationEngine *engine, bluetooth *bl) {
                          QStringLiteral("ftp"), 48, labelFontSize);
     heart = new DataObject(tr("Heart (bpm)"), QStringLiteral("icons/icons/heart_red.png"),
                            QStringLiteral("0"), false, QStringLiteral("heart"), 48, labelFontSize);
-    fan = new DataObject(tr("Fan Speed"), QStringLiteral("icons/icons/fan.png"), QStringLiteral("0"), true,
-                         QStringLiteral("fan"), 48, labelFontSize);
     jouls = new DataObject(tr("KJouls"), QStringLiteral("icons/icons/joul.png"), QStringLiteral("0"), false,
                            QStringLiteral("joul"), 48, labelFontSize);
     elapsed =
@@ -833,15 +831,6 @@ homeform::homeform(QQmlApplicationEngine *engine, bluetooth *bl) {
     stravaWorkoutName = QLatin1String("");
     movieFileName = QUrl("");
 
-#if defined(Q_OS_WIN) || (defined(Q_OS_MAC) && !defined(Q_OS_IOS)) || (defined(Q_OS_ANDROID) && defined(LICENSE))
-#ifndef STEAM_STORE
-    connect(engine, &QQmlApplicationEngine::quit, &QGuiApplication::quit);
-    connect(&tLicense, &QTimer::timeout, this, &homeform::licenseTimeout);
-    tLicense.start(600000);
-    licenseRequest();
-#endif
-#endif
-
     this->bluetoothManager = bl;
     this->engine = engine;
     connect(bluetoothManager, &bluetooth::bluetoothDeviceConnected, this, &homeform::bluetoothDeviceConnected);
@@ -974,7 +963,7 @@ homeform::homeform(QQmlApplicationEngine *engine, bluetooth *bl) {
 
     qDebug() << "homeform constructor events linked";
 
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+#if !defined(Q_OS_IOS)
     QObject::connect(engine, &QQmlApplicationEngine::quit, &QGuiApplication::quit);
 #endif
 
@@ -1819,8 +1808,6 @@ void homeform::trainProgramSignals() {
                    &bluetoothdevice::changeNextInclination300Meters);
         disconnect(trainProgram, &trainprogram::changeInclination, ((bike *)bluetoothManager->device()),
                    &bike::changeInclination);
-        disconnect(trainProgram, &trainprogram::changeFanSpeed, ((treadmill *)bluetoothManager->device()),
-                   &treadmill::changeFanSpeed);
         disconnect(trainProgram, &trainprogram::changeSpeedAndInclination, ((treadmill *)bluetoothManager->device()),
                    &treadmill::changeSpeedAndInclination);
         disconnect(trainProgram, &trainprogram::changeResistance, ((bike *)bluetoothManager->device()),
@@ -1880,8 +1867,6 @@ void homeform::trainProgramSignals() {
         if (bluetoothManager->device()->deviceType() == TREADMILL) {
             connect(trainProgram, &trainprogram::changeSpeed, ((treadmill *)bluetoothManager->device()),
                     &treadmill::changeSpeed);
-            connect(trainProgram, &trainprogram::changeFanSpeed, ((treadmill *)bluetoothManager->device()),
-                    &treadmill::changeFanSpeed);
             connect(trainProgram, &trainprogram::changeInclination, ((treadmill *)bluetoothManager->device()),
                     &treadmill::changeInclination);
             connect(trainProgram, &trainprogram::changeSpeedAndInclination, ((treadmill *)bluetoothManager->device()),
@@ -2182,11 +2167,6 @@ void homeform::sortTiles() {
                 dataList.append(hrv);
             }
 
-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
-                fan->setGridId(i);
-                dataList.append(fan);
-            }
 
             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
@@ -2577,11 +2557,6 @@ void homeform::sortTiles() {
                 dataList.append(hrv);
             }
 
-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
-                fan->setGridId(i);
-                dataList.append(fan);
-            }
 
             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
@@ -2972,11 +2947,6 @@ void homeform::sortTiles() {
                 dataList.append(hrv);
             }
 
-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
-                fan->setGridId(i);
-                dataList.append(fan);
-            }
 
             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
@@ -3452,11 +3422,6 @@ void homeform::sortTiles() {
                 dataList.append(hrv);
             }
 
-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
-                fan->setGridId(i);
-                dataList.append(fan);
-            }
 
             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
@@ -3824,11 +3789,6 @@ void homeform::sortTiles() {
                 dataList.append(hrv);
             }
 
-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
-                fan->setGridId(i);
-                dataList.append(fan);
-            }
 
             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
@@ -4193,11 +4153,6 @@ void homeform::sortTiles() {
                 dataList.append(hrv);
             }
 
-            if (settings.value(QZSettings::tile_fan_enabled, true).toBool() &&
-                settings.value(QZSettings::tile_fan_order, 0).toInt() == i) {
-                fan->setGridId(i);
-                dataList.append(fan);
-            }
 
             if (settings.value(QZSettings::tile_datetime_enabled, true).toBool() &&
                 settings.value(QZSettings::tile_datetime_order, 0).toInt() == i) {
@@ -4958,10 +4913,6 @@ bool homeform::handleKeyboardShortcut(const QString &sequence) {
     } else if (matches(QZSettings::shortcut_target_incline_minus,
                        QZSettings::default_shortcut_target_incline_minus)) {
         Minus(QStringLiteral("target_inclination"));
-    } else if (matches(QZSettings::shortcut_fan_plus, QZSettings::default_shortcut_fan_plus)) {
-        Plus(QStringLiteral("fan"));
-    } else if (matches(QZSettings::shortcut_fan_minus, QZSettings::default_shortcut_fan_minus)) {
-        Minus(QStringLiteral("fan"));
     } else if (matches(QZSettings::shortcut_peloton_offset_plus,
                        QZSettings::default_shortcut_peloton_offset_plus)) {
         Plus(QStringLiteral("peloton_offset"));
@@ -5328,21 +5279,6 @@ void homeform::Plus(const QString &name) {
                 }
             }
         }
-    } else if (name.contains(QStringLiteral("fan"))) {
-        QSettings settings;
-        if (bluetoothManager->device()) {
-            if (settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable)
-                    .toBool() &&
-                settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
-                    .toString()
-                    .compare(QStringLiteral("Manual"))) {
-                fanOverride += 10;
-            } else if (settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable)
-                           .toBool()) {
-                bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() + 10);
-            } else
-                bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() + 1);
-        }
     } else if (name.contains(QStringLiteral("remainingtimetrainprogramrow"))) {
         if (bluetoothManager->device() && trainProgram) {
             trainProgram->increaseElapsedTime(QTime(0, 0, 0).secsTo(trainProgram->currentRowRemainingTime()));
@@ -5630,22 +5566,6 @@ void homeform::Minus(const QString &name) {
                         ((rower *)bluetoothManager->device())->lastRequestedPower().value());
                 }
             }
-        }
-    } else if (name.contains(QStringLiteral("fan"))) {
-
-        if (bluetoothManager->device()) {
-            QSettings settings;
-            if (settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable)
-                    .toBool() &&
-                settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
-                    .toString()
-                    .compare(QStringLiteral("Manual"))) {
-                fanOverride -= 10;
-            } else if (settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable)
-                           .toBool()) {
-                bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() - 10);
-            } else
-                bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() - 1);
         }
     } else if (name.contains(QStringLiteral("remainingtimetrainprogramrow"))) {
         if (bluetoothManager->device() && trainProgram) {
@@ -6201,10 +6121,6 @@ void homeform::update() {
         calories->setValue(QString::number(bluetoothManager->device()->calories().value(), 'f', 0));
         calories->setSecondLine(QString::number((activeOnly ? bluetoothManager->device()->activeCalories().rate1s() : bluetoothManager->device()->calories().rate1s()) * 60.0, 'f', 1) +
                                 " /min");
-        if (!settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable).toBool())
-            fan->setValue(QString::number(bluetoothManager->device()->fanSpeed()));
-        else
-            fan->setValue(QString::number(qRound(((double)bluetoothManager->device()->fanSpeed()) / 10.0) * 10.0));
         jouls->setValue(QString::number(bluetoothManager->device()->jouls().value() / 1000.0, 'f', 1));
         jouls->setSecondLine(QString::number(bluetoothManager->device()->jouls().rate1s() / 1000.0 * 60.0, 'f', 1) +
                              " /min");
@@ -8094,50 +8010,6 @@ void homeform::update() {
             }
         }
 
-        if (settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable).toBool()) {
-            if (!settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
-                     .toString()
-                     .compare(QStringLiteral("Manual"))) {
-                // do nothing here, the user change the fan value with the tile
-            } else if (paused || stopped) {
-                qDebug() << QStringLiteral("fitmetria_fanfit paused or stopped mode");
-                bluetoothManager->device()->changeFanSpeed(0);
-            }
-            // Heart Mode
-            else if (!settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
-                          .toString()
-                          .compare(QStringLiteral("Heart"))) {
-                qDebug() << QStringLiteral("fitmetria_fanfit heart mode")
-                         << bluetoothManager->device()->currentHeart().value();
-                const uint8_t min = 80;
-                uint8_t v = 0;
-                if (bluetoothManager->device()->currentHeart().value() > min && maxHeartRate > min)
-                    v = ((bluetoothManager->device()->currentHeart().value() - min) * 100.0) /
-                        (double)(maxHeartRate - min);
-                bluetoothManager->device()->changeFanSpeed(v + fanOverride);
-            }
-            // Power Mode
-            else if (!settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
-                          .toString()
-                          .compare(QStringLiteral("Power"))) {
-                qDebug() << QStringLiteral("fitmetria_fanfit power mode") << watts;
-                const double percOverFtp = 1.20;
-                const double min = 50;
-                uint8_t v = 0;
-                double a = (double)(((ftpSetting * percOverFtp) - min));
-                if (watts >= min && a > 0)
-                    v = ((watts - min) * 100.0) / a;
-                bluetoothManager->device()->changeFanSpeed(v + fanOverride);
-            }
-            // Wind mode
-            else if (!settings.value(QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode)
-                          .toString()
-                          .compare(QStringLiteral("Wind"))) {
-                // Todo
-                qDebug() << QStringLiteral("fitmetria_fanfit wind mode");
-                // bluetoothManager->device()->changeFanSpeed((ftpZone - 1) * 1.5);
-            }
-        }
 
         if (!stopped && !paused) {
             if(settings.value(QZSettings::autolap_distance, QZSettings::default_autolap_distance).toDouble() != 0) {
@@ -10254,14 +10126,6 @@ void homeform::setPelotonPopupVisible(bool value) {
     emit pelotonPopupVisibleChanged(m_pelotonPopupVisible);
 }
 
-bool homeform::licensePopupVisible() { return m_LicensePopupVisible; }
-
-void homeform::setLicensePopupVisible(bool value) {
-
-    m_LicensePopupVisible = value;
-    emit licensePopupVisibleChanged(m_LicensePopupVisible);
-}
-
 bool homeform::mapsVisible() { return m_MapsVisible; }
 
 void homeform::setMapsVisible(bool value) {
@@ -10888,34 +10752,6 @@ int homeform::preview_workout_points() {
     }
     return 0;
 }
-
-#if defined(Q_OS_WIN) || (defined(Q_OS_MAC) && !defined(Q_OS_IOS)) || (defined(Q_OS_ANDROID) && defined(LICENSE))
-void homeform::licenseReply(QNetworkReply *reply) {
-    QString r = reply->readAll();
-    qDebug() << r;
-    if (r.contains("OK")) {
-        tLicense.stop();
-    } else {
-        licenseRequest();
-    }
-}
-
-void homeform::licenseRequest() {
-    QTimer::singleShot(30000, this, [this]() {
-        QSettings settings;
-        if (!mgr) {
-            mgr = new QNetworkAccessManager(this);
-            connect(mgr, &QNetworkAccessManager::finished, this, &homeform::licenseReply);
-        }
-        QUrl url(QStringLiteral("http://robertoviola.cloud:4010/?supporter=") +
-                 settings.value(QZSettings::user_email, "").toString());
-        QNetworkRequest request(url);
-        mgr->get(request);
-    });
-}
-
-void homeform::licenseTimeout() { setLicensePopupVisible(true); }
-#endif
 
 void homeform::changeTimestamp(QTime source, QTime actual) {
     QSettings settings;

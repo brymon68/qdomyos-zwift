@@ -90,10 +90,6 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
         .float32(bluetoothManager->device()->jouls().value())
         .closeMessage()
 
-        .openMessage("/QZ/FanSpeed", 1)
-        .int32(bluetoothManager->device()->fanSpeed())
-        .closeMessage()
-
         .openMessage("/QZ/ElapsedTime", 1)
         .string(bluetoothManager->device()->elapsedTime().toString(QStringLiteral("m:ss")).toLatin1())
         .closeMessage()

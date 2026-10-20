@@ -67,7 +67,6 @@ QString openEndedRowLabel(const trainrow &row) {
     item[QStringLiteral("speed")] = row.speed;                                                              \
     item[QStringLiteral("minSpeed")] = row.minSpeed;                                                        \
     item[QStringLiteral("maxSpeed")] = row.maxSpeed;                                                        \
-    item[QStringLiteral("fanspeed")] = row.fanspeed;                                                        \
     if (row.inclination >= -50) {\
         item[QStringLiteral("inclination")] = row.inclination;\
     }\
@@ -386,22 +385,6 @@ void TemplateInfoSenderBuilder::onSetResistance(const QJsonValue &msgContent, Te
     tempSender->send(out.toJson());
 }
 
-void TemplateInfoSenderBuilder::onSetFanSpeed(const QJsonValue &msgContent, TemplateInfoSender *tempSender) {
-    QJsonObject obj, outObj;
-    QJsonValue resVal;
-    int res;
-    outObj[QStringLiteral("value")] = QJsonValue(QJsonValue::Null);
-    if (device && msgContent.isObject() && (obj = msgContent.toObject()).contains(QStringLiteral("value")) &&
-        (resVal = msgContent[QStringLiteral("value")]).isDouble() && (res = resVal.toInt()) >= 0 && res < 255) {
-        outObj[QStringLiteral("value")] = res;
-        ((bike *)device)->changeFanSpeed((uint8_t)res);
-    }
-    QJsonObject main;
-    main[QStringLiteral("msg")] = QStringLiteral("R_setfanspeed");
-    main[QStringLiteral("content")] = outObj;
-    QJsonDocument out(main);
-    tempSender->send(out.toJson());
-}
 
 void TemplateInfoSenderBuilder::onSetPower(const QJsonValue &msgContent, TemplateInfoSender *tempSender) {
     QJsonObject obj, outObj;
@@ -1096,9 +1079,6 @@ void TemplateInfoSenderBuilder::onSaveTrainingProgram(const QJsonValue &msgConte
             if (row.contains(QStringLiteral("maxSpeed"))) {
                 tR.maxSpeed = row[QStringLiteral("maxSpeed")].toDouble();
             }
-            if (row.contains(QStringLiteral("fanspeed"))) {
-                tR.fanspeed = row[QStringLiteral("fanspeed")].toInt();
-            }
             if (row.contains(QStringLiteral("inclination"))) {
                 tR.inclination = row[QStringLiteral("inclination")].toDouble();
             }
@@ -1519,9 +1499,6 @@ void TemplateInfoSenderBuilder::onDataReceived(const QByteArray &data) {
                     return;
                 } else if (msg == QStringLiteral("setspeed")) {
                     onSetSpeed(jsonObject[QStringLiteral("content")], sender);
-                    return;
-                } else if (msg == QStringLiteral("setfanspeed")) {
-                    onSetFanSpeed(jsonObject[QStringLiteral("content")], sender);
                     return;
                 } else if (msg == QStringLiteral("setsettings")) {
                     onSetSettings(jsonObject[QStringLiteral("content")], sender);

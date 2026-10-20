@@ -48,9 +48,6 @@ import com.ifit.glassos.workout.CadenceMetric;
 import com.ifit.glassos.workout.CadenceServiceGrpc;
 import com.ifit.glassos.workout.RpmMetric;
 import com.ifit.glassos.workout.RpmServiceGrpc;
-import com.ifit.glassos.settings.FanState;
-import com.ifit.glassos.settings.FanStateMessage;
-import com.ifit.glassos.settings.FanStateServiceGrpc;
 import com.ifit.glassos.workout.WorkoutServiceGrpc;
 import com.ifit.glassos.workout.WorkoutResult;
 import com.ifit.glassos.workout.StartWorkoutResponse;
@@ -102,7 +99,6 @@ public class GrpcTreadmillService {
     private ResistanceServiceGrpc.ResistanceServiceBlockingStub resistanceStub;
     private CadenceServiceGrpc.CadenceServiceBlockingStub cadenceStub;
     private RpmServiceGrpc.RpmServiceBlockingStub rpmStub;
-    private FanStateServiceGrpc.FanStateServiceBlockingStub fanStub;
     private WorkoutServiceGrpc.WorkoutServiceBlockingStub workoutStub;
     private StrokesServiceGrpc.StrokesServiceBlockingStub strokesStub;
     private PaceServiceGrpc.PaceServiceBlockingStub paceStub;
@@ -119,7 +115,6 @@ public class GrpcTreadmillService {
     private volatile double currentWatts = 0.0;
     private volatile double currentCadence = 0.0;
     private volatile double currentRpm = 0.0;
-    private volatile int currentFanSpeed = 0;
     private volatile double currentStrokesCount = 0.0;
     private volatile double currentStrokesLength = 0.0;
     private volatile int currentPaceSeconds = 0;
@@ -137,7 +132,6 @@ public class GrpcTreadmillService {
         void onResistanceUpdated(double resistance);
         void onCadenceUpdated(double cadence);
         void onRpmUpdated(double rpm);
-        void onFanSpeedUpdated(int fanSpeed);
         void onStrokesUpdated(double strokesCount, double strokesLength);
         void onPaceUpdated(int paceSeconds, int last500mPaceSeconds);
         void onHeartRateUpdated(double heartRate);
@@ -370,49 +364,6 @@ public class GrpcTreadmillService {
         });
     }
 
-    private void setFanSpeedInstance(int fanSpeed) {
-        executorService.execute(() -> {
-            try {
-                Metadata headers = createHeaders();
-                FanStateServiceGrpc.FanStateServiceBlockingStub stubWithHeaders = fanStub.withInterceptors(
-                        MetadataUtils.newAttachHeadersInterceptor(headers)
-                );
-                
-                FanState fanState;
-                switch (fanSpeed) {
-                    case 0:
-                        fanState = FanState.FAN_STATE_OFF;
-                        break;
-                    case 1:
-                        fanState = FanState.FAN_STATE_LOW;
-                        break;
-                    case 2:
-                        fanState = FanState.FAN_STATE_MEDIUM;
-                        break;
-                    case 3:
-                        fanState = FanState.FAN_STATE_HIGH;
-                        break;
-                    case 4:
-                        fanState = FanState.FAN_STATE_AUTO;
-                        break;
-                    default:
-                        fanState = FanState.FAN_STATE_OFF;
-                        break;
-                }
-                
-                FanStateMessage request = FanStateMessage.newBuilder().setState(fanState).build();
-                stubWithHeaders.setFanState(request);
-                
-                QLog.d(TAG, String.format("Set fan speed to %d (%s)", fanSpeed, fanState.name()));
-                
-            } catch (Exception e) {
-                QLog.e(TAG, "Failed to set fan speed", e);
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onError("fan", e.getMessage()));
-                }
-            }
-        });
-    }
 
     private void shutdownInstance() {
         stopMetricsUpdates();
@@ -496,7 +447,6 @@ public class GrpcTreadmillService {
         resistanceStub = ResistanceServiceGrpc.newBlockingStub(channel);
         cadenceStub = CadenceServiceGrpc.newBlockingStub(channel);
         rpmStub = RpmServiceGrpc.newBlockingStub(channel);
-        fanStub = FanStateServiceGrpc.newBlockingStub(channel);
         workoutStub = WorkoutServiceGrpc.newBlockingStub(channel);
         strokesStub = StrokesServiceGrpc.newBlockingStub(channel);
         paceStub = PaceServiceGrpc.newBlockingStub(channel);
@@ -833,57 +783,6 @@ public class GrpcTreadmillService {
                 }
             }
 
-            // Fetch fan speed
-            /*
-            try {
-                long fanStartTime = System.currentTimeMillis();
-                FanStateServiceGrpc.FanStateServiceBlockingStub fanStubWithHeaders = fanStub.withInterceptors(
-                        MetadataUtils.newAttachHeadersInterceptor(headers)
-                );
-                long fanInterceptorTime = System.currentTimeMillis();
-                QLog.d(TAG, "Fan interceptor setup took: " + (fanInterceptorTime - fanStartTime) + "ms");
-                
-                FanStateMessage fanResponse = fanStubWithHeaders.getFanState(request);
-                long fanCallTime = System.currentTimeMillis();
-                QLog.d(TAG, "Fan gRPC call took: " + (fanCallTime - fanInterceptorTime) + "ms");
-                
-                int fanSpeed;
-                switch (fanResponse.getState()) {
-                    case FAN_STATE_OFF:
-                        fanSpeed = 0;
-                        break;
-                    case FAN_STATE_LOW:
-                        fanSpeed = 1;
-                        break;
-                    case FAN_STATE_MEDIUM:
-                        fanSpeed = 2;
-                        break;
-                    case FAN_STATE_HIGH:
-                        fanSpeed = 3;
-                        break;
-                    case FAN_STATE_AUTO:
-                        fanSpeed = 4;
-                        break;
-                    default:
-                        fanSpeed = 0;
-                        break;
-                }
-                
-                currentFanSpeed = fanSpeed;
-                
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onFanSpeedUpdated(currentFanSpeed));
-                }
-                long fanEndTime = System.currentTimeMillis();
-                QLog.d(TAG, "Fan total processing took: " + (fanEndTime - fanStartTime) + "ms");
-            } catch (Exception e) {
-                QLog.w(TAG, "Failed to fetch fan speed", e);
-                if (metricsListener != null) {
-                    mainHandler.post(() -> metricsListener.onError("fan", "Error"));
-                }
-            }
-            */
-
             long totalEndTime = System.currentTimeMillis();
             long totalTime = totalEndTime - startTime;
             QLog.d(TAG, "=== TIMING SUMMARY ===");
@@ -986,12 +885,6 @@ public class GrpcTreadmillService {
         return 0.0;
     }
     
-    public static int getCurrentFanSpeed() {
-        if (instance != null) {
-            return instance.currentFanSpeed;
-        }
-        return 0;
-    }
     
     public static double getCurrentResistance() {
         if (instance != null) {
@@ -1075,13 +968,6 @@ public class GrpcTreadmillService {
         }
     }
     
-    public static void setFanSpeed(int fanSpeed) {
-        if (instance != null) {
-            instance.setFanSpeedInstance(fanSpeed);
-        } else {
-            QLog.e(TAG, "Service not initialized. Call initialize() first.");
-        }
-    }
     
     private void startWorkoutInstance() {
         executorService.execute(() -> {

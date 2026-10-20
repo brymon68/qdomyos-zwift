@@ -57,8 +57,6 @@ ScrollView {
         property int  tile_ftp_order: 10
         property bool tile_heart_enabled: true
         property int  tile_heart_order: 11
-        property bool tile_fan_enabled: true
-        property int  tile_fan_order: 12
         property bool tile_jouls_enabled: true
         property int  tile_jouls_order: 13
         property bool tile_elapsed_enabled: true
@@ -319,8 +317,6 @@ ScrollView {
         property string shortcut_target_speed_minus: ""
         property string shortcut_target_incline_plus: ""
         property string shortcut_target_incline_minus: ""
-        property string shortcut_fan_plus: ""
-        property string shortcut_fan_minus: ""
         property string shortcut_peloton_offset_plus: ""
         property string shortcut_peloton_offset_minus: ""
         property string shortcut_peloton_remaining_plus: ""
@@ -1175,51 +1171,6 @@ ScrollView {
                     }
                 }
             }
-        }
-
-        AccordionCheckElement {
-            id: fanEnabledAccordion
-            title: qsTr("Fan")
-            linkedBoolSetting: "tile_fan_enabled"
-            settings: settings
-            accordionContent: RowLayout {
-                spacing: 10
-                Label {
-                    id: labelfanOrder
-                    text: qsTr("order index:")
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                }
-                ComboBox {
-                    id: fanOrderTextField
-                    model: rootItem.tile_order
-                    displayText: settings.tile_fan_order
-                    Layout.fillHeight: false
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onActivated: {
-                        displayText = fanOrderTextField.currentValue
-                     }
-                }
-                Button {
-                    id: okfanOrderButton
-                    text: qsTr("OK")
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    onClicked: {settings.tile_fan_order = fanOrderTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                }
-            }
-        }
-
-        Label {
-            text: qsTr("Built-in treadmill fan speed (Treadmill only)")
-            font.bold: true
-            font.italic: true
-            font.pixelSize: Qt.application.font.pixelSize - 2
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            color: Material.color(Material.Lime)
         }
 
         AccordionCheckElement {

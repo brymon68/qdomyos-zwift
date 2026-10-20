@@ -289,10 +289,6 @@ void bluetooth::finished() {
     if (ss2k_peloton)
         ftmsAccessoryFound = true;
 
-    // since i can have multiple fanfit i can't wait more because i don't have the full list of the fanfit
-    // devices connected to QZ. edit: let's wait at the last one item
-    bool fitmetriaFanfitFound =
-        !settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable).toBool();
 
     bool zwiftDeviceFound =
         !settings.value(QZSettings::zwift_click, QZSettings::default_zwift_click).toBool() && !settings.value(QZSettings::zwift_play, QZSettings::default_zwift_play).toBool();
@@ -307,7 +303,6 @@ void bluetooth::finished() {
     if ((!heartRateBeltFound && !heartRateBeltAvaiable()) || (!ftmsAccessoryFound && !ftmsAccessoryAvaiable()) ||
         (!cscFound && !cscSensorAvaiable()) || (!powerSensorFound && !powerSensorAvaiable()) ||
         (!eliteRizerFound && !eliteRizerAvaiable()) || (!eliteSterzoSmartFound && !eliteSterzoSmartAvaiable()) ||
-        (!fitmetriaFanfitFound && !fitmetriaFanfitAvaiable()) ||
         (!zwiftDeviceFound && !zwiftDeviceAvaiable()) ||
         (!sramDeviceFound && !sramDeviceAvaiable()) ||
         (!cycplusBC2DeviceFound && !cycplusBC2DeviceAvaiable()) ||
@@ -418,17 +413,6 @@ bool bluetooth::ftmsAccessoryAvaiable() {
     return false;
 }
 
-bool bluetooth::fitmetriaFanfitAvaiable() {
-
-    Q_FOREACH (QBluetoothDeviceInfo b, devices) {
-        if (!b.name().compare("FITFAN-", Qt::CaseInsensitive)) {
-            return true;
-        } else if (b.name().toUpper().startsWith("HEADWIND ")) {
-            return true;
-        }
-    }
-    return false;
-}
 
 bool bluetooth::zwiftDeviceAvaiable() {
 
@@ -578,8 +562,6 @@ void bluetooth::deviceDiscovered(const QBluetoothDeviceInfo &device) {
     bool cycplusBC2DeviceFound =
         !settings.value(QZSettings::cycplus_bc2_controller, QZSettings::default_cycplus_bc2_controller).toBool();
     bool thinkriderDeviceFound = !settings.value(QZSettings::thinkrider_controller, QZSettings::default_thinkrider_controller).toBool();
-    bool fitmetriaFanfitFound =
-        !settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable).toBool();
     bool toorx_ftms = settings.value(QZSettings::toorx_ftms, QZSettings::default_toorx_ftms).toBool();
     bool toorx_ftms_treadmill =
         settings.value(QZSettings::toorx_ftms_treadmill, QZSettings::default_toorx_ftms_treadmill).toBool();
@@ -681,10 +663,6 @@ void bluetooth::deviceDiscovered(const QBluetoothDeviceInfo &device) {
     if (!heartRateBeltFound) {
 
         heartRateBeltFound = heartRateBeltAvaiable();
-    }
-    if (!fitmetriaFanfitFound) {
-
-        fitmetriaFanfitFound = fitmetriaFanfitAvaiable();
     }
     if (!zwiftDeviceFound) {
 
@@ -829,7 +807,7 @@ void bluetooth::deviceDiscovered(const QBluetoothDeviceInfo &device) {
 #endif
 
     bool searchDevices = (heartRateBeltFound && ftmsAccessoryFound && cscFound && powerSensorFound && eliteRizerFound &&
-                          eliteSterzoSmartFound && fitmetriaFanfitFound && zwiftDeviceFound && sramDeviceFound &&
+                          eliteSterzoSmartFound && zwiftDeviceFound && sramDeviceFound &&
                           cycplusBC2DeviceFound && thinkriderDeviceFound) ||
                          forceHeartBeltOffForTimeout;
 
@@ -3074,8 +3052,6 @@ void bluetooth::connectedAndDiscovered() {
         settings.value(QZSettings::elite_rizer_name, QZSettings::default_elite_rizer_name).toString();
     QString eliteSterzoSmartName =
         settings.value(QZSettings::elite_sterzo_smart_name, QZSettings::default_elite_sterzo_smart_name).toString();
-    bool fitmetriaFanfitEnabled =
-        settings.value(QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable).toBool();
 
     // only at the first very connection, setting the user default resistance
     if (device() && firstConnected && device()->deviceType() == BIKE &&
@@ -3179,41 +3155,6 @@ void bluetooth::connectedAndDiscovered() {
             }
         }
 
-        if (fitmetriaFanfitEnabled) {
-            for (const QBluetoothDeviceInfo &b : qAsConst(devices)) {
-                if (((b.name().startsWith("FITFAN-"))) && !fitmetria_fanfit_isconnected(b)) {
-                    fitmetria_fanfit *f = new fitmetria_fanfit(this->device());
-
-                    connect(f, &fitmetria_fanfit::debug, this, &bluetooth::debug);
-
-                    connect(this->device(), SIGNAL(fanSpeedChanged(uint8_t)), f, SLOT(fanSpeedRequest(uint8_t)));
-
-                    f->deviceDiscovered(b);
-                    fitmetriaFanfit.append(f);
-                    break;
-                } else if (((b.name().toUpper().startsWith("HEADWIND "))) && !fitmetria_fanfit_isconnected(b)) {
-                    wahookickrheadwind *f = new wahookickrheadwind(this->device());
-
-                    connect(f, &wahookickrheadwind::debug, this, &bluetooth::debug);
-
-                    connect(this->device(), SIGNAL(fanSpeedChanged(uint8_t)), f, SLOT(fanSpeedRequest(uint8_t)));
-
-                    f->deviceDiscovered(b);
-                    wahookickrHeadWind.append(f);
-                    continue;
-                } else if (((b.name().toUpper().startsWith("ARIA")) && b.name().length() == 4) && !fitmetria_fanfit_isconnected(b)) {
-                    eliteariafan *f = new eliteariafan(this->device());
-
-                    connect(f, &eliteariafan::debug, this, &bluetooth::debug);
-
-                    connect(this->device(), SIGNAL(fanSpeedChanged(uint8_t)), f, SLOT(fanSpeedRequest(uint8_t)));
-
-                    f->deviceDiscovered(b);
-                    eliteAriaFan.append(f);
-                    break;
-                }
-            }
-        }
 
         if (!csc_as_bike && !csc_as_treadmill) {
             for (const QBluetoothDeviceInfo &b : qAsConst(devices)) {
@@ -4234,30 +4175,6 @@ void bluetooth::restart() {
         delete ftmsAccessory;
         ftmsAccessory = nullptr;
     }
-    if (fitmetriaFanfit.length()) {
-
-        foreach (fitmetria_fanfit *f, fitmetriaFanfit) {
-            delete f;
-            f = nullptr;
-        }
-        fitmetriaFanfit.clear();
-    }
-    if (wahookickrHeadWind.length()) {
-
-        foreach (wahookickrheadwind *f, wahookickrHeadWind) {
-            delete f;
-            f = nullptr;
-        }
-        wahookickrHeadWind.clear();
-    }
-    if (eliteAriaFan.length()) {
-
-        foreach (eliteariafan *f, eliteAriaFan) {
-            delete f;
-            f = nullptr;
-        }
-        eliteAriaFan.clear();
-    }
     if (cadenceSensor) {
 
         // heartRateBelt->disconnectBluetooth(); // to test
@@ -4629,21 +4546,6 @@ void bluetooth::inclinationChanged(double grade, double inclination) {
     stateFileUpdate();
 }
 
-bool bluetooth::fitmetria_fanfit_isconnected(const QBluetoothDeviceInfo &device) {
-    foreach (fitmetria_fanfit *f, fitmetriaFanfit) {
-        if (SAME_BLUETOOTH_DEVICE(device, f->bluetoothDevice))
-            return true;
-    }
-    foreach (wahookickrheadwind *f, wahookickrHeadWind) {
-        if (SAME_BLUETOOTH_DEVICE(device, f->bluetoothDevice))
-            return true;
-    }
-    foreach (eliteariafan *f, eliteAriaFan) {
-        if (SAME_BLUETOOTH_DEVICE(device, f->bluetoothDevice))
-            return true;
-    }
-    return false;
-}
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 void bluetooth::deviceUpdated(const QBluetoothDeviceInfo &device, QBluetoothDeviceInfo::Fields updateFields) {

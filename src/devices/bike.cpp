@@ -299,7 +299,6 @@ metric bike::lastRequestedPelotonResistance() { return RequestedPelotonResistanc
 metric bike::lastRequestedCadence() { return RequestedCadence; }
 metric bike::lastRequestedPower() { return RequestedPower; }
 metric bike::currentResistance() { return Resistance; }
-uint8_t bike::fanSpeed() { return FanSpeed; }
 bool bike::connected() { return false; }
 uint16_t bike::watts() { return 0; }
 metric bike::pelotonResistance() { return m_pelotonResistance; }
@@ -431,9 +430,6 @@ int bike::metricValueForSetting(const QString &setting) {
     } else if (!setting.compare(QStringLiteral("FTP"))) {
 
         return 0;
-    } else if (!setting.compare(QStringLiteral("Fan"))) {
-
-        return FanSpeed;
     } else if (!setting.compare(QStringLiteral("Jouls"))) {
 
         return qRound(jouls().value());

@@ -46,9 +46,7 @@
         <file>Credits.qml</file>
         <file>WebEngineTest.qml</file>
         <file>profiles.qml</file>
-        <file>SwagBagView.qml</file>
         <file>SimpleButton.qml</file>
-        <file>SwagBagItem.qml</file>
         <file>GoogleMap.qml</file>
         <file>inner_templates/googlemaps/maps.htm</file>
         <file>inner_templates/googlemaps/main_ws_manager.js</file>

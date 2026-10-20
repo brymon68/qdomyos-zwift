@@ -161,25 +161,6 @@ metric bluetoothdevice::hrCalories() {
 }
 
 metric bluetoothdevice::jouls() { return m_jouls; }
-uint8_t bluetoothdevice::fanSpeed() { return FanSpeed; };
-bool bluetoothdevice::changeFanSpeed(uint8_t speed) {
-    // managing underflow
-    if (speed > 230 && FanSpeed < 20) {
-        speed = 0;
-    } else if (speed < 20 && FanSpeed > 230) {
-        // managing overflow
-        speed = 100;
-    }
-    if (speed > 100)
-        speed = 100;
-    // this is useful when there is a fitmetria fanfit in order to set the current
-    // value to the last requested
-    FanSpeed = speed;
-
-    requestFanSpeed = speed;
-    emit fanSpeedChanged(speed);
-    return false;
-}
 bool bluetoothdevice::connected() { return false; }
 metric bluetoothdevice::elevationGain() { return elevationAcc; }
 metric bluetoothdevice::negativeElevationGain() { return negativeElevationAcc; }
@@ -517,7 +498,6 @@ QStringList bluetoothdevice::metrics() {
     r.append(QStringLiteral("AVG Watt"));
     r.append(QStringLiteral("FTP"));
     r.append(QStringLiteral("Heart Rate"));
-    r.append(QStringLiteral("Fan"));
     r.append(QStringLiteral("Jouls"));
     r.append(QStringLiteral("Lap Elapsed"));
     r.append(QStringLiteral("Elapsed"));
@@ -572,8 +552,6 @@ int bluetoothdevice::metricValueForSetting(const QString &setting) {
     } else if (!setting.compare(QStringLiteral("AVG Watt"))) {
         return qRound(wattsMetric().average());
     } else if (!setting.compare(QStringLiteral("FTP"))) {
-        return 0;
-    } else if (!setting.compare(QStringLiteral("Fan"))) {
         return 0;
     } else if (!setting.compare(QStringLiteral("Jouls"))) {
         return qRound(jouls().value());

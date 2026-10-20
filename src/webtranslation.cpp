@@ -62,7 +62,6 @@ const WebTranslationEntry entries[] = {
     {"workoutEditor.cadence", QT_TRANSLATE_NOOP("WebTranslations", "Cadence")},
     {"workoutEditor.power", QT_TRANSLATE_NOOP("WebTranslations", "Power")},
     {"workoutEditor.forceSpeed", QT_TRANSLATE_NOOP("WebTranslations", "Force Speed")},
-    {"workoutEditor.fan", QT_TRANSLATE_NOOP("WebTranslations", "Fan")},
     {"workoutEditor.pelotonResistance", QT_TRANSLATE_NOOP("WebTranslations", "Peloton Res.")},
     {"workoutEditor.hrLoop", QT_TRANSLATE_NOOP("WebTranslations", "HR Loop (s)")},
     {"workoutEditor.hrZone", QT_TRANSLATE_NOOP("WebTranslations", "HR Zone")},

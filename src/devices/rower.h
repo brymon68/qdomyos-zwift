@@ -23,7 +23,6 @@ class rower : public bluetoothdevice {
     QTime averagePace() override;
     QTime maxPace() override;
     virtual double requestedSpeed();
-    uint8_t fanSpeed() override;
     double currentCrankRevolutions() override;
     uint16_t lastCrankEventTime() override;
     bool connected() override;

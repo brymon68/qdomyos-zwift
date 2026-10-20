@@ -22,7 +22,6 @@ class bike : public bluetoothdevice {
     metric lastRequestedCadence();
     metric lastRequestedPower();
     metric currentResistance() override;
-    uint8_t fanSpeed() override;
     double currentCrankRevolutions() override;
     uint16_t lastCrankEventTime() override;
     bool connected() override;

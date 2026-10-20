@@ -141,7 +141,6 @@ double elliptical::currentCrankRevolutions() { return CrankRevs; }
 uint16_t elliptical::lastCrankEventTime() { return LastCrankEventTime; }
 metric elliptical::currentResistance() { return Resistance; }
 metric elliptical::currentInclination() { return Inclination; }
-uint8_t elliptical::fanSpeed() { return FanSpeed; }
 bool elliptical::connected() { return false; }
 
 BLUETOOTH_TYPE elliptical::deviceType() { return ELLIPTICAL; }

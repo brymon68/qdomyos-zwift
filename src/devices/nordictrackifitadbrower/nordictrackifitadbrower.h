@@ -118,11 +118,9 @@ class nordictrackifitadbrower : public rower {
     double getGrpcStrokesLength();
     int getGrpcPaceSeconds();
     int getGrpcLast500mPaceSeconds();
-    int getGrpcFanSpeed();
 
     // gRPC control setters
     void setGrpcResistance(double resistance);
-    void setGrpcFanSpeed(int fanSpeed);
 
 #ifdef Q_OS_IOS
     lockscreen *h = 0;

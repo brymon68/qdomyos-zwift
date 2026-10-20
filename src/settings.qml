@@ -404,8 +404,6 @@ import AndroidStatusBar 1.0
             property int  tile_ftp_order: 10
             property bool tile_heart_enabled: true
             property int  tile_heart_order: 11
-            property bool tile_fan_enabled: true
-            property int  tile_fan_order: 12
             property bool tile_jouls_enabled: true
             property int  tile_jouls_order: 13
             property bool tile_elapsed_enabled: true
@@ -588,10 +586,6 @@ import AndroidStatusBar 1.0
             property string ftms_accessory_name: "Disabled"
             property real ss2k_shift_step: 900
 
-            property bool fitmetria_fanfit_enable: false
-            property string fitmetria_fanfit_mode: "Heart"
-            property real fitmetria_fanfit_min: 0
-            property real fitmetria_fanfit_max: 100
 
             property bool virtualbike_forceresistance: true
             property bool bluetooth_relaxed: false
@@ -746,7 +740,7 @@ import AndroidStatusBar 1.0
             property bool fakedevice_elliptical: false
 
             // from version 2.10.99
-            property string nordictrack_2950_ip: ""
+            property string nordictrack_2950_ip: "localhost"
 
             // from version 2.10.102
             property bool tile_instantaneous_stride_length_enabled: false
@@ -1646,8 +1640,6 @@ import AndroidStatusBar 1.0
             property string shortcut_target_speed_minus: ""
             property string shortcut_target_incline_plus: ""
             property string shortcut_target_incline_minus: ""
-            property string shortcut_fan_plus: ""
-            property string shortcut_fan_minus: ""
             property string shortcut_peloton_offset_plus: ""
             property string shortcut_peloton_offset_minus: ""
             property string shortcut_peloton_remaining_plus: ""
@@ -13953,293 +13945,6 @@ import AndroidStatusBar 1.0
                                             onClicked: { settings.ss2k_shift_step_sample_4 = ss2kShiftStepSample4TextField.text; window.settings_restart_to_apply = true; toast.show(qsTr("Setting saved!")); }
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-
-                    AccordionElement {
-                        id: fitmetriaFanFitOptionsAccordion
-                        title: qsTr("Fitmetria Fitfan™ Options")
-                        indicatRectColor: Material.color(Material.Grey)
-                        textColor: Material.color(Material.Yellow)
-                        color: Material.backgroundColor
-
-                        accordionContent: ColumnLayout {
-                            spacing: 0
-                            IndicatorOnlySwitch {
-                                id: fitmetriaFanFitDelegate
-                                text: qsTr("Enable")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.fitmetria_fanfit_enable
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: { settings.fitmetria_fanfit_enable = checked; window.settings_restart_to_apply = true; }
-                            }
-
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    id: labelFitmetriaFanFitMode
-                                    text: qsTr("Mode:")
-                                    Layout.fillWidth: true
-                                }
-                                ComboBox {
-                                    id: fitmetriaFanFitModeTextField
-                                    model: [ "Heart", "Power", "Manual" ]
-                                    displayText: settings.fitmetria_fanfit_mode
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onActivated: {
-                                        console.log("combomodel activated" + fitmetriaFanFitModeTextField.currentIndex)
-                                        displayText = fitmetriaFanFitModeTextField.currentValue
-                                    }
-
-                                }
-                                Button {
-                                    id: okFitmetriaFanFitModeTextField
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.fitmetria_fanfit_mode = fitmetriaFanFitModeTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    id: labelFitmetriaFanFitMin
-                                    text: qsTr("Min. value (0-100):")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: fitmetriaFanFitMinTextField
-                                    text: settings.fitmetria_fanfit_min
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhDigitsOnly
-                                    onAccepted: settings.fitmetria_fanfit_min = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    id: okFitmetriaFanFitMin
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.fitmetria_fanfit_min = fitmetriaFanFitMinTextField.text; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    id: labelFitmetriaFanFitMax
-                                    text: qsTr("Max value (0-100):")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: fitmetriaFanFitMaxTextField
-                                    text: settings.fitmetria_fanfit_max
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhDigitsOnly
-                                    onAccepted: settings.fitmetria_fanfit_max = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    id: okFitmetriaFanFitMax
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.fitmetria_fanfit_max = fitmetriaFanFitMaxTextField.text; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
-                        }
-                    }
-
-                    AccordionElement {
-                        title: qsTr("Wahoo Kickr HeadWind Options")
-                        indicatRectColor: Material.color(Material.Grey)
-                        textColor: Material.color(Material.Yellow)
-                        color: Material.backgroundColor
-
-                        accordionContent: ColumnLayout {
-                            spacing: 0
-                            IndicatorOnlySwitch {
-                                text: qsTr("Enable")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.fitmetria_fanfit_enable
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: { settings.fitmetria_fanfit_enable = checked; window.settings_restart_to_apply = true; }
-                            }
-
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("Mode:")
-                                    Layout.fillWidth: true
-                                }
-                                ComboBox {
-                                    id: headWindModeTextField
-                                    model: [ "Heart", "Power", "Manual" ]
-                                    displayText: settings.fitmetria_fanfit_mode
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onActivated: {
-                                        console.log("combomodel activated" + headWindModeTextField.currentIndex)
-                                        displayText = headWindModeTextField.currentValue
-                                    }
-
-                                }
-                                Button {
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.fitmetria_fanfit_mode = headWindModeTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("Min. value (0-100):")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: headWindMinTextField
-                                    text: settings.fitmetria_fanfit_min
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhDigitsOnly
-                                    onAccepted: settings.fitmetria_fanfit_min = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.fitmetria_fanfit_min = headWindMinTextField.text; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("Max value (0-100):")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: headWindMaxTextField
-                                    text: settings.fitmetria_fanfit_max
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhDigitsOnly
-                                    onAccepted: settings.fitmetria_fanfit_max = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.fitmetria_fanfit_max = headWindMaxTextField.text; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
-                        }
-                    }
-
-                    AccordionElement {
-                        title: qsTr("Elite Aria Options")
-                        indicatRectColor: Material.color(Material.Grey)
-                        textColor: Material.color(Material.Yellow)
-                        color: Material.backgroundColor
-
-                        accordionContent: ColumnLayout {
-                            spacing: 0
-                            IndicatorOnlySwitch {
-                                text: qsTr("Enable")
-                                spacing: 0
-                                bottomPadding: 0
-                                topPadding: 0
-                                rightPadding: 0
-                                leftPadding: 0
-                                clip: false
-                                checked: settings.fitmetria_fanfit_enable
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                                onClicked: { settings.fitmetria_fanfit_enable = checked; window.settings_restart_to_apply = true; }
-                            }
-
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("Mode:")
-                                    Layout.fillWidth: true
-                                }
-                                ComboBox {
-                                    id: eliteAriaModeTextField
-                                    model: [ "Heart", "Power", "Manual" ]
-                                    displayText: settings.fitmetria_fanfit_mode
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onActivated: {
-                                        console.log("combomodel activated" + eliteAriaModeTextField.currentIndex)
-                                        displayText = eliteAriaModeTextField.currentValue
-                                    }
-
-                                }
-                                Button {
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.fitmetria_fanfit_mode = eliteAriaModeTextField.displayText; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("Min. value (0-100):")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: eliteAriaMinTextField
-                                    text: settings.fitmetria_fanfit_min
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhDigitsOnly
-                                    onAccepted: settings.fitmetria_fanfit_min = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.fitmetria_fanfit_min = eliteAriaMinTextField.text; toast.show(qsTr("Setting saved!")); }
-                                }
-                            }
-                            RowLayout {
-                                spacing: 10
-                                Label {
-                                    text: qsTr("Max value (0-100):")
-                                    Layout.fillWidth: true
-                                }
-                                TextField {
-                                    id: eliteAriaMaxTextField
-                                    text: settings.fitmetria_fanfit_max
-                                    horizontalAlignment: Text.AlignRight
-                                    Layout.fillHeight: false
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    inputMethodHints: Qt.ImhDigitsOnly
-                                    onAccepted: settings.fitmetria_fanfit_max = text
-                                    onActiveFocusChanged: if(this.focus) this.cursorPosition = this.text.length
-                                }
-                                Button {
-                                    text: qsTr("OK")
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    onClicked: { settings.fitmetria_fanfit_max = eliteAriaMaxTextField.text; toast.show(qsTr("Setting saved!")); }
                                 }
                             }
                         }

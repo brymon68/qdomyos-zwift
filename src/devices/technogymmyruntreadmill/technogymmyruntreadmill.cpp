@@ -215,17 +215,7 @@ void technogymmyruntreadmill::update() {
 
             requestStop = -1;
         }
-        if (requestIncreaseFan != -1) {
-            emit debug(QStringLiteral("increasing fan speed..."));
 
-            // sendChangeFanSpeed(FanSpeed + 1);
-            requestIncreaseFan = -1;
-        } else if (requestDecreaseFan != -1) {
-            emit debug(QStringLiteral("decreasing fan speed..."));
-
-            // sendChangeFanSpeed(FanSpeed - 1);
-            requestDecreaseFan = -1;
-        }
     }
 }
 

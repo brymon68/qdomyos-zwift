@@ -41,7 +41,6 @@ class domyostreadmill : public treadmill {
     domyostreadmill(uint32_t poolDeviceTime = 200, bool noConsole = false, bool noHeartService = false,
                     double forceInitSpeed = 0.0, double forceInitInclination = 0.0);
     bool connected() override;
-    bool changeFanSpeed(uint8_t speed) override;
     double minStepSpeed() override;
 
   private:
@@ -52,7 +51,6 @@ class domyostreadmill : public treadmill {
         bool disable_log;
         bool wait_for_response;
     };
-    bool sendChangeFanSpeed(uint8_t speed);
     double GetSpeedFromPacket(const QByteArray &packet);
     double GetInclinationFromPacket(const QByteArray &packet);
     double GetKcalFromPacket(const QByteArray &packet);

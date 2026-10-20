@@ -143,7 +143,6 @@ devices/csafe/netserial.cpp \
 devices/csafe/kalmanfilter.cpp \
 devices/csafeelliptical/csafeelliptical.cpp \
 devices/csaferower/csaferower.cpp \
-devices/eliteariafan/eliteariafan.cpp \
 devices/fakerower/fakerower.cpp \
 devices/proformtelnetbike/proformtelnetbike.cpp \
 virtualdevices/virtualdevice.cpp \
@@ -156,7 +155,6 @@ devices/iconceptelliptical/iconceptelliptical.cpp \
 localipaddress.cpp \
 devices/pelotonbike/pelotonbike.cpp \
 devices/schwinn170bike/schwinn170bike.cpp \
-devices/wahookickrheadwind/wahookickrheadwind.cpp \
 windows_zwift_workout_paddleocr_thread.cpp \
 devices/ypooelliptical/ypooelliptical.cpp \
 devices/ziprotreadmill/ziprotreadmill.cpp \
@@ -231,7 +229,6 @@ devices/elliptical.cpp \
 devices/eslinkertreadmill/eslinkertreadmill.cpp \
 devices/fakebike/fakebike.cpp \
 filedownloader.cpp \
-devices/fitmetria_fanfit/fitmetria_fanfit.cpp \
 devices/fitplusbike/fitplusbike.cpp \
 devices/fitshowtreadmill/fitshowtreadmill.cpp \
 fit-sdk/fit.cpp \
@@ -447,7 +444,6 @@ devices/csafe/netserial.h \
 devices/csafe/kalmanfilter.h \
 devices/csafeelliptical/csafeelliptical.h \
 devices/csaferower/csaferower.h \
-devices/eliteariafan/eliteariafan.h \
 devices/proformtelnetbike/proformtelnetbike.h \
 windows_zwift_workout_paddleocr_thread.h \
 devices/fakerower/fakerower.h \
@@ -469,7 +465,6 @@ devices/iconceptelliptical/iconceptelliptical.h \
 localipaddress.h \
 devices/pelotonbike/pelotonbike.h \
 devices/schwinn170bike/schwinn170bike.h \
-devices/wahookickrheadwind/wahookickrheadwind.h \
 devices/ypooelliptical/ypooelliptical.h \
 devices/ziprotreadmill/ziprotreadmill.h \
 devices/computrainerbike/Computrainer.h \
@@ -556,7 +551,6 @@ devices/elliptical.h \
 devices/eslinkertreadmill/eslinkertreadmill.h \
 devices/fakebike/fakebike.h \
 filedownloader.h \
-devices/fitmetria_fanfit/fitmetria_fanfit.h \
 devices/fitplusbike/fitplusbike.h \
 devices/ftmsrower/ftmsrower.h \
 homefitnessbuddy.h \
@@ -1016,7 +1010,6 @@ DISTFILES += \
     $$PWD/android/proto/google/protobuf/wrappers.proto \
     $$PWD/android/proto/settings/BrightnessService.proto \
     $$PWD/android/proto/settings/DemoModeService.proto \
-    $$PWD/android/proto/settings/FanStateService.proto \
     $$PWD/android/proto/settings/MaxSpeedService.proto \
     $$PWD/android/proto/settings/Settings.proto \
     $$PWD/android/proto/settings/SystemUnitsService.proto \
@@ -1174,10 +1167,6 @@ DISTFILES += \
 	android/src/com/dsi/ant/channel/PredefinedNetwork.java \
     android/gradle.properties \
     android/proguard-rules.pro \
-	android/src/org/qtproject/qt/android/purchasing/Security.java \
-	android/src/org/qtproject/qt/android/purchasing/InAppPurchase.java \
-	android/src/org/qtproject/qt/android/purchasing/Base64.java \
-	android/src/org/qtproject/qt/android/purchasing/Base64DecoderException.java \
 	ios/AppDelegate.swift \
 	ios/BLEPeripheralManager.swift \
 	ios/LiveActivityManager.swift
@@ -1195,7 +1184,6 @@ ios {
 
 ios {
     OBJECTIVE_SOURCES += ios/lockscreen.mm \
-    ios/ios_eliteariafan.mm \
     ios/ios_app_delegate.mm \
     ios/ios_liveactivity.mm \
 	 fit-sdk/FitDecode.mm \
@@ -1235,9 +1223,6 @@ SOURCES += \
     androidstatusbar.cpp \
     fontmanager.cpp
 
-include($$PWD/purchasing/purchasing.pri)
-INCLUDEPATH += purchasing/qmltypes
-INCLUDEPATH += purchasing/inapp
 
 WINRT_MANIFEST = AppxManifest.xml
 

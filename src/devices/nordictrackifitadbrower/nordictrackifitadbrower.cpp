@@ -698,20 +698,6 @@ int nordictrackifitadbrower::getGrpcLast500mPaceSeconds() {
     return 0;
 }
 
-int nordictrackifitadbrower::getGrpcFanSpeed() {
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized) {
-        int fanSpeed = QAndroidJniObject::callStaticMethod<jint>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
-            "getCurrentFanSpeed",
-            "()I"
-        );
-        qDebug() << "getGrpcFanSpeed() returned:" << fanSpeed;
-        return fanSpeed;
-    }
-#endif
-    return 0;
-}
 
 // ============================= gRPC Control Setters =============================
 
@@ -725,20 +711,6 @@ void nordictrackifitadbrower::setGrpcResistance(double resistance) {
             resistance - Resistance.value()
         );
         emit debug(QString("Set gRPC resistance to: %1").arg(resistance));
-    }
-#endif
-}
-
-void nordictrackifitadbrower::setGrpcFanSpeed(int fanSpeed) {
-#ifdef Q_OS_ANDROID
-    if (grpcInitialized) {
-        QAndroidJniObject::callStaticMethod<void>(
-            "org/cagnulen/qdomyoszwift/GrpcTreadmillService",
-            "setFanSpeed",
-            "(I)V",
-            fanSpeed
-        );
-        emit debug(QString("Set gRPC fan speed to: %1").arg(fanSpeed));
     }
 #endif
 }

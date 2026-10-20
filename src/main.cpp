@@ -25,6 +25,9 @@
 #include <QOperatingSystemVersion>
 #include <QQmlApplicationEngine>
 #include <QSettings>
+#ifdef X22I_TEST
+#include "x22i_defaults.h"
+#endif
 #include <QStandardPaths>
 #include <QList>
 #ifdef CHARTJS
@@ -594,6 +597,9 @@ int main(int argc, char *argv[]) {
     app->setApplicationName(QStringLiteral("qDomyos-Zwift"));
 
     QSettings settings;
+#ifdef X22I_TEST
+    applyX22iDefaults(settings);
+#endif
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
     QString profileName = "";

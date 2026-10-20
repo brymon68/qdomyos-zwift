@@ -166,8 +166,6 @@ const QString QZSettings::tile_ftp_order = QStringLiteral("tile_ftp_order");
 const QString QZSettings::tile_heart_enabled = QStringLiteral("tile_heart_enabled");
 const QString QZSettings::tile_heart_order = QStringLiteral("tile_heart_order");
 const QString QZSettings::tile_heart_show_as_percent = QStringLiteral("tile_heart_show_as_percent");
-const QString QZSettings::tile_fan_enabled = QStringLiteral("tile_fan_enabled");
-const QString QZSettings::tile_fan_order = QStringLiteral("tile_fan_order");
 const QString QZSettings::tile_jouls_enabled = QStringLiteral("tile_jouls_enabled");
 const QString QZSettings::tile_jouls_order = QStringLiteral("tile_jouls_order");
 const QString QZSettings::tile_elapsed_enabled = QStringLiteral("tile_elapsed_enabled");
@@ -363,11 +361,6 @@ const QString QZSettings::default_elite_sterzo_smart_name = QStringLiteral("Disa
 const QString QZSettings::ftms_accessory_name = QStringLiteral("ftms_accessory_name");
 const QString QZSettings::default_ftms_accessory_name = QStringLiteral("Disabled");
 const QString QZSettings::ss2k_shift_step = QStringLiteral("ss2k_shift_step");
-const QString QZSettings::fitmetria_fanfit_enable = QStringLiteral("fitmetria_fanfit_enable");
-const QString QZSettings::fitmetria_fanfit_mode = QStringLiteral("fitmetria_fanfit_mode");
-const QString QZSettings::default_fitmetria_fanfit_mode = QStringLiteral("Heart");
-const QString QZSettings::fitmetria_fanfit_min = QStringLiteral("fitmetria_fanfit_min");
-const QString QZSettings::fitmetria_fanfit_max = QStringLiteral("fitmetria_fanfit_max");
 const QString QZSettings::virtualbike_forceresistance = QStringLiteral("virtualbike_forceresistance");
 const QString QZSettings::bluetooth_relaxed = QStringLiteral("bluetooth_relaxed");
 const QString QZSettings::bluetooth_30m_hangs = QStringLiteral("bluetooth_30m_hangs");
@@ -481,7 +474,7 @@ const QString QZSettings::tts_avg_watt_kg = QStringLiteral("tts_avg_watt_kg");
 const QString QZSettings::tts_max_watt_kg = QStringLiteral("tts_max_watt_kg");
 const QString QZSettings::fakedevice_elliptical = QStringLiteral("fakedevice_elliptical");
 const QString QZSettings::nordictrack_2950_ip = QStringLiteral("nordictrack_2950_ip");
-const QString QZSettings::default_nordictrack_2950_ip = QStringLiteral("");
+const QString QZSettings::default_nordictrack_2950_ip = QStringLiteral("localhost");
 const QString QZSettings::tile_instantaneous_stride_length_enabled =
     QStringLiteral("tile_instantaneous_stride_length_enabled");
 const QString QZSettings::tile_instantaneous_stride_length_order =
@@ -1153,10 +1146,6 @@ const QString QZSettings::shortcut_target_incline_plus = QStringLiteral("shortcu
 const QString QZSettings::default_shortcut_target_incline_plus = QStringLiteral("");
 const QString QZSettings::shortcut_target_incline_minus = QStringLiteral("shortcut_target_incline_minus");
 const QString QZSettings::default_shortcut_target_incline_minus = QStringLiteral("");
-const QString QZSettings::shortcut_fan_plus = QStringLiteral("shortcut_fan_plus");
-const QString QZSettings::default_shortcut_fan_plus = QStringLiteral("");
-const QString QZSettings::shortcut_fan_minus = QStringLiteral("shortcut_fan_minus");
-const QString QZSettings::default_shortcut_fan_minus = QStringLiteral("");
 const QString QZSettings::shortcut_peloton_offset_plus = QStringLiteral("shortcut_peloton_offset_plus");
 const QString QZSettings::default_shortcut_peloton_offset_plus = QStringLiteral("");
 const QString QZSettings::shortcut_peloton_offset_minus = QStringLiteral("shortcut_peloton_offset_minus");
@@ -1248,7 +1237,7 @@ const QString QZSettings::default_shortcut_start_stop = QStringLiteral("");
 const QString QZSettings::shortcut_stop = QStringLiteral("shortcut_stop");
 const QString QZSettings::default_shortcut_stop = QStringLiteral("");
 
-const uint32_t allSettingsCount = 975;
+const uint32_t allSettingsCount = 967;
 
 QVariant allSettings[allSettingsCount][2] = {
     {QZSettings::cryptoKeySettingsProfiles, QZSettings::default_cryptoKeySettingsProfiles},
@@ -1367,8 +1356,6 @@ QVariant allSettings[allSettingsCount][2] = {
     {QZSettings::tile_heart_enabled, QZSettings::default_tile_heart_enabled},
     {QZSettings::tile_heart_order, QZSettings::default_tile_heart_order},
     {QZSettings::tile_heart_show_as_percent, QZSettings::default_tile_heart_show_as_percent},
-    {QZSettings::tile_fan_enabled, QZSettings::default_tile_fan_enabled},
-    {QZSettings::tile_fan_order, QZSettings::default_tile_fan_order},
     {QZSettings::tile_jouls_enabled, QZSettings::default_tile_jouls_enabled},
     {QZSettings::tile_jouls_order, QZSettings::default_tile_jouls_order},
     {QZSettings::tile_elapsed_enabled, QZSettings::default_tile_elapsed_enabled},
@@ -1544,10 +1531,6 @@ QVariant allSettings[allSettingsCount][2] = {
     {QZSettings::elite_sterzo_smart_name, QZSettings::default_elite_sterzo_smart_name},
     {QZSettings::ftms_accessory_name, QZSettings::default_ftms_accessory_name},
     {QZSettings::ss2k_shift_step, QZSettings::default_ss2k_shift_step},
-    {QZSettings::fitmetria_fanfit_enable, QZSettings::default_fitmetria_fanfit_enable},
-    {QZSettings::fitmetria_fanfit_mode, QZSettings::default_fitmetria_fanfit_mode},
-    {QZSettings::fitmetria_fanfit_min, QZSettings::default_fitmetria_fanfit_min},
-    {QZSettings::fitmetria_fanfit_max, QZSettings::default_fitmetria_fanfit_max},
     {QZSettings::virtualbike_forceresistance, QZSettings::default_virtualbike_forceresistance},
     {QZSettings::bluetooth_relaxed, QZSettings::default_bluetooth_relaxed},
     {QZSettings::bluetooth_30m_hangs, QZSettings::default_bluetooth_30m_hangs},
@@ -2193,8 +2176,6 @@ QVariant allSettings[allSettingsCount][2] = {
     {QZSettings::shortcut_target_speed_minus, QZSettings::default_shortcut_target_speed_minus},
     {QZSettings::shortcut_target_incline_plus, QZSettings::default_shortcut_target_incline_plus},
     {QZSettings::shortcut_target_incline_minus, QZSettings::default_shortcut_target_incline_minus},
-    {QZSettings::shortcut_fan_plus, QZSettings::default_shortcut_fan_plus},
-    {QZSettings::shortcut_fan_minus, QZSettings::default_shortcut_fan_minus},
     {QZSettings::shortcut_peloton_offset_plus, QZSettings::default_shortcut_peloton_offset_plus},
     {QZSettings::shortcut_peloton_offset_minus, QZSettings::default_shortcut_peloton_offset_minus},
     {QZSettings::shortcut_peloton_remaining_plus, QZSettings::default_shortcut_peloton_remaining_plus},

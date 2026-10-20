@@ -162,8 +162,6 @@ ApplicationWindow {
         property string shortcut_target_speed_minus: ""
         property string shortcut_target_incline_plus: ""
         property string shortcut_target_incline_minus: ""
-        property string shortcut_fan_plus: ""
-        property string shortcut_fan_minus: ""
         property string shortcut_peloton_offset_plus: ""
         property string shortcut_peloton_offset_minus: ""
         property string shortcut_peloton_remaining_plus: ""
@@ -212,9 +210,6 @@ ApplicationWindow {
     }
 
 
-    Store {
-        id: iapStore
-    }
 
     Loader {
       id: googleMapUI
@@ -223,35 +218,6 @@ ApplicationWindow {
       onLoaded: { console.log("googleMapUI loaded"); stackView.push(googleMapUI.item); }
     }
 
-    // here in order to cache everything for the SwagBagView
-    Product {
-        id: productUnlockVowels
-        type: Product.Unlockable
-        store: iapStore
-        identifier: "org.cagnulein.qdomyoszwift.swagbag"
-
-        onPurchaseSucceeded: {
-            console.log(identifier + " purchase successful");
-            applicationData.vowelsUnlocked = true;
-            transaction.finalize();
-            pageStack.pop();
-        }
-
-        onPurchaseFailed: {
-            console.log(identifier + " purchase failed");
-            console.log("reason: "
-                        + transaction.failureReason === Transaction.CanceledByUser ? "Canceled" : transaction.errorString);
-            transaction.finalize();
-        }
-
-        onPurchaseRestored: {
-            console.log(identifier + " purchase restored");
-            applicationData.vowelsUnlocked = true;
-            console.log("timestamp: " + transaction.timestamp);
-            transaction.finalize();
-            pageStack.pop();
-        }
-    }
 
     ToastManager {
         id: toast
@@ -699,46 +665,6 @@ ApplicationWindow {
              width: 370
              height: 120
              text: qsTr("Your Peloton account is now connected!<br><br>Restart the app to apply this change!")
-            }
-         }
-    }
-
-    Timer {
-        id: popupLicenseAutoClose
-        interval: 120000; running: rootItem.licensePopupVisible; repeat: false
-        onTriggered: popupLicense.close();
-    }
-
-    Popup {
-        id: popupLicense
-         parent: Overlay.overlay
-         enabled: rootItem.licensePopupVisible
-         onEnabledChanged: { if(rootItem.licensePopupVisible) popupLicense.open() }
-         onClosed: { Qt.openUrlExternally("https://www.patreon.com/bePatron?u=45290147"); Qt.callLater(Qt.quit); }
-
-         x: Math.round((parent.width - width) / 2)
-         y: Math.round((parent.height - height) / 2)
-         width: 580
-         height: 230
-         modal: true
-         focus: true
-         palette.text: "white"
-         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-         enter: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-         }
-         exit: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-         }
-         Column {
-             anchors.horizontalCenter: parent.horizontalCenter
-         Label {
-             anchors.horizontalCenter: parent.horizontalCenter
-             width: 570
-             height: 220
-             text: qsTr("Trial time expired!<br><br>Please join the QZ Patreon Membership to unlock the full license!<br>https://www.patreon.com/bePatron?u=45290147<br><br>Then add your patreon email in the email field in the general settings.<br>The App will now close.")
             }
          }
     }
@@ -1207,14 +1133,6 @@ ApplicationWindow {
                     drawer.close()
                 }
             }
-                ItemDelegate {
-                    text: qsTr("Swag Bag")
-                    width: parent.width
-                    onClicked: {
-                        stackView.push("SwagBagView.qml")
-                        drawer.close()
-                    }
-                }
 
                 ItemDelegate {
                     text: qsTr("Charts")
@@ -1533,8 +1451,6 @@ ApplicationWindow {
             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_speed_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("target_speed") }
             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_incline_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("target_inclination") }
             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_incline_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("target_inclination") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_fan_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("fan") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_fan_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("fan") }
             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_offset_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("peloton_offset") }
             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_offset_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("peloton_offset") }
             Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_remaining_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("peloton_remaining") }

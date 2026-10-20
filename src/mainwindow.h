@@ -46,8 +46,6 @@ class MainWindow : public QDialog {
     void on_stop_clicked();
     void on_start_clicked();
     void on_groupTrain_clicked();
-    void on_fanSpeedMinus_clicked();
-    void on_fanSpeedPlus_clicked();
     void on_difficulty_valueChanged(int value);
     void trainProgramSignals();
     void on_speedMinus_clicked();

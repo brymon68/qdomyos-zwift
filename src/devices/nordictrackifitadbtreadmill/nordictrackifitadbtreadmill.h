@@ -76,7 +76,6 @@ class nordictrackifitadbtreadmill : public treadmill {
     bool connected() override;
     bool canStartStop() override;
     double minStepSpeed() override { return 0.1; }
-    bool changeFanSpeed(uint8_t speed) override;
 
   private:
     struct DisplayValue {
@@ -100,8 +99,6 @@ class nordictrackifitadbtreadmill : public treadmill {
     double getGrpcCadence();
     double getGrpcHeartRate();
     void setGrpcSpeed(double speed);
-    void setGrpcFanSpeed(int fanSpeed);
-    int getGrpcFanSpeed();
     void setGrpcIncline(double incline);
     void startGrpcWorkoutStateMonitoring();
     int getGrpcWorkoutState();

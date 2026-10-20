@@ -481,11 +481,7 @@ class QZSettings {
     static const QString tile_heart_show_as_percent;
     static constexpr bool default_tile_heart_show_as_percent = false;
 
-    static const QString tile_fan_enabled;
-    static constexpr bool default_tile_fan_enabled = true;
 
-    static const QString tile_fan_order;
-    static constexpr int default_tile_fan_order = 12;
 
     static const QString tile_jouls_enabled;
     static constexpr bool default_tile_jouls_enabled = true;
@@ -1050,17 +1046,9 @@ class QZSettings {
     static const QString ss2k_shift_step;
     static constexpr float default_ss2k_shift_step = 900;
 
-    static const QString fitmetria_fanfit_enable;
-    static constexpr bool default_fitmetria_fanfit_enable = false;
 
-    static const QString fitmetria_fanfit_mode;
-    static const QString default_fitmetria_fanfit_mode;
 
-    static const QString fitmetria_fanfit_min;
-    static constexpr float default_fitmetria_fanfit_min = 0;
 
-    static const QString fitmetria_fanfit_max;
-    static constexpr float default_fitmetria_fanfit_max = 100;
     /**
      *@brief Indicates if the virtual device should send resistance requests to the bike.
      */
@@ -3084,10 +3072,6 @@ class QZSettings {
     static const QString shortcut_target_incline_minus;
     static const QString default_shortcut_target_incline_minus;
 
-    static const QString shortcut_fan_plus;
-    static const QString default_shortcut_fan_plus;
-    static const QString shortcut_fan_minus;
-    static const QString default_shortcut_fan_minus;
 
     static const QString shortcut_peloton_offset_plus;
     static const QString default_shortcut_peloton_offset_plus;

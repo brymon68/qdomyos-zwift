@@ -119,17 +119,8 @@ void truetreadmill::update() {
                 emit debug(QStringLiteral("stopping..."));
                 requestStop = -1;
             }
-            if (requestFanSpeed != -1) {
-                emit debug(QStringLiteral("changing fan speed..."));
-                requestFanSpeed = -1;
-            }
-            if (requestIncreaseFan != -1) {
-                emit debug(QStringLiteral("increasing fan speed..."));
-                requestIncreaseFan = -1;
-            } else if (requestDecreaseFan != -1) {
-                emit debug(QStringLiteral("decreasing fan speed..."));
-                requestDecreaseFan = -1;
-            }
+
+
         }
     }
 }

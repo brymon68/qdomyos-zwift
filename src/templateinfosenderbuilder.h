@@ -73,7 +73,6 @@ class TemplateInfoSenderBuilder : public QObject {
     void onSetSettings(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
     void onGetSettings(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
     void onSetResistance(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
-    void onSetFanSpeed(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
     void onSetPower(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
     void onSetCadence(const QJsonValue &msgContent, TemplateInfoSender *tempSender);
     void onSetSpeed(const QJsonValue &msgContent, TemplateInfoSender *tempSender);

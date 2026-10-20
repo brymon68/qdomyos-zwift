@@ -52,7 +52,6 @@
 #include "devices/echelonconnectsport/echelonconnectsport.h"
 #include "devices/echelonrower/echelonrower.h"
 #include "devices/echelonstairclimber/echelonstairclimber.h"
-#include "devices/eliteariafan/eliteariafan.h"
 #include "devices/eliterizer/eliterizer.h"
 #include "devices/elitesquarecontroller/elitesquarecontroller.h"
 #include "devices/elitesterzosmart/elitesterzosmart.h"
@@ -61,7 +60,6 @@
 #include "devices/fakeelliptical/fakeelliptical.h"
 #include "devices/fakerower/fakerower.h"
 #include "devices/faketreadmill/faketreadmill.h"
-#include "devices/fitmetria_fanfit/fitmetria_fanfit.h"
 #include "devices/fitplusbike/fitplusbike.h"
 
 #include "devices/fitshowtreadmill/fitshowtreadmill.h"
@@ -151,7 +149,6 @@
 #include "devices/trxappgateusbrower/trxappgateusbrower.h"
 #include "devices/trxappgateusbtreadmill/trxappgateusbtreadmill.h"
 #include "devices/ultrasportbike/ultrasportbike.h"
-#include "devices/wahookickrheadwind/wahookickrheadwind.h"
 #include "devices/wahookickrsnapbike/wahookickrsnapbike.h"
 #include "devices/yesoulbike/yesoulbike.h"
 #include "devices/ypooelliptical/ypooelliptical.h"
@@ -313,9 +310,6 @@ class bluetooth : public QObject, public SignalHandler {
     fakeelliptical *fakeElliptical = nullptr;
     fakerower *fakeRower = nullptr;
     faketreadmill *fakeTreadmill = nullptr;
-    QList<fitmetria_fanfit *> fitmetriaFanfit;
-    QList<wahookickrheadwind *> wahookickrHeadWind;
-    QList<eliteariafan *> eliteAriaFan;
     QList<zwiftclickremote* > zwiftPlayDevice;
     zwiftclickremote* zwiftClickRemote = nullptr;
     cycplusbc2controller* cycplusBC2Controller = nullptr;
@@ -355,12 +349,10 @@ class bluetooth : public QObject, public SignalHandler {
     bool powerSensorAvaiable();
     bool eliteRizerAvaiable();
     bool eliteSterzoSmartAvaiable();
-    bool fitmetriaFanfitAvaiable();
     bool zwiftDeviceAvaiable();
     bool sramDeviceAvaiable();
     bool cycplusBC2DeviceAvaiable();
     bool thinkriderDeviceAvaiable();
-    bool fitmetria_fanfit_isconnected(const QBluetoothDeviceInfo &device);
     bool gymModeEnabled() const;
 
     QTimer discoveryTimeout;

@@ -45,8 +45,6 @@ ScrollView {
         property string shortcut_target_speed_minus: ""
         property string shortcut_target_incline_plus: ""
         property string shortcut_target_incline_minus: ""
-        property string shortcut_fan_plus: ""
-        property string shortcut_fan_minus: ""
         property string shortcut_peloton_offset_plus: ""
         property string shortcut_peloton_offset_minus: ""
         property string shortcut_peloton_remaining_plus: ""
@@ -284,11 +282,6 @@ ScrollView {
                     Label { text: qsTr("Time to Next + / -"); Layout.fillWidth: true }
                     ShortcutField { text: settings.shortcut_remaining_time_plus; settingName: "shortcut_remaining_time_plus" }
                     ShortcutField { text: settings.shortcut_remaining_time_minus; settingName: "shortcut_remaining_time_minus" }
-                }
-                RowLayout {
-                    Label { text: qsTr("Fan Speed + / -"); Layout.fillWidth: true }
-                    ShortcutField { text: settings.shortcut_fan_plus; settingName: "shortcut_fan_plus" }
-                    ShortcutField { text: settings.shortcut_fan_minus; settingName: "shortcut_fan_minus" }
                 }
                 RowLayout {
                     Label { text: qsTr("PID Heart Rate + / -"); Layout.fillWidth: true }

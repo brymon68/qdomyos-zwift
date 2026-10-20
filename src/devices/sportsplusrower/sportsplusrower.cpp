@@ -171,7 +171,6 @@ void sportsplusrower::characteristicChanged(const QLowEnergyCharacteristic &char
             Heart = ((uint8_t)newValue.at(8));
         }
     }
-    FanSpeed = 0;
 
     emit debug(QStringLiteral("Current cadence: ") + QString::number(Cadence.value()));
     // emit debug(QStringLiteral("Current resistance: ") + QString::number(resistance));

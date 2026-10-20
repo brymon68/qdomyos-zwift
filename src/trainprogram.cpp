@@ -91,7 +91,6 @@ QString trainrow::toString() const {
     rv += QStringLiteral(" lower_speed = %1").arg(lower_speed);     // used for peloton
     rv += QStringLiteral(" average_speed = %1").arg(average_speed); // used for peloton
     rv += QStringLiteral(" upper_speed = %1").arg(upper_speed);     // used for peloton
-    rv += QStringLiteral(" fanspeed = %1").arg(fanspeed);
     rv += QStringLiteral(" inclination = %1").arg(inclination);
     rv += QStringLiteral(" lower_inclination = %1").arg(lower_inclination);     // used for peloton
     rv += QStringLiteral(" average_inclination = %1").arg(average_inclination); // used for peloton
@@ -1034,10 +1033,6 @@ void trainprogram::scheduler() {
             }
         }
 
-        if (rows.at(0).fanspeed != -1) {
-            qDebug() << QStringLiteral("trainprogram change fanspeed") + QString::number(rows.at(0).fanspeed);
-            emit changeFanSpeed(rows.at(0).fanspeed);
-        }
 
         if (!isnan(rows.at(0).latitude) || !isnan(rows.at(0).longitude) || !isnan(rows.at(0).altitude)) {
             qDebug() << qSetRealNumberPrecision(10) << QStringLiteral("trainprogram change GEO position")
@@ -1545,11 +1540,6 @@ void trainprogram::applyCurrentStepSettings() {
         }
     }
 
-    if (rows.at(currentStep).fanspeed != -1) {
-        qDebug() << QStringLiteral("trainprogram change fanspeed ") +
-                        QString::number(rows.at(currentStep).fanspeed);
-        emit changeFanSpeed(rows.at(currentStep).fanspeed);
-    }
 
     if (!isnan(rows.at(currentStep).latitude) || !isnan(rows.at(currentStep).longitude) ||
         !isnan(rows.at(currentStep).altitude)) {
@@ -1758,9 +1748,6 @@ bool trainprogram::saveXML(const QString &filename, const QList<trainrow> &rows,
             }
             stream.writeAttribute(QStringLiteral("forcespeed"),
                                   row.forcespeed ? QStringLiteral("1") : QStringLiteral("0"));
-            if (row.fanspeed >= 0) {
-                stream.writeAttribute(QStringLiteral("fanspeed"), QString::number(row.fanspeed));
-            }
             if (row.maxSpeed >= 0) {
                 stream.writeAttribute(QStringLiteral("maxspeed"), QString::number(row.maxSpeed));
             }
@@ -1920,9 +1907,6 @@ QList<trainrow> trainprogram::loadXML(const QString &filename, BLUETOOTH_TYPE de
             }
             if (atts.hasAttribute(QStringLiteral("minspeed"))) {
                 row.minSpeed = atts.value(QStringLiteral("minspeed")).toDouble();
-            }
-            if (atts.hasAttribute(QStringLiteral("fanspeed"))) {
-                row.fanspeed = atts.value(QStringLiteral("fanspeed")).toDouble();
             }
             if (atts.hasAttribute(QStringLiteral("inclination"))) {
                 row.inclination = atts.value(QStringLiteral("inclination")).toDouble();

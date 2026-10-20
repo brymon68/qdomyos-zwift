@@ -304,7 +304,6 @@ void sportsplusbike::characteristicChanged(const QLowEnergyCharacteristic &chara
             Heart = ((uint8_t)newValue.at(8));
         }
     }
-    FanSpeed = 0;
 
     emit debug(QStringLiteral("Current cadence: ") + QString::number(cadence));
     // emit debug(QStringLiteral("Current resistance: ") + QString::number(resistance));

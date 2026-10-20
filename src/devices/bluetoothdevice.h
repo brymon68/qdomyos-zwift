@@ -128,10 +128,6 @@ class bluetoothdevice : public QObject {
      */
     metric jouls();
 
-    /**
-     * @brief fanSpeed Gets the current fan speed. Units: depends on device
-     */
-    virtual uint8_t fanSpeed();
 
     /**
      * @brief elapsedTime The elapsed time for the session(?).
@@ -245,11 +241,6 @@ class bluetoothdevice : public QObject {
             return wattsMetric().value();
     }
 
-    /**
-     * @brief changeFanSpeed Tries to change the fan speed.
-     * @param speed The requested fan speed. Units: depends on device
-     */
-    virtual bool changeFanSpeed(uint8_t speed);
 
     /**
      * @brief elevationGain Gets a metric object to get and set the elevation gain. Units: ?
@@ -537,7 +528,6 @@ class bluetoothdevice : public QObject {
     void cadenceChanged(uint8_t cadence);
     void powerChanged(uint16_t power);
     void inclinationChanged(double grade, double percentage);
-    void fanSpeedChanged(uint8_t speed);
     void instantaneousStrideLengthChanged(double length);
     void groundContactChanged(double groundContact);
     void verticalOscillationChanged(double verticalOscillation);
@@ -604,10 +594,6 @@ class bluetoothdevice : public QObject {
     metric Distance;
     metric Distance1s; // used to populate the distance on the FIT file. Since Strava is using the distance to graph it, it has to have 1s trigger.
 
-    /**
-     * @brief FanSpeed The currently requested fan speed. Units: revolutions per second
-     */
-    uint8_t FanSpeed = 0;
 
     /**
      * @brief Heart rate. Unit: beats per minute
@@ -633,9 +619,6 @@ class bluetoothdevice : public QObject {
     int8_t requestStart = -1;
     int8_t requestStop = -1;
     int8_t requestPause = -1;
-    int8_t requestIncreaseFan = -1;
-    int8_t requestDecreaseFan = -1;
-    double requestFanSpeed = -1;
 
     int64_t lastStart = 0;
     int64_t lastStop = 0;

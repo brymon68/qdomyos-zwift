@@ -13,7 +13,6 @@
 #include "devices/bluetoothdevice.h"
 #include <QDebug>
 #include "ios/AdbClient.h"
-#include "ios/ios_eliteariafan.h"
 #include "ios/ios_echelonconnectsport.h"
 #include "ios/ios_zwiftclickremote.h"
 #include "ios/ios_liveactivity.h"
@@ -50,7 +49,6 @@ static NSString *LockscreenStringFromCString(const char *message)
     return string;
 }
 
-static ios_eliteariafan* ios_eliteAriaFan = nil;
 static ios_echelonconnectsport* ios_echelonConnectSport = nil;
 
 static zwift_protobuf_layer* zwiftProtobufLayer = nil;
@@ -524,15 +522,7 @@ void lockscreen::adb_sendcommand(const char* command) {
     }];
 }
 
-void lockscreen::eliteAriaFan() {
-    ios_eliteAriaFan = [[ios_eliteariafan alloc] init];
-}
 
-void lockscreen::eliteAriaFan_fanSpeedRequest(unsigned char speed) {
-    if(ios_eliteAriaFan) {
-        [ios_eliteAriaFan fanSpeedRequest:speed];
-    }
-}
 
 void lockscreen::echelonConnectSport(const char*  Name, void* deviceClass) {
     NSString *deviceName = [NSString stringWithCString:Name encoding:NSASCIIStringEncoding];

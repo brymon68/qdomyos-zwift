@@ -20,9 +20,6 @@ void MainWindow::load(bluetooth *b) {
 
 #ifdef Q_OS_ANDROID
     ui->groupTrain->setVisible(false);
-    ui->fanBar->setVisible(false);
-    ui->fanSpeedMinus->setVisible(false);
-    ui->fanSpeedPlus->setVisible(false);
     ui->weight->setVisible(false);
     ui->weightDescription->setVisible(false);
     ui->weightIcon->setVisible(false);
@@ -73,7 +70,6 @@ void MainWindow::update() {
         ui->heartrate->setText(QString::number(bluetoothManager->device()->currentHeart().value()));
         ui->odometer->setText(QString::number(bluetoothManager->device()->odometer(), 'f', 2));
         ui->calories->setText(QString::number(bluetoothManager->device()->calories().value(), 'f', 0));
-        ui->fanBar->setValue(bluetoothManager->device()->fanSpeed());
 
         if (bluetoothManager->device()->deviceType() == TREADMILL) {
             if (bluetoothManager->device()->currentSpeed().value()) {
@@ -489,19 +485,7 @@ void MainWindow::on_groupTrain_clicked() {
     trainProgram->enabled = ui->groupTrain->isChecked();
 }
 
-void MainWindow::on_fanSpeedMinus_clicked() {
-    if (bluetoothManager->device()) {
 
-        bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() - 1);
-    }
-}
-
-void MainWindow::on_fanSpeedPlus_clicked() {
-    if (bluetoothManager->device()) {
-
-        bluetoothManager->device()->changeFanSpeed(bluetoothManager->device()->fanSpeed() + 1);
-    }
-}
 
 void MainWindow::on_difficulty_valueChanged(int value) {
     if (editing) {

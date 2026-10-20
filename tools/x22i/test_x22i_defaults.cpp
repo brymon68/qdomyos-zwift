@@ -1,4 +1,4 @@
-#include "x22i_defaults.h"
+#include "../../src/x22i_defaults.h"
 
 #include <QtCore/QByteArray>
 #include <QtCore/QCoreApplication>

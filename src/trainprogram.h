@@ -29,7 +29,6 @@ class trainrow {
     double lower_speed = -1;   // used for peloton
     double average_speed = -1; // used for peloton
     double upper_speed = -1;   // used for peloton
-    double fanspeed = -1;
     double inclination = -200;
     double lower_inclination = -200;   // used for peloton
     double average_inclination = -200; // used for peloton
@@ -170,7 +169,6 @@ private slots:
     void stop(bool paused);
     void lap();
     void changeSpeed(double speed);
-    bool changeFanSpeed(uint8_t speed);
     void changeInclination(double grade, double inclination);
     void changeNextInclination300Meters(QList<MetersByInclination>);
     void changeResistance(resistance_t resistance);
