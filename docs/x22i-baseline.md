@@ -1,6 +1,24 @@
 # X22i Android baseline
 
-This is first-phase build and migration scaffolding for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). A successful build, installation, settings migration, and physical treadmill comparison remain to be demonstrated. Packaging checks alone do not establish device behavior.
+This is the first-phase build and migration tooling for [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1). The pinned ARM64 baseline builds successfully. Installation, settings migration, and physical treadmill comparison remain to be demonstrated. Packaging checks alone do not establish device behavior.
+
+## Verified build: 2026-10-20 UTC
+
+[GitHub Actions run 39363926662](https://github.com/brymon68/qdomyos-zwift/actions/runs/39363926662) passed using build recipe commit `1ab94b8601b5b626941d484137fd9db4023dde36`. All 20 settings/privacy and APK-check tests passed. The downloaded APK independently passed the payload checks, and its SHA-256 matched the recorded provenance.
+
+| Measurement | Result |
+|---|---|
+| APK size | 50,993,998 bytes |
+| Native architectures | `arm64-v8a` only |
+| Package/version | `org.cagnulen.qdomyoszwift`, 2.21.5 / 1403 |
+| APK SHA-256 | `1bae6bb0ded6668e6ed92558d69ee24ed7b15c6dfa3abb804d516d2a6f6381f6` |
+| Signature verification | v1 and v2 passed |
+| Installed rollback APK size | 43,557,271 bytes |
+| Upgrade compatibility | Signing certificate differs from installed APK |
+
+The installed APK was backed up privately and its checksum verified against the console. The existing 861-setting backup still matches its recorded checksum. The baseline's iFIT TLS assets match those in the installed APK. No app was installed, launched, or stopped, and no physical controls were exercised. The existing QZ process was stopped when inspected, so no runtime memory/startup comparison was recorded.
+
+This baseline is larger than the installed January build; feature removal has not begun. Its new debug signer cannot update the existing package in place. The owner selected a separately identified test app to preserve the original installation. Do not use this successful build as evidence that device acceptance checks passed.
 
 ## Pinned artifact
 
@@ -15,13 +33,13 @@ The artifact bundle contains the APK, checksum/provenance in `build-info.json`, 
 The [workflow](../.github/workflows/x22i-baseline.yml) builds the pinned upstream checkout separately from this repository. After the workflow is available on GitHub, dispatch it on the scaffolding branch:
 
 ```sh
-gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref codex/x22i-baseline
+gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref codex/x22i-baseline -f variant=baseline
 gh run list --repo brymon68/qdomyos-zwift --workflow x22i-baseline.yml
 gh run watch RUN_ID --repo brymon68/qdomyos-zwift
 gh run download RUN_ID --repo brymon68/qdomyos-zwift --name x22i-baseline-arm64 --dir /LOCAL/ARTIFACTS
 ```
 
-Replace `RUN_ID` and uppercase paths with local values. The workflow also runs on matching changes pushed to `codex/x22i-baseline`; these commands do not imply that a run has already succeeded.
+Replace `RUN_ID` and uppercase paths with local values. Matching changes pushed to `codex/x22i-baseline` build the `test` variant. Manual dispatch defaults to `test`; select `baseline` explicitly to reproduce the original package identity.
 
 For a local build, provide a **clean, disposable** checkout at the exact source pin with all recursive submodules initialized. Install Qt Android **5.15.0** with Qt Charts, Network Auth, and Purchasing; Java **17**; Android platform **35**; build tools **35.0.0**; NDK **21.4.7075529**; and host build tools including `make`, `python3`, and `rsync`. The source supplies Gradle **8.13**. Use a dedicated Qt installation: the script copies the baseline's patched Qt JARs into it and installs its Qt HTTP server build there.
 
@@ -37,6 +55,21 @@ bash tools/x22i/build_baseline.sh /LOCAL/BASELINE-SOURCE /LOCAL/NEW-BUILD-DIRECT
 ```
 
 The output directory must not exist. The script modifies the disposable source defaults, builds and checks the APK, and does not install it. Do not supply private secret headers or owner credentials.
+
+## Separate test app
+
+The `test` variant uses application ID `org.cagnulen.qdomyoszwift.x22ibaseline` and launcher label **X22i Test**. Java namespace, source manifest package, JNI classes, QSettings organization/application names, and iFIT protocol behavior stay the same. The variant still contains the baseline trial and fan features.
+
+It uses a persistent private PKCS12 signing key with alias `x22i-test`, backed up outside Git with owner-only permissions. The repository secrets `X22I_TEST_KEYSTORE_BASE64` and `X22I_TEST_KEYSTORE_PASSWORD` provide this key to CI. The workflow fails when they are absent and removes its temporary key afterward. Do not rotate this key casually: future test APKs need the same signer for updates. Never upload the saved QSettings backup, Zwift credentials, or personal configuration to CI.
+
+```sh
+gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref codex/x22i-baseline -f variant=test
+gh run download RUN_ID --repo brymon68/qdomyos-zwift --name x22i-test-arm64 --dir /LOCAL/TEST-ARTIFACTS
+```
+
+For local builds set `X22I_VARIANT=test`, `X22I_SIGNING_STORE_FILE` to the private PKCS12 path, and `X22I_SIGNING_STORE_PASSWORD` through the local secret-handling mechanism before invoking the same script. Do not put passwords in command arguments, committed files, or logs.
+
+The build records the final manifest and checks package identity, launcher identity, component names, and provider authorities. Only one QZ app may run during testing: both identities still advertise the same fitness device and access the same iFIT endpoint. Before copying any private settings, verify the candidate's actual settings/profile locations on the console and stop both QZ apps. Copy into the candidate only, then verify all 861 original settings. Rollback consists of stopping the test app and returning to the original installation; neither installation nor hardware testing is performed by the build workflow.
 
 ## Private settings and installation
 

@@ -18,6 +18,16 @@ export ANDROID_NDK_ROOT="$ANDROID_SDK_ROOT/ndk/21.4.7075529"
 export ANDROID_NDK="$ANDROID_NDK_ROOT"
 export ANDROID_HOME="$ANDROID_SDK_ROOT"
 export GRADLE_USER_HOME="$output_dir/gradle-cache"
+export X22I_VARIANT=${X22I_VARIANT:-baseline}
+case "$X22I_VARIANT" in
+    baseline) ;;
+    test)
+        : "${X22I_SIGNING_STORE_FILE:?Set the private test PKCS12 keystore path}"
+        : "${X22I_SIGNING_STORE_PASSWORD:?Set the private test keystore password}"
+        [[ -f "$X22I_SIGNING_STORE_FILE" ]] || { echo "Test keystore is missing" >&2; exit 2; }
+        ;;
+    *) echo "X22I_VARIANT must be baseline or test" >&2; exit 2 ;;
+esac
 jobs=${X22I_BUILD_JOBS:-2}
 
 for command in git make python3 rsync qmake lrelease androiddeployqt javac; do
@@ -32,6 +42,7 @@ done
 # No owner credentials or service secrets are needed for this build.
 python3 - "$source_dir" "$script_dir/baseline.json" <<'PY'
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -69,6 +80,36 @@ for relative, (old, new) in replacements.items():
     if text.count(old) != 1:
         raise SystemExit('Pinned baseline variant no longer matches expected source')
     path.write_text(text.replace(old, new))
+
+if os.environ['X22I_VARIANT'] == 'test':
+    gradle = source / 'src/android/build.gradle'
+    text = gradle.read_text()
+    original = 'applicationId = "org.cagnulen.qdomyoszwift"'
+    if text.count(original) != 1 or text.count('\nandroid {\n') != 1:
+        raise SystemExit('Expected Android package/signing configuration was not found')
+    text = text.replace(original, 'applicationId = "org.cagnulen.qdomyoszwift.x22ibaseline"')
+    signing = '''
+android {
+    signingConfigs {
+        debug {
+            storeFile file(System.getenv('X22I_SIGNING_STORE_FILE'))
+            storePassword System.getenv('X22I_SIGNING_STORE_PASSWORD')
+            keyAlias 'x22i-test'
+            keyPassword System.getenv('X22I_SIGNING_STORE_PASSWORD')
+            storeType 'PKCS12'
+        }
+    }
+'''
+    gradle.write_text(text.replace('\nandroid {\n', signing))
+    manifest = source / 'src/android/AndroidManifest.xml'
+    text = manifest.read_text()
+    for label in ('qdomyos-zwift', 'QZ'):
+        original = 'android:label="' + label + '"'
+        if text.count(original) != 1:
+            raise SystemExit('Expected application/launcher label was not found')
+        text = text.replace(original, 'android:label="X22i Test"')
+    # Keep the source manifest package, Java namespace and JNI names unchanged.
+    manifest.write_text(text)
 PY
 
 mkdir -p "$output_dir/httpserver" "$output_dir/native" "$output_dir/android" "$output_dir/artifacts"
@@ -127,18 +168,30 @@ apk="$output_dir/android/build/outputs/apk/debug/android-debug.apk"
 python3 "$script_dir/verify_apk.py" "$apk"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$apk" > "$output_dir/artifacts/signing.txt"
 "$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump badging "$apk" > "$output_dir/artifacts/apk-badging.txt"
-cp "$apk" "$output_dir/artifacts/x22i-baseline-arm64.apk"
+"$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump xmltree "$apk" AndroidManifest.xml > "$output_dir/artifacts/manifest-tree.txt"
+if [[ "$X22I_VARIANT" == test ]]; then
+    python3 "$script_dir/verify_manifest.py" "$output_dir/artifacts/manifest-tree.txt" org.cagnulen.qdomyoszwift.x22ibaseline 'X22i Test'
+else
+    python3 "$script_dir/verify_manifest.py" "$output_dir/artifacts/manifest-tree.txt" org.cagnulen.qdomyoszwift QZ
+fi
+cp "$apk" "$output_dir/artifacts/x22i-$X22I_VARIANT-arm64.apk"
 cp "$source_dir/LICENSE" "$output_dir/artifacts/LICENSE"
-git -C "$source_dir" diff -- src/settings.qml src/qzsettings.cpp src/settings-catalog.json src/android/build.gradle > "$output_dir/artifacts/source.patch"
+git -C "$source_dir" diff -- src/settings.qml src/qzsettings.cpp src/settings-catalog.json src/android/build.gradle src/android/AndroidManifest.xml > "$output_dir/artifacts/source.patch"
 python3 - "$script_dir" "$source_dir" "$output_dir" <<'PY'
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 scripts, source, output = map(Path, sys.argv[1:])
 info = json.loads((scripts / 'baseline.json').read_text())
-apk = output / 'artifacts/x22i-baseline-arm64.apk'
+info['variant'] = os.environ['X22I_VARIANT']
+if info['variant'] == 'test':
+    info['package'] = 'org.cagnulen.qdomyoszwift.x22ibaseline'
+    info['label'] = 'X22i Test'
+    info['signing'] = 'Persistent private test key; separate from installed QZ signer'
+apk = output / ('artifacts/x22i-' + info['variant'] + '-arm64.apk')
 info['apk_sha256'] = hashlib.sha256(apk.read_bytes()).hexdigest()
 info['apk_bytes'] = apk.stat().st_size
 info['build_recipe_revision'] = subprocess.check_output(['git', '-C', str(scripts), 'rev-parse', 'HEAD'], text=True).strip()
