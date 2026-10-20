@@ -11,11 +11,9 @@ class SignalHandler {
         SIG_NOOP = 1, // The application is requested to do a no-op (only a target that platform-specific signals map to
                       // when they can't be raised anyway)
         SIG_INT = 2,  // Control+C (should terminate but consider that it's a normal way to do so; can delay a bit)
-        SIG_TERM = 4, // Control+Break (should terminate now without regarding the consequences)
-        SIG_CLOSE = 8, // Container window closed (should perform normal termination, like Ctrl^C) [Windows only; on
-                       // Linux it maps to SIG_TERM]
-        SIG_RELOAD =
-            16, // Reload the configuration [Linux only, physical signal is SIGHUP; on Windows it maps to SIG_NOOP]
+        SIG_TERM = 4, // Termination requested
+        SIG_CLOSE = 8, // Maps to SIG_TERM
+        SIG_RELOAD = 16, // Reserved; no handler registered
         DEFAULT_SIGNALS = SIG_INT | SIG_TERM | SIG_CLOSE,
     };
     static const int numSignals = 6;

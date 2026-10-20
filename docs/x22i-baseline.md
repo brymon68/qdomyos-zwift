@@ -8,7 +8,9 @@ The source was aligned with the already tested NordicTrack gRPC revision `8b78e9
 
 - Only the X22i equipment driver is built or present under the equipment directories. DIRCON remains as a Zwift transport. Bike, rower, elliptical, other treadmill and accessory drivers, discovery/factory selection, and their tests are deleted.
 - The app connects directly to local iFIT at `localhost`. This hostname is required for TLS verification; the numeric loopback address is rejected by the console's certificate. The dashboard shows speed, incline, pace, distance, elapsed time and heart rate, with Start/Pause/Stop and manual speed/incline controls.
-- UI settings are limited to 56 X22i connection, Zwift terrain, motion and calibration keys. General settings, user profiles, personal measurements, tile customization, fitness account integrations and email uploads are deleted. Local FIT/GPX files and workout editing remain.
+- UI settings are limited to X22i connection, Zwift terrain, motion and calibration. General settings, user profiles, personal measurements, tile customization, fitness account integrations and email uploads are deleted.
+- Local workout programs, editing, recording, history, charts, FIT/GPX import and export, and their examples and tests are deleted. The floating overlay retains live treadmill metrics and manual controls. iFIT's workout-state protocol remains because it controls and monitors the physical treadmill.
+- Windows and ESP32 support, legacy platform packaging, Bluetooth capture samples and simulator helpers are deleted. Android ARM64 is the supported application target.
 - Locale is fixed to US English. Translation catalogs, translator loading, web translation service, language resources and translation maintenance jobs are deleted.
 - Licensing enforcement, purchasing, fan features, ANT+, power measurement, FTP/energy calculations and related dependencies are deleted. GPL licensing and attribution remain.
 - Zwift authentication and terrain polling, local iFIT gRPC, TLS/protobuf assets, incline calibration and limits, manual controls, Bluetooth and DIRCON remain. Existing saved settings are preserved; obsolete keys are inert.
@@ -17,7 +19,7 @@ Package renaming and physical console validation remain in [issue #1](https://gi
 
 ## Build from this fork
 
-The supported target is Android ARM64 (`arm64-v8a`), version **2.21.5 / 1403**. Install Qt Android **5.15.0** with Charts and Network Auth, Java **17**, Android platform **35**, build tools **35.0.0**, NDK **21.4.7075529**, and host tools `git`, `make`, `python3`, and `rsync`. Gradle **8.13** is supplied by the repository. Use a dedicated Qt installation: the recipe installs the fork's Qt JARs and Qt HTTP server into it.
+The supported target is Android ARM64 (`arm64-v8a`), version **2.21.5 / 1403**. Install Qt Android **5.15.0** with Network Auth, Java **17**, Android platform **35**, build tools **35.0.0**, NDK **21.4.7075529**, and host tools `git`, `make`, `python3`, and `rsync`. Gradle **8.13** is supplied by the repository. Use a dedicated Qt installation: the recipe installs the fork's Qt JARs and Qt HTTP server into it.
 
 On the configured workstation, activate the existing toolchain with:
 
@@ -49,7 +51,7 @@ gh workflow run x22i-baseline.yml --repo brymon68/qdomyos-zwift --ref "$(git bra
 gh run download RUN_ID --repo brymon68/qdomyos-zwift --name x22i-test-arm64 --dir /LOCAL/ARTIFACTS
 ```
 
-CI runs the Python checks and a native QtCore test of settings preservation before building. Never upload personal settings, credentials, or backups to CI.
+CI runs the Python packaging and configuration checks, native QtCore tests of settings preservation and treadmill protocol behavior, and the standalone C++17 Zwift terrain-incline test before building. Never upload personal settings, credentials, or backups to CI.
 
 ### Docker toolchain
 
@@ -73,13 +75,13 @@ Initialize submodules and commit changes in the mounted fork first. `/LOCAL/BUIL
 
 `artifacts/` contains the APK, `build-info.json`, signing report, package badging, merged manifest, GPL license, and (for `test`) the bundled defaults header. `source_revision` and `build_recipe_revision` identify the same fork commit. Provenance also records dependency revisions, toolchain versions, APK hash/size, and removed-feature flags. No source patch is required to reconstruct the application.
 
-The build verifies ARM64 Qt/OpenSSL/C++ payloads, QML resources, gRPC assets, package/component/provider identities, and removed-code markers in the native app and all DEX files. APK signatures are verified separately. These checks establish packaging and source removal; they do not establish runtime connectivity or physical incline behavior.
+The build verifies ARM64 Qt/OpenSSL/C++ payloads, QML resources, gRPC assets, package/component/provider identities, and removed-code markers in the native app and all DEX files. The removal checks reject workout editor/history APIs and orphan Android file, shortcut, screen-capture, ADB and USB helper classes while permitting the retained iFIT control protocol. APK signatures are verified separately. These checks establish packaging and source removal; they do not establish runtime connectivity or physical incline behavior.
 
 ANT+ drivers, services, SDKs, and controls have been deleted. The X22i no longer reads or estimates watts, offers power targets or FTP zones, or records power-derived metrics. Bluetooth/DIRCON treadmill payloads omit watts and reject target-power commands; speed and terrain-incline commands remain supported.
 
 ## Settings and installation
 
-[`src/x22i_defaults.h`](../src/x22i_defaults.h) supplies 57 reviewed nonsecret settings in test builds before normal settings reads and QML startup. It only writes missing keys. Saved custom values, explicit false/zero/empty values, and private credentials take precedence. It preserves miles, local iFIT, Bluetooth/DIRCON, Zwift auto-incline, gain/calibration, the 0.5% incline step, three-second delay, bounds, and the 31-entry incline lookup table. The general Reset Settings and profile import/export actions are removed.
+[`src/x22i_defaults.h`](../src/x22i_defaults.h) supplies reviewed nonsecret settings in test builds before normal settings reads and QML startup. It only writes missing keys. Saved custom values, explicit false/zero/empty values, and private credentials take precedence. It preserves miles, local iFIT, Bluetooth/DIRCON, Zwift auto-incline, gain/calibration, the 0.5% incline step, three-second delay, bounds, and the 31-entry incline lookup table. The general Reset Settings and profile import/export actions are removed.
 
 Upgrade X22i Test with the same package and persistent signer. Do not uninstall to work around an update failure or rotate the signing key casually. Fresh installs need private Zwift authentication; credentials are never bundled.
 

@@ -16,5 +16,9 @@
   "treadmill_power_measurement": false,
   "equipment": "NordicTrack X22i",
   "locale": "en_US",
-  "user_profiles": false
+  "user_profiles": false,
+  "workout_programs": false,
+  "activity_recording": false,
+  "esp32_support": false,
+  "windows_support": false
 }

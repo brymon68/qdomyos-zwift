@@ -3,8 +3,6 @@ import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.12
 import QtGraphicalEffects 1.12
 import QtQuick.Window 2.12
-import Qt.labs.platform 1.1
-import QtMultimedia 5.15
 
 HomeForm {
     objectName: "home"
@@ -20,107 +18,25 @@ HomeForm {
     }
     signal start_clicked;
     signal stop_clicked;
-    signal lap_clicked;
     signal plus_clicked(string name)
     signal minus_clicked(string name)
     signal largeButton_clicked(string name)
 
-    SoundEffect {
-        id: trainingProgramSegmentSound
-        source: "qrc:/sounds/training-program-segment.wav"
-        volume: 0.9
-    }
-
-    Connections {
-        target: rootItem
-        onTrainingProgramIntervalSoundRequested: trainingProgramSegmentSound.play()
-    }
-
-    Popup {
-        id: popupLap
-         parent: Overlay.overlay
-
-         x: Math.round((parent.width - width) / 2)
-         y: Math.round((parent.height - height) / 2)
-         width: 380
-         height: 60
-         modal: true
-         focus: true
-         palette.text: "white"
-         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-         enter: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-         }
-         exit: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-         }
-         Column {
-             anchors.horizontalCenter: parent.horizontalCenter
-         Label {
-             anchors.horizontalCenter: parent.horizontalCenter
-             text: qsTr("New lap started!")
+    Timer {
+        id: checkStopFromWeb
+        interval: 200
+        running: true
+        repeat: true
+        onTriggered: {
+            if (rootItem.stopRequested) {
+                rootItem.stopRequested = false;
+                stop_clicked();
             }
         }
     }
 
-    MessageDialog {
-        id: stopConfirmationDialog
-        text: qsTr("Stop Workout")
-        informativeText: qsTr("Do you really want to stop the current workout?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: {
-            close();
-            inner_stop();
-        }
-        onNoClicked: close()
-    }
-
-    Timer {
-        id: popupLapAutoClose
-        interval: 2000; running: false; repeat: false
-        onTriggered: popupLap.close();
-    }
-
-    Timer {
-        id: checkStartStopFromWeb
-        interval: 200; running: true; repeat: true
-        onTriggered: {if(rootItem.stopRequested) {rootItem.stopRequested = false; inner_stop(); }}
-    }
-
-    function inner_stop() {
-        stop_clicked();
-        rootItem.save_screenshot();
-        if(CHARTJS)
-            stackView.push("ChartJsTest.qml")
-        else
-            stackView.push("ChartsEndWorkout.qml")
-    }
-
-    start.onClicked: { start_clicked(); }
-    stop.onClicked: {
-        if (rootItem.confirmStopEnabled()) {
-            stopConfirmationDialog.open();
-        } else {
-            inner_stop();
-        }
-    }
-    lap.onClicked: { lap_clicked(); popupLap.open(); popupLapAutoClose.running = true; }
-
-    Component.onCompleted: {
-        console.log("home.qml completed");
-    }
-
-    Connections {
-        target: rootItem
-        function onCloseCompleteScreenRequested() {
-            console.log("Closing complete screen as requested");
-            if (stackView.depth > 1) {
-                stackView.pop();
-            }
-        }
-    }
+    start.onClicked: start_clicked()
+    stop.onClicked: stop_clicked()
 
     GridView {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -338,117 +254,6 @@ HomeForm {
         }
     }
 
-    footer: Item {
-        id: footerItem
-        width: parent.width
-        height: footerHeight
-        property real footerHeight: (rootItem.chartFooterVisible ? parent.height / 4 : parent.height / 2)
-        property real minHeight: parent.height / 4
-        property real maxHeight: parent.height * 3 / 4
-        anchors.bottom: parent.bottom
-        clip: true
-        visible: rootItem.chartFooterVisible || rootItem.videoVisible
 
-        Rectangle {
-            id: dragHandle
-            width: parent.width / 5
-            height: 10
-            color: "#9C27B0"
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            visible: rootItem.chartFooterVisible || rootItem.videoVisible
-
-            Canvas {
-                anchors.fill: parent
-                onPaint: {
-                    var ctx = getContext("2d");
-                    ctx.strokeStyle = "#FFFFFF";
-                    ctx.lineWidth = 2;
-
-                    for (var i = 0; i < 3; i++) {
-                        ctx.beginPath();
-                        ctx.moveTo(0, (i + 1) * parent.height / 4);
-                        ctx.lineTo(parent.width, (i + 1) * parent.height / 4);
-                        ctx.stroke();
-                    }
-                }
-            }
-
-            MouseArea {
-                id: dragArea
-                anchors.fill: parent
-                cursorShape: Qt.SizeVerCursor
-
-                property real startY: 0
-                property real startHeight: 0
-
-                onPressed: {
-                    startY = mouseY
-                    startHeight = footerItem.height
-                }
-
-                onMouseYChanged: {
-                    if (pressed) {
-                        var newHeight = Math.max(footerItem.minHeight, Math.min(footerItem.maxHeight, startHeight + startY - mouseY))
-                        footerItem.footerHeight = newHeight
-                    }
-                }
-            }
-        }
-
-        Rectangle {
-            id: chartFooterRectangle
-            visible: rootItem.chartFooterVisible
-            anchors.top: dragHandle.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            ChartFooter {
-                anchors.fill: parent
-                visible: rootItem.chartFooterVisible
-            }
-        }
-
-        Rectangle {
-            objectName: "footerrectangle"
-            visible: rootItem.videoVisible
-            anchors.top: dragHandle.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-
-            onVisibleChanged: {
-                if(visible === true) {
-                    console.log("mediaPlayer onCompleted: " + rootItem.videoPath)
-                    console.log("videoRate: " + rootItem.videoRate)
-                    videoPlaybackHalf.source = rootItem.videoPath
-                    videoPlaybackHalf.seek(rootItem.videoPosition)
-                    videoPlaybackHalf.play()
-                    videoPlaybackHalf.muted = rootItem.currentCoordinateValid
-                } else {
-                    videoPlaybackHalf.stop()
-                }
-            }
-
-            MediaPlayer {
-                id: videoPlaybackHalf
-                objectName: "videoplaybackhalf"
-                autoPlay: false
-                playbackRate: rootItem.videoRate
-
-                onError: {
-                    if (videoPlaybackHalf.NoError !== error) {
-                        console.log("[qmlvideo] VideoItem.onError error " + error + " errorString " + errorString)
-                    }
-                }
-            }
-
-            VideoOutput {
-                id: videoPlayer
-                anchors.fill: parent
-                source: videoPlaybackHalf
-            }
-        }
-    }
 
 }

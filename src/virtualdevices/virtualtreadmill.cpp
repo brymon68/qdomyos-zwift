@@ -5,9 +5,9 @@
 #include <chrono>
 
 #ifdef Q_OS_ANDROID
-#include "androidactivityresultreceiver.h"
 #include "keepawakehelper.h"
 #include <QAndroidJniObject>
+#include <QtAndroid>
 #endif
 
 using namespace std::chrono_literals;
@@ -43,11 +43,7 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
         //! [Advertising Data]
         advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
         advertisingData.setIncludePowerLevel(true);
-#if defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)
-        advertisingData.setLocalName(QStringLiteral("KICKR RUN"));
-#else            
         advertisingData.setLocalName(QStringLiteral("DomyosBridge"));
-#endif
         QList<QBluetoothUuid> services;
 
         // Add Wahoo Run Service UUID
@@ -221,48 +217,6 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
                serviceDataFTMS.addCharacteristic(charDataFIT2);
            }
 
-#if defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)
-        qDebug() << "Raspberry workaround for sending metrics to the peloton app";
-        QLowEnergyCharacteristicData charDataFIT;
-        charDataFIT.setUuid((QBluetoothUuid::CharacteristicType)0x2A00); 
-        QByteArray valueFIT;
-        valueFIT.append((char)'K'); // average speed, cadence and resistance level supported
-        valueFIT.append((char)'I'); // heart rate and elapsed time
-        valueFIT.append((char)'C');
-        valueFIT.append((char)'K');
-        valueFIT.append((char)'R');
-        valueFIT.append((char)' '); // indoor simulation, wheel and spin down supported
-        valueFIT.append((char)'R');
-        valueFIT.append((char)'U');
-        valueFIT.append((char)'N');
-        valueFIT.append((char)0x00);
-        charDataFIT.setValue(valueFIT);
-        charDataFIT.setProperties(QLowEnergyCharacteristic::Read);
-
-        QLowEnergyCharacteristicData charDataFIT2;
-        charDataFIT2.setUuid((QBluetoothUuid::CharacteristicType)0x2A01);
-        QByteArray valueFIT2;
-        valueFIT2.append((char)0x00);
-        charDataFIT2.setValue(valueFIT2);
-        charDataFIT2.setProperties(QLowEnergyCharacteristic::Read);
-
-        genericAccessServerData.setUuid((QBluetoothUuid::ServiceClassUuid)0x1800);
-        genericAccessServerData.addCharacteristic(charDataFIT);
-        genericAccessServerData.addCharacteristic(charDataFIT2);
-
-        QLowEnergyCharacteristicData charDataFIT3;
-        charDataFIT3.setUuid((QBluetoothUuid::CharacteristicType)0x2A05);
-        charDataFIT3.setProperties(QLowEnergyCharacteristic::Indicate);
-        QByteArray descriptor33;
-        descriptor33.append((char)0x02);
-        descriptor33.append((char)0x00);
-        const QLowEnergyDescriptorData clientConfig43(QBluetoothUuid::ClientCharacteristicConfiguration,
-                                                        descriptor33);
-        charDataFIT3.addDescriptor(clientConfig43);
-
-        genericAttributeServiceData.setUuid((QBluetoothUuid::ServiceClassUuid)0x1801);
-        genericAttributeServiceData.addCharacteristic(charDataFIT3);
-#endif              
 
            if (RSCEnable()) {
                QLowEnergyCharacteristicData charData;
@@ -341,10 +295,6 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
         serviceWahoo = leController->addService(serviceDataWahoo);
         QThread::msleep(100);
 
-#if defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)        
-        genericAccessServer = leController->addService(genericAccessServerData);
-        genericAttributeService = leController->addService(genericAttributeServiceData);
-#endif          
         
         if (noHeartService == false) {
             serviceHR = leController->addService(serviceDataHR);
@@ -359,9 +309,7 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
                              &virtualtreadmill::wahooCharacteristicChanged);
 
         QLowEnergyAdvertisingParameters pars = QLowEnergyAdvertisingParameters();
-#if !defined(Q_OS_LINUX) || defined(Q_OS_ANDROID)
             pars.setInterval(100, 100);
-#endif
 
 #ifdef Q_OS_ANDROID
         QAndroidJniObject::callStaticMethod<void>("org/cagnulen/qdomyoszwift/BleAdvertiser",
@@ -369,11 +317,6 @@ virtualtreadmill::virtualtreadmill(bluetoothdevice *t, bool noHeartService) {
                                                  "(Landroid/content/Context;)V",
                                                  QtAndroid::androidContext().object());
 
-#elif defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)
-        pars.setInterval(30, 50);
-        leController->startAdvertising(pars, advertisingData);
-#else
-        leController->startAdvertising(pars, advertisingData, advertisingData);
 #endif
         //! [Start Advertising]
 
@@ -459,10 +402,6 @@ void virtualtreadmill::reconnect() {
     serviceWahoo = leController->addService(serviceDataWahoo);
     QThread::msleep(100);
 
-#if defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)
-    genericAccessServer = leController->addService(genericAccessServerData);
-    genericAttributeService = leController->addService(genericAttributeServiceData);
-#endif      
     
     if (noHeartService == false) {
         serviceHR = leController->addService(serviceDataHR);
@@ -477,8 +416,6 @@ void virtualtreadmill::reconnect() {
                                                  "startAdvertisingTreadmill",
                                                  "(Landroid/content/Context;)V",
                                                  QtAndroid::androidContext().object());
-#else
-        leController->startAdvertising(pars, advertisingData, advertisingData);
 #endif
     }
 }

@@ -120,8 +120,5 @@ You may still use another device for Zwift, Rouvy, or another training applicati
 
 1. Use the **FitPro USB treadmill** build (`android-debug-fitpro-treadmill.apk`) on the console. Keep **iFIT fully stopped** so it does not compete for the USB-HID hardware; an active iFIT subscription is not needed for this direct-hardware method.
 2. Start QZ on the treadmill console, confirm that treadmill telemetry updates, and test a **small manual speed and incline adjustment** while remaining able to stop the treadmill safely.
-3. To create an interval session on the same console, open **QZ → Workout Editor**, choose **Treadmill**, and enter the desired speed and incline steps. QZ's editor supports treadmill intervals and **Save & Start**; see the [Workout Editor guide](../workout-editor.md).
 
-The **confirmed T9 test covers manual speed and incline commands**, not yet a complete automatically controlled interval workout. Verify short, gentle intervals on the specific console before relying on programmed transitions.
-
-A separate iPhone running QZ is **not required** for this local-console workflow. Remote creation/start of FitPro workouts **from another QZ instance over Wi-Fi** is a different workflow and should not be assumed to work without a separately tested client connection. The gRPC build is likewise a different mode: it needs a newer iFIT 3D interface and iFIT running, whereas FitPro USB does not.
+A separate iPhone running QZ is **not required** for this local-console workflow. The gRPC build is likewise a different mode: it needs a newer iFIT 3D interface and iFIT running, whereas FitPro USB does not.

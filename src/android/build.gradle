@@ -7,7 +7,6 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.2'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.20'
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.9.5'
     }
 }
@@ -15,14 +14,11 @@ buildscript {
 repositories {
     google()
     mavenCentral()
-    maven { url = 'https://jitpack.io' }
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'com.google.protobuf'
 
-def amazon = System.getenv('AMAZON')
 def x22iVariant = System.getenv('X22I_VARIANT') ?: 'test'
 if (!(x22iVariant in ['test', 'baseline'])) {
     throw new GradleException('X22I_VARIANT must be test or baseline')
@@ -30,7 +26,6 @@ if (!(x22iVariant in ['test', 'baseline'])) {
 def x22iTest = x22iVariant == 'test'
 def androidCompileSdk = (project.findProperty('androidCompileSdkVersion') ?: '35').toString()
 def qtAndroidDir = project.findProperty('qt5AndroidDir') ?: System.getenv('QT_ANDROID_DIR')
-println(amazon)
 def qtAndroidBaseDir = qtAndroidDir ? qtAndroidDir.toString().replaceAll('/src/android/java/?$', '') : null
 def qtAndroidJavaRootDir = qtAndroidDir?.toString()?.endsWith('/src/android/java') ? qtAndroidDir.toString() : (qtAndroidBaseDir ? qtAndroidBaseDir + '/src/android/java' : null)
 def qtAndroidJarDir = qtAndroidBaseDir ? qtAndroidBaseDir + '/jar' : null
@@ -57,9 +52,6 @@ dependencies {
     }
 
     implementation "androidx.core:core:1.12.0"
-    implementation "androidx.activity:activity-ktx:1.9.3"
-    implementation "androidx.core:core-ktx:1.12.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
     
     // FIXED: Una sola versione di protobuf-javalite
     implementation 'com.google.protobuf:protobuf-javalite:3.25.3'
@@ -69,28 +61,10 @@ dependencies {
     implementation 'io.grpc:grpc-stub:1.63.0'
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
 		
-    if(amazon == "1") {
-        // amazon app store
-        implementation 'com.google.mlkit:text-recognition:16.0.0-beta6'
-    } else {
-        // google play store
-        implementation 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.2'
-    }
-
     def appcompat_version = "1.3.1"
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    implementation files('libs/usb-serial-for-android-3.8.1.aar')
-
-    implementation 'com.jakewharton.timber:timber:5.0.1'
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.60'
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
-
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit:2.1.20'
-    testImplementation 'org.json:json:20231013'
 }
 
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -155,15 +129,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = [qtAndroidJavaSrcDir, 'src', 'java']
-            kotlin.srcDirs = ['src', 'java']
             aidl.srcDirs = [qtAndroidJavaSrcDir, 'src', 'aidl']
             res.srcDirs = [qtAndroidJavaResDir, 'res']
             resources.srcDirs = ['resources']
@@ -176,10 +145,6 @@ android {
         }
         release {
             java.srcDirs += ["$buildDir/generated/aidl_source_output_dir/release/out"]
-        }
-        test {
-            java.srcDirs = ['tests']
-            kotlin.srcDirs = ['tests']
         }
     }
 
@@ -248,25 +213,7 @@ android {
         pickFirst '**/META-INF/services/**'
         pickFirst '**/kotlin/**'
     }
-    tasks.all { task ->
-        if (task.name == 'compileDebugJavaWithJavac' && amazon == "1") {
-            task.dependsOn copyArm64Directory
-            task.dependsOn copyArm32Directory
-        }
-    }
-
     if (!qtAndroidDir) {
         throw new GradleException("qt5AndroidDir is not set. Install Qt for Android and set qt5AndroidDir in gradle.properties or via the QT_ANDROID_DIR environment variable.")
     }
-}
-task copyArm64Directory(type: Copy) {
-    from "libs/arm64-v8a/"
-    include '*arm64-v8a.so'
-    into "libs/armeabi-v7a/"
-}
-
-task copyArm32Directory(type: Copy) {
-    from "libs/armeabi-v7a/"
-    include '*armeabi-v7a.so'
-    into "libs/arm64-v8a/"
 }

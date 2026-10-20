@@ -41,15 +41,6 @@ class QZSettings {
     static const QString miles_unit;
     static constexpr bool default_miles_unit = true;
 
-    /**
-     *@brief value for peloton trainrow.forcespeed.
-     */
-    static const QString treadmill_force_speed;
-    static constexpr bool default_treadmill_force_speed = false;
-
-    static const QString treadmill_force_running_activity;
-    static constexpr bool default_treadmill_force_running_activity = false;
-
     static const QString pause_on_start_treadmill;
     static constexpr bool default_pause_on_start_treadmill = false;
 
@@ -110,24 +101,6 @@ class QZSettings {
      */
     static const QString app_opening;
     static constexpr int default_app_opening = 0;
-
-    /**
-     * @brief Enable text to speech.
-     */
-    static const QString tts_enabled;
-    static constexpr bool default_tts_enabled = false;
-
-    static const QString trainprogram_stop_at_end;
-    static constexpr bool default_trainprogram_stop_at_end = false;
-
-    static const QString trainprogram_clipboard_workout_enabled;
-    static constexpr bool default_trainprogram_clipboard_workout_enabled = false;
-
-    static const QString trainprogram_sound_on_segment;
-    static constexpr bool default_trainprogram_sound_on_segment = false;
-
-    static const QString gpx_loop;
-    static constexpr bool default_gpx_loop = false;
 
     static const QString floating_width;
     static constexpr int default_floating_width = 370;
@@ -204,26 +177,11 @@ class QZSettings {
     static const QString treadmill_inclination_override_150;
     static constexpr double default_treadmill_inclination_override_150 = 15.0;
 
-    static const QString treadmill_direct_distance;
-    static constexpr bool default_treadmill_direct_distance = false;
-
     static const QString treadmill_inclination_ovveride_gain;
     static constexpr double default_treadmill_inclination_ovveride_gain = 0.01;
 
     static const QString treadmill_inclination_ovveride_offset;
     static constexpr double default_treadmill_inclination_ovveride_offset = 0.1;
-
-    static const QString zwift_ocr;
-    static constexpr bool default_zwift_ocr = false;
-
-    static const QString fit_file_saved_on_quit;
-    static constexpr bool default_fit_file_saved_on_quit = false;
-
-    static const QString zwift_workout_ocr;
-    static constexpr bool default_zwift_workout_ocr = false;
-
-    static const QString zwift_ocr_climb_portal;
-    static constexpr bool default_zwift_ocr_climb_portal = false;
 
     static const QString zwift_username;
     static const QString default_zwift_username;
@@ -258,32 +216,8 @@ class QZSettings {
     static const QString dircon_id;
     static constexpr int default_dircon_id = 0;
 
-    static const QString skipLocationServicesDialog;
-    static constexpr bool default_skipLocationServicesDialog = false;
-
     static const QString min_inclination;
     static constexpr double default_min_inclination = -999.0;
-
-    static const QString mqtt_host;
-    static const QString default_mqtt_host;
-
-    static const QString mqtt_port;
-    static constexpr int default_mqtt_port = 1883;
-
-    static const QString mqtt_username;
-    static const QString default_mqtt_username;
-
-    static const QString mqtt_password;
-    static const QString default_mqtt_password;
-
-    static const QString mqtt_deviceid;
-    static const QString default_mqtt_deviceid;
-
-    static const QString OSC_ip;
-    static const QString default_OSC_ip;
-
-    static const QString OSC_port;
-    static constexpr int default_OSC_port = 9000;
 
     static const QString real_inclination_to_virtual_treamill_bridge;
     static constexpr bool default_real_inclination_to_virtual_treamill_bridge = false;
@@ -293,18 +227,6 @@ class QZSettings {
      */
     static const QString floatingwindow_type;
     static constexpr int default_floatingwindow_type = 0;
-
-    /**
-     * @brief Show a confirmation dialog before stopping a workout from the UI.
-     */
-    static const QString confirm_stop_workout;
-    static constexpr bool default_confirm_stop_workout = false;
-
-    /**
-     * @brief Automatically trigger a lap when completing each workout segment/row in TrainProgram
-     */
-    static const QString trainprogram_auto_lap_on_segment;
-    static constexpr bool default_trainprogram_auto_lap_on_segment = false;
 
     /**
      * @brief Enable keyboard shortcuts
@@ -321,9 +243,6 @@ class QZSettings {
     static const QString default_shortcut_inclination_plus;
     static const QString shortcut_inclination_minus;
     static const QString default_shortcut_inclination_minus;
-
-    static const QString shortcut_lap;
-    static const QString default_shortcut_lap;
 
     static const QString shortcut_start_stop;
     static const QString default_shortcut_start_stop;

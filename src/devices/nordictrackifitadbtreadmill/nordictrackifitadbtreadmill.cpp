@@ -229,7 +229,6 @@ void nordictrackifitadbtreadmill::update() {
                         // If starting from IDLE and QZ is on complete screen (stopped), close it first
                         if (previousState == 1 && qzPausedOrStopped) {
                             emit debug("Closing complete screen before starting new workout");
-                            emit homeform::singleton()->closeCompleteScreenRequested();
                         }
 
                         // Only call Start() if QZ is not already running (to avoid toggling pause)

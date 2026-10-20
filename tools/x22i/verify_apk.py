@@ -15,8 +15,7 @@ import zipfile
 
 QT_MODULES = (
     "Core", "Gui", "Qml", "Quick", "QuickControls2", "Widgets", "Bluetooth",
-    "Network", "Charts", "HttpServer", "Xml", "Positioning", "NetworkAuth",
-    "WebSockets", "Sql",
+    "Network", "HttpServer", "NetworkAuth", "WebSockets",
 )
 REQUIRED_FILES = (
     "lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so",
@@ -56,6 +55,10 @@ def verify_apk(path, no_fan=False, no_purchasing=False):
             checks.append(("Removed equipment, localization and profiles", (
                 "kingsmithr2treadmill", "kineticbike", "domyosbike", "GarminConnect",
                 "WebTranslation", "cryptoKeySettingsProfiles", "profile_open_clicked")))
+            checks.append(("Removed workout programs, recording and history", (
+                "WorkoutModel", "FitDatabaseProcessor", "trainprogram_open_clicked",
+                "trainprogram_save_clicked", "previewWorkoutDescription", "previewSessionOnChart",
+                "preview_workout_points", "clipboard_accept_workout_prompt")))
             if no_fan:
                 checks.append(("Fan support", (
                     "changeFanSpeed", "fanSpeedChanged", "fitmetria_fanfit", "wahookickrheadwind",
@@ -69,6 +72,10 @@ def verify_apk(path, no_fan=False, no_purchasing=False):
         markers = ["com/dsi/ant/", "org/cagnulen/qdomyoszwift/ChannelService",
                    "WattsServiceGrpc", "ConstantWattsServiceGrpc", "getCurrentWatts",
                    "ResistanceServiceGrpc", "StrokesServiceGrpc", "PaceServiceGrpc", "RpmServiceGrpc"]
+        markers.extend("org/cagnulen/qdomyoszwift/" + name for name in (
+            "ContentHelper", "Shortcuts", "ScreenCaptureService", "QZAdbRemote",
+            "CSafeRowerUSBHID", "Usbserial",
+        ))
         if no_fan:
             markers.extend(("FanStateService", "setFanSpeed", "getCurrentFanSpeed"))
         if no_purchasing:

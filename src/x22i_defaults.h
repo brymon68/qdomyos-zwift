@@ -23,7 +23,6 @@ inline void applyX22iDefaults(QSettings &settings) {
         {QStringLiteral("continuous_moving"), false},
         {QStringLiteral("speed_gain"), 1.0},
         {QStringLiteral("speed_offset"), 0.0},
-        {QStringLiteral("treadmill_force_speed"), false},
         {QStringLiteral("treadmill_inclination_ovveride_gain"), 0.01},
         {QStringLiteral("treadmill_inclination_ovveride_offset"), 0.1},
         {QStringLiteral("treadmill_step_incline"), 0.5},
@@ -32,10 +31,6 @@ inline void applyX22iDefaults(QSettings &settings) {
         // Preserve the saved value; 100 is not a physical hardware limit.
         {QStringLiteral("treadmill_incline_max"), 100.0},
         {QStringLiteral("min_inclination"), -999.0},
-        {QStringLiteral("trainprogram_incline_min"), 0.0},
-        {QStringLiteral("trainprogram_incline_max"), 15.0},
-        {QStringLiteral("trainprogram_speed_min"), 8.0},
-        {QStringLiteral("trainprogram_speed_max"), 16.0},
         {QStringLiteral("treadmill_inclination_override_0"), 0.0},
         {QStringLiteral("treadmill_inclination_override_05"), 0.5},
         {QStringLiteral("treadmill_inclination_override_10"), 1.0},

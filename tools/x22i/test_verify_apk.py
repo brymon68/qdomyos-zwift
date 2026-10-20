@@ -16,9 +16,8 @@ LIBRARIES = (
     "libqdomyos-zwift_arm64-v8a.so", "libc++_shared.so", "libcrypto_1_1.so", "libssl_1_1.so",
     "libQt5Core_arm64-v8a.so", "libQt5Gui_arm64-v8a.so", "libQt5Qml_arm64-v8a.so",
     "libQt5Quick_arm64-v8a.so", "libQt5QuickControls2_arm64-v8a.so", "libQt5Widgets_arm64-v8a.so",
-    "libQt5Bluetooth_arm64-v8a.so", "libQt5Network_arm64-v8a.so", "libQt5Charts_arm64-v8a.so",
-    "libQt5HttpServer_arm64-v8a.so", "libQt5Xml_arm64-v8a.so", "libQt5Positioning_arm64-v8a.so",
-    "libQt5NetworkAuth_arm64-v8a.so", "libQt5WebSockets_arm64-v8a.so", "libQt5Sql_arm64-v8a.so",
+    "libQt5Bluetooth_arm64-v8a.so", "libQt5Network_arm64-v8a.so",
+    "libQt5HttpServer_arm64-v8a.so", "libQt5NetworkAuth_arm64-v8a.so", "libQt5WebSockets_arm64-v8a.so",
 )
 
 
@@ -127,6 +126,36 @@ class VerifyApkTests(unittest.TestCase):
                     result = self.run_verifier()
                     self.assertEqual(result.returncode, 1)
                     self.assertIn(marker, result.stderr)
+
+    def test_removed_workout_ui_and_history_are_rejected(self):
+        for marker in ("WorkoutModel", "FitDatabaseProcessor", "trainprogram_open_clicked",
+                       "trainprogram_save_clicked", "previewWorkoutDescription", "previewSessionOnChart",
+                       "preview_workout_points", "clipboard_accept_workout_prompt"):
+            for encoding in ("utf-8", "utf-16-le"):
+                with self.subTest(marker=marker, encoding=encoding):
+                    self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = marker.encode(encoding)
+                    result = self.run_verifier()
+                    self.assertEqual(result.returncode, 1)
+                    self.assertIn("Removed workout programs, recording and history remains", result.stderr)
+                    self.assertIn(marker, result.stderr)
+
+    def test_orphan_android_classes_are_rejected_in_secondary_dex(self):
+        for name in ("ContentHelper", "Shortcuts", "ScreenCaptureService", "QZAdbRemote",
+                     "CSafeRowerUSBHID", "Usbserial"):
+            with self.subTest(java_class=name):
+                descriptor = "Lorg/cagnulen/qdomyoszwift/" + name + ";"
+                self.entries["classes3.dex"] = descriptor.encode()
+                result = self.run_verifier()
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("classes3.dex", result.stderr)
+                self.assertIn(name, result.stderr)
+
+    def test_required_ifit_control_and_zwift_metadata_are_allowed(self):
+        payload = b"WorkoutServiceGrpc\x00WorkoutState\x00ZwiftWorkoutMetadata\x00"
+        self.entries["lib/arm64-v8a/libqdomyos-zwift_arm64-v8a.so"] = payload
+        self.entries["classes.dex"] = payload + b"Lcom/ifit/glassos/workout/WorkoutServiceGrpc;"
+        result = self.run_verifier("--no-fan", "--no-purchasing")
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_missing_qt_or_runtime_library(self):
         for name in ("libQt5QuickControls2_arm64-v8a.so", "libQt5HttpServer_arm64-v8a.so", "libc++_shared.so", "libssl_1_1.so"):

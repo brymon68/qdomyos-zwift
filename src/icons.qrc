@@ -1,40 +1,20 @@
 <RCC>
     <qresource prefix="/icons">
         <file>icons/bluetooth-icon.png</file>
-        <file>icons/fan.png</file>
         <file>icons/speed.png</file>
         <file>icons/inclination.png</file>
         <file>icons/heart_red.png</file>
-        <file>icons/watt.png</file>
         <file>icons/odometer.png</file>
-        <file>icons/elevationgain.png</file>
-        <file>icons/kcal.png</file>
-        <file>icons/weight.png</file>
         <file>icons/start.png</file>
         <file>icons/stop.png</file>
-        <file>icons/cadence.png</file>
         <file>icons/resistance.png</file>
         <file>icons/pace.png</file>
-        <file>icons/chart.png</file>
         <file>icons/icon.png</file>
-        <file>icons/signal-0.png</file>
         <file>icons/signal-1.png</file>
         <file>icons/signal-2.png</file>
         <file>icons/signal-3.png</file>
-        <file>icons/joul.png</file>
         <file>icons/clock.png</file>
         <file>icons/pause.png</file>
-        <file>icons/lap.png</file>
-        <file>icons/tray-arrow-down.png</file>
-        <file>icons/tray-arrow-up.png</file>
-        <file>icons/lock.png</file>
-        <file>icons/unlock.png</file>
-        <file>icons/maps-icon-16.png</file>
-        <file>icons/video.png</file>
         <file>icons/mini-display.png</file>
-        <file>icons/btn_strava_connectwith_orange.png</file>
-        <file>icons/Button_Connect_Rect_DarkMode.png</file>
-        <file>icons/garmin-connect-badge.png</file>
-        <file>icons/intervals-logo-with-name.png</file>
     </qresource>
 </RCC>
