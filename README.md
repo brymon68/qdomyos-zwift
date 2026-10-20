@@ -1,150 +1,29 @@
-# qdomyos-zwift
-Zwift bridge for Treadmills and Bike!
+# X22i Zwift bridge
 
-## QZ is not affiliated with or endorsed by any subscription service or maker of exercise equipment.
+An Android fork of [QDomyos-Zwift](https://github.com/cagnulein/qdomyos-zwift) for a NordicTrack X22i console, with Zwift running on a Mac. It reads treadmill telemetry through the local iFIT gRPC service and preserves automatic incline following Zwift terrain. iFIT remains required.
 
-[<img src="docs/img/google_play.png">](https://play.google.com/store/apps/details?id=org.cagnulen.qdomyoszwift&fbclid=IwAR3CVoYb0scvGf7gb0Y20VFh5Na5fDWwe7VACk-2c45Tm0x5s8sXpIGhGyw)
-[<img src="docs/img/app_store.png">](https://apps.apple.com/app/id1543684531?fbclid=IwAR10H6y3mEgwkTlGJON3e8voYOh2wt3kLFOpFzoIXaYZ_N0y0pDvKxHMUaM)
-<a href="https://www.buymeacoffee.com/cagnulein" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
-<a href="https://hosted.weblate.org/engage/qz/" target="_blank"><img src="https://hosted.weblate.org/widget/qz/svg-badge.svg" alt="Translation status" /></a>
+The application source lives in this repository's `src/`. The Android build compiles this checkout directly. The app connects only to the X22i, uses US English, and shows speed, incline, pace, distance, elapsed time, and heart rate. Other equipment drivers, localization catalogs, user profiles, ANT+, power measurement, and cloud fitness accounts are removed. Zwift authentication remains for terrain incline. Package renaming and console validation remain in [issue #1](https://github.com/brymon68/qdomyos-zwift/issues/1).
 
-**Need help? Check the [QZ FAQ and troubleshooting guides](docs/faq/README.md).**
+## Build
 
-<table>
-<tr>
-  <td>
-<img src="icons/AppScreen/iOS%20Phones%20-%206.5_/screenshot1.jpeg" style="height: 400px !important; box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" >
-    </td>
-  <td>
-<img src="icons/AppScreen/iOS%20Phones%20-%206.5_/screenshot2.jpeg" style="height: 400px !important; box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" >
-    </td>
-  <td>
-<img src="icons/AppScreen/iOS%20Phones%20-%206.5_/screenshot3.jpeg" style="height: 400px !important; box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" >
-    </td>
-  <td>
-<img src="icons/AppScreen/iOS%20Phones%20-%206.5_/screenshot4.jpeg" style="height: 400px !important; box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" >
-    </td>
-  <td>
-<img src="icons/AppScreen/iOS%20Phones%20-%206.5_/screenshot5.jpeg" style="height: 400px !important; box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" >
-    </td>
-  </tr>
-</table>
+Use the **X22i ARM64 builds** GitHub Actions workflow with variant `test`, or build locally with the documented Qt/Android toolchain:
 
-### Features
+```sh
+git submodule update --init --recursive
+# Configure the toolchain and private test signing environment first.
+bash tools/x22i/build_baseline.sh /LOCAL/NEW-BUILD-DIRECTORY
+```
 
-# UI Features
+Builds require committed source and produce an APK plus commit, checksum, manifest, and signing records. See [build and configuration instructions](docs/x22i-baseline.md) for toolchain versions, signing setup, and Docker usage.
 
-|Feature|Bike|Treadmill|Elliptical|Rower|Notes|
-|:---|:---:|:---:|:---:|:---:|---:|
-|Tiles Customization|X|X|X|X|Order and visibility of each tile|
-|Profiles|X|X|X|X|Different user or different fitness device profiles|
-|UI Zoom Customization|X|X|X|X||
+## Configuration and updates
 
-# Peloton Features
+The current app is **X22i Test**, package `org.cagnulen.qdomyoszwift.x22ibaseline`. Update it in place with the same signing key to preserve its configuration. Do not uninstall to resolve an update failure.
 
-|Feature|Bike|Treadmill|Elliptical|Rower|Notes|
-|:---|:---:|:---:|:---:|:---:|---:|
-|Bike metrics on the peloton app|X||X|||
-|Power zone with auto resistance|X|||||
-|Peloton real-time resistance conversion|X||X||with the possibility to customize it|
-|Peloton real-time auto-resistance|X||X||with the possibility to customize it|
-|Peloton auto speed and auto inclination||X|X||with the possibility to customize it|
+The app supplies missing nonsecret X22i settings, including miles and the accepted incline calibration. The treadmill connection uses local iFIT at `127.0.0.1`. Existing saved values take precedence. A fresh install still needs private Zwift authentication. Preserve both Bluetooth and DIRCON until the active Mac connection is established. If speed connects but incline does not follow terrain, verify the saved Zwift authentication and auto-incline configuration first.
 
-# Heart Rate Features
+Keep credentials and configuration backups outside Git and build artifacts. The build never installs or launches the app.
 
-|Feature|Bike|Treadmill|Elliptical|Rower|Notes|
-|:---|:---:|:---:|:---:|:---:|---:|
-|Heart Rate support|X|X|X|X|Apple Watch, ANT+ devices and Bluetooth devices|
-|Heart Rate Zones Customizations|X|X|X|X||
-|Ability to calculate Wattage from HR and Cadence|X||||for the bikes that doesn't have a power sensor|
+## License
 
-# 3rd Apps Compatibility
-
-|Feature|Bike|Treadmill|Elliptical|Rower|Notes|
-|:---|:---:|:---:|:---:|:---:|---:|
-|Zwift Compatibility|X|X|X|X||
-|Zwift Auto resistance|X||X|||
-|Zwift Auto inclination and speed||X|X||https://www.youtube.com/watch?v=KTQ2n7yeDbo|
-|Wahoo RGT Compatibility|X|X|X|X||
-|VzFit Compatibility|X|X|X|X||
-|Rouvy Compatibility|X|X|X|X||
-|IFIT app Compatibility|X|||||
-|Echelon app Compatibility|X|||||
-|Wahoo Dircon Compatibility|X|X|X|X|in order to send data to Zwift or RGT with Wifi only!|
-|One device only support for Zwift and Wahoo RGT|X|X|X|X|using Wahoo Dircon https://www.youtube.com/watch?v=gYYUXNWFAok|
-|BitGym Compatibility|X|X|X|X||
-
-# Training Program
-|Feature|Bike|Treadmill|Elliptical|Rower|Notes|
-|:---|:---:|:---:|:---:|:---:|---:|
-|Builtin video support (Kinomap like)|X|X|X|X|Files could be local or on the cloud!|
-|GPX auto following|X|X|X|X||
-|2D/3D maps for GPX|X|X|X|X||
-|ZWO (Zwift workout file) compatibility|X|X|X|X||
-|XML Workout file compatibility|X|X|X|X||
-|Auto follow workout based on your heart rate|X|X|X|X||
-|Random workout|X|X|X|X||
-
-
-# Statistics 
-
-|Feature|Bike|Treadmill|Elliptical|Rower|Notes|
-|:---|:---:|:---:|:---:|:---:|---:|
-|E-Mail report|X|X|X|X|at the end of the workout|
-|Strava integration|X|X|X|X|press stop at the end of the workout to auto upload it|
-
-# Misc
-
-|Feature|Bike|Treadmill|Elliptical|Rower|Notes|
-|:---|:---:|:---:|:---:|:---:|---:|
-|Resistance shifting with bluetooth remote|X||X|||
-|TTS support|X|X|X|X||
-|Zwift Play & Click support|X|||||
-|MQTT integration|X|X|X|X||
-|OpenSoundControl integration|X|X|X|X||
-
-
-### Documentation and FAQ
-
-Need help configuring QZ, connecting your equipment, or troubleshooting a problem?
-
-- [QZ Frequently Asked Questions](docs/faq/README.md)
-- [Supported devices and applications](docs/20_supported_devices_and_applications.md)
-- [Installation guide](docs/10_Installation.md)
-
-The FAQ includes practical setup guides, common troubleshooting solutions, device-specific instructions, and integration guides for Zwift, Garmin, NordicTrack / ProForm iFIT, Rouvy, and more.
-
-### Installation 
-
-  You can install it on multiple platforms.
-  Read the [installation procedure](docs/10_Installation.md)
-
-
-### Tested on
-
-  The QDomyos-Zwift application can run on [Macintosh or Linux devices](docs/10_Installation.md) iOS, and Android. 
-  It supports any [FTMS-compatible application](docs/20_supported_devices_and_applications.md) software and most [bluetooth enabled device](docs/20_supported_devices_and_applications.md).
-
-### No GUI version
-
-run as
-
-  $ sudo ./qdomyos-zwift -no-gui
-
-### Reference
-
-  => GitHub Repository: [QDomyos-Zwift on GitHub](https://github.com/ProH4Ck/treadmill-bridge)
-
-  => Treadmill Incline Reference: [What Is 10 Degrees in Incline on a Treadmill?](https://www.livestrong.com/article/422012-what-is-10-degrees-in-incline-on-a-treadmill/)
-
-  => Icon Attribution: Icons used in this documentation are from [Flaticon.com](https://www.flaticon.com)
-
-### Translations
-
-  Translations are managed with [Weblate](https://weblate.org). If you'd like to help translate QZ into your language, visit the project on Weblate:
-
-  [![Translation status](https://hosted.weblate.org/widget/qz/multi-auto.svg)](https://hosted.weblate.org/engage/qz/)
-
-### Blog
-
-  => Related Blog: [Roberto Viola's Blog](https://robertoviola.cloud)
+Derived from QDomyos-Zwift by Roberto Viola and contributors. The [GPL-3.0 license](LICENSE) and source attribution are retained. This project is not affiliated with NordicTrack, iFIT, or Zwift.

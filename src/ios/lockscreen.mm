@@ -3,10 +3,8 @@
 #import <UIKit/UIKit.h>
 #import <WatchConnectivity/WatchConnectivity.h>
 #import <CoreBluetooth/CoreBluetooth.h>
-#import <HealthKit/HealthKit.h>
 #import <WebKit/WKWebsiteDataStore.h>
 #import <AVFoundation/AVFoundation.h>
-#import <ConnectIQ/ConnectIQ.h>
 #import "qdomyoszwift-Swift2.h"
 #import "swiftDebug.h"
 #import "swiftDebugBridge.h"
@@ -14,9 +12,7 @@
 #include "devices/bluetoothdevice.h"
 #include <QDebug>
 #include "ios/AdbClient.h"
-#include "ios/ios_eliteariafan.h"
 #include "ios/ios_echelonconnectsport.h"
-#include "ios/ios_zwiftclickremote.h"
 #include "ios/ios_liveactivity.h"
 
 @class virtualbike_ios_swift;
@@ -33,7 +29,6 @@ static virtualrower_zwift* _virtualrower = nil;
 static virtualtreadmill_zwift* _virtualtreadmill_zwift = nil;
 static WorkoutTracking* workoutTracking = nil;
 
-static GarminConnect* Garmin = 0;
 
 static AdbClient *_adb = 0;
 
@@ -51,49 +46,10 @@ static NSString *LockscreenStringFromCString(const char *message)
     return string;
 }
 
-static HKWorkoutActivityType HistoricalHealthKitActivityType(unsigned short sport)
-{
-    switch (sport) {
-    case 1: // FIT_SPORT_RUNNING
-        return HKWorkoutActivityTypeRunning;
-    case 11: // FIT_SPORT_WALKING
-        return HKWorkoutActivityTypeWalking;
-    case 2: // FIT_SPORT_CYCLING
-        return HKWorkoutActivityTypeCycling;
-    case 15: // FIT_SPORT_ROWING
-        return HKWorkoutActivityTypeRowing;
-    case 4: // FIT_SPORT_FITNESS_EQUIPMENT
-        return HKWorkoutActivityTypeElliptical;
-    default:
-        return HKWorkoutActivityTypeOther;
-    }
-}
-
-static HKQuantityType *HistoricalHealthKitDistanceType(unsigned short sport)
-{
-    switch (sport) {
-    case 1:
-    case 11:
-        return [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierDistanceWalkingRunning];
-    case 2:
-    case 4:
-        return [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierDistanceCycling];
-    case 15:
-        if (@available(iOS 18.0, *)) {
-            return [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierDistanceRowing];
-        }
-        return nil;
-    default:
-        return nil;
-    }
-}
-
-static ios_eliteariafan* ios_eliteAriaFan = nil;
 static ios_echelonconnectsport* ios_echelonConnectSport = nil;
 
 static zwift_protobuf_layer* zwiftProtobufLayer = nil;
 
-static NSString* profile_selected;
 
 bool lockscreen::appleWatchAppInstalled() {
     static int lastState = -1; // -1 = not initialized, 0 = not supported/not paired, 1 = paired but no app, 2 = paired with app
@@ -148,9 +104,6 @@ void lockscreen::request()
     h = [[healthkit alloc] init];
     [h request];
     zwiftProtobufLayer = [[zwift_protobuf_layer alloc] init];
-    if (@available(iOS 13, *)) {
-        Garmin = [[GarminConnect alloc] init];
-    }
     // just to be sure, I built the library for iOS17 only but theorically we can use any iOS version
     if (@available(iOS 17, *)) {
         workoutTracking = [[WorkoutTracking alloc] init];
@@ -167,98 +120,6 @@ void lockscreen::startWorkout(unsigned short deviceType) {
 void lockscreen::stopWorkout() {
     if(workoutTracking != nil && !appleWatchAppInstalled())
         [workoutTracking stopWorkOut];
-}
-
-bool lockscreen::canWriteHistoricalWorkoutToHealthKit(unsigned short sport) {
-    if (![HKHealthStore isHealthDataAvailable]) {
-        return false;
-    }
-
-    HKHealthStore *healthStore = [[HKHealthStore alloc] init];
-    HKWorkoutType *workoutType = [HKObjectType workoutType];
-    HKQuantityType *energyType = [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierActiveEnergyBurned];
-    HKQuantityType *distanceType = HistoricalHealthKitDistanceType(sport);
-
-    if ([healthStore authorizationStatusForType:workoutType] != HKAuthorizationStatusSharingAuthorized ||
-        !energyType || [healthStore authorizationStatusForType:energyType] != HKAuthorizationStatusSharingAuthorized) {
-        return false;
-    }
-
-    return !distanceType || [healthStore authorizationStatusForType:distanceType] == HKAuthorizationStatusSharingAuthorized;
-}
-
-bool lockscreen::saveHistoricalWorkoutToHealthKit(unsigned short sport, double startTimestamp, double endTimestamp,
-                                                   double distanceMeters, double calories) {
-    if (endTimestamp <= startTimestamp || !canWriteHistoricalWorkoutToHealthKit(sport)) {
-        return false;
-    }
-
-    HKHealthStore *healthStore = [[HKHealthStore alloc] init];
-    HKWorkoutConfiguration *configuration = [[HKWorkoutConfiguration alloc] init];
-    configuration.activityType = HistoricalHealthKitActivityType(sport);
-    configuration.locationType = HKWorkoutSessionLocationTypeIndoor;
-
-    HKWorkoutBuilder *builder = [[HKWorkoutBuilder alloc] initWithHealthStore:healthStore
-                                                                configuration:configuration
-                                                                       device:[HKDevice localDevice]];
-    NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startTimestamp];
-    NSDate *endDate = [NSDate dateWithTimeIntervalSince1970:endTimestamp];
-
-    [builder beginCollectionWithStartDate:startDate completion:^(BOOL success, NSError *error) {
-        if (!success) {
-            qDebug() << "Historical Apple Health workout begin failed:" << error.localizedDescription.UTF8String;
-            return;
-        }
-
-        NSMutableArray<HKSample *> *samples = [NSMutableArray array];
-        HKQuantityType *energyType = [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierActiveEnergyBurned];
-        if (calories > 0 && energyType) {
-            HKQuantity *energy = [HKQuantity quantityWithUnit:[HKUnit kilocalorieUnit] doubleValue:calories];
-            [samples addObject:[HKQuantitySample quantitySampleWithType:energyType
-                                                               quantity:energy
-                                                              startDate:startDate
-                                                                endDate:endDate]];
-        }
-
-        HKQuantityType *distanceType = HistoricalHealthKitDistanceType(sport);
-        if (distanceMeters > 0 && distanceType) {
-            HKQuantity *distance = [HKQuantity quantityWithUnit:[HKUnit meterUnit] doubleValue:distanceMeters];
-            [samples addObject:[HKQuantitySample quantitySampleWithType:distanceType
-                                                               quantity:distance
-                                                              startDate:startDate
-                                                                endDate:endDate]];
-        }
-
-        void (^finishWorkout)(void) = ^{
-            [builder endCollectionWithEndDate:endDate completion:^(BOOL endSuccess, NSError *endError) {
-                if (!endSuccess) {
-                    qDebug() << "Historical Apple Health workout end failed:" << endError.localizedDescription.UTF8String;
-                    return;
-                }
-                [builder finishWorkoutWithCompletion:^(HKWorkout *workout, NSError *finishError) {
-                    if (finishError) {
-                        qDebug() << "Historical Apple Health workout save failed:" << finishError.localizedDescription.UTF8String;
-                    } else {
-                        qDebug() << "Historical workout saved to Apple Health";
-                    }
-                }];
-            }];
-        };
-
-        if (samples.count == 0) {
-            finishWorkout();
-        } else {
-            [builder addSamples:samples completion:^(BOOL addSuccess, NSError *addError) {
-                if (!addSuccess) {
-                    qDebug() << "Historical Apple Health workout samples failed:" << addError.localizedDescription.UTF8String;
-                    return;
-                }
-                finishWorkout();
-            }];
-        }
-    }];
-
-    return true;
 }
 
 long lockscreen::heartRate()
@@ -283,7 +144,7 @@ void lockscreen::setTotalKcal(double totalKcal)
 
 void lockscreen::setDistance(double distance)
 {
-    [h setDistanceWithDistance:distance];
+    [h setDistanceWithDistance:distance * 0.621371];
 }
 
 void lockscreen::setSteps(double steps)
@@ -339,26 +200,25 @@ void lockscreen::virtualbike_setCadence(unsigned short crankRevolutions, unsigne
 void lockscreen::workoutTrackingUpdate(double speed, unsigned short cadence, unsigned short watt,
                                        unsigned short currentCalories, unsigned long long currentSteps,
                                        unsigned char deviceType, double currentDistance, double totalKcal,
-                                       double elevationGain, bool useMiles, unsigned char heartRate, int liveActivityHeartRate,
-                                       const char *compactLeadingMetric, int compactLeadingValue, const char *compactTrailingMetric,
+                                       bool useMiles, unsigned char heartRate, const char *compactLeadingMetric,
+                                       int compactLeadingValue, const char *compactTrailingMetric,
                                        int compactTrailingValue) {
     const double healthCadence = (deviceType == BIKE) ? cadence : cadence * 2.0;
-    qDebug() << "Apple Health workout elevation gain:" << elevationGain;
     if(workoutTracking != nil && !appleWatchAppInstalled())
-        [workoutTracking addMetricsWithPower:watt cadence:healthCadence speed:speed * 100 kcal:currentCalories steps:currentSteps deviceType:deviceType distance:currentDistance totalKcal:totalKcal elevationGain:elevationGain heartRate:heartRate];
+        [workoutTracking addMetricsWithPower:watt cadence:healthCadence speed:speed * 100 kcal:currentCalories steps:currentSteps deviceType:deviceType distance:currentDistance totalKcal:totalKcal elevationGain:0 heartRate:heartRate];
 
     // Start Live Activity on first update, then keep updating
     if (!ios_liveactivity::isLiveActivityRunning()) {
         ios_liveactivity::startLiveActivity("QZ", useMiles, compactLeadingMetric, compactTrailingMetric);
     }
-    ios_liveactivity::updateLiveActivity(speed, cadence, watt, liveActivityHeartRate, currentDistance, currentCalories, useMiles,
+    ios_liveactivity::updateLiveActivity(speed, cadence, watt, heartRate, currentDistance, currentCalories, useMiles,
                                          compactLeadingMetric, compactLeadingValue, compactTrailingMetric,
                                          compactTrailingValue);
 }
 
-void lockscreen::virtualbike_zwift_ios(bool disable_hr, bool garmin_bluetooth_compatibility, bool zwift_play_emulator, bool watt_bike_emulator, bool tacx)
+void lockscreen::virtualbike_zwift_ios(bool disable_hr, bool garmin_bluetooth_compatibility, bool zwift_play_emulator, bool watt_bike_emulator)
 {
-    _virtualbike_zwift = [[virtualbike_zwift alloc] initWithDisable_hr:disable_hr garmin_bluetooth_compatibility:garmin_bluetooth_compatibility zwift_play_emulator:zwift_play_emulator watt_bike_emulator:watt_bike_emulator tacx:tacx];
+    _virtualbike_zwift = [[virtualbike_zwift alloc] initWithDisable_hr:disable_hr garmin_bluetooth_compatibility:garmin_bluetooth_compatibility zwift_play_emulator:zwift_play_emulator watt_bike_emulator:watt_bike_emulator];
 }
 
 void lockscreen::virtualrower_ios()
@@ -464,15 +324,6 @@ uint64_t lockscreen::virtualtreadmill_lastChangeCurrentSlope()
     return 0;
 }
 
-double lockscreen::virtualtreadmill_getPowerRequested()
-{
-    if(_virtualtreadmill_zwift != nil)
-    {
-        return [_virtualtreadmill_zwift readPowerRequested];
-    }
-    return 0;
-}
-
 double lockscreen::virtualtreadmill_getRequestedSpeed()
 {
     if(_virtualtreadmill_zwift != nil)
@@ -491,10 +342,10 @@ uint64_t lockscreen::virtualtreadmill_lastChangeRequestedSpeed()
     return 0;
 }
 
-bool lockscreen::virtualtreadmill_updateFTMS(UInt16 normalizeSpeed, UInt8 currentResistance, UInt16 currentCadence, UInt16 currentWatt, UInt16 currentInclination, UInt64 currentDistance, double elevationGain, unsigned short currentCalories, qint32 currentSteps,  unsigned short elapsedSeconds, UInt8 deviceType)
+bool lockscreen::virtualtreadmill_updateFTMS(UInt16 normalizeSpeed, UInt8 currentResistance, UInt16 currentCadence, UInt16 currentInclination, UInt64 currentDistance, double elevationGain, qint32 currentSteps,  unsigned short elapsedSeconds, UInt8 deviceType)
 {
     if(_virtualtreadmill_zwift != nil)
-        return [_virtualtreadmill_zwift updateFTMSWithNormalizeSpeed:normalizeSpeed currentCadence:currentCadence currentResistance:currentResistance currentWatt:currentWatt currentInclination:currentInclination currentDistance:currentDistance elapsedTimeSeconds:elapsedSeconds];
+        return [_virtualtreadmill_zwift updateFTMSWithNormalizeSpeed:normalizeSpeed currentCadence:currentCadence currentResistance:currentResistance currentInclination:currentInclination currentDistance:currentDistance elapsedTimeSeconds:elapsedSeconds];
     return 0;
 }
 
@@ -520,35 +371,6 @@ int lockscreen::virtualrower_getLastFTMSMessage(unsigned char* message) {
         return 0;
     }
     return 0;
-}
-
-void lockscreen::garminconnect_init() {
-    [[ConnectIQ sharedInstance] initializeWithUrlScheme:@"org.cagnulein.connectiqcomms-ciq"
-                                 uiOverrideDelegate:nil];
-    
-    [[ConnectIQ sharedInstance] showConnectIQDeviceSelection];
-}
-
-bool lockscreen::urlParser(const char *url) {
-    NSString *sURL = [NSString stringWithCString:url encoding:NSASCIIStringEncoding];
-    NSURL *URL = [NSURL URLWithString:[sURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    [Garmin urlParser: URL];
-}
-
-int lockscreen::getHR() {
-    return [Garmin getHR];
-}
-
-int lockscreen::getFootCad() {
-    return [Garmin getFootCad];
-}
-
-int lockscreen::getPower() {
-    return [Garmin getPower];
-}
-
-double lockscreen::getSpeed() {
-    return [Garmin getSpeed];
 }
 
 // getVolume
@@ -577,13 +399,7 @@ void lockscreen::nslog(const char* log) {
     NSLog(@"%@", string);
 }
 
-void lockscreen::set_action_profile(const char* profile) {
-    profile_selected = [[NSString alloc] initWithUTF8String:profile];
-}
 
-const char* lockscreen::get_action_profile() {
-    return [profile_selected UTF8String];
-}
 
 void lockscreen::adb_connect(const char*  IP) {
     if(_adb == 0) {
@@ -655,15 +471,7 @@ void lockscreen::adb_sendcommand(const char* command) {
     }];
 }
 
-void lockscreen::eliteAriaFan() {
-    ios_eliteAriaFan = [[ios_eliteariafan alloc] init];
-}
 
-void lockscreen::eliteAriaFan_fanSpeedRequest(unsigned char speed) {
-    if(ios_eliteAriaFan) {
-        [ios_eliteAriaFan fanSpeedRequest:speed];
-    }
-}
 
 void lockscreen::echelonConnectSport(const char*  Name, void* deviceClass) {
     NSString *deviceName = [NSString stringWithCString:Name encoding:NSASCIIStringEncoding];
@@ -739,40 +547,6 @@ uint32_t lockscreen::zwift_hub_getCadenceFromBuffer(const QByteArray& buffer) {
     
     uint32_t cadence = [ZwiftHubBike getCadenceFromBufferWithBuffer:data];
     return cadence;
-}
-
-static NSMutableDictionary<NSValue*, ios_zwiftclickremote*>* ios_zwiftClickRemotes = nil;
-
-void lockscreen::zwiftClickRemote(const char* Name, const char* UUID, void* deviceClass) {
-    NSString *deviceName = [NSString stringWithCString:Name encoding:NSASCIIStringEncoding];
-    NSString *deviceUUID = [NSString stringWithCString:UUID encoding:NSASCIIStringEncoding];
-    
-    // Initialize the dictionary if needed
-    if (ios_zwiftClickRemotes == nil) {
-        ios_zwiftClickRemotes = [[NSMutableDictionary alloc] init];
-    }
-    
-    // Create a key using the pointer value
-    NSValue *key = [NSValue valueWithPointer:deviceClass];
-    
-    // Create a new instance for this device, passing both name and UUID
-    ios_zwiftclickremote *remote = [[ios_zwiftclickremote alloc] initWithNameAndUUID:deviceName uuid:deviceUUID qtDevice:deviceClass];
-    
-    // Store in dictionary using the device pointer as key
-    [ios_zwiftClickRemotes setObject:remote forKey:key];
-}
-
-
-void lockscreen::zwiftClickRemote_WriteCharacteristic(unsigned char* qdata, unsigned char length, void* deviceClass) {
-    if (ios_zwiftClickRemotes == nil) return;
-
-    // Get the specific remote for this device
-    NSValue *key = [NSValue valueWithPointer:deviceClass];
-    ios_zwiftclickremote *remote = [ios_zwiftClickRemotes objectForKey:key];
-
-    if(remote) {
-        [remote writeCharacteristic:qdata length:length];
-    }
 }
 
 bool lockscreen::isInMultiWindowMode() {

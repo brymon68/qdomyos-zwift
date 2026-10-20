@@ -5,6 +5,6 @@ CharacteristicNotifier2A37::CharacteristicNotifier2A37(bluetoothdevice *Bike, QO
 
 int CharacteristicNotifier2A37::notify(QByteArray &valueHR) {
     valueHR.append(char(0));                                  // Flags that specify the format of the value.
-    valueHR.append(char(Bike->metrics_override_heartrate())); // Actual value.
+    valueHR.append(char(qBound(0, qRound(Bike->currentHeart().value()), 255))); // Actual value.
     return CN_OK;
 }

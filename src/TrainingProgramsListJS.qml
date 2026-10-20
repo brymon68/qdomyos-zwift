@@ -19,29 +19,10 @@ ColumnLayout {
 
     Settings {
         id: settings
-        property real ftp: 200.0
     }
 
     property var selectedFileUrl: ""
     property bool isSearching: false
-
-    Connections {
-        target: rootItem
-        function onAndroidDocumentPicked(kind, localUrl) {
-            if (kind === "training") {
-                trainprogram_open_clicked(localUrl)
-            }
-        }
-    }
-
-    // Called by main.qml on the Android back button: leave the workout preview first
-    function handleBack() {
-        if (stackView.depth > 1) {
-            stackView.pop()
-            return true
-        }
-        return false
-    }
 
     function openWorkoutPreview(fileUrl) {
         if (!fileUrl || fileUrl.toString() === "") {
@@ -75,7 +56,7 @@ ColumnLayout {
         isSearching = true
 
         // Call C++ FileSearcher for fast recursive search
-        var results = fileSearcher.searchRecursively(folderUrl, filter, ["*.xml", "*.zwo", "*.mrc", "*.erg", "*.json", "*.xsr"])
+        var results = fileSearcher.searchRecursively(folderUrl, filter, ["*.xml", "*.zwo"])
 
         // Populate search results model
         for (var i = 0; i < results.length; i++) {
@@ -89,9 +70,8 @@ ColumnLayout {
         sourceComponent: Component {
             FileDialog {
                 id: fileDialog
-                title: qsTr("Please choose a file")
+                title: "Please choose a file"
                 folder: shortcuts.home
-                nameFilters: [qsTr("Training programs (*.xml *.zwo *.mrc *.erg *.json *.xsr)"), qsTr("All files (*)")]
                 visible: true
                 onAccepted: {
                     var chosenFile = fileDialog.fileUrl || fileDialog.file || (fileDialog.fileUrls && fileDialog.fileUrls.length > 0 ? fileDialog.fileUrls[0] : "")
@@ -117,8 +97,8 @@ ColumnLayout {
     MessageDialog {
         id: deleteDialog
         property url fileUrl: ""
-        text: qsTr("Delete workout?")
-        informativeText: qsTr("This cannot be undone.")
+        text: "Delete workout?"
+        informativeText: "This cannot be undone."
         buttons: (MessageDialog.Yes | MessageDialog.No)
         onYesClicked: {
             if (rootItem.deleteTrainingProgramFile(fileUrl)) {
@@ -150,7 +130,7 @@ ColumnLayout {
                     spacing: 5
 
                     Text {
-                        text: qsTr("Filter")
+                        text: "Filter"
                         color: "white"
                         verticalAlignment: Text.AlignVCenter
                     }
@@ -158,7 +138,7 @@ ColumnLayout {
                     TextField {
                         id: filterField
                         Layout.fillWidth: true
-                        placeholderText: qsTr("Search (recursive)...")
+                        placeholderText: "Search (recursive)..."
 
                         function updateFilter() {
                             var text = filterField.text.trim()
@@ -200,7 +180,7 @@ ColumnLayout {
 
                     FolderListModel {
                         id: folderModel
-                        nameFilters: ["*.xml", "*.zwo", "*.mrc", "*.erg", "*.json", "*.xsr"]
+                        nameFilters: ["*.xml", "*.zwo"]
                         folder: "file://" + rootItem.getWritableAppDir() + 'training'
                         showDotAndDotDot: false
                         showDirs: true
@@ -293,13 +273,9 @@ ColumnLayout {
                 Button {
                     Layout.fillWidth: true
                     height: 50
-                    text: qsTr("Other folders")
+                    text: "Other folders"
                     onClicked: {
-                        if (Qt.platform.os === "android") {
-                            rootItem.openAndroidDocumentPicker("training")
-                        } else {
-                            fileDialogLoader.active = true
-                        }
+                        fileDialogLoader.active = true
                     }
                 }
             }
@@ -319,14 +295,14 @@ ColumnLayout {
                     spacing: 10
 
                     Button {
-                        text: qsTr("← Back")
+                        text: "← Back"
                         onClicked: stackView.pop()
                     }
 
                     Item { Layout.fillWidth: true }
 
                     Button {
-                        text: qsTr("Delete")
+                        text: "Delete"
                         visible: pendingWorkoutUrl.toString() !== ""
                         Material.background: Material.Red
                         onClicked: {
@@ -336,7 +312,7 @@ ColumnLayout {
                     }
 
                     Button {
-                        text: qsTr("Start Workout")
+                        text: "Start Workout"
                         highlighted: true
                         Material.background: Material.Green
                         onClicked: {

@@ -44,7 +44,6 @@ QList<SessionLine> QFitTestSuite::createTestSession() {
         line.cadence = 60;
         line.heart = 120 + (i % 30);  // Varying HR between 120-150
         line.calories = i / 10;
-        line.watt = 100;
 
         session.append(line);
     }

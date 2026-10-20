@@ -1,66 +1,20 @@
 #ifndef NORDICTRACKIFITADBTREADMILL_H
 #define NORDICTRACKIFITADBTREADMILL_H
 
-#include <QtCore/qbytearray.h>
-
-#ifndef Q_OS_ANDROID
-#include <QtCore/qcoreapplication.h>
-#else
-#include <QtGui/qguiapplication.h>
-#endif
-#include <QtCore/qlist.h>
-#include <QtCore/qmutex.h>
-#include <QtCore/qscopedpointer.h>
-#include <QtCore/qtimer.h>
-
-#include <QDateTime>
-#include <QObject>
-#include <QString>
-#include <QThread>
-#include <QUdpSocket>
-
 #include "treadmill.h"
-
-#ifdef Q_OS_IOS
-#include "ios/lockscreen.h"
-#endif
-
-class nordictrackifitadbtreadmillLogcatAdbThread : public QThread {
-    Q_OBJECT
-
-  public:
-    explicit nordictrackifitadbtreadmillLogcatAdbThread(QString s);
-    bool runCommand(QString command);
-
-    void run() override;
-    bool stop = false;    
-
-  signals:
-    void onSpeedInclination(double speed, double inclination);
-    void debug(QString message);
-    void onWatt(double watt);
-    void onCadence(double cadence);
-
-  private:
-    QString adbCommandPending = "";
-    double speed = 0;
-    double inclination = 0;
-    double watt = 0;
-    double cadence = 0;
-    QString name;
-    struct adbfile {
-        QDateTime date;
-        QString name;
-    };
-
-    QString runAdbCommand(QString command);
-    void runAdbTailCommand(QString command);
-};
+#include <QDateTime>
+#include <QTimer>
 
 class nordictrackifitadbtreadmill : public treadmill {
     Q_OBJECT
   public:
-    nordictrackifitadbtreadmill(bool noWriteResistance, bool noHeartService);
+    enum RequestOrigin {
+        ORIGIN_USER,     // User initiated action
+        ORIGIN_GRPC,     // Action from gRPC/iFit app
+        ORIGIN_INTERNAL  // Internal app logic
+    };
+
+    explicit nordictrackifitadbtreadmill(bool noHeartService = false);
     bool connected() override;
     bool canStartStop() override;
     double minStepSpeed() override { return 0.1; }
@@ -68,42 +22,34 @@ class nordictrackifitadbtreadmill : public treadmill {
   private:
     void forceIncline(double incline);
     void forceSpeed(double speed);
-    double getDouble(QString v);
-    void initiateThreadStop();
+
+    // gRPC integration methods
+    void initializeGrpcService();
+    void startGrpcMetricsUpdates();
+    void stopGrpcMetricsUpdates();
+    double getGrpcSpeed();
+    double getGrpcIncline();
+    double getGrpcCadence();
+    double getGrpcHeartRate();
+    void setGrpcSpeed(double speed);
+    void setGrpcIncline(double incline);
+    void startGrpcWorkoutStateMonitoring();
+    int getGrpcWorkoutState();
 
     QTimer *refresh;
 
-    uint8_t sec1Update = 0;
-    QDateTime lastRefreshCharacteristicChanged = QDateTime::currentDateTime();
-    QDateTime lastInclinationChanged = QDateTime::currentDateTime();
-    uint8_t firstStateChanged = 0;
-    uint16_t m_watts = 0;
-    bool wattReadFromTM = false;
-    bool cadenceReadFromTM = false;
-
-    bool initDone = false;
     bool initRequest = false;
 
-    bool noWriteResistance = false;
-    bool noHeartService = false;
-    bool proform_trainer_9_0 = false;
+    bool grpcInitialized = false;
+    int previousWorkoutState = 1; // WORKOUT_STATE_IDLE
 
-    QUdpSocket *socket = nullptr;
-    QHostAddress lastSender;
+    QDateTime lastTimeDataReceived;
+    bool firstDataReceived = true;
 
-#ifdef Q_OS_WIN32
-    nordictrackifitadbtreadmillLogcatAdbThread *logcatAdbThread = nullptr;
-#endif
-
-    int x14i_inclination_lookuptable(double reqInclination);
-    int proform_trainer_9_0_speed_lookuptable(double reqSpeed);
-    int proform_trainer_9_0_inclination_lookuptable(double reqInclination);
-
-#ifdef Q_OS_IOS
-    lockscreen *h = 0;
-#endif
-
-    QString lastCommand = "";
+    // Track origin of stop/pause/start requests to prevent echoing gRPC events
+    RequestOrigin requestStartOrigin = ORIGIN_USER;
+    RequestOrigin requestStopOrigin = ORIGIN_USER;
+    RequestOrigin requestPauseOrigin = ORIGIN_USER;
 
   signals:
     void disconnected();
@@ -111,17 +57,12 @@ class nordictrackifitadbtreadmill : public treadmill {
 
   private slots:
 
-    void onSpeedInclination(double speed, double inclination);
-    void onWatt(double watt);
-    void onCadence(double cadence);
-
-    void processPendingDatagrams();
     void changeInclinationRequested(double grade, double percentage);
 
     void update();
     
   public slots:
-    void stopLogcatAdbThread();
+    void stopGrpcService();
 };
 
 #endif // NORDICTRACKIFITADBTREADMILL_H

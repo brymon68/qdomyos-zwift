@@ -29,8 +29,8 @@ TREE = '''N: android=http://schemas.android.com/apk/res/android
       E: service (line=20)
         A: android:name(0x01010003)="org.cagnulen.qdomyoszwift.ForegroundService" (Raw: "org.cagnulen.qdomyoszwift.ForegroundService")
       E: activity-alias (line=21)
-        A: android:name(0x01010003)="org.cagnulen.qdomyoszwift.ViewPermissionUsageActivity" (Raw: "org.cagnulen.qdomyoszwift.ViewPermissionUsageActivity")
-        A: android:targetActivity(0x01010202)="org.cagnulen.qdomyoszwift.HealthConnectPermissionActivity" (Raw: "org.cagnulen.qdomyoszwift.HealthConnectPermissionActivity")
+        A: android:name(0x01010003)="org.cagnulen.qdomyoszwift.SyntheticAliasActivity" (Raw: "org.cagnulen.qdomyoszwift.SyntheticAliasActivity")
+        A: android:targetActivity(0x01010202)="org.cagnulen.qdomyoszwift.SyntheticAliasTargetActivity" (Raw: "org.cagnulen.qdomyoszwift.SyntheticAliasTargetActivity")
       E: receiver (line=22)
         A: android:name(0x01010003)="org.cagnulen.qdomyoszwift.MediaButtonReceiver" (Raw: "org.cagnulen.qdomyoszwift.MediaButtonReceiver")
 '''
@@ -112,10 +112,10 @@ class VerifyManifestTests(unittest.TestCase):
                 self.assert_rejected(TREE.replace(ORIGINAL_PACKAGE + ".ForegroundService", name), "must be fully qualified")
 
     def test_alias_target_keeps_original_namespace(self):
-        self.assert_rejected(TREE.replace(ORIGINAL_PACKAGE + ".HealthConnectPermissionActivity", "other.package.HealthConnectPermissionActivity"), "alias target must retain original Java namespace")
+        self.assert_rejected(TREE.replace(ORIGINAL_PACKAGE + ".SyntheticAliasTargetActivity", "other.package.SyntheticAliasTargetActivity"), "alias target must retain original Java namespace")
 
     def test_relative_alias_target(self):
-        self.assert_rejected(TREE.replace(ORIGINAL_PACKAGE + ".HealthConnectPermissionActivity", ".HealthConnectPermissionActivity"), "must be fully qualified")
+        self.assert_rejected(TREE.replace(ORIGINAL_PACKAGE + ".SyntheticAliasTargetActivity", ".SyntheticAliasTargetActivity"), "must be fully qualified")
 
     def test_launcher_action_and_category_must_share_filter(self):
         tree = TREE.replace('          E: category (line=14)', '        E: intent-filter (line=14)\n          E: category (line=14)')

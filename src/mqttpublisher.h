@@ -11,9 +11,7 @@
 #include <QHash>
 #include <QVariant>
 #include "bluetoothdevice.h"
-#include "devices/bike.h"
 #include "devices/treadmill.h"
-#include "devices/rower.h"
 #include "bluetooth.h"
 
 class MQTTPublisher : public QObject {
@@ -49,10 +47,8 @@ private:
     void publishOnlineStatus();
     void setupMQTTClient();
     void publishToTopic(const QString& topic, const QVariant& value);
-    void publishMomentaryButtonPress(const QString& topic);
-    void publishDefaultZwiftControllerStates();
     void connectToHost();
-    QString getUserNickname() const;
+    QString getDeviceId() const;
     QString getBaseTopic() const;
     QString getStatusTopic() const;
 
@@ -85,7 +81,7 @@ private:
     quint16 m_port;
     QString m_username;
     QString m_password;
-    QString m_userNickname;
+    QString m_deviceId;
     QPointer<bluetoothdevice> m_device;
     bluetooth* m_manager;
 };

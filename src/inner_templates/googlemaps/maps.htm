@@ -9,9 +9,7 @@
   <script src="chartjs.3.4.1.min.js"></script>
   <script src="chart.js"></script>
   <script src="globals.js"></script>
-  <script src="bike.js"></script>
   <script src="main_ws_manager.js"></script>
-  <script src="../i18n/i18n.js"></script>
   <script src="cesium-key.js"></script>
   <style>
   canvas{
@@ -50,22 +48,18 @@
 	 var transform = Cesium.Transforms.eastNorthUpToFixedFrame(center);
 	 let map = viewer;
 
-// Add our vehicle model.
-const bike = viewer.entities.add({
+// Track the current route position without an equipment model.
+const positionMarker = viewer.entities.add({
   position: center,
-  model: {
-    uri: bikeUri,
-    runAnimations: false,
-          minimumPixelSize: 32,
-          scale: 0.5,
-          color: Cesium.Color.ORANGE,
-          silhouetteColor: Cesium.Color.ORANGE,
-          silhouetteSize: 1,
-  },
-
+  point: {
+    pixelSize: 12,
+    color: Cesium.Color.ORANGE,
+    outlineColor: Cesium.Color.WHITE,
+    outlineWidth: 2
+  }
 });
 
-viewer.trackedEntity = bike;
+viewer.trackedEntity = positionMarker;
 
   </script>
  </div>
@@ -74,7 +68,7 @@ viewer.trackedEntity = bike;
     <div id="cesiumContainer" class="cesiumContainer"></div>
 	 <div id="metricsContainer" style="position: absolute; bottom: 0px; right: 0px; width: 200px; height: 250px; touch-action: none; user-select: none; z-index: 1000;">
         <div class="metrics" style="color: #FFFFFF; width: 100%; height: 100%; margin: 0; border-radius: 25px; border: 2px solid #73AD21; background: #73AD21; padding: 8px; box-sizing: border-box; overflow: hidden; position: relative; touch-action: none;">
-            <div id="metricsText" style="font-size: 12px; line-height: 1.4;">🏃Speed: 0.00<br>🚴Cadence:0<br>💓Heart:0<br>🔥Calories:0.0<br>📏Odometer:0.00<br>⚡Watt:0<br>⏲️Elapsed:0:00:00<br>📐Inclination:0.0<br>🧲Resistance:0<br>✈️Altitude:0.0<br>⛰️Elevation:0.0</div>
+            <div id="metricsText" style="font-size: 12px; line-height: 1.4;">🏃Speed: 0.00<br>💓Heart:0<br>📏Odometer:0.00<br>⏲️Elapsed:0:00:00<br>📐Inclination:0.0<br>✈️Altitude:0.0<br>⛰️Elevation:0.0</div>
             <div id="resizeHandle" style="position: absolute; bottom: 0; right: 0; width: 50px; height: 50px; background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.8) 50%); cursor: nwse-resize; border-bottom-right-radius: 23px; display: flex; align-items: flex-end; justify-content: flex-end; font-size: 24px; color: rgba(0,0,0,0.6); padding-bottom: 2px; padding-right: 4px;">⤡</div>
         </div>
     </div>
@@ -89,12 +83,8 @@ viewer.trackedEntity = bike;
     let currentSpeed = 0
     let lastCoordinateTS = 0
     let altOffset = 0
-    let lastBikeHeight = 0
+    let lastPositionHeight = 0
     let firstTime = 0
-
-    function t(key, fallback) {
-        return window.qzTranslate ? window.qzTranslate(key, fallback) : fallback;
-    }
 
     function a() {
     onWorkout = false;
@@ -107,58 +97,30 @@ viewer.trackedEntity = bike;
         return null;
     }, 15000, 3);
     el.enqueue().then(process_latlon);
-    keys_arr = ['speed', 'cadence', 'heart', 'calories', 'distance', 'watts', 'elapsed_h', 'elapsed_m', 'elapsed_s', 'inclination', 'resistance', 'elevation', 'altitude']
          let ell = new MainWSQueueElement({
 	     msg: null,
 		}, function(msg) {
-		  if (msg.msg === 'workout') {
-		      var speed = 0;
-				var cadence = 0;
-				var hr = 0;
-				var calories = 0;
-				var odometer = 0;
-				var watt = 0;
-				var elapsed_h = 0;
-				var elapsed_m = 0;
-				var elapsed_s = 0;
-				var inclination = 0;
-				var resistance = 0;
-				var elevation = 0;
-				var altitude = 0;
-				for (let key of keys_arr) {
-				    if (msg.content[key] === undefined)
-                                             continue;
-						if (key === 'speed') {
-                                                  currentSpeed = speed = msg.content[key];
-						} else if (key === 'cadence') {
-						  cadence = msg.content[key];
-						} else if (key === 'heart') {
-                                                  hr = msg.content[key];
-						} else if (key === 'calories') {
-                                                  calories = msg.content[key];
-						} else if (key === 'distance') {
-                                                  odometer = msg.content[key];
-						} else if (key === 'watts') {
-                                                  watt = msg.content[key];
-						} else if (key === 'elapsed_h') {
-                                                  elapsed_h = msg.content[key];
-						} else if (key === 'elapsed_m') {
-                                                  elapsed_m = msg.content[key];
-						} else if (key === 'elapsed_s') {
-                                                  elapsed_s = msg.content[key];
-						} else if (key === 'inclination') {
-                                                  inclination = msg.content[key];
-						} else if (key === 'resistance') {
-                                                  resistance = msg.content[key];
-						} else if (key === 'elevation') {
-                                                  elevation = msg.content[key];
-																} else if (key === 'altitude') {
-																  altitude = msg.content[key];
-																}
-				}
-
-            $('#metricsText').html("🏃" + t('metric.speedTitle', 'Speed') + ": " + speed.toFixed(2) + "<br>🚴" + t('metric.cadenceTitle', 'Cadence') + ":" + cadence.toFixed(0) + "<br>💓" + t('metric.heart', 'Heart') + ":"+ hr.toFixed(0) + "<br>🔥" + t('metric.caloriesTitle', 'Calories') + ":"+ calories.toFixed(1) + "<br>📏" + t('metric.odometer', 'Odometer') + ":"+ odometer.toFixed(2) + "<br>⚡" + t('metric.watt', 'Watt') + ":"+ watt.toFixed(0) + "<br>⏲️" + t('metric.elapsed', 'Elapsed') + ":"+ elapsed_h.toString().padStart(2, "0") + ":" + elapsed_m.toString().padStart(2, "0") + ":"+ elapsed_s.toString().padStart(2, "0") + "<br>📐" + t('metric.inclinationTitle', 'Inclination') + ":"+ inclination.toFixed(1) + "<br>🧲" + t('metric.resistanceTitle', 'Resistance') + ":"+ resistance.toFixed(0) + "<br>✈️" + t('metric.altitude', 'Altitude') + ":"+ altitude.toFixed(1) + "<br>⛰️" + t('metric.elevationTitle', 'Elevation') + ":"+ elevation.toFixed(2));
-		  }
+          if (msg.msg === 'workout') {
+            const speed = Number(msg.content.speed || 0);
+            const heart = Number(msg.content.heart || 0);
+            const distance = Number(msg.content.distance || 0);
+            const elapsedHours = Number(msg.content.elapsed_h || 0);
+            const elapsedMinutes = Number(msg.content.elapsed_m || 0);
+            const elapsedSeconds = Number(msg.content.elapsed_s || 0);
+            const inclination = Number(msg.content.inclination || 0);
+            const elevation = Number(msg.content.elevation || 0);
+            const altitude = Number(msg.content.altitude || 0);
+            currentSpeed = speed;
+            $('#metricsText').html(
+                "🏃Speed: " + speed.toFixed(2) +
+                "<br>💓Heart:" + heart.toFixed(0) +
+                "<br>📏Odometer:" + distance.toFixed(2) +
+                "<br>⏲️Elapsed:" + elapsedHours.toString().padStart(2, "0") + ":" +
+                    elapsedMinutes.toString().padStart(2, "0") + ":" + elapsedSeconds.toString().padStart(2, "0") +
+                "<br>📐Inclination:" + inclination.toFixed(1) +
+                "<br>✈️Altitude:" + altitude.toFixed(1) +
+                "<br>⛰️Elevation:" + elevation.toFixed(2));
+          }
 		  return null;
 		}, 15000, 3);
          ell.enqueue().then(onWorkout).catch(function(err) {
@@ -222,8 +184,8 @@ viewer.trackedEntity = bike;
 	  terrainSamplePositions.push(position);
 	  }
 
-    bike.position = Cesium.Cartesian3.fromDegrees(realLon, realLat, lastBikeHeight);
-    bike.orientation = Cesium.Transforms.headingPitchRollQuaternion(Cesium.Cartesian3.fromDegrees(realLon, realLat), new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(realAzimuth), 0, 0));
+    positionMarker.position = Cesium.Cartesian3.fromDegrees(realLon, realLat, lastPositionHeight);
+    positionMarker.orientation = Cesium.Transforms.headingPitchRollQuaternion(Cesium.Cartesian3.fromDegrees(realLon, realLat), new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(realAzimuth), 0, 0));
 
 Promise.resolve(
        Cesium.sampleTerrainMostDetailed(
@@ -236,8 +198,7 @@ Promise.resolve(
               0,
               0
        );
-           lastBikeHeight = samples[0].height
-           //bike.modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(Cesium.Cartesian3.fromDegrees(realLon, realLat, lastBikeHeight), hpr);
+           lastPositionHeight = samples[0].height
        });
 
 

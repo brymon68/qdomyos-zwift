@@ -48,7 +48,6 @@ google_test/*
 # Qt-es
 *.pro.user
 *build-*
-!build-qdomyos-zwift-Qt_*_for_iOS-Debug # Needed for Apple Watch
 src/inner_templates/googlemaps/cesium-key.js
 src/inner_templates/googlemaps/cesium.js
 cesium.js
@@ -63,6 +62,7 @@ src/android/local.properties
 src/translations/*.qm
 /tools/__pycache__
 *.qm
+/aqtinstall.log
 
 # macOS
 *.DS_Store

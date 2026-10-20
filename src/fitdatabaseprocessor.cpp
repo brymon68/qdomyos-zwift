@@ -8,7 +8,6 @@
 #include <QDirIterator>
 #include <QSqlDatabase>
 #include <QDateTime>
-#include <QSet>
 
 const QString FitDatabaseProcessor::DB_CONNECTION_NAME = "FitProcessor";
 
@@ -75,8 +74,6 @@ bool FitDatabaseProcessor::initializeDatabase() {
                         "max_cadence INTEGER,"
                         "avg_speed REAL,"
                         "max_speed REAL,"
-                        "avg_power INTEGER,"
-                        "max_power INTEGER,"
                         "total_ascent REAL,"
                         "total_descent REAL,"
                         "avg_stride_length REAL,"
@@ -143,36 +140,6 @@ void FitDatabaseProcessor::processFile(const QString& filePath) {
     emit fileProcessed(filePath);
 }
 
-void FitDatabaseProcessor::importFiles(const QStringList& filePaths) {
-    int added = 0;
-    int alreadyInHistory = 0;
-    int unreadable = 0;
-    if (!db.isOpen() && !initializeDatabase()) {
-        emit importFinished(0, 0, 0, false);
-        return;
-    }
-    // the counts are workouts, not files: copies of one workout (same bytes) count once
-    QSet<QString> seenHashes;
-    for (const QString& filePath : filePaths) {
-        const QString hash = getFileHash(filePath);
-        if (!hash.isEmpty()) {
-            if (seenHashes.contains(hash)) {
-                continue;
-            }
-            seenHashes.insert(hash);
-        }
-        if (isFileProcessed(filePath)) {
-            alreadyInHistory++;
-        } else if (processFitFile(filePath)) {
-            added++;
-            emit fileProcessed(filePath);
-        } else {
-            unreadable++;
-        }
-    }
-    emit importFinished(added, alreadyInHistory, unreadable, true);
-}
-
 void FitDatabaseProcessor::stopProcessing() {
     stopRequested.storeRelease(1);
     workerThread.quit();
@@ -233,7 +200,6 @@ bool FitDatabaseProcessor::saveWorkout(const QString& filePath,
     int maxHr = 0, totalHr = 0, hrCount = 0;
     int maxCadence = 0, totalCadence = 0, cadenceCount = 0;
     double maxSpeed = 0, totalSpeed = 0, speedCount = 0;
-    int maxPower = 0, totalPower = 0, powerCount = 0;
     double totalAscent = 0, totalDescent = 0;
     double lastElevation = session.first().coordinate.altitude();
 
@@ -259,13 +225,6 @@ bool FitDatabaseProcessor::saveWorkout(const QString& filePath,
             speedCount++;
         }
 
-        // Power
-        if (point.watt > 0) {
-            maxPower = qMax(maxPower, static_cast<int>(point.watt));
-            totalPower += point.watt;
-            powerCount++;
-        }
-
         // Elevation changes
         if (point.coordinate.isValid()) {
             double currentElevation = point.coordinate.altitude();
@@ -286,11 +245,11 @@ bool FitDatabaseProcessor::saveWorkout(const QString& filePath,
                   "file_hash, file_path, workout_name, sport_type, start_time, end_time, "
                   "total_time, total_distance, total_calories, "
                   "avg_heart_rate, max_heart_rate, avg_cadence, max_cadence, "
-                  "avg_speed, max_speed, avg_power, max_power, "
+                  "avg_speed, max_speed, "
                   "total_ascent, total_descent, avg_stride_length, total_strides, "
                   "workout_source, peloton_workout_id, peloton_url, training_program_file"
                   ") VALUES ("
-                  "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?"
+                  "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?"
                   ")");
 
     query.addBindValue(fileHash);
@@ -308,8 +267,6 @@ bool FitDatabaseProcessor::saveWorkout(const QString& filePath,
     query.addBindValue(maxCadence);
     query.addBindValue(speedCount > 0 ? totalSpeed / speedCount : 0);
     query.addBindValue(maxSpeed);
-    query.addBindValue(powerCount > 0 ? totalPower / powerCount : 0);
-    query.addBindValue(maxPower);
     query.addBindValue(totalAscent);
     query.addBindValue(totalDescent);
     query.addBindValue(session.last().instantaneousStrideLengthCM);
@@ -414,8 +371,6 @@ bool FitDatabaseProcessor::processFitFile(const QString& filePath) {
 
 void FitDatabaseProcessor::doWork() {
     if (!initializeDatabase()) {
-        // without this the history page waits for the processing forever
-        emit processingStopped();
         return;
     }
 

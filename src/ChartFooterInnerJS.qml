@@ -9,21 +9,16 @@ ColumnLayout {
     anchors.fill: parent
     Settings {
         id: settings
-        property int chart_display_mode: 0
     }
     WebView {
         id: webView
         anchors.fill: parent
-        url: "http://localhost:" + settings.value("template_inner_QZWS_port") + "/chartjs/" +
-             (rootItem.chartTreadmillMode ? "treadmillchartlive.htm" : "chartlive.htm")
+        url: "http://localhost:" + settings.value("template_inner_QZWS_port") + "/chartjs/treadmillchartlive.htm"
         visible: rootItem.chartFooterVisible
         onLoadingChanged: {
             if (loadRequest.errorString) {
                 console.error(loadRequest.errorString);
                 console.error("port " + settings.value("template_inner_QZWS_port"));
-            } else if (loadRequest.status === WebView.LoadSucceededStatus) {
-                // Send chart display mode to the web view
-                sendDisplayModeToWebView();
             }
         }
         onVisibleChanged: {
@@ -31,24 +26,6 @@ ColumnLayout {
             if(visible === true) {
                 reload();
             }
-        }
-    }
-    
-    // Watch for changes in chart display mode setting
-    Connections {
-        target: settings
-        function onChart_display_modeChanged() {
-            sendDisplayModeToWebView();
-        }
-    }
-    
-    function sendDisplayModeToWebView() {
-        if (webView.loading === false) {
-            webView.runJavaScript("
-                if (window.setChartDisplayMode) {
-                    window.setChartDisplayMode(" + settings.chart_display_mode + ");
-                }
-            ");
         }
     }
 }

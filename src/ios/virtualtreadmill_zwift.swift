@@ -31,11 +31,6 @@ let treadmilldataUuid = CBUUID(string: "0x2ACD");
         return peripheralManager.lastCurrentSlope;
     }
     
-    @objc public func readPowerRequested() -> Double
-    {
-        return peripheralManager.PowerRequested;
-    }
-    
     @objc public func readRequestedSpeed() -> Double
     {
         return peripheralManager.RequestedSpeed;
@@ -46,12 +41,11 @@ let treadmilldataUuid = CBUUID(string: "0x2ACD");
         return peripheralManager.lastRequestedSpeed;
     }
     
-    @objc public func updateFTMS(normalizeSpeed: UInt16, currentCadence: UInt16, currentResistance: UInt8, currentWatt: UInt16, currentInclination: UInt16, currentDistance: UInt64, elapsedTimeSeconds: UInt16) -> Bool
+    @objc public func updateFTMS(normalizeSpeed: UInt16, currentCadence: UInt16, currentResistance: UInt8, currentInclination: UInt16, currentDistance: UInt64, elapsedTimeSeconds: UInt16) -> Bool
     {
         peripheralManager.NormalizeSpeed = normalizeSpeed
         peripheralManager.CurrentCadence = currentCadence
         peripheralManager.CurrentResistance = currentResistance
-        peripheralManager.CurrentWatt = currentWatt
         peripheralManager.CurrentInclination = currentInclination
         peripheralManager.CurrentDistance = currentDistance
         peripheralManager.ElapsedTimeSeconds = elapsedTimeSeconds
@@ -78,11 +72,9 @@ class BLEPeripheralManagerTreadmillZwift: NSObject, CBPeripheralManagerDelegate 
   private var FitnessMachinestatusCharacteristic: CBMutableCharacteristic!
   private var TrainingStatusCharacteristic: CBMutableCharacteristic!
     public var CurrentSlope: Double! = 0
-    public var PowerRequested: Double! = 0
     public var NormalizeSpeed: UInt16! = 0
     public var CurrentCadence: UInt16! = 0
     public var CurrentResistance: UInt8! = 0
-    public var CurrentWatt: UInt16! = 0
     public var CurrentInclination: UInt16! = 0
     public var CurrentDistance: UInt64! = 0
     public var ElapsedTimeSeconds: UInt16! = 0
@@ -133,7 +125,7 @@ class BLEPeripheralManagerTreadmillZwift: NSObject, CBPeripheralManagerDelegate 
             let FitnessMachineFeaturePermissions: CBAttributePermissions = [.readable]
             self.FitnessMachineFeatureCharacteristic = CBMutableCharacteristic(type: FitnessMachineFeatureCharacteristicUuid,
                                                                                properties: FitnessMachineFeatureProperties,
-                                                                               value: Data (bytes: [0x83, 0x14, 0x00, 0x00, 0x0c, 0xe0, 0x00, 0x00]),
+                                                                               value: Data (bytes: [0x83, 0x14, 0x00, 0x00, 0x03, 0xe0, 0x00, 0x00]),
                                                                                permissions: FitnessMachineFeaturePermissions)
             
             let supported_resistance_level_rangeProperties: CBCharacteristicProperties = [.read]
@@ -278,11 +270,6 @@ class BLEPeripheralManagerTreadmillZwift: NSObject, CBPeripheralManagerDelegate 
               
               SwiftDebug.qtDebug("virtualtreadmill_zwift: new requested slope \(self.CurrentSlope)")
           }
-            else if(requests.first!.value?.first == 0x05)
-          {
-                var high : UInt16 = (((UInt16)(requests.first!.value![2])) << 8);
-                self.PowerRequested = (Double)((UInt16)(requests.first!.value![1]) + high);
-          }
           else if(requests.first!.value?.first == 0x02)
           {
                 // Set Target Speed
@@ -302,7 +289,8 @@ class BLEPeripheralManagerTreadmillZwift: NSObject, CBPeripheralManagerDelegate 
           SwiftDebug.qtDebug("virtualtreadmill_zwift: Responded successfully to a read request")
            
           let funcCode: UInt8 = requests.first!.value![0]
-          var response: [UInt8] = [0x80, funcCode , 0x01]
+          let resultCode: UInt8 = funcCode == 0x05 ? 0x02 : 0x01
+          var response: [UInt8] = [0x80, funcCode, resultCode]
           let responseData = Data(bytes: &response, count: 3)
             
           self.peripheralManager.updateValue(responseData, for: self.FitnessMachineControlPointCharacteristic, onSubscribedCentrals: nil)
@@ -350,12 +338,12 @@ class BLEPeripheralManagerTreadmillZwift: NSObject, CBPeripheralManagerDelegate 
   }
     
     func calculateIndoorBike() -> Data {
-        let flags0:UInt8 = 0x64
+        let flags0:UInt8 = 0x24
         let flags1:UInt8 = 0x02
       //self.delegate?.BLEPeripheralManagerCSCDidSendValue(flags, crankRevolutions: self.crankRevolutions, lastCrankEventTime: self.lastCrankEventTime)
-        var indoorBike: [UInt8] = [flags0, flags1, (UInt8)(self.NormalizeSpeed & 0xFF), (UInt8)((self.NormalizeSpeed >> 8) & 0xFF),  (UInt8)(self.CurrentCadence & 0xFF), (UInt8)((self.CurrentCadence >> 8) & 0xFF), self.CurrentResistance, 0x00, (UInt8)(self.CurrentWatt & 0xFF), (UInt8)((self.CurrentWatt >> 8) & 0xFF),
+        var indoorBike: [UInt8] = [flags0, flags1, (UInt8)(self.NormalizeSpeed & 0xFF), (UInt8)((self.NormalizeSpeed >> 8) & 0xFF),  (UInt8)(self.CurrentCadence & 0xFF), (UInt8)((self.CurrentCadence >> 8) & 0xFF), self.CurrentResistance, 0x00,
                                    self.heartRate, 0x00]
-      let indoorBikeData = Data(bytes: &indoorBike, count: 12)
+      let indoorBikeData = Data(bytes: &indoorBike, count: indoorBike.count)
       return indoorBikeData
     }
 

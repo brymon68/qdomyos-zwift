@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ ${X22I_VARIANT:-baseline} == test ]]; then
+if [[ ${X22I_VARIANT:-test} == test ]]; then
     : "${X22I_SIGNING_STORE_PASSWORD_FILE:?Mount the test password file and set X22I_SIGNING_STORE_PASSWORD_FILE}"
     if [[ ! -f "$X22I_SIGNING_STORE_PASSWORD_FILE" || ! -r "$X22I_SIGNING_STORE_PASSWORD_FILE" ]]; then
         echo "The mounted test password file is unavailable." >&2

@@ -1,96 +1,30 @@
 #include "characteristicwriteprocessor2ad9.h"
-#include "devices/elliptical.h"
-#include "devices/ftmsbike/ftmsbike.h"
 #include "treadmill.h"
 #include <QSettings>
 #include <QtMath>
 
-CharacteristicWriteProcessor2AD9::CharacteristicWriteProcessor2AD9(double bikeResistanceGain,
-                                                                   int8_t bikeResistanceOffset, bluetoothdevice *bike,
+namespace {
+constexpr quint8 FTMS_SET_TARGET_POWER = 0x05;
+constexpr quint8 FTMS_SET_INDOOR_BIKE_SIMULATION_PARAMS = 0x11;
+constexpr quint8 FTMS_RESPONSE_CODE = 0x80;
+constexpr quint8 FTMS_SUCCESS = 0x01;
+constexpr quint8 FTMS_NOT_SUPPORTED = 0x02;
+}
+
+CharacteristicWriteProcessor2AD9::CharacteristicWriteProcessor2AD9(bluetoothdevice *bike,
                                                                    CharacteristicNotifier2AD9 *notifier,
                                                                    QObject *parent)
-    : CharacteristicWriteProcessor(bikeResistanceGain, bikeResistanceOffset, bike, parent), notifier(notifier) {}
+    : CharacteristicWriteProcessor(bike, parent), notifier(notifier) {}
 
 int CharacteristicWriteProcessor2AD9::writeProcess(quint16 uuid, const QByteArray &data, QByteArray &reply) {
     if (data.size()) {
         BLUETOOTH_TYPE dt = Bike->deviceType();
-        QSettings settings;
-        char cmd = data.at(0);
-        if (cmd == FTMS_SET_TARGET_POWER) {
-            settings.setValue(QZSettings::zwift_erg, true);
-        } else if (cmd == FTMS_SET_TARGET_INCLINATION ||
-                   cmd == FTMS_SET_TARGET_RESISTANCE_LEVEL ||
-                   cmd == FTMS_SET_INDOOR_BIKE_SIMULATION_PARAMS) {
-            settings.setValue(QZSettings::zwift_erg, false);
-        }
-        if (dt == BIKE || dt == ROWING) {
-            bool force_resistance =
-                settings.value(QZSettings::virtualbike_forceresistance, QZSettings::default_virtualbike_forceresistance)
-                    .toBool();
-            bool erg_mode = settings.value(QZSettings::zwift_erg, QZSettings::default_zwift_erg).toBool();
-            emit ftmsCharacteristicChanged(QLowEnergyCharacteristic(), data);
-            if (cmd == FTMS_SET_TARGET_RESISTANCE_LEVEL) {
-
-                // Set Target Resistance
-                resistance_t uresistance = data.at(1);
-                uresistance = uresistance / 10;
-                if (force_resistance && !erg_mode) {
-                    Bike->changeResistance(uresistance);
-                }
-                qDebug() << QStringLiteral("new requested resistance ") + QString::number(uresistance) +
-                                QStringLiteral(" enabled ") + force_resistance;
-                reply.append((quint8)FTMS_RESPONSE_CODE);
-                reply.append((quint8)FTMS_SET_TARGET_RESISTANCE_LEVEL);
-                reply.append((quint8)FTMS_SUCCESS);
-            } else if (cmd == FTMS_SET_INDOOR_BIKE_SIMULATION_PARAMS) // simulation parameter
-
-            {
-                qDebug() << QStringLiteral("indoor bike simulation parameters");
-                reply.append((quint8)FTMS_RESPONSE_CODE);
-                reply.append((quint8)FTMS_SET_INDOOR_BIKE_SIMULATION_PARAMS);
-                reply.append((quint8)FTMS_SUCCESS);
-
-                int16_t iresistance = (((uint8_t)data.at(3)) + (data.at(4) << 8));
-                uint8_t crr = data.at(5);
-                uint8_t cw = data.at(6);
-                changeSlope(iresistance, crr, cw);
-            } else if (cmd == FTMS_SET_TARGET_POWER) // erg mode
-
-            {
-                qDebug() << QStringLiteral("erg mode");
-                reply.append((quint8)FTMS_RESPONSE_CODE);
-                reply.append((quint8)FTMS_SET_TARGET_POWER);
-                reply.append((quint8)FTMS_SUCCESS);
-
-                uint16_t power = (((uint8_t)data.at(1)) + (data.at(2) << 8));
-                changePower(power);
-            } else if (cmd == FTMS_START_RESUME) {
-                qDebug() << QStringLiteral("start simulation!");
-
-                reply.append((quint8)FTMS_RESPONSE_CODE);
-                reply.append((quint8)FTMS_START_RESUME);
-                reply.append((quint8)FTMS_SUCCESS);
-            } else if (cmd == FTMS_STOP_PAUSE) {
-                qDebug() << QStringLiteral("stop/pause simulation! ignoring it");
-
-                reply.append((quint8)FTMS_RESPONSE_CODE);
-                reply.append((quint8)FTMS_STOP_PAUSE);
-                reply.append((quint8)FTMS_SUCCESS);
-            } else if (cmd == FTMS_REQUEST_CONTROL) {
-                qDebug() << QStringLiteral("control requested");
-
-                reply.append((quint8)FTMS_RESPONSE_CODE);
-                reply.append((char)FTMS_REQUEST_CONTROL);
-                reply.append((quint8)FTMS_SUCCESS);
-            } else {
-                qDebug() << QStringLiteral("not supported");
-
-                reply.append((quint8)FTMS_RESPONSE_CODE);
-                reply.append((quint8)cmd);
-                reply.append((quint8)FTMS_NOT_SUPPORTED);
-            }
-        } else if (dt == TREADMILL || dt == ELLIPTICAL) {
-            // Forward FTMS writes (including Start/Stop) to listeners for treadmill/elliptical devices.
+        if (dt == TREADMILL && data.at(0) == FTMS_SET_TARGET_POWER) {
+            reply.append((quint8)FTMS_RESPONSE_CODE);
+            reply.append((quint8)FTMS_SET_TARGET_POWER);
+            reply.append((quint8)FTMS_NOT_SUPPORTED);
+        } else if (dt == TREADMILL) {
+            // Preserve FTMS Start/Stop forwarding and manual speed/incline control.
             emit ftmsCharacteristicChanged(QLowEnergyCharacteristic(), data);
             char a, b;
             if ((char)data.at(0) == 0x02) {
@@ -114,13 +48,6 @@ int CharacteristicWriteProcessor2AD9::writeProcess(quint16 uuid, const QByteArra
 
                 if (dt == TREADMILL)
                     ((treadmill *)Bike)->changeInclination(requestIncline, requestIncline);
-                // Resistance as incline on Sole E95s Elliptical #419
-                else if (dt == ELLIPTICAL) {
-                    if(((elliptical *)Bike)->inclinationAvailableByHardware())
-                        ((elliptical *)Bike)->changeInclination(requestIncline, requestIncline);
-                    else
-                        changeSlope(requestIncline * 100.0, 33, 34);
-                }
                 qDebug() << "new requested incline " + QString::number(requestIncline);
             } else if ((char)data.at(0) == 0x07) // Start request
             {

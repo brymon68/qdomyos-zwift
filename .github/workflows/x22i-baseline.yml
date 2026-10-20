@@ -12,10 +12,7 @@ on:
           - test
           - baseline
   push:
-    branches: [codex/x22i-baseline]
-    paths:
-      - .github/workflows/x22i-baseline.yml
-      - tools/x22i/**
+    branches: [master, 'codex/**']
 
 permissions:
   contents: read
@@ -35,6 +32,9 @@ jobs:
       X22I_VARIANT: ${{ github.event_name == 'workflow_dispatch' && inputs.variant || 'test' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
       - name: Test private settings and APK checks
         run: python3 -m unittest discover -s tools/x22i -p 'test_*.py' -v
       - name: Prepare test app signing key
@@ -60,23 +60,6 @@ jobs:
           with os.fdopen(descriptor, 'wb') as destination:
               destination.write(keystore)
           PY
-      - name: Read pinned source revision
-        id: baseline
-        run: |
-          python3 - <<'PY'
-          import json, os
-          from pathlib import Path
-          pin = json.loads(Path('tools/x22i/baseline.json').read_text())
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
-              out.write('source_revision=' + pin['source_revision'] + '\n')
-          PY
-      - uses: actions/checkout@v4
-        with:
-          repository: cagnulein/qdomyos-zwift
-          ref: ${{ steps.baseline.outputs.source_revision }}
-          path: baseline-source
-          submodules: recursive
-          persist-credentials: false
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -90,26 +73,31 @@ jobs:
           c++ -std=c++11 -fPIC tools/x22i/test_x22i_defaults.cpp \
             -o "$RUNNER_TEMP/test-x22i-defaults" $(pkg-config --cflags --libs Qt5Core)
           "$RUNNER_TEMP/test-x22i-defaults"
+      - name: Test treadmill protocol without power support
+        run: |
+          c++ -std=c++17 -fPIC -Isrc -Isrc/devices tools/x22i/test_treadmill_protocol.cpp \
+            -o "$RUNNER_TEMP/test-treadmill-protocol" $(pkg-config --cflags --libs Qt5Core)
+          "$RUNNER_TEMP/test-treadmill-protocol"
       - uses: jdpurcell/install-qt-action@v5
         with:
           version: '5.15.0'
           host: linux
           target: android
           arch: android
-          modules: qtcharts qtnetworkauth qtpurchasing
+          modules: qtcharts qtnetworkauth
           dir: ${{ runner.temp }}/x22i-qt
           cache: true
           cache-key-prefix: x22i-baseline-qt
       - name: Install pinned Android packages
         run: |
           "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" 'ndk;21.4.7075529' 'platforms;android-35' 'build-tools;35.0.0'
-      - name: Build pinned gRPC app
+      - name: Build fork source
         env:
           QT_ANDROID_DIR: ${{ runner.temp }}/x22i-qt/Qt/5.15.0/android
           X22I_BUILD_JOBS: '2'
           X22I_SIGNING_STORE_FILE: ${{ env.X22I_VARIANT == 'test' && format('{0}/x22i-test-signing.p12', runner.temp) || '' }}
           X22I_SIGNING_STORE_PASSWORD: ${{ env.X22I_VARIANT == 'test' && secrets.X22I_TEST_KEYSTORE_PASSWORD || '' }}
-        run: bash tools/x22i/build_baseline.sh "$GITHUB_WORKSPACE/baseline-source" "$RUNNER_TEMP/x22i-build"
+        run: bash tools/x22i/build_baseline.sh "$RUNNER_TEMP/x22i-build"
       - name: Remove test app signing key
         if: always()
         run: rm -f -- "$RUNNER_TEMP/x22i-test-signing.p12"

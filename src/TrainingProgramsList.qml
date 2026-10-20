@@ -4,8 +4,6 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.0
 import QtQuick.Dialogs 1.0
-import QtCharts 2.2
-import Qt.labs.settings 1.0
 
 ColumnLayout {
     signal trainprogram_open_clicked(url name)
@@ -15,27 +13,13 @@ ColumnLayout {
     property url selectedWorkoutUrl: ""
     property url initialWorkoutUrl: ""
 
-    Connections {
-        target: rootItem
-        function onAndroidDocumentPicked(kind, localUrl) {
-            if (kind === "training") {
-                trainprogram_open_clicked(localUrl)
-            }
-        }
-    }
-
     function openWorkoutPreview(fileUrl) {
         if (!fileUrl || fileUrl.toString() === "") {
             return
         }
         selectedWorkoutUrl = fileUrl
         trainprogram_preview(fileUrl)
-        powerSeries.clear();
-        for(var i=0;i<rootItem.preview_workout_points;i+=10)
-        {
-            powerSeries.append(i * 1000, rootItem.preview_workout_watt[i]);
-        }
-        rootItem.update_chart_power(powerChart);
+
     }
 
     Component.onCompleted: {
@@ -46,8 +30,8 @@ ColumnLayout {
 
     MessageDialog {
         id: deleteDialog
-        text: qsTr("Delete workout?")
-        informativeText: qsTr("This cannot be undone.")
+        text: "Delete workout?"
+        informativeText: "This cannot be undone."
         buttons: (MessageDialog.Yes | MessageDialog.No)
         onYesClicked: {
             if (rootItem.deleteTrainingProgramFile(selectedWorkoutUrl)) {
@@ -66,9 +50,8 @@ ColumnLayout {
         active: false
         sourceComponent: Component {
             FileDialog {
-                title: qsTr("Please choose a file")
+                title: "Please choose a file"
                 folder: shortcuts.home
-                nameFilters: [qsTr("Training programs (*.xml *.zwo *.mrc *.erg *.json *.xsr)"), qsTr("All files (*)")]
                 visible: true
                 onAccepted: {
                     console.log("You chose: " + fileUrl)
@@ -93,20 +76,20 @@ ColumnLayout {
 
     RowLayout{
         spacing: 2
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        anchors.top: parent.top
+        anchors.fill: parent
 
         ColumnLayout {
             spacing: 0
-            Layout.fillHeight: true
+            anchors.top: parent.top
+            anchors.fill: parent
 
             Row
             {
                 spacing: 5
-                leftPadding: window.contentSideMargin
                 Text
                 {
-                    text:qsTr("Filter")
+                    text:"Filter"
                     color: "white"
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -120,7 +103,7 @@ ColumnLayout {
                            filter+= "[%1%2]".arg(text[i].toUpperCase()).arg(text[i].toLowerCase())
                         filter+="*"
                         print(filter)
-                        folderModel.nameFilters = [filter + ".zwo", filter + ".xml", filter + ".mrc", filter + ".erg", filter + ".json", filter + ".xsr"]
+                        folderModel.nameFilters = [filter + ".zwo", filter + ".xml"]
                     }
                     id: filterField
                     onTextChanged: updateFilter()
@@ -137,13 +120,14 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.minimumWidth: 50
                 Layout.preferredWidth: 100
+                Layout.maximumWidth: row.left
                 Layout.minimumHeight: 150
-                Layout.fillHeight: true
+                Layout.preferredHeight: parent.height
                 ScrollBar.vertical: ScrollBar {}
                 id: list
                 FolderListModel {
                     id: folderModel
-                    nameFilters: ["*.xml", "*.zwo", "*.mrc", "*.erg", "*.json", "*.xsr"]
+                    nameFilters: ["*.xml", "*.zwo"]
                     folder: "file://" + rootItem.getWritableAppDir() + 'training'
                           showDotAndDotDot: false
                     showDirs: true
@@ -160,7 +144,6 @@ ColumnLayout {
                         z: 1
                         Item {
                             id: root
-                            x: window.contentSideMargin
                             property alias text: fileTextBox.text
                             property int spacing: 30
                             width: fileTextBox.width + spacing
@@ -232,12 +215,7 @@ ColumnLayout {
                         list.currentItem.textColor = Material.color(Material.Yellow)
                         console.log(fileUrl + ' selected');
                         trainprogram_preview(fileUrl)
-                        powerSeries.clear();
-                        for(var i=0;i<rootItem.preview_workout_points;i+=10)
-                        {
-                            powerSeries.append(i * 1000, rootItem.preview_workout_watt[i]);
-                        }
-                        rootItem.update_chart_power(powerChart);
+
                         //trainprogram_open_clicked(fileUrl);
                         //popup.open()
                     } else {
@@ -251,22 +229,15 @@ ColumnLayout {
         }
 
         ScrollView {
+            anchors.top: parent.top
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-            // Padding, not a margin: the content moves in, the scroll bar stays at the edge
-            rightPadding: window.contentSideMargin
-            contentHeight: date.height + description.height + powerChart.height
-            Layout.fillHeight: true
+            contentHeight: date.height + description.height
+            Layout.preferredHeight: parent.height
             Layout.fillWidth: true
             Layout.minimumWidth: 100
             Layout.preferredWidth: 200
 
-            property alias powerSeries: powerSeries
-            property alias powerChart: powerChart
 
-            Settings {
-                id: settings
-                property real ftp: 200.0
-            }
 
             Row {
                 id: row
@@ -297,69 +268,18 @@ ColumnLayout {
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
-                Item {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: description.bottom
-                    anchors.bottom: parent.bottom
-
-                    ChartView {
-                        id: powerChart
-                        objectName: "powerChart"
-                        antialiasing: true
-                        legend.visible: false
-                        height: 400
-                        width: parent.width
-                        title: qsTr("Power")
-                        titleFont.pixelSize: 20
-
-                        DateTimeAxis {
-                            id: valueAxisX
-                            tickCount: 7
-                            min: new Date(0)
-                            max: new Date(rootItem.preview_workout_points * 1000)
-                            format: "mm:ss"
-                            //labelsVisible: false
-                            gridVisible: false
-                            //lineVisible: false
-                            labelsFont.pixelSize: 10
-                        }
-
-                        ValueAxis {
-                            id: valueAxisY
-                            min: 0
-                            max: rootItem.wattMaxChart
-                            //tickCount: 60
-                            tickCount: 8
-                            labelFormat: "%.0f"
-                            //labelsVisible: false
-                            //gridVisible: false
-                            //lineVisible: false
-                            labelsFont.pixelSize: 10
-                        }
-
-                        LineSeries {
-                            //name: "Power"
-                            id: powerSeries
-                            visible: true
-                            axisX: valueAxisX
-                            axisY: valueAxisY
-                            color: "black"
-                            width: 1
-                        }
-                    }
-                }
             }
         }
     }
 
     RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 50
+        height: 50
+        width: parent.width
+        Layout.alignment: Qt.AlignCenter | Qt.AlignVCenter
 
         Button {
             Layout.fillWidth: true
-            text: qsTr("Start Workout")
+            text: "Start Workout"
             visible: selectedWorkoutUrl != ""
             onClicked: {
                 trainprogram_open_clicked(selectedWorkoutUrl)
@@ -370,7 +290,7 @@ ColumnLayout {
         Button {
             id: deleteButton
             Layout.fillWidth: true
-            text: qsTr("Delete")
+            text: "Delete"
             visible: selectedWorkoutUrl != ""
             onClicked: deleteDialog.visible = true
         }
@@ -378,15 +298,15 @@ ColumnLayout {
         Button {
             id: searchButton
             Layout.fillWidth: true
-            text: qsTr("Other folders")
+            text: "Other folders"
             onClicked: {
                 console.log("folder is " + rootItem.getWritableAppDir() + 'training')
-                if (Qt.platform.os === "android") {
-                    rootItem.openAndroidDocumentPicker("training")
-                } else {
-                    fileDialogLoader.active = true
-                }
+                // Create a fresh FileDialog instance
+                fileDialogLoader.active = true
             }
+        }
+        anchors {
+            bottom: parent.bottom
         }
     }
 }

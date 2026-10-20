@@ -2,25 +2,7 @@
 
 ## Can I use QZ to get treadmill data into Garmin without Zwift or another training app?
 
-Yes. There are two different approaches depending on whether you want the Garmin watch to receive the treadmill metrics live or you only want the completed activity in Garmin Connect.
-
-### Option 1: send speed and distance live to a Garmin watch over ANT+
-
-On Android, QZ can connect to a supported treadmill over Bluetooth/FTMS and retransmit treadmill speed and distance using the **ANT+ SDM/footpod profile**.
-
-Your Garmin watch can then pair with QZ as a footpod or speed/distance sensor and record the treadmill activity directly. Zwift, Kinomap, and similar training apps are not required for this setup.
-
-The Android device running QZ must be able to **transmit ANT+**. If the phone or tablet does not have usable native ANT+ support, a compatible USB ANT+ dongle with the appropriate USB/OTG adapter can be used. Make sure the dongle supports transmission, not only reception.
-
-On Android devices that rely on an external USB ANT+ stick, the ANT stack may also require the **ANT Radio Service** and **ANT USB Service** components. If Android does not recognize the stick for ANT+ use, install those two ANT service components, reconnect the stick through USB/OTG, and restart QZ. In a confirmed support case, an Android phone could then use QZ to broadcast trainer/power/speed data that became visible on a Garmin device.
-
-### Option 2: upload the completed QZ workout to Garmin Connect
-
-If you do not need the Garmin watch to receive the treadmill data live, QZ can record the workout itself and upload the generated **FIT activity** to Garmin Connect.
-
-In this setup the watch does not need to be paired to QZ as an ANT+ sensor. Configure the Garmin Connect integration in QZ and use QZ to record the session; the completed activity will be pushed automatically to Garmin Connect and it will count as training effect and Vo2Max.
-
-Choose **ANT+ SDM/footpod** when you want the watch itself to see and record the treadmill speed/distance during the workout. Choose **Garmin Connect FIT upload** when your main goal is simply to have the finished activity and its metrics in Garmin Connect.
+QZ can record the workout and upload the generated **FIT activity** to Garmin Connect. Configure the Garmin Connect integration, record the session, and finish/save the workout to upload it.
 
 ## Can I use a basic indoor bike with a Bluetooth cadence sensor in MyWhoosh through QZ?
 
@@ -208,8 +190,5 @@ In a confirmed support case, Kinomap had retained old connections and was interf
 
 **Yes, the two connections have different purposes.** A Garmin watch may *discover* QZ's virtual Bluetooth advertisement without successfully connecting to it as a usable bike sensor. Seeing the device name in the Garmin sensor search does not guarantee that the watch supports the specific Bluetooth service and pairing path exposed by QZ.
 
-An **iPhone cannot transmit ANT+**, so QZ running on iOS cannot use the Android ANT+ sensor-broadcast method to send cycling or treadmill metrics directly to a Garmin watch. Enabling QZ's **Garmin Bluetooth Sensor** compatibility option does not add ANT+ to an iPhone or guarantee that every Garmin watch can connect over Bluetooth.
 
 If your aim is to have the completed ride in **Garmin Connect**, keep **Garmin Upload / Garmin Connect integration** enabled in QZ, record the workout in QZ and finish/save the session. QZ then uploads the completed activity and its available metrics to Garmin Connect **after the workout**, rather than feeding a live data stream into the watch's own activity recording.
-
-In a confirmed iPhone/bike support case, Garmin Connect uploads already worked although a Garmin Epix Pro Gen 2 discovered QZ and then failed the Bluetooth sensor pairing. If you specifically need a live ANT+ feed to the watch, use an appropriate **Android device with ANT+ transmission capability** and a supported QZ broadcast profile instead; see the live ANT+ guidance above.

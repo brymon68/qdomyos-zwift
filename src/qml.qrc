@@ -2,16 +2,12 @@
     <qresource prefix="/">
         <file>HomeForm.ui.qml</file>
         <file>main.qml</file>
-        <file>EmailValidator.qml</file>
-        <file>SettingsNumberField.qml</file>
-        <file>SettingsFormatField.qml</file>
         <file>Page1Form.ui.qml</file>
         <file>Page2Form.ui.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>Home.qml</file>
         <file>settings.qml</file>
         <file>settings-catalog.json</file>
-        <file>settings-index-worker.js</file>
         <file>AccordionElement.qml</file>
         <file>AccordionCheckElement.qml</file>
         <file>icons/arrow-collapse-vertical.png</file>
@@ -31,7 +27,6 @@
         <file>TrainingProgramsList.qml</file>
         <file>TrainingProgramsListJS.qml</file>
         <file>WorkoutEditor.qml</file>
-        <file>SettingsList.qml</file>
         <file>ChartJsTest.qml</file>
         <file>inner_templates/chartjs/.eslintrc.js</file>
         <file>inner_templates/chartjs/.jshintrc</file>
@@ -46,33 +41,16 @@
         <file>inner_templates/chartjs/moment.js</file>
         <file>inner_templates/chartjs/resize-observer.min.js</file>
         <file>inner_templates/chartjs/ajax-loader.gif</file>
-        <file>Classifica.qml</file>
         <file>Credits.qml</file>
         <file>WebEngineTest.qml</file>
-        <file>profiles.qml</file>
-        <file>SwagBagView.qml</file>
         <file>SimpleButton.qml</file>
-        <file>SwagBagItem.qml</file>
         <file>GoogleMap.qml</file>
         <file>inner_templates/googlemaps/maps.htm</file>
         <file>inner_templates/googlemaps/main_ws_manager.js</file>
         <file>inner_templates/googlemaps/globals.js</file>
         <file>inner_templates/googlemaps/marker.png</file>
-        <file>settings-tts.qml</file>
         <file>NewPageElement.qml</file>
         <file>inner_templates/googlemaps/jquery-3.6.0.min.js</file>
-        <file>inner_templates/googlemaps/bike.js</file>
-        <file>zwo/Easy intervals.zwo</file>
-        <file>zwo/HIIT Aerobic.zwo</file>
-        <file>zwo/HIIT Anaerobic Sprint.zwo</file>
-        <file>zwo/HIIT Anaerobic.zwo</file>
-        <file>zwo/HIIT Neuromuscular.zwo</file>
-        <file>zwo/Short Mix by Jonathan.zwo</file>
-        <file>zwo/Tabata plus 2 with sweet spot and threshold.zwo</file>
-        <file>zwo/Tabata with sweet spot.zwo</file>
-        <file>zwo/Tempo and endurance.zwo</file>
-        <file>zwo/VO2max with recovery.zwo</file>
-        <file>zwo/VO2max with sweet spot.zwo</file>
         <file>inner_templates/googlemaps/chart.js</file>
         <file>inner_templates/googlemaps/chartjs.3.4.1.min.js</file>
         <file>inner_templates/googlemaps/chartjs-adapter-moment.js</file>
@@ -91,23 +69,18 @@
         <file>gpx/Richmond Park.gpx</file>
         <file>gpx/St Andrews to Pittenweem.gpx</file>
         <file>GPXList.qml</file>
-        <file>WorkoutsHistory.qml</file>
-        <file>ShapeIcon.qml</file>
         <file>WorkoutTypeTag.qml</file>
         <file>inner_templates/previewchart/ajax-loader.gif</file>
         <file>inner_templates/previewchart/chart.htm</file>
         <file>inner_templates/previewchart/dochart.js</file>
         <file>inner_templates/previewchart/main_ws_manager.js</file>
         <file>videoPlayback.qml</file>
-        <file>settings-tiles.qml</file>
         <file>inner_templates/floating/floating.htm</file>
         <file>inner_templates/floating/globals.js</file>
         <file>inner_templates/floating/jquery-3.6.0.min.js</file>
         <file>inner_templates/floating/main_ws_manager.js</file>
         <file>inner_templates/floating/radikalmedium.otf</file>
-        <file>settings-shortcuts.qml</file>
         <file>settings-treadmill-inclination-override.qml</file>
-        <file>WebStravaAuth.qml</file>
         <file>Toast.qml</file>
         <file>ToastManager.qml</file>
         <file>sounds/training-program-segment.wav</file>
@@ -118,10 +91,6 @@
         <file>inner_templates/chartjs/bike.png</file>
         <file>inner_templates/chartjs/html2canvas.min.js</file>
         <file>inner_templates/chartjs/qzlogo.png</file>
-        <file>inner_templates/chartjs/dochartlive.js</file>
-        <file>inner_templates/chartjs/chartlive.htm</file>
-        <file>inner_templates/i18n.js</file>
-        <file alias="inner_templates/i18n/i18n.js">inner_templates/i18n.js</file>
         <file>inner_templates/workouteditor/index.html</file>
         <file>inner_templates/workouteditor/workout-editor.css</file>
         <file>inner_templates/workouteditor/workout-editor.js</file>
@@ -132,19 +101,11 @@
         <file>ChartFooterInnerJS.qml</file>
         <file>ChartFooterInnerNoJS.qml</file>
         <file>inner_templates/chartjs/dochartliveheart.js</file>
-        <file>Wizard.qml</file>
-        <file>gears.qml</file>
-        <file>customgears.qml</file>
-        <file>custominclinationresistance.qml</file>
         <file>IndicatorOnlySwitch.qml</file>
-        <file>ValueComboBox.qml</file>
-        <file>UiComboBox.qml</file>
         <file>StaticAccordionElement.qml</file>
         <file>inner_templates/chartjs/dotreadmillchartlive.js</file>
         <file>inner_templates/chartjs/treadmillchartlive.htm</file>
         <file>PreviewChart.qml</file>
-        <file>WebPelotonAuth.qml</file>
         <file>inner_templates/floating/hfloating.htm</file>
-        <file>WebIntervalsICUAuth.qml</file>
     </qresource>
 </RCC>

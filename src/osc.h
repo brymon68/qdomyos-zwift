@@ -9,15 +9,10 @@
 #include <QHash>
 #include <QVariant>
 #include "bluetoothdevice.h"
-#include "devices/bike.h"
 #include "devices/treadmill.h"
-#include "devices/rower.h"
 #include "homeform.h"
 #include "bluetooth.h"
 #include <oscpp/client.hpp>
-#include <oscpp/server.hpp>
-#include <oscpp/print.hpp>
-#include <iostream>
 
 class OSC : public QObject
 {
@@ -30,9 +25,7 @@ class OSC : public QObject
     bluetooth* bluetoothManager;
 
     size_t OSC_makePacket(void* buffer, size_t size);
-    void OSC_handlePacket(const OSCPP::Server::Packet& packet);
     QUdpSocket* OSC_sendSocket = new QUdpSocket(this);
-    QUdpSocket* OSC_recvSocket = new QUdpSocket(this);
 
   private slots:
     void publishWorkoutData();

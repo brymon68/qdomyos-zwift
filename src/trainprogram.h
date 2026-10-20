@@ -7,6 +7,7 @@
 #include <QSet>
 #include <QTime>
 #include <QTimer>
+#include <QUdpSocket>
 
 #ifdef Q_OS_IOS
 #include "ios/lockscreen.h"
@@ -19,12 +20,6 @@
 #include "zwift-api/zwift_messages.pb.h"
 #endif
 
-enum class treadmill_pid_hr_mode : int8_t {
-    Default = -1,
-    Speed = 0,
-    Inclination = 1
-};
-
 class trainrow {
   public:
     QTime duration = QTime(0, 0, 0, 0);
@@ -35,7 +30,6 @@ class trainrow {
     double lower_speed = -1;   // used for peloton
     double average_speed = -1; // used for peloton
     double upper_speed = -1;   // used for peloton
-    double fanspeed = -1;
     double inclination = -200;
     double lower_inclination = -200;   // used for peloton
     double average_inclination = -200; // used for peloton
@@ -58,17 +52,12 @@ class trainrow {
     int8_t zoneHR = -1;
     int16_t HRmin = -1;
     int16_t HRmax = -1;
-    treadmill_pid_hr_mode pidHrMode = treadmill_pid_hr_mode::Default;
     int16_t HRabove = -1;
     int16_t HRbelow = -1;
     double maxSpeed = -1;
     double minSpeed = -1;
-    double maxInclination = -1;
     int8_t maxResistance = -1;
     int32_t power = -1;
-    bool rampIsFtpFraction = false;
-    double rampPowerFromOriginal = -1.0;
-    double rampPowerToOriginal = -1.0;
     int32_t mets = -1;
     bool waitForLap = false;
     QTime rampDuration = QTime(0, 0, 0, 0); // QZ split the ramp in 1 second segments. This field will tell you how long
@@ -100,7 +89,6 @@ class trainprogram : public QObject {
     static trainprogram *load(const QString &filename, bluetooth *b, QString Extension);
     static QList<trainrow> loadXML(const QString &filename, BLUETOOTH_TYPE device_type);
     static bool saveXML(const QString &filename, const QList<trainrow> &rows, BLUETOOTH_TYPE device_type = UNKNOWN);
-    static bool hasTargetPower(const QString &filename);
     static QString deviceTypeToXmlKey(BLUETOOTH_TYPE type);
     static BLUETOOTH_TYPE deviceTypeFromXmlKey(const QString &key);
     static BLUETOOTH_TYPE xmlDeviceType(const QString &filename, BLUETOOTH_TYPE fallback = UNKNOWN);
@@ -128,18 +116,11 @@ class trainprogram : public QObject {
     int TotalGPXSecs();
     double weightedInclination(int step);
     double medianInclination(int step);
-    bool adjustPowerOffsetForTrainingProgram(int32_t delta);
-    int32_t powerOffsetForTrainingProgram() const { return trainingProgramPowerOffset; }
-    bool adjustResistanceOffsetForTrainingProgram(int32_t delta);
-    int32_t resistanceOffsetForTrainingProgram() const { return trainingProgramResistanceOffset; }
     bool overrideZoneHRForCurrentRow(uint8_t zone);
     bool advanceLapButtonStep();
     static int firstBlockingLapButtonRow(const QList<trainrow> &rows, int currentStep, int candidateStep);
     static int firstBlockingTransitionRow(const QList<trainrow> &rows, int currentStep, int candidateStep);
     static bool isBlockingTransitionRow(const trainrow &row);
-    static QString pidHrModeToString(treadmill_pid_hr_mode mode);
-    static treadmill_pid_hr_mode pidHrModeFromString(const QString &value);
-    static treadmill_pid_hr_mode effectivePidHrMode(const trainrow &row, treadmill_pid_hr_mode globalMode);
     bool powerzoneWorkout() {
         foreach(trainrow r, rows) {
             if(r.power != -1) return true;
@@ -180,20 +161,17 @@ class trainprogram : public QObject {
     void scheduler();
 
 private slots:
-    void pelotonOCRprocessPendingDatagrams();
 
   signals:
     void start();
     void stop(bool paused);
     void lap();
     void changeSpeed(double speed);
-    bool changeFanSpeed(uint8_t speed);
     void changeInclination(double grade, double inclination);
     void changeNextInclination300Meters(QList<MetersByInclination>);
     void changeResistance(resistance_t resistance);
     void changeRequestedPelotonResistance(int8_t resistance);
     void changeCadence(int16_t cadence);
-    void changePower(int32_t power);
     void changeSpeedAndInclination(double speed, double inclination);
     void changeGeoPosition(QGeoCoordinate p, double azimuth, double avgAzimuthNext300Meters);
     void changeTimestamp(QTime source, QTime actual);
@@ -228,17 +206,12 @@ private slots:
     int lastStepTimestampChanged = 0;
     double lastCurrentStepDistance = 0.0;
     QTime lastCurrentStepTime = QTime(0, 0, 0);
-    int32_t trainingProgramPowerOffset = 0;
-    int32_t trainingProgramResistanceOffset = 0;
     int lastLapButtonToastStep = -1;
     int lastLapButtonToastTick = -30;
-    
+
     int64_t currentTimerJitter = 0;
     QDateTime lastSchedulerCall = QDateTime::currentDateTime();
 
-    QUdpSocket* pelotonOCRsocket = nullptr;
-    void pelotonOCRcomputeTime(QString t);
-    
     AuthToken* zwift_auth_token = nullptr;
     World* zwift_world = nullptr;
     int zwift_player_id = -1;

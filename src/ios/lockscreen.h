@@ -20,13 +20,10 @@ class lockscreen {
     void setHeartRate(unsigned char heartRate);
     void startWorkout(unsigned short deviceType);
     void stopWorkout();
-    bool canWriteHistoricalWorkoutToHealthKit(unsigned short sport);
-    bool saveHistoricalWorkoutToHealthKit(unsigned short sport, double startTimestamp, double endTimestamp,
-                                          double distanceMeters, double calories);
     void workoutTrackingUpdate(double speed, unsigned short cadence, unsigned short watt, unsigned short currentCalories,
                                unsigned long long currentSteps, unsigned char deviceType, double currentDistance,
-                               double totalKcal, double elevationGain, bool useMiles, unsigned char heartRate,
-                               int liveActivityHeartRate, const char *compactLeadingMetric, int compactLeadingValue,
+                               double totalKcal, bool useMiles, unsigned char heartRate,
+                               const char *compactLeadingMetric, int compactLeadingValue,
                                const char *compactTrailingMetric, int compactTrailingValue);
     bool appleWatchAppInstalled();
 
@@ -35,8 +32,7 @@ class lockscreen {
     void virtualbike_setHeartRate(unsigned char heartRate);
     void virtualbike_setCadence(unsigned short crankRevolutions, unsigned short lastCrankEventTime);
 
-    void virtualbike_zwift_ios(bool disable_hr, bool garmin_bluetooth_compatibility, bool zwift_play_emulator, bool watt_bike_emulator, bool tacx);
-
+    void virtualbike_zwift_ios(bool disable_hr, bool garmin_bluetooth_compatibility, bool zwift_play_emulator, bool watt_bike_emulator);
     double virtualbike_getCurrentSlope();
     double virtualbike_getCurrentCRR();
     double virtualbike_getCurrentCW();
@@ -61,26 +57,17 @@ class lockscreen {
     void virtualtreadmill_setHeartRate(unsigned char heartRate);
     double virtualtreadmill_getCurrentSlope();
     uint64_t virtualtreadmill_lastChangeCurrentSlope();
-    double virtualtreadmill_getPowerRequested();
     double virtualtreadmill_getRequestedSpeed();
     uint64_t virtualtreadmill_lastChangeRequestedSpeed();
     bool virtualtreadmill_updateFTMS(unsigned short normalizeSpeed, unsigned char currentResistance,
-                                     unsigned short currentCadence, unsigned short currentWatt,
+                                     unsigned short currentCadence,
                                      unsigned short currentInclination, unsigned long long currentDistance, double elevationGain,
-                                     unsigned short currentCalories, qint32 currentSteps, unsigned short elapsedSeconds,
+                                     qint32 currentSteps, unsigned short elapsedSeconds,
                                      unsigned char deviceType);
 
     // volume
     double getVolume();
 
-    // garmin
-    bool urlParser(const char *url);
-    void garminconnect_init();
-    int getHR();
-    int getFootCad();
-    int getPower();
-    double getSpeed();
-    
     // debug
     static void debug(const char* debugstring);
     static void nslog(const char* log);
@@ -89,9 +76,6 @@ class lockscreen {
     void adb_connect(const char* IP);
     void adb_sendcommand(const char* command);
     
-    // Elite Aria Fan
-    void eliteAriaFan();
-    void eliteAriaFan_fanSpeedRequest(unsigned char speed);
 
     // Echelon Connect Sport
     void echelonConnectSport(const char*  Name, void* deviceClass);
@@ -101,10 +85,6 @@ class lockscreen {
     void wahooKickrSnapBike(const char* Name, void* deviceClass);
     void writeCharacteristic(unsigned char* qdata, unsigned char length);
 
-    // Zwift Click Remote
-    void zwiftClickRemote(const char* Name, const char* UUID, void* deviceClass);
-    void zwiftClickRemote_WriteCharacteristic(unsigned char* qdata, unsigned char length, void* deviceClass);
-    
     // Zwift API
     void zwift_api_decodemessage_player(const char* data, int len);
     float zwift_api_getaltitude();
@@ -119,8 +99,6 @@ class lockscreen {
     static uint32_t zwift_hub_getCadenceFromBuffer(const QByteArray& buffer);
     
     // quick actions
-    static void set_action_profile(const char* profile);
-    static const char* get_action_profile();
 
     // multi-window detection for iPadOS
     static bool isInMultiWindowMode();

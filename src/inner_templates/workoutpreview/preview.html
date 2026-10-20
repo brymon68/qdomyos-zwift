@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Workout Preview</title>
-    <script src="../i18n/i18n.js"></script>
     <style>
         * {
             margin: 0;
@@ -44,9 +43,7 @@
         let chart = null;
         let miles = 1; // 1 = km, 0.621371 = miles
 
-        function tq(key, fallback) {
-            return window.qzTranslate ? window.qzTranslate(key, fallback) : fallback;
-        }
+
 
         function openEndedSegmentStyle(ctx) {
             return (ctx.p0.raw && ctx.p0.raw.openEnded) ||
@@ -54,7 +51,7 @@
         }
 
         // Function to create/update the workout chart
-        function updateWorkoutChart(workoutData, deviceType) {
+        function updateWorkoutChart(workoutData) {
             const ctx = document.getElementById('workoutChart').getContext('2d');
 
             // Destroy existing chart
@@ -62,11 +59,11 @@
                 chart.destroy();
             }
 
-            // Prepare datasets based on device type
+            // Display explicit speed and incline targets.
             const datasets = [];
 
-            // Determine primary metric based on device type
-            const primaryMetric = getPrimaryMetric(deviceType, workoutData);
+            // Speed uses the selected display units.
+            const primaryMetric = getPrimaryMetric(workoutData);
 
             if (primaryMetric) {
                 datasets.push({
@@ -85,28 +82,10 @@
                 });
             }
 
-            // Add cadence as secondary metric for bikes
-            if (deviceType === 'bike' && workoutData.cadence && workoutData.cadence.length > 0) {
-                datasets.push({
-                    label: tq('chart.cadenceRpmUpper', 'Cadence (RPM)'),
-                    data: workoutData.cadence,
-                    borderColor: '#f59e0b',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.1,
-                    pointRadius: 0,
-                    segment: {
-                        borderDash: openEndedSegmentStyle
-                    },
-                    yAxisID: 'y1'
-                });
-            }
-
             // Add inclination as secondary metric for treadmills
-            if (deviceType === 'treadmill' && workoutData.inclination && workoutData.inclination.length > 0) {
+            if (workoutData.inclination && workoutData.inclination.length > 0) {
                 datasets.push({
-                    label: tq('chart.inclinationPercent', 'Inclination (%)'),
+                    label: ('Inclination (%)'),
                     data: workoutData.inclination,
                     borderColor: '#10b981',
                     backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -168,7 +147,7 @@
                             type: 'linear',
                             title: {
                                 display: true,
-                                text: tq('chart.timeSeconds', 'Time (seconds)'),
+                                text: ('Time (seconds)'),
                                 color: '#666'
                             },
                             grid: {
@@ -188,7 +167,7 @@
                             position: 'left',
                             title: {
                                 display: true,
-                                text: primaryMetric ? primaryMetric.label : tq('chart.value', 'Value'),
+                                text: primaryMetric ? primaryMetric.label : ('Value'),
                                 color: '#3b82f6'
                             },
                             grid: {
@@ -199,20 +178,19 @@
                             }
                         },
                         y1: {
-                            beginAtZero: deviceType !== 'treadmill',
+                            beginAtZero: false,
                             position: 'right',
-                            display: (deviceType === 'bike' && workoutData.cadence && workoutData.cadence.length > 0) ||
-                                     (deviceType === 'treadmill' && workoutData.inclination && workoutData.inclination.length > 0),
+                            display: !!(workoutData.inclination && workoutData.inclination.length),
                             title: {
                                 display: true,
-                                text: deviceType === 'treadmill' ? tq('chart.inclinationPercent', 'Inclination (%)') : tq('chart.cadenceRpmUpper', 'Cadence (RPM)'),
-                                color: deviceType === 'treadmill' ? '#10b981' : '#f59e0b'
+                                text: 'Inclination (%)',
+                                color: '#10b981'
                             },
                             grid: {
                                 drawOnChartArea: false
                             },
                             ticks: {
-                                color: deviceType === 'treadmill' ? '#10b981' : '#f59e0b'
+                                color: '#10b981'
                             }
                         }
                     }
@@ -220,63 +198,13 @@
             });
         }
 
-        // Determine primary metric based on device type
-        function getPrimaryMetric(deviceType, workoutData) {
-            const { watts, speed, inclination, resistance, cadence } = workoutData;
-
-            // For bikes: show watts (power)
-            if (deviceType === 'bike' && watts && watts.length > 0) {
-                return {
-                    label: tq('workoutEditor.powerW', 'Power (W)'),
-                    data: watts
-                };
-            }
-
-            // For treadmills: show speed
-            if (deviceType === 'treadmill' && speed && speed.length > 0) {
-                return {
-                    label: miles === 1 ? tq('workoutEditor.speedKmh', 'Speed (km/h)') : tq('workoutEditor.speedMph', 'Speed (mph)'),
-                    data: speed.map(point => ({ x: point.x, y: point.y * miles }))
-                };
-            }
-
-            // For ellipticals/rowers: show watts if available, otherwise resistance
-            if ((deviceType === 'elliptical' || deviceType === 'rower')) {
-                if (watts && watts.length > 0) {
-                    return {
-                        label: tq('workoutEditor.powerW', 'Power (W)'),
-                        data: watts
-                    };
-                }
-                if (resistance && resistance.length > 0) {
-                    return {
-                        label: tq('workoutEditor.resistance', 'Resistance'),
-                        data: resistance
-                    };
-                }
-            }
-
-            // Default: try watts, then speed, then resistance
-            if (watts && watts.length > 0) {
-                return {
-                    label: tq('workoutEditor.powerW', 'Power (W)'),
-                    data: watts
-                };
-            }
-            if (speed && speed.length > 0) {
-                return {
-                    label: miles === 1 ? tq('workoutEditor.speedKmh', 'Speed (km/h)') : tq('workoutEditor.speedMph', 'Speed (mph)'),
-                    data: speed.map(point => ({ x: point.x, y: point.y * miles }))
-                };
-            }
-            if (resistance && resistance.length > 0) {
-                return {
-                    label: tq('workoutEditor.resistance', 'Resistance'),
-                    data: resistance
-                };
-            }
-
-            return null;
+        // Speed uses the selected display units.
+        function getPrimaryMetric(workoutData) {
+            if (!workoutData.speed.length) return null;
+            return {
+                label: miles === 1 ? 'Speed (km/h)' : 'Speed (mph)',
+                data: workoutData.speed.map(point => Object.assign({}, point, { y: point.y * miles }))
+            };
         }
 
         // WebSocket for communication with Qt
@@ -309,7 +237,6 @@
 
             ws.onopen = function() {
                 console.log('WebSocket connected');
-                ws.send(JSON.stringify({ msg: 'webtranslations', content: {} }));
 
                 // Request initial data
                 requestWorkoutPreview();
@@ -353,26 +280,13 @@
             if (msgType === 'workoutpreview' || msgType === 'R_workoutpreview') {
                 const content = data.content || data;
                 updateWorkoutFromData(content);
-            } else if (msgType === 'R_webtranslations') {
-                window.qzSetTranslations(data.content || {});
-                lastDataHash = null;
             }
         }
 
         // Update chart from WebSocket data
         function updateWorkoutFromData(data) {
             // Create a hash of the data to detect changes
-            const dataHash = JSON.stringify({
-                points: data.points,
-                watts: data.watts,
-                speed: data.speed,
-                inclination: data.inclination,
-                resistance: data.resistance,
-                cadence: data.cadence,
-                segments: data.segments,
-                hasOpenEndedSteps: data.hasOpenEndedSteps,
-                deviceType: data.deviceType
-            });
+            const dataHash = JSON.stringify(data);
 
             // Only update if data has changed
             if (dataHash === lastDataHash) {
@@ -381,7 +295,7 @@
 
             lastDataHash = dataHash;
 
-            const { points, watts, speed, inclination, resistance, cadence, segments, hasOpenEndedSteps, deviceType, miles_unit } = data;
+            const { speed, inclination, segments, hasOpenEndedSteps, miles_unit } = data;
 
             // Update miles setting if provided
             if (miles_unit !== undefined) {
@@ -389,31 +303,14 @@
             }
 
             const workoutData = {
-                watts: watts || [],
                 speed: speed || [],
                 inclination: inclination || [],
-                resistance: resistance || [],
-                cadence: cadence || [],
                 segments: segments || [],
                 hasOpenEndedSteps: hasOpenEndedSteps || false
             };
 
-            // The C++ backend always populates watts even for treadmill workouts where
-            // power is unset (sent as y = -1).  Detect the actual device type from data.
-            var hasValidWatts = workoutData.watts.some(function(p) {
-                return (p !== null && typeof p === 'object' && p.y !== undefined) ? p.y >= 0 : Number(p) >= 0;
-            });
-            var actualDeviceType = deviceType || 'bike';
-            if (!hasValidWatts) {
-                if (workoutData.speed.length > 0) {
-                    actualDeviceType = 'treadmill';
-                } else if (workoutData.resistance.length > 0) {
-                    actualDeviceType = 'elliptical';
-                }
-            }
-
             console.log('Updating chart with new data');
-            updateWorkoutChart(workoutData, actualDeviceType);
+            updateWorkoutChart(workoutData);
         }
 
         // External API for backwards compatibility (if needed)
@@ -425,11 +322,9 @@
         // Initialize with empty chart
         window.addEventListener('load', function() {
             updateWorkoutChart({
-                watts: [],
                 speed: [],
-                inclination: [],
-                resistance: []
-            }, 'bike');
+                inclination: []
+            });
         });
     </script>
 </body>

@@ -28,8 +28,6 @@
 #include <QObject>
 #include <QTimer>
 
-#include <qmdnsengine/hostname.h>
-
 class QHostAddress;
 
 namespace QMdnsEngine {
@@ -45,8 +43,6 @@ class HostnamePrivate : public QObject {
   public:
     HostnamePrivate(Hostname *hostname, AbstractServer *server);
     HostnamePrivate(Hostname *hostname, const QByteArray &desired, AbstractServer *server);
-    HostnamePrivate(Hostname *hostname, const QByteArray &desired, HostnameAddressFamily family,
-                    AbstractServer *server);
 
     void assertHostname();
     bool generateRecord(const QHostAddress &srcAddress, quint16 type, Record &record);
@@ -56,7 +52,6 @@ class HostnamePrivate : public QObject {
     QByteArray hostnamePrev;
     QByteArray hostname;
     QByteArray desiredHostname;
-    HostnameAddressFamily addressFamily;
     bool hostnameRegistered;
     int hostnameSuffix;
 

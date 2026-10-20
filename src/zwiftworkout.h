@@ -11,11 +11,6 @@ class zwiftworkout {
     static bool isZwiftWorkoutFile(const QString &filename, const QString &extension = QString());
     static double normalizeIncline(double incline);
 
-  private:
-    static bool durationAsDistance(QString sportType, QString durationType);
-    static double speedFromPace(int Pace);
-    static void convertTag(double thresholdSecPerKm, const QString &sportType, const QString &durationType,
-                           QList<trainrow> &list, const char *tag, ...);
 };
 
 #endif // ZWIFTWORKOUT_H

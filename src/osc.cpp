@@ -9,8 +9,6 @@ OSC::OSC(bluetooth* manager, QObject *parent)
     m_timer->setInterval(1000);
     connect(m_timer, &QTimer::timeout, this, &OSC::publishWorkoutData);
 
-    OSC_recvSocket->bind(9001);
-
     m_timer->start();
 }
 
@@ -19,10 +17,6 @@ void OSC::publishWorkoutData() {
     QSettings settings;
     QString OSC_ip = settings.value(QZSettings::OSC_ip, QZSettings::default_OSC_ip).toString();
     int OSC_port = settings.value(QZSettings::OSC_port, QZSettings::default_OSC_port).toInt();
-    QByteArray osc_read = OSC_recvSocket->readAll();
-    if(!osc_read.isEmpty()) {
-        OSC_handlePacket(OSCPP::Server::Packet(osc_read.data(), osc_read.length()));
-    }
     char osc_buffer[3000];
     int osc_len = OSC_makePacket(osc_buffer, sizeof(osc_buffer));
     int osc_ret_len = OSC_sendSocket->writeDatagram(osc_buffer, osc_len, QHostAddress(OSC_ip), OSC_port);
@@ -38,9 +32,6 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
         .openBundle(1234ULL)
                              // Add a message with two arguments and an array with 6 elements;
                              // for efficiency this needs to be known in advance.
-        .openMessage("/QZ/Resistance", 1)
-        .int32(bluetoothManager->device()->currentResistance().value())
-        .closeMessage()
 
         .openMessage("/QZ/Heart", 1)
         .int32(bluetoothManager->device()->currentHeart().value())
@@ -82,18 +73,6 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
         .float32(bluetoothManager->device()->currentDistance1s().value())
         .closeMessage()
 
-        .openMessage("/QZ/Calories", 1)
-        .float32(bluetoothManager->device()->calories().value())
-        .closeMessage()
-
-        .openMessage("/QZ/Joules", 1)
-        .float32(bluetoothManager->device()->jouls().value())
-        .closeMessage()
-
-        .openMessage("/QZ/FanSpeed", 1)
-        .int32(bluetoothManager->device()->fanSpeed())
-        .closeMessage()
-
         .openMessage("/QZ/ElapsedTime", 1)
         .string(bluetoothManager->device()->elapsedTime().toString(QStringLiteral("m:ss")).toLatin1())
         .closeMessage()
@@ -110,16 +89,8 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
         .int32(bluetoothManager->device()->connected())
         .closeMessage()
 
-        .openMessage("/QZ/Resistance", 1)
-        .int32(bluetoothManager->device()->currentResistance().value())
-        .closeMessage()
-
         .openMessage("/QZ/Cadence", 1)
         .float32(bluetoothManager->device()->currentCadence().value())
-        .closeMessage()
-
-        .openMessage("/QZ/CrankRevolutions", 1)
-        .float32(bluetoothManager->device()->currentCrankRevolutions())
         .closeMessage()
 
         .openMessage("/QZ/Coordinate", 2)
@@ -133,14 +104,6 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
 
         .openMessage("/QZ/AverageAzimuthNext300m", 1)
         .float32(bluetoothManager->device()->averageAzimuthNext300m())
-        .closeMessage()
-
-        .openMessage("/QZ/LastCrankEventTime", 1)
-        .int32(bluetoothManager->device()->lastCrankEventTime())
-        .closeMessage()
-
-        .openMessage("/QZ/Watts", 1)
-        .int32(bluetoothManager->device()->wattsMetric().value())
         .closeMessage()
 
         .openMessage("/QZ/ElevationGain", 1)
@@ -171,77 +134,10 @@ size_t OSC::OSC_makePacket(void* buffer, size_t size)
         .float32(bluetoothManager->device()->inclinationDifficultOffset())
         .closeMessage()
 
-        .openMessage("/QZ/WeightLoss", 1)
-        .float32(bluetoothManager->device()->weightLoss())
-        .closeMessage()
-
-        .openMessage("/QZ/WattKg", 1)
-        .float32(bluetoothManager->device()->wattKg().value())
-        .closeMessage()
-
-        .openMessage("/QZ/METS", 1)
-        .float32(bluetoothManager->device()->currentMETS().value())
-        .closeMessage()
-
-        .openMessage("/QZ/HeartZone", 1)
-        .int32(bluetoothManager->device()->currentHeartZone().value())
-        .closeMessage()
-
-        .openMessage("/QZ/MaxHeartZone", 1)
-        .int32(bluetoothManager->device()->maxHeartZone())
-        .closeMessage()
-
-        .openMessage("/QZ/PowerZone", 1)
-        .int32(bluetoothManager->device()->currentPowerZone().value())
-        .closeMessage()
-
-        .openMessage("/QZ/TargetPowerZone", 1)
-        .int32(bluetoothManager->device()->targetPowerZone().value())
-        .closeMessage()
-
         .openMessage("/QZ/DeviceType", 1)
         .int32(bluetoothManager->device()->deviceType())
         .closeMessage()
 
-        .openMessage("/QZ/MaxResistance", 1)
-        .int32(bluetoothManager->device()->maxResistance())
-        .closeMessage()
         .closeBundle();
     return packet.size();
-}
-
-void OSC::OSC_handlePacket(const OSCPP::Server::Packet& packet)
-{
-    if (packet.isBundle()) {
-        // Convert to bundle
-        OSCPP::Server::Bundle bundle(packet);
-
-               // Print the time
-        std::cout << "#bundle " << bundle.time() << std::endl;
-
-               // Get packet stream
-        OSCPP::Server::PacketStream packets(bundle.packets());
-
-               // Iterate over all the packets and call handlePacket recursively.
-               // Cuidado: Might lead to stack overflow!
-        while (!packets.atEnd()) {
-            OSC_handlePacket(packets.next());
-        }
-    } else {
-        // Convert to message
-        OSCPP::Server::Message msg(packet);
-
-               // Get argument stream
-        OSCPP::Server::ArgStream args(msg.args());
-
-        if (msg == "/QZ/Resistance") {
-            const float value = args.int32();
-            qDebug() << "OSC" << value;
-            if(bluetoothManager->device()->deviceType() == BIKE)
-                ((bike*)bluetoothManager->device())->changeResistance(value);
-        } else {
-            // Simply print unknown messages
-            std::cout << "Unknown message: " << msg << std::endl;
-        }
-    }
 }

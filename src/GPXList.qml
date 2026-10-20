@@ -13,35 +13,20 @@ ColumnLayout {
     signal trainprogram_open_clicked(url name)
     signal trainprogram_open_other_folder(url name)
     signal trainprogram_preview(url name)
-    property var selectedFileUrl: ""
-
-    Connections {
-        target: rootItem
-        function onAndroidDocumentPicked(kind, localUrl) {
-            if (kind === "gpx") {
-                trainprogram_open_clicked(localUrl)
-            }
-        }
-    }
-
     Loader {
         id: fileDialogLoader
         active: false
         sourceComponent: Component {
             FileDialog {
-                id: fileDialog
-                title: qsTr("Please choose a file")
+                title: "Please choose a file"
                 folder: shortcuts.home
-                nameFilters: [qsTr("GPX files (*.gpx *.GPX)"), qsTr("All files (*)")]
                 visible: true
                 onAccepted: {
-                    var chosenFile = fileDialog.fileUrl || fileDialog.file || (fileDialog.fileUrls && fileDialog.fileUrls.length > 0 ? fileDialog.fileUrls[0] : "")
-                    console.log("You chose: " + chosenFile)
-                    selectedFileUrl = chosenFile
+                    console.log("You chose: " + fileUrl)
                     if(OS_VERSION === "Android") {
-                        trainprogram_open_other_folder(chosenFile)
+                        trainprogram_open_other_folder(fileUrl)
                     } else {
-                        trainprogram_open_clicked(chosenFile)
+                        trainprogram_open_clicked(fileUrl)
                     }
                     close()
                     // Destroy and recreate the dialog for next use
@@ -59,20 +44,20 @@ ColumnLayout {
 
     RowLayout{
         spacing: 2
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        anchors.top: parent.top
+        anchors.fill: parent
 
         ColumnLayout {
             spacing: 0
-            Layout.fillHeight: true
+            anchors.top: parent.top
+            anchors.fill: parent
 
             Row
             {
                 spacing: 5
-                leftPadding: window.contentSideMargin
                 Text
                 {
-                    text:qsTr("Filter")
+                    text:"Filter"
                     color: "white"
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -86,7 +71,7 @@ ColumnLayout {
                            filter+= "[%1%2]".arg(text[i].toUpperCase()).arg(text[i].toLowerCase())
                         filter+="*"
                         print(filter)
-                        folderModel.nameFilters = [filter + ".gpx", filter + ".GPX"]
+                        folderModel.nameFilters = [filter + ".gpx"]
                     }
                     id: filterField
                     onTextChanged: updateFilter()
@@ -103,13 +88,14 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.minimumWidth: 50
                 Layout.preferredWidth: 100
+                Layout.maximumWidth: row.left
                 Layout.minimumHeight: 150
-                Layout.fillHeight: true
+                Layout.preferredHeight: parent.height
                 ScrollBar.vertical: ScrollBar {}
                 id: list
                 FolderListModel {
                     id: folderModel
-                    nameFilters: ["*.gpx", "*.GPX"]
+                    nameFilters: ["*.gpx"]
                     folder: "file://" + rootItem.getWritableAppDir() + 'gpx'
                     showDotAndDotDot: false
                     showDirs: true
@@ -126,7 +112,6 @@ ColumnLayout {
                         z: 1
                         Item {
                             id: root
-                            x: window.contentSideMargin
                             property alias text: fileTextBox.text
                             property int spacing: 30
                             width: fileTextBox.width + spacing
@@ -201,13 +186,14 @@ ColumnLayout {
         }
 
         ScrollView {
+            anchors.top: parent.top
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-            Layout.fillHeight: true
+            //contentHeight: map.height
+            Layout.preferredHeight: parent.height
             Layout.fillWidth: true
+            Layout.fillHeight: true
             Layout.minimumWidth: 100
             Layout.preferredWidth: 200
-            // Padding, not a margin: the content moves in, the scroll bar stays at the edge
-            rightPadding: window.contentSideMargin
 
             Row {
                 id: row
@@ -260,7 +246,7 @@ ColumnLayout {
                             elevationGain = elevationGain + (pathController.geopath.coordinateAt(i).altitude - pathController.geopath.coordinateAt(i-1).altitude)
                         lines[i] = pathController.geopath.coordinateAt(i)
                     }
-                    distance.text = qsTr("Distance %1 km Elevation Gain: %2 meters").arg(pathController.distance.toFixed(1)).arg(elevationGain.toFixed(1))
+                    distance.text = "Distance " + pathController.distance.toFixed(1) + " km Elevation Gain: " + elevationGain.toFixed(1) + " meters"
                     return lines;
                 }
 
@@ -281,16 +267,17 @@ ColumnLayout {
 
     Button {
         id: searchButton
-        Layout.fillWidth: true
-        Layout.preferredHeight: 50
-        text: qsTr("Other folders")
+        height: 50
+        width: parent.width
+        text: "Other folders"
+        Layout.alignment: Qt.AlignCenter | Qt.AlignVCenter
         onClicked: {
             console.log("folder is " + rootItem.getWritableAppDir() + 'gpx')
-            if (Qt.platform.os === "android") {
-                rootItem.openAndroidDocumentPicker("gpx")
-            } else {
-                fileDialogLoader.active = true
-            }
+            // Create a fresh FileDialog instance
+            fileDialogLoader.active = true
+        }
+        anchors {
+            bottom: parent.bottom
         }
     }
 }

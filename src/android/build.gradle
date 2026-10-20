@@ -23,6 +23,11 @@ apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'com.google.protobuf'
 
 def amazon = System.getenv('AMAZON')
+def x22iVariant = System.getenv('X22I_VARIANT') ?: 'test'
+if (!(x22iVariant in ['test', 'baseline'])) {
+    throw new GradleException('X22I_VARIANT must be test or baseline')
+}
+def x22iTest = x22iVariant == 'test'
 def androidCompileSdk = (project.findProperty('androidCompileSdkVersion') ?: '35').toString()
 def qtAndroidDir = project.findProperty('qt5AndroidDir') ?: System.getenv('QT_ANDROID_DIR')
 println(amazon)
@@ -32,12 +37,21 @@ def qtAndroidJarDir = qtAndroidBaseDir ? qtAndroidBaseDir + '/jar' : null
 def qtAndroidJavaSrcDir = qtAndroidJavaRootDir ? qtAndroidJavaRootDir + '/src' : 'qt-android-missing/src/android/java/src'
 def qtAndroidJavaResDir = qtAndroidJavaRootDir ? qtAndroidJavaRootDir + '/res' : 'qt-android-missing/src/android/java/res'
 
+// FIXED: Force resolution con versioni consistenti
+configurations.all {
+    resolutionStrategy {
+        // TUTTE le versioni devono essere consistenti
+        force 'com.google.protobuf:protobuf-javalite:3.25.3'
+        force 'io.grpc:grpc-okhttp:1.63.0'
+        force 'io.grpc:grpc-protobuf-lite:1.63.0' 
+        force 'io.grpc:grpc-stub:1.63.0'
+        force 'io.grpc:grpc-core:1.63.0'
+    }
+    // Exclude full protobuf from ALL dependencies
+    exclude group: 'com.google.protobuf', module: 'protobuf-java'
+}
+
 dependencies {
-    implementation 'io.netty:netty-all:4.1.100.Final'
-    implementation 'com.google.guava:guava:32.1.3-android'
-    implementation 'com.fazecast:jSerialComm:2.10.4'  	
-    implementation 'org.slf4j:slf4j-api:2.0.9'
-    implementation 'org.slf4j:slf4j-simple:2.0.9'	
     if (qtAndroidJarDir) {
         implementation fileTree(dir: qtAndroidJarDir, include: ['*.jar'])
     }
@@ -46,7 +60,14 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.9.3"
     implementation "androidx.core:core-ktx:1.12.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
-    implementation 'com.google.protobuf:protobuf-javalite:3.25.1'
+    
+    // FIXED: Una sola versione di protobuf-javalite
+    implementation 'com.google.protobuf:protobuf-javalite:3.25.3'
+        
+    implementation 'io.grpc:grpc-okhttp:1.63.0'        
+    implementation 'io.grpc:grpc-protobuf-lite:1.63.0'
+    implementation 'io.grpc:grpc-stub:1.63.0'
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 		
     if(amazon == "1") {
         // amazon app store
@@ -54,27 +75,21 @@ dependencies {
     } else {
         // google play store
         implementation 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.2'
-        implementation 'com.google.android.play:age-signals:0.0.3'
-        implementation 'androidx.health.connect:connect-client:1.1.0-alpha11'
     }
 
     def appcompat_version = "1.3.1"
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation "com.android.billingclient:billing:8.0.0"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation files('libs/usb-serial-for-android-3.8.1.aar')
-    implementation 'com.google.android.gms:play-services-wearable:19.0.0'
 
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.60'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
-    implementation("com.garmin.connectiq:ciq-companion-app-sdk:2.3.0@aar")
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit:2.1.20'
-    testImplementation 'androidx.health.connect:connect-client:1.1.0-alpha11'
     testImplementation 'org.json:json:20231013'
 }
 
@@ -85,7 +100,12 @@ def archSuffix = Os.isFamily(Os.FAMILY_MAC) ? ':osx-x86_64' : ''
 
 protobuf {
     protoc {
-      artifact = "com.google.protobuf:protoc:3.25.1$archSuffix"
+      artifact = "com.google.protobuf:protoc:3.25.3$archSuffix"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.63.0"
+        }
     }
     generateProtoTasks {
       all().configureEach { task ->
@@ -94,11 +114,27 @@ protobuf {
             option "lite"
           }
         }
+        task.plugins {
+            grpc {
+                option "lite"
+            }
+        }
       }
     }
 }
 
 android {
+    if (x22iTest) {
+        signingConfigs {
+            debug {
+                storeFile file(System.getenv('X22I_SIGNING_STORE_FILE'))
+                storePassword System.getenv('X22I_SIGNING_STORE_PASSWORD')
+                keyAlias 'x22i-test'
+                keyPassword System.getenv('X22I_SIGNING_STORE_PASSWORD')
+                storeType 'PKCS12'
+            }
+        }
+    }
     /*******************************************************
      * The following variables:
      * - androidBuildToolsVersion,
@@ -166,33 +202,52 @@ android {
     // Qt 5.15's QtLoader.java finds libraries via nativeLibraryDir on the
     // filesystem, not from inside the APK, so we must force extraction.
     packaging {
-        resources {
-            excludes += [
-                'META-INF/io.netty.versions.properties',
-                'META-INF/INDEX.LIST',
-                'META-INF/DEPENDENCIES',
-                'META-INF/LICENSE',
-                'META-INF/LICENSE.txt',
-                'META-INF/license.txt',
-                'META-INF/NOTICE',
-                'META-INF/NOTICE.txt',
-                'META-INF/notice.txt',
-                'META-INF/ASL2.0',
-                'META-INF/*.kotlin_module'
-            ]
-        }
         jniLibs {
             useLegacyPackaging = true
         }
     }
 
     defaultConfig {
-        applicationId = "org.cagnulen.qdomyoszwift"
+        ndk { abiFilters "arm64-v8a" }
+        applicationId = x22iTest ? "org.cagnulen.qdomyoszwift.x22ibaseline" : "org.cagnulen.qdomyoszwift"
+        manifestPlaceholders = [
+            x22iApplicationLabel: x22iTest ? "X22i Test" : "qdomyos-zwift",
+            x22iLauncherLabel: x22iTest ? "X22i Test" : "QZ"
+        ]
         resConfig "en"
         minSdk 21
         targetSdk 36
     }
 
+    // FIXED: Packaging options ottimizzato per gestire i conflitti protobuf
+    packagingOptions {
+        // EXCLUDE problematic META-INF files instead of pickFirst to avoid collisions
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
+        
+        // Keep pickFirst only for files that are actually needed
+        pickFirst '**/META-INF/okio.kotlin_module'
+        pickFirst '**/META-INF/*.kotlin_module'
+        
+        // CRITICAL: Handle duplicate protobuf classes - this is crucial for your error
+        pickFirst '**/com/google/protobuf/**'
+        
+        // Handle native libraries
+        pickFirst '**/libprotobuf-lite.so'
+        pickFirst '**/libprotoc.so'
+        
+        // Additional common conflicts
+        pickFirst '**/META-INF/services/**'
+        pickFirst '**/kotlin/**'
+    }
     tasks.all { task ->
         if (task.name == 'compileDebugJavaWithJavac' && amazon == "1") {
             task.dependsOn copyArm64Directory
@@ -204,8 +259,6 @@ android {
         throw new GradleException("qt5AndroidDir is not set. Install Qt for Android and set qt5AndroidDir in gradle.properties or via the QT_ANDROID_DIR environment variable.")
     }
 }
-
-
 task copyArm64Directory(type: Copy) {
     from "libs/arm64-v8a/"
     include '*arm64-v8a.so'

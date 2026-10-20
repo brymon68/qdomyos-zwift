@@ -28,51 +28,16 @@ var speed_max = 0;
 var incline_max = 0;
 var miles = 1; // 1 = km, 0.621371 = miles
 
-// Whole-workout target curve, pre-rendered from the training program (mirrors dochartlive.js'
-// reqpower/rebuildTrainingProgramTarget) so the user sees the entire planned speed/inclination
-// profile up front, with the actual live values then progressing across that fixed timeline --
-// exactly like the bike power chart, instead of a target line that only ever grows one point at
-// a time and never shows what's coming next.
+// Draw the complete planned speed and inclination profile, then advance live values
+// across the same timeline as the workout progresses.
 var trainingProgramRows = [];
 var trainingProgramDurations = [];
 var firstElapsedTargetSpeed = 0;
 
-function t(key, fallback) {
-    return window.qzTranslate ? window.qzTranslate(key, fallback) : fallback;
-}
+
 
 function isTrueSetting(value) {
     return value === true || value === 'true' || value === 1 || value === '1';
-}
-
-// Speed zones derived from the user's own race pace settings (Settings -> Training Program Options ->
-// 1 Mile/5K/10K/Half Marathon/Marathon pace), the same reference paces QZ uses to turn a Zwift running
-// workout's %pace target into an actual km/h (see zwiftworkout::speedFromPace). This mirrors how the
-// bike power chart derives its zones from FTP, but for running there's no single "reference value" like
-// FTP -- each race distance gives its own reference pace -- so we use all five, sorted from slowest
-// (marathon) to fastest (1 mile), as the zone boundaries.
-var paceZoneLabels = ['Marathon', 'Half Marathon', '10K', '5K', '1 Mile'];
-var paceZoneLabelKeys = ['chart.paceMarathon', 'chart.paceHalfMarathon', 'chart.pace10k', 'chart.pace5k', 'chart.pace1Mile'];
-var paceZones = [8, 10, 11, 12, 14]; // km/h fallback if settings can't be read; overwritten in dochart_init()
-var paceZoneColorsT = ['greyt', 'limegreent', 'goldt', 'oranget', 'darkoranget', 'redt'];
-
-// Background bands for each pace zone, from 0 up to the fastest zone's top. Built as a function
-// (rather than computed once) so it always reflects the current paceZones/speed_max at chart
-// creation time, after the settings fetch in dochart_init() has resolved.
-function paceZoneBoxes() {
-    const boundaries = [0, ...paceZones, Math.max(speed_max, paceZones[paceZones.length - 1] + 1)];
-    const boxes = {};
-    for (let i = 0; i < paceZoneColorsT.length; i++) {
-        boxes['box' + i] = {
-            type: 'box',
-            xMin: 0,
-            yMin: boundaries[i],
-            yMax: boundaries[i + 1],
-            backgroundColor: window.chartColors[paceZoneColorsT[i]],
-            yScaleID: 'y-speed',
-        };
-    }
-    return boxes;
 }
 
 // How many seconds a training program row should occupy on the timeline. Open-ended rows (e.g.
@@ -135,14 +100,8 @@ function rebuildTrainingProgramTarget(updateChart) {
     const finalElapsed = Math.max(elapsed, latestWorkoutElapsed(0), latestWorkoutElapsed(2));
     treadmillChart.options.scales.x.max = finalElapsed;
 
-    if (paceZones.length > 0 && speed_max < paceZones[paceZones.length - 1]) {
-        // Always show all pace zone bands/labels on the axis, even if the workout
-        // never actually reaches the fastest configured pace.
-        speed_max = paceZones[paceZones.length - 1];
-    }
     treadmillChart.options.scales['y-speed'].max = Math.ceil(speed_max * 1.1);
     treadmillChart.options.scales['y-incline'].max = Math.ceil(Math.max(incline_max, 1) * 1.1);
-    treadmillChart.options.plugins.annotation.annotations = paceZoneBoxes();
 
     if (updateChart) {
         treadmillChart.update('none');
@@ -216,8 +175,7 @@ function process_arr(arr) {
     // The target (dashed) datasets are populated separately once the training program loads
     // (process_trainprogram/rebuildTrainingProgramTarget), covering the whole planned workout up
     // front. Here we only rebuild the actual (solid) history, aligned to the same workoutElapsed
-    // baseline: the first moment the training program actually gave a speed target, mirroring how
-    // dochartlive.js finds firstElapsedTargetPower for the bike power chart.
+    // baseline: the first moment the training program gave a speed target.
     for (let el of arr) {
         const time = el.elapsed_s + el.elapsed_m * 60 + el.elapsed_h * 3600;
 
@@ -244,11 +202,6 @@ function process_arr(arr) {
         }
     }
 
-    if (paceZones.length > 0 && speed_max < paceZones[paceZones.length - 1]) {
-        // Always show all pace zone bands/labels on the axis, even if the workout
-        // never actually reached the fastest configured pace.
-        speed_max = paceZones[paceZones.length - 1];
-    }
     speed_max = Math.ceil(speed_max * 1.1);
     incline_max = Math.ceil(incline_max * 1.1);
 
@@ -269,13 +222,13 @@ function process_arr(arr) {
         plugins: [backgroundFill],
         data: {
             // Target datasets are listed first and actual datasets last: Chart.js paints datasets
-            // in array order, so the actual (solid, zone-colored) lines are always drawn on top of
+            // in array order, so the actual solid lines are always drawn on top of
             // the dashed target lines instead of being hidden behind them when the two coincide
             // (e.g. with a Fake Treadmill, which has no acceleration lag and tracks target exactly).
             // Target data itself is filled in later by rebuildTrainingProgramTarget() once the
             // training program has loaded.
             datasets: [{
-                label: miles === 1 ? t('chart.targetSpeedKmh', 'Target Speed (km/h)') : t('chart.targetSpeedMph', 'Target Speed (mph)'),
+                label: miles === 1 ? ('Target Speed (km/h)') : ('Target Speed (mph)'),
                 backgroundColor: window.chartColors.black,
                 borderColor: window.chartColors.black,
                 data: [],
@@ -285,7 +238,7 @@ function process_arr(arr) {
                 yAxisID: 'y-speed',
                 borderDash: [5, 5]
             }, {
-                label: t('chart.targetIncline', 'Target Incline'),
+                label: ('Target Incline'),
                 backgroundColor: window.chartColors.grey,
                 borderColor: window.chartColors.grey,
                 data: [],
@@ -298,7 +251,7 @@ function process_arr(arr) {
                 // Actual speed/inclination use a solid pen 1.5x thicker than the dashed target
                 // lines (black/blue vs. black/grey) so the two stay visually distinct even when
                 // they coincide (e.g. with a Fake Treadmill, which tracks target exactly).
-                label: miles === 1 ? t('workoutEditor.speedKmh', 'Speed (km/h)') : t('workoutEditor.speedMph', 'Speed (mph)'),
+                label: miles === 1 ? ('Speed (km/h)') : ('Speed (mph)'),
                 backgroundColor: window.chartColors.black,
                 borderColor: window.chartColors.black,
                 data: speed,
@@ -307,7 +260,7 @@ function process_arr(arr) {
                 borderWidth: 3,
                 yAxisID: 'y-speed'
             }, {
-                label: t('workoutEditor.incline', 'Incline'),
+                label: ('Incline'),
                 backgroundColor: window.chartColors.blue,
                 borderColor: window.chartColors.blue,
                 data: inclination,
@@ -331,9 +284,6 @@ function process_arr(arr) {
                 legend: {
                     display: false
                 },
-                annotation: {
-                    annotations: paceZoneBoxes()
-                }
             },
             scales: {
                 x: {
@@ -359,7 +309,7 @@ function process_arr(arr) {
                     position: 'left',
                     title: {
                         display: true,
-                        text: miles === 1 ? t('workoutEditor.speedKmh', 'Speed (km/h)') : t('workoutEditor.speedMph', 'Speed (mph)'),
+                        text: miles === 1 ? ('Speed (km/h)') : ('Speed (mph)'),
                         color: 'black',
                     },
                     min: 0,
@@ -368,10 +318,6 @@ function process_arr(arr) {
                         stepSize: 1,
                         autoSkip: false,
                         color: 'black',
-                        callback: value => {
-                            const i = paceZones.findIndex(z => Math.abs(z - value) < 0.5);
-                            return i === -1 ? Math.round(value) : `${Math.round(value)} (${t(paceZoneLabelKeys[i], paceZoneLabels[i])})`;
-                        }
                     }
                 },
                 'y-incline': {
@@ -380,7 +326,7 @@ function process_arr(arr) {
                     position: 'right',
                     title: {
                         display: true,
-                        text: t('workoutEditor.inclinePercent', 'Incline (%)'),
+                        text: ('Incline (%)'),
                         color: window.chartColors.blue,
                     },
                     min: 0,
@@ -490,37 +436,15 @@ function loadTrainingProgram() {
 }
 
 function dochart_init() {
-    // Fetch miles_unit and the user's race pace settings first, since paceZones/miles need to be
-    // resolved before the chart (and its zone backgrounds/labels) is built.
-    const keys_arr = ['miles_unit', 'pacef_1mile', 'pacef_5km', 'pacef_10km', 'pacef_halfmarathon', 'pacef_marathon'];
-    let el = new MainWSQueueElement({
-        msg: 'getsettings',
-        content: {
-            keys: keys_arr
-        }
+    const request = new MainWSQueueElement({
+        msg: 'getsettings', content: {keys: ['miles_unit']}
     }, function(msg) {
-        if (msg.msg === 'R_getsettings') {
-            for (const key of keys_arr) {
-                if (msg.content[key] === undefined) return null;
-            }
-            return msg.content;
-        }
-        return null;
+        return msg.msg === 'R_getsettings' ? msg.content : null;
     }, 5000, 3);
-    el.enqueue().then(function(settings) {
-        if (settings['miles_unit'] === true || settings['miles_unit'] === 'true') {
-            miles = 0.621371;
-        }
-        const paceToSpeed = pacef => (3600 / Number(pacef)) * miles;
-        paceZones = [
-            paceToSpeed(settings['pacef_marathon']),
-            paceToSpeed(settings['pacef_halfmarathon']),
-            paceToSpeed(settings['pacef_10km']),
-            paceToSpeed(settings['pacef_5km']),
-            paceToSpeed(settings['pacef_1mile']),
-        ].sort((a, b) => a - b);
-    }).catch(function(err) {
-        console.error('Error getting settings: ' + err);
+    request.enqueue().then(function(settings) {
+        miles = settings.miles_unit === false || settings.miles_unit === 'false' ? 1 : 0.621371;
+    }).catch(function(error) {
+        console.error(error);
     }).finally(loadSessionArrayAndBuildChart);
 }
 

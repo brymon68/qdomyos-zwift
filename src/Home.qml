@@ -3,7 +3,6 @@ import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.12
 import QtGraphicalEffects 1.12
 import QtQuick.Window 2.12
-import Qt.labs.settings 1.0
 import Qt.labs.platform 1.1
 import QtMultimedia 5.15
 
@@ -13,7 +12,7 @@ HomeForm {
         anchors.fill: parent
         width: parent.fill
         height: parent.fill
-        color: settings.theme_background_color
+        color: "#303030"
 
         // VoiceOver accessibility - ignore decorative background
         Accessible.role: Accessible.Pane
@@ -22,24 +21,9 @@ HomeForm {
     signal start_clicked;
     signal stop_clicked;
     signal lap_clicked;
-    signal peloton_start_workout;
-    signal peloton_abort_workout;
     signal plus_clicked(string name)
     signal minus_clicked(string name)
     signal largeButton_clicked(string name)
-
-    Settings {
-        id: settings
-        property real ui_zoom: 100.0
-        property bool theme_tile_icon_enabled: true
-        property string theme_tile_background_color: "#303030"
-        property string theme_background_color: "#303030"
-        property bool theme_tile_shadow_enabled: true
-        property string theme_tile_shadow_color: "#9C27B0"
-        property int theme_tile_secondline_textsize: 12
-        property bool skipLocationServicesDialog: false
-        property bool trainprogram_sound_on_segment: false
-    }
 
     SoundEffect {
         id: trainingProgramSegmentSound
@@ -50,16 +34,6 @@ HomeForm {
     Connections {
         target: rootItem
         onTrainingProgramIntervalSoundRequested: trainingProgramSegmentSound.play()
-    }
-
-    MessageDialog {
-        id: messagePelotonAskStart
-        text: qsTr("Peloton Workout in progress")
-        informativeText: qsTr("Do you want to follow the resistance? ") + rootItem.pelotonProvider
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: {rootItem.pelotonAskStart = false; peloton_start_workout();}
-        onNoClicked: {rootItem.pelotonAskStart = false; peloton_abort_workout();}
-        visible: rootItem.pelotonAskStart
     }
 
     Popup {
@@ -103,111 +77,10 @@ HomeForm {
         onNoClicked: close()
     }
 
-    // Optional post-workout popup (settings.rpe_feel_popup_enabled) asking for perceived exertion
-    // and how the user felt. Saving the FIT file (rootItem.finalizeFitSave) is suspended until this
-    // popup is answered, so the values can be embedded in the FIT file before it's written/uploaded.
-    Popup {
-        id: rpeFeelPopup
-        parent: Overlay.overlay
-
-        x: Math.round((parent.width - width) / 2)
-        y: Math.round((parent.height - height) / 2)
-        width: 420
-        height: 340
-        modal: true
-        focus: true
-        palette.text: "white"
-        closePolicy: Popup.NoAutoClose
-
-        property int selectedRpe: 5
-        property int selectedFeel: 50
-        readonly property var rpeLabels: [
-            qsTr("Rest"), qsTr("Very Light"), qsTr("Light"), qsTr("Moderate"),
-            qsTr("Somewhat Hard"), qsTr("Hard"), qsTr("Harder"), qsTr("Very Hard"),
-            qsTr("Very Very Hard"), qsTr("Extremely Hard"), qsTr("Maximum Effort")
-        ]
-
-        Column {
-            anchors.fill: parent
-            anchors.margins: 16
-            spacing: 14
-
-            Label {
-                text: qsTr("How was this workout?")
-                font.bold: true
-                font.pixelSize: 18
-                width: parent.width
-                wrapMode: Text.WordWrap
-            }
-
-            Label {
-                text: qsTr("Perceived Exertion (RPE): ") + rpeFeelPopup.selectedRpe + " - " + rpeFeelPopup.rpeLabels[rpeFeelPopup.selectedRpe]
-                width: parent.width
-                wrapMode: Text.WordWrap
-            }
-
-            Slider {
-                id: rpeSlider
-                width: parent.width
-                from: 0
-                to: 10
-                stepSize: 1
-                value: rpeFeelPopup.selectedRpe
-                onValueChanged: rpeFeelPopup.selectedRpe = value
-            }
-
-            Label {
-                text: qsTr("How did you feel?")
-                width: parent.width
-                wrapMode: Text.WordWrap
-            }
-
-            UiComboBox {
-                id: feelCombo
-                width: parent.width
-                model: [qsTr("Very Bad"), qsTr("Bad"), qsTr("OK"), qsTr("Good"), qsTr("Very Good")]
-                currentIndex: 2
-                onCurrentIndexChanged: rpeFeelPopup.selectedFeel = currentIndex * 25
-            }
-
-            Row {
-                spacing: 12
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                Button {
-                    text: qsTr("Skip")
-                    onClicked: {
-                        rpeFeelPopup.close();
-                        rootItem.finalizeFitSave(-1, -1);
-                        finish_stop();
-                    }
-                }
-
-                Button {
-                    text: qsTr("Save")
-                    highlighted: true
-                    onClicked: {
-                        rpeFeelPopup.close();
-                        rootItem.finalizeFitSave(rpeFeelPopup.selectedRpe, rpeFeelPopup.selectedFeel);
-                        finish_stop();
-                    }
-                }
-            }
-        }
-    }
-
     Timer {
         id: popupLapAutoClose
         interval: 2000; running: false; repeat: false
         onTriggered: popupLap.close();
-    }
-
-    Timer {
-        id: searchStatusTimer
-        // Always running: rootItem.device blinks while no device is connected (it drives the icon),
-        // and bluetoothSearchStatus() is empty once a device is connected
-        interval: 1000; repeat: true; triggeredOnStart: true; running: true
-        onTriggered: searchStatus = rootItem.bluetoothSearchStatus()
     }
 
     Timer {
@@ -216,78 +89,8 @@ HomeForm {
         onTriggered: {if(rootItem.stopRequested) {rootItem.stopRequested = false; inner_stop(); }}
     }
 
-    property bool locationServiceRequsted: false
-    // Bluetooth and Location as Android reports them now, not only at app start: switched on from
-    // the quick settings, the questions about them go away.
-    // Home.qml is created before homeform sets rootItem: until then assume "on", so the question
-    // doesn't flash at start; setting rootItem re-evaluates the binding with the real value
-    property bool locationServicesOn: typeof rootItem === "undefined" || rootItem.locationServices()
-    // "No" answered: not asked again until the next start
-    property bool locationServicesDeclined: false
-
-    Timer {
-        interval: 2000; repeat: true
-        // only while a question about them is open: devices without GPS never report Location on
-        running: !locationServicesOn && (locationServicesDialog.visible || locationServiceRequsted)
-        onTriggered: locationServicesOn = rootItem.refreshLocationServices()
-    }
-
-    MessageDialog {
-        id: locationServicesDialog
-        text: qsTr("Permissions Required")
-        informativeText: qsTr("QZ requires both Bluetooth and Location Services to be enabled.\nLocation Services are necessary on Android to allow the app to find Bluetooth devices.\nThe GPS will not be used.\n\nWould you like to enable them?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: {
-            locationServiceRequsted = true
-            rootItem.enableLocationServices()
-        }
-        onNoClicked: {
-            locationServicesDeclined = true
-            remindLocationServicesDialog.visible = true
-        }
-        visible: !locationServicesOn && !locationServiceRequsted && !locationServicesDeclined && !settings.skipLocationServicesDialog
-    }
-
-    MessageDialog {
-        id: remindLocationServicesDialog
-        text: qsTr("Reminder Preference")
-        informativeText: qsTr("Would you like to be reminded about enabling Location Services next time?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: settings.skipLocationServicesDialog = false
-        onNoClicked: settings.skipLocationServicesDialog = true
-        visible: false
-    }
-
-    MessageDialog {
-        text: qsTr("Restart the app")
-        informativeText: qsTr("To apply the changes, you need to restart the app.\nWould you like to do that now?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: Qt.callLater(Qt.quit)
-        onNoClicked: this.visible = false;
-        visible: locationServiceRequsted && !locationServicesOn
-    }
-
-    Timer {
-        interval: 200; running: true; repeat: false
-        onTriggered: {
-            if(rootItem.firstRun()) {
-                stackView.push("Wizard.qml")
-            }
-        }
-    }
-
     function inner_stop() {
         stop_clicked();
-        if (rootItem.rpeFeelPopupEnabled()) {
-            rpeFeelPopup.selectedRpe = 5;
-            rpeFeelPopup.selectedFeel = 50;
-            rpeFeelPopup.open();
-        } else {
-            finish_stop();
-        }
-    }
-
-    function finish_stop() {
         rootItem.save_screenshot();
         if(CHARTJS)
             stackView.push("ChartJsTest.qml")
@@ -309,44 +112,42 @@ HomeForm {
         console.log("home.qml completed");
     }
 
+    Connections {
+        target: rootItem
+        function onCloseCompleteScreenRequested() {
+            console.log("Closing complete screen as requested");
+            if (stackView.depth > 1) {
+                stackView.pop();
+            }
+        }
+    }
+
     GridView {
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        // The tiles stretch to fill the row: the space left over by a whole number of columns
-        // is shared between the columns, up to a quarter of the tile width, and what remains
-        // centres the grid. Measured on the page, so the Android insets are excluded.
-        // The grid is exactly as wide as its columns and centred by the anchor above, not
-        // by leftMargin: Qt 5.15 does not recount the columns when leftMargin changes, so
-        // after a resize a row could come out one column short
-        readonly property real tileBaseWidth: 175 * settings.ui_zoom / 100
-        readonly property int tileColumns: Math.max(1, Math.floor(parent.width / tileBaseWidth))
-        cellWidth: Math.floor(Math.min(parent.width / tileColumns, tileBaseWidth * 1.25))
-        width: tileColumns * cellWidth
-        // Every tile is narrower than its cell by tileGap and sits at the cell's left edge, so the
-        // last column ends with the gap: the grid is shifted by half the gap, so the outer margins
-        // are equal
-        readonly property real tileGap: 5 * settings.ui_zoom / 100
-        anchors.horizontalCenterOffset: tileGap / 2
-        cellHeight: 130 * settings.ui_zoom / 100
+        anchors.fill: parent
+        cellWidth: 175
+        cellHeight: 130
         focus: true
         model: appModel
-        anchors.topMargin: (!window.lockTiles ? rootItem.topBarHeight + 30 : 0)
-        interactive: !window.lockTiles
+        leftMargin: { if(OS_VERSION === "Android") (Screen.width % cellWidth) / 2; else (parent.width % cellWidth) / 2; }
+        anchors.topMargin: rootItem.topBarHeight + 30
         id: gridView
         objectName: "gridview"
-        onMovementEnded: { headerToolbar.visible = (contentY == 0) || window.lockTiles; }
-        Screen.orientationUpdateMask:  Qt.LandscapeOrientation | Qt.PortraitOrientation | Qt.InvertedLandscapeOrientation | Qt.InvertedPortraitOrientation
+        onMovementEnded: { headerToolbar.visible = (contentY == 0); }
+        Screen.orientationUpdateMask:  Qt.LandscapeOrientation | Qt.PortraitOrientation
         Screen.onPrimaryOrientationChanged:{
-            // Nothing to recompute: cellWidth and the grid width follow the page width
+            if(OS_VERSION === "Android")
+                gridView.leftMargin = (Screen.width % cellWidth) / 2;
+            else
+                gridView.leftMargin = (parent.width % cellWidth) / 2;
         }
 
         Accessible.ignored: true
 
         delegate: Item {
             id: id1
-            width: gridView.cellWidth - gridView.tileGap
-            height: 125 * settings.ui_zoom / 100
+            width: 170
+            height: 125
 
             visible: visibleItem
             Component.onCompleted: console.log("completed " + objectName)
@@ -357,29 +158,21 @@ HomeForm {
             Accessible.description: largeButton ? largeButtonLabel : (secondLine !== "" ? secondLine : (writable ? qsTr("Adjustable. Current value: ") + value : qsTr("Current value: ") + value))
             Accessible.focusable: true
 
-
-            SequentialAnimation on rotation {
-                NumberAnimation { to:  2; duration: 60 }
-                NumberAnimation { to: -2; duration: 120 }
-                NumberAnimation { to:  0; duration: 60 }
-                running: loc.currentId !== -1 && id1.state !== "active" && window.lockTiles
-                loops: Animation.Infinite; alwaysRunToEnd: true
+            Behavior on x {
+                NumberAnimation { duration: 400; easing.type: Easing.OutBack }
             }
 
-            states: State {
-                name: "active"; when: loc.currentId === gridId && window.lockTiles
-                PropertyChanges { target: id1; opacity: 0.3 }
+            Behavior on y {
+                NumberAnimation { duration: 400; easing.type: Easing.OutBack }
             }
-
-            transitions: Transition { NumberAnimation { property: "opacity"; duration: 200} }
 
             Rectangle {
-                width: id1.width - 2 * settings.ui_zoom / 100
-                height: 123 * settings.ui_zoom / 100
+                width: 168
+                height: 123
                 radius: 3
                 border.width: 1
-                border.color: (settings.theme_tile_shadow_enabled ? settings.theme_tile_shadow_color : settings.theme_tile_background_color)
-                color: settings.theme_tile_background_color
+                border.color: "#9C27B0"
+                color: "#303030"
                 id: rect
 
                 // Ignore for VoiceOver - decorative background only
@@ -387,21 +180,21 @@ HomeForm {
             }
 
             DropShadow {
-                visible: settings.theme_tile_shadow_enabled
+                visible: true
                 anchors.fill: rect
                 cached: true
                 horizontalOffset: 3
                 verticalOffset: 3
                 radius: 8.0
                 samples: 16
-                color: settings.theme_tile_shadow_color
+                color: "#9C27B0"
                 source: rect
             }
 
             Timer {
                 id: toggleIconTimer
                 interval: 500; running: true; repeat: true
-                onTriggered: { if(identificator === "inclination" && rootItem.autoInclinationEnabled()) myIcon.visible = !myIcon.visible; else myIcon.visible = settings.theme_tile_icon_enabled && !largeButton; }
+                onTriggered: { if(identificator === "inclination" && rootItem.autoInclinationEnabled()) myIcon.visible = !myIcon.visible; else myIcon.visible = !largeButton; }
             }
 
             Image {
@@ -410,10 +203,10 @@ HomeForm {
                 anchors {
                          bottom: id1.bottom
                 }
-                width: 48 * settings.ui_zoom / 100
-                height: 48 * settings.ui_zoom / 100
+                width: 48
+                height: 48
                 source: icon
-                visible: settings.theme_tile_icon_enabled && !largeButton
+                visible: !largeButton
 
                 // Ignore for VoiceOver - decorative only
                 Accessible.ignored: true
@@ -428,9 +221,9 @@ HomeForm {
                 }
                 text: value
                 horizontalAlignment: Text.AlignHCenter
-                width: Math.max(50, parent.width - (writable ? 100 * settings.ui_zoom / 100 : 12 * settings.ui_zoom / 100))
-                height: 58 * settings.ui_zoom / 100
-                font.pointSize: valueFontSize * settings.ui_zoom / 100
+                width: Math.max(50, parent.width - (writable ? 100 : 12))
+                height: 58
+                font.pointSize: valueFontSize
                 fontSizeMode: Text.Fit
                 minimumPointSize: 10
                 font.bold: true
@@ -450,9 +243,9 @@ HomeForm {
                 }
                 text: secondLine
                 horizontalAlignment: Text.AlignHCenter
-                width: Math.max(50, parent.width - 12 * settings.ui_zoom / 100)
-                height: 24 * settings.ui_zoom / 100
-                font.pointSize: settings.theme_tile_secondline_textsize * settings.ui_zoom / 100
+                width: Math.max(50, parent.width - 12)
+                height: 24
+                font.pointSize: 12
                 fontSizeMode: Text.Fit
                 minimumPointSize: 7
                 font.bold: false
@@ -465,8 +258,8 @@ HomeForm {
                 id: myText
                 anchors {
                     top: myIcon.top
-                    horizontalCenter: settings.theme_tile_icon_enabled ? undefined : parent.horizontalCenter
-                    left: settings.theme_tile_icon_enabled ? parent.left : undefined
+                    horizontalCenter: undefined
+                    left: parent.left
                 }
                 font.bold: true
                 font.pointSize: labelFontSize
@@ -474,11 +267,11 @@ HomeForm {
                 minimumPointSize: 8
                 color: "white"
                 text: name
-                horizontalAlignment: settings.theme_tile_icon_enabled ? Text.AlignLeft : Text.AlignHCenter
-                anchors.leftMargin: settings.theme_tile_icon_enabled ? 55 * settings.ui_zoom / 100 : 0
-                width: Math.max(40, parent.width - (settings.theme_tile_icon_enabled ? 61 : 12) * settings.ui_zoom / 100)
-                height: 40 * settings.ui_zoom / 100
-                anchors.topMargin: 20 * settings.ui_zoom / 100
+                horizontalAlignment: Text.AlignLeft
+                anchors.leftMargin: 55
+                width: Math.max(40, parent.width - 61)
+                height: 40
+                anchors.topMargin: 20
                 visible: !largeButton
 
                 // Ignore for VoiceOver - parent Item handles accessibility
@@ -493,8 +286,8 @@ HomeForm {
                 anchors.top: myValue.top
                 anchors.left: parent.left
                 anchors.leftMargin: 2
-                width: 48 * settings.ui_zoom / 100
-                height: 48 * settings.ui_zoom / 100
+                width: 48
+                height: 48
 
                 // VoiceOver accessibility
                 Accessible.role: Accessible.Button
@@ -512,8 +305,8 @@ HomeForm {
                 anchors.top: myValue.top
                 anchors.right: parent.right
                 anchors.rightMargin: 2
-                width: 48 * settings.ui_zoom / 100
-                height: 48 * settings.ui_zoom / 100
+                width: 48
+                height: 48
 
                 // VoiceOver accessibility
                 Accessible.role: Accessible.Button
@@ -533,7 +326,7 @@ HomeForm {
                           color: largeButtonColor
                             radius: 20
                             }
-                font.pointSize: 20 * settings.ui_zoom / 100
+                font.pointSize: 20
 
                 // VoiceOver accessibility
                 Accessible.role: Accessible.Button
@@ -658,134 +451,4 @@ HomeForm {
         }
     }
 
-    Item {
-        id: ghostTile
-        visible: loc.currentId !== -1 && window.lockTiles
-        x: loc.mouseX - width / 2
-        y: loc.mouseY - height / 2
-        width: 85 * settings.ui_zoom / 100
-        height: 63 * settings.ui_zoom / 100
-        z: 200
-
-        Rectangle {
-            anchors.fill: parent
-            radius: 3
-            color: settings.theme_tile_background_color
-            opacity: 0.9
-            border.width: 2
-            border.color: settings.theme_tile_shadow_color
-
-            Text {
-                anchors.centerIn: parent
-                color: "white"
-                text: loc.tileName
-                font.pointSize: 10 * settings.ui_zoom / 100
-                font.bold: true
-                horizontalAlignment: Text.AlignHCenter
-                width: parent.width - 8
-                wrapMode: Text.WordWrap
-            }
-        }
-    }
-
-    Timer {
-        id: autoScrollTimer
-        interval: 50
-        repeat: true
-        running: false
-        property real scrollSpeed: 15
-        onTriggered: {
-            if (loc.currentId === -1) { running = false; return; }
-            var edgeZone = 80
-            if (loc.mouseY > gridView.height - edgeZone) {
-                var factor = (loc.mouseY - (gridView.height - edgeZone)) / edgeZone
-                gridView.contentY = Math.min(
-                    gridView.contentHeight - gridView.height,
-                    gridView.contentY + scrollSpeed * (1 + factor * 2)
-                )
-            } else if (loc.mouseY < edgeZone) {
-                var factor2 = (edgeZone - loc.mouseY) / edgeZone
-                gridView.contentY = Math.max(0, gridView.contentY - scrollSpeed * (1 + factor2 * 2))
-            } else {
-                running = false
-            }
-        }
-    }
-
-    MouseArea {
-        property int currentId: -1
-        property int newIndex
-        property int startIndex: -1
-        property string tileName: ""
-        property real lastScrollY: 0
-        property bool isSwiping: false
-
-        function indexAtMouse(mx, my) {
-            var cols = gridView.tileColumns
-            var adjustedY = my + gridView.contentY
-            var col = Math.floor((mx - gridView.x) / gridView.cellWidth)
-            if (col < 0 || col >= cols) return -1
-            var row = Math.floor(adjustedY / gridView.cellHeight)
-            var idx = row * cols + col
-            if (idx < 0 || idx >= appModel.count) return -1
-            return idx
-        }
-
-        id: loc
-        enabled: window.lockTiles
-        anchors.fill: parent
-
-        onPressed: {
-            lastScrollY = mouseY
-            isSwiping = false
-        }
-
-        onPressAndHold: {
-            if (isSwiping) return
-            var idx = indexAtMouse(mouseX, mouseY)
-            if (idx !== -1) {
-                startIndex = idx
-                newIndex = idx
-                currentId = appModel[idx].gridId
-                tileName = appModel[idx].name
-            } else {
-                currentId = -1
-                tileName = ""
-            }
-        }
-
-        onReleased: {
-            autoScrollTimer.running = false
-            if (currentId !== -1) {
-                var idx = indexAtMouse(mouseX, mouseY)
-                if (idx !== -1 && idx !== startIndex)
-                    rootItem.moveTile(tileName, idx, startIndex)
-            }
-            currentId = -1
-            startIndex = -1
-            tileName = ""
-            isSwiping = false
-        }
-
-        onPositionChanged: {
-            if (currentId === -1) {
-                // No drag in progress: scroll the grid like a normal flick
-                var dy = mouseY - lastScrollY
-                if (Math.abs(dy) > 5) isSwiping = true
-                gridView.contentY = Math.max(0,
-                    Math.min(gridView.contentHeight - gridView.height,
-                             gridView.contentY - dy))
-                lastScrollY = mouseY
-                return
-            }
-            var edgeZone = 80
-            if (mouseY > gridView.height - edgeZone || mouseY < edgeZone)
-                autoScrollTimer.running = true
-            else
-                autoScrollTimer.running = false
-
-            var idx = indexAtMouse(mouseX, mouseY)
-            if (idx !== -1 && idx !== newIndex) newIndex = idx
-        }
-    }
 }

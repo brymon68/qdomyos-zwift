@@ -28,7 +28,7 @@ ApplicationWindow {
             var temp = AndroidStatusBar.height + AndroidStatusBar.navigationBarHeight + AndroidStatusBar.leftInset + AndroidStatusBar.rightInset
         }
     }
-    
+
     // Helper functions for cleaner padding calculations
     function getTopPadding() {
         // Add padding for iPadOS multi-window mode (Stage Manager, Split View, Slide Over)
@@ -42,229 +42,48 @@ ApplicationWindow {
             }
         }
         if (Qt.platform.os !== "android" || AndroidStatusBar.apiLevel < 31) return 0;
-        // AndroidStatusBar.height is always the top inset in the current orientation
-        // (getSystemWindowInsets() returns orientation-aware values)
-        return AndroidStatusBar.height;
+        return (Screen.orientation === Qt.PortraitOrientation || Screen.orientation === Qt.InvertedPortraitOrientation) ?
+               AndroidStatusBar.height : AndroidStatusBar.leftInset;
     }
 
     function getBottomPadding() {
         if (Qt.platform.os !== "android" || AndroidStatusBar.apiLevel < 31) return 0;
-        // navigationBarHeight is always the bottom inset in the current orientation
-        return AndroidStatusBar.navigationBarHeight;
+        return (Screen.orientation === Qt.PortraitOrientation || Screen.orientation === Qt.InvertedPortraitOrientation) ?
+               AndroidStatusBar.navigationBarHeight : AndroidStatusBar.rightInset;
     }
 
     function getLeftPadding() {
         if (Qt.platform.os !== "android" || AndroidStatusBar.apiLevel < 31) return 0;
         return (Screen.orientation === Qt.LandscapeOrientation || Screen.orientation === Qt.InvertedLandscapeOrientation) ?
-               (settings.android_landscape_cutout_margin ? AndroidStatusBar.leftInset : AndroidStatusBar.systemBarLeftInset) : 0;
+               AndroidStatusBar.leftInset : 0;
     }
 
     function getRightPadding() {
         if (Qt.platform.os !== "android" || AndroidStatusBar.apiLevel < 31) return 0;
         return (Screen.orientation === Qt.LandscapeOrientation || Screen.orientation === Qt.InvertedLandscapeOrientation) ?
-               (settings.android_landscape_cutout_margin ? AndroidStatusBar.rightInset : AndroidStatusBar.systemBarRightInset) : 0;
-    }
-
-    // Side margin for text, after the Material 3 window margins (16 on compact windows
-    // under 600 wide, 24 on wider ones) but tighter: 12 and 16. Keeps text clear of
-    // rounded screen corners and of the edges covered by protective glass.
-    // A property rather than a function, so .ui.qml forms can bind to it.
-    readonly property int contentSideMargin: width < 600 ? 12 : 16
-
-    function isConfiguringShortcuts() {
-        // Check if a TextField in the shortcuts settings has active focus
-        // This prevents global shortcuts from intercepting key presses when configuring them
-        var focusItem = window.activeFocusItem;
-        if (!focusItem) return false;
-
-        // Walk up the parent hierarchy to check if we're inside settingsShortcutsPane
-        var current = focusItem;
-        while (current) {
-            if (current.objectName === "settingsShortcutsPane") {
-                return true;
-            }
-            current = current.parent;
-        }
-        return false;
-    }
-
-    function shortcutReady(sequence) {
-        return Qt.platform.os !== "ios" && settings.shortcuts_enabled && !isConfiguringShortcuts() && String(sequence).length > 0;
-    }
-    function stripBluetoothDeviceName(deviceName) {
-        return deviceName.replace(/ \(\d+%\)$/, "")
-    }
-
-    function maybeOpenGymModePopup() {
-        if (typeof rootItem === "undefined" || !rootItem) {
-            return
-        }
-        if (settings.gym_mode && !rootItem.hasConnectedDevice() && !gymModePopupDismissed && !popupGymMode.visible) {
-            popupGymMode.open()
-        }
+               AndroidStatusBar.rightInset : 0;
     }
 
     signal gpx_open_clicked(url name)
     signal gpxpreview_open_clicked(url name)
-    signal profile_open_clicked(url name)
     signal trainprogram_open_clicked(url name)
-    signal fitfile_preview_clicked(url name)
     signal trainprogram_open_other_folder(url name)
     signal gpx_open_other_folder(url name)
     signal trainprogram_preview(url name)
     signal trainprogram_zwo_loaded(string s)
     signal trainprogram_autostart_requested()
     signal fitfile_preview(string s)
-    signal gpx_save_clicked()
-    signal fit_save_clicked()
-    signal refresh_bluetooth_devices_clicked()
-    signal strava_connect_clicked()
-    signal peloton_connect_clicked()
-    signal intervalsicu_connect_clicked()
-    signal intervalsicu_download_todays_workout_clicked()
-    signal loadSettings(url name)
-    signal saveSettings(url name)
-    signal deleteSettings(url name)
-    signal restoreSettings()
-    signal saveProfile(string profilename)
     signal restart()
-    signal volumeUp()
-    signal volumeDown()
-    signal keyMediaPrevious()
-    signal keyMediaNext()
     signal floatingOpen()
     signal openFloatingWindowBrowser();
-    signal strava_upload_file_prepare();
 
-    property bool lockTiles: false
     property bool settings_restart_to_apply: false
-    property bool gymModePopupDismissed: false
-
-    // rootItem comes from homeform, created only after this file is loaded (main.cpp): for about
-    // a second the bindings on it fail and keep their defaults - every header button shown in a
-    // squashed bar. The header and the page wait for it
-    readonly property bool rootReady: typeof rootItem !== "undefined" && rootItem !== null
-
-    Settings {
-        id: settings
-        property string profile_name: "default"        
-        property string theme_status_bar_background_color: "#800080"
-        property bool volume_change_gears: false
-        property string peloton_username: "username"
-        property string peloton_password: "password"
-
-        property bool gym_mode: false
-
-        property bool shortcuts_enabled: false
-        property string shortcut_speed_plus: ""
-        property string shortcut_speed_minus: ""
-        property string shortcut_inclination_plus: ""
-        property string shortcut_inclination_minus: ""
-        property string shortcut_resistance_plus: ""
-        property string shortcut_resistance_minus: ""
-        property string shortcut_peloton_resistance_plus: ""
-        property string shortcut_peloton_resistance_minus: ""
-        property string shortcut_target_resistance_plus: ""
-        property string shortcut_target_resistance_minus: ""
-        property string shortcut_target_power_plus: ""
-        property string shortcut_target_power_minus: ""
-        property string shortcut_target_zone_plus: ""
-        property string shortcut_target_zone_minus: ""
-        property string shortcut_target_speed_plus: ""
-        property string shortcut_target_speed_minus: ""
-        property string shortcut_target_incline_plus: ""
-        property string shortcut_target_incline_minus: ""
-        property string shortcut_fan_plus: ""
-        property string shortcut_fan_minus: ""
-        property string shortcut_peloton_offset_plus: ""
-        property string shortcut_peloton_offset_minus: ""
-        property string shortcut_peloton_remaining_plus: ""
-        property string shortcut_peloton_remaining_minus: ""
-        property string shortcut_remaining_time_plus: ""
-        property string shortcut_remaining_time_minus: ""
-        property string shortcut_gears_plus: ""
-        property string shortcut_gears_minus: ""
-        property string shortcut_pid_hr_plus: ""
-        property string shortcut_pid_hr_minus: ""
-        property string shortcut_ext_incline_plus: ""
-        property string shortcut_ext_incline_minus: ""
-        property string shortcut_biggears_plus: ""
-        property string shortcut_biggears_minus: ""
-        property string shortcut_avs_cruise: ""
-        property string shortcut_avs_climb: ""
-        property string shortcut_avs_sprint: ""
-        property string shortcut_power_avg: ""
-        property string shortcut_erg_mode: ""
-        property string shortcut_preset_resistance_1: ""
-        property string shortcut_preset_resistance_2: ""
-        property string shortcut_preset_resistance_3: ""
-        property string shortcut_preset_resistance_4: ""
-        property string shortcut_preset_resistance_5: ""
-        property string shortcut_preset_speed_1: ""
-        property string shortcut_preset_speed_2: ""
-        property string shortcut_preset_speed_3: ""
-        property string shortcut_preset_speed_4: ""
-        property string shortcut_preset_speed_5: ""
-        property string shortcut_preset_inclination_1: ""
-        property string shortcut_preset_inclination_2: ""
-        property string shortcut_preset_inclination_3: ""
-        property string shortcut_preset_inclination_4: ""
-        property string shortcut_preset_inclination_5: ""
-        property string shortcut_preset_powerzone_1: ""
-        property string shortcut_preset_powerzone_2: ""
-        property string shortcut_preset_powerzone_3: ""
-        property string shortcut_preset_powerzone_4: ""
-        property string shortcut_preset_powerzone_5: ""
-        property string shortcut_preset_powerzone_6: ""
-        property string shortcut_preset_powerzone_7: ""
-        property string shortcut_auto_resistance: ""
-        property string shortcut_lap: ""
-        property string shortcut_start_stop: ""
-        property string shortcut_stop: ""
-        property bool android_landscape_cutout_margin: true
-        property bool android_landscape_cutout_prompt_shown: false
-    }
-
-
-    Store {
-        id: iapStore
-    }
 
     Loader {
       id: googleMapUI
       source:"GoogleMap.qml";
       active: false
       onLoaded: { console.log("googleMapUI loaded"); stackView.push(googleMapUI.item); }
-    }
-
-    // here in order to cache everything for the SwagBagView
-    Product {
-        id: productUnlockVowels
-        type: Product.Unlockable
-        store: iapStore
-        identifier: "org.cagnulein.qdomyoszwift.swagbag"
-
-        onPurchaseSucceeded: {
-            console.log(identifier + " purchase successful");
-            applicationData.vowelsUnlocked = true;
-            transaction.finalize();
-            pageStack.pop();
-        }
-
-        onPurchaseFailed: {
-            console.log(identifier + " purchase failed");
-            console.log("reason: "
-                        + transaction.failureReason === Transaction.CanceledByUser ? "Canceled" : transaction.errorString);
-            transaction.finalize();
-        }
-
-        onPurchaseRestored: {
-            console.log(identifier + " purchase restored");
-            applicationData.vowelsUnlocked = true;
-            console.log("timestamp: " + transaction.timestamp);
-            transaction.finalize();
-            pageStack.pop();
-        }
     }
 
     ToastManager {
@@ -338,22 +157,6 @@ ApplicationWindow {
         }
     }
 
-    Timer {
-       id: gymModeStartupTimer
-       interval: 1500
-       running: true
-       repeat: true
-       onTriggered: {
-            if (typeof rootItem === "undefined" || !rootItem) {
-                return
-            }
-            maybeOpenGymModePopup()
-            if (popupGymMode.visible || rootItem.hasConnectedDevice() || gymModePopupDismissed || !settings.gym_mode) {
-                stop()
-            }
-        }
-    }
-
     /*
     Timer {
         interval: 1000
@@ -375,65 +178,30 @@ ApplicationWindow {
         }
     }*/
 
-    // Shared by the toolbar "◄" button and the Android back button.
-    // stepInsidePage: pages with their own inner navigation (Wizard, training programs
-    // list) first go back one step there, via their handleBack().
-    // Returns false when there is nothing to go back to (home page).
-    function navigateBack(stepInsidePage) {
-        if (stepInsidePage && stackView.currentItem && typeof stackView.currentItem.handleBack === "function" &&
-                stackView.currentItem.handleBack()) {
-            return true
+    Keys.onBackPressed: {
+        if(OS_VERSION === "Android") {
+            toast.show("Pressed it quickly to close the app!")
+            timer.pressBack();
         }
-        if (stackView.depth <= 1) {
-            return false
-        }
-
-        var remindToSaveProfile = headerToolbar.settingsPageActive &&
-                stackView.currentItem &&
-                typeof stackView.currentItem.profileSaveReminderNeeded === "function" &&
-                stackView.currentItem.profileSaveReminderNeeded()
-        var activeProfileName = settings.profile_name
-
-        if(window.settings_restart_to_apply === true) {
-            window.settings_restart_to_apply = false;
-            popupRestartApp.visible = true;
-        }
-
-        stackView.pop()
-        toolButtonLoadSettings.visible = false;
-        toolButtonSaveSettings.visible = false;
-        rootItem.sortTiles()
-        if (remindToSaveProfile) {
-            toast.show(qsTr("Remember to save profile \"%1\" if you want to keep these changes in this profile.").arg(activeProfileName))
-        }
-        return true
     }
+    Timer{
+        id: timer
 
-    // On Android an unhandled back key closes the window, which quits the app.
-    // (Keys.onBackPressed cannot be attached to ApplicationWindow: it is not an Item.)
-    // Popups and the drawer close themselves on back before this is reached.
-    // Android 16+ with targetSdk 36 no longer sends the back key to the app unless
-    // AndroidManifest.xml sets android:enableOnBackInvokedCallback="false".
-    onClosing: {
-        if (OS_VERSION !== "Android") {
-            return
-        }
-        if (navigateBack(true)) {
-            close.accepted = false
-            return
-        }
-        if (backToExitTimer.running) {
-            return  // second press within the interval: let the app close
-        }
-        close.accepted = false
-        backToExitTimer.start()
-        toast.show(qsTr("Press back again to exit"), backToExitTimer.interval)
-    }
-
-    Timer {
-        id: backToExitTimer
+        property bool backPressed: false
         repeat: false
-        interval: 2000 // ms
+        interval: 200//ms
+        onTriggered: backPressed = false
+        function pressBack(){
+            if(backPressed){
+                timer.stop()
+                backPressed = false
+                Qt.callLater(Qt.quit)
+            }
+            else{
+                backPressed = true
+                timer.start()
+            }
+        }
     }
 
     Popup {
@@ -466,346 +234,6 @@ ApplicationWindow {
 	}
 
     MessageDialog {
-           id: popupPelotonAuth
-           text: qsTr("Peloton Authentication Change")
-           informativeText: qsTr("Peloton has moved to a new authentication system. Username and password are no longer required.\n\nWould you like to switch to the new authentication method now?")
-           buttons: (MessageDialog.Yes | MessageDialog.No)
-           onYesClicked: {
-               settings.peloton_username = "username"
-               settings.peloton_password = "password"
-               stackView.push("WebPelotonAuth.qml")
-               peloton_connect_clicked()
-           }
-           onNoClicked: this.visible = false
-           visible: false
-       }
-
-    Timer {
-       id: pelotonAuthCheck
-       interval: 1000  // 1 second delay after startup
-       running: true
-       repeat: false
-       onTriggered: {
-           if (settings.peloton_password !== "password") {
-               popupPelotonAuth.visible = true
-           }
-       }
-    }
-
-    Popup {
-        id: popupClassificaHelper
-         parent: Overlay.overlay
-
-       x: Math.round((parent.width - width) / 2)
-         y: Math.round((parent.height - height) / 2)
-         width: 380
-         height: 130
-         modal: true
-         focus: true
-         palette.text: "white"
-         onClosed: stackView.push("Classifica.qml");
-         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-         enter: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-         }
-         exit: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-         }
-         Column {
-             anchors.horizontalCenter: parent.horizontalCenter
-         Label {
-             anchors.horizontalCenter: parent.horizontalCenter
-             text: qsTr("QZ Classifica is a realtime viewer about the actual\neffort of every QZ users! If you want to join in,\nchoose a nickname in the general settings\nand enable the QZ Classifica setting in the\nexperimental settings section and\nrestart the app.")
-            }
-         }
-    }
-
-    Popup {
-        id: popupGymMode
-        parent: Overlay.overlay
-        x: Math.round((parent.width - width) / 2)
-        y: Math.round((parent.height - height) / 2)
-        width: Math.min(parent.width - 30, 720)
-        height: Math.min(parent.height - 40, 260)
-        modal: true
-        focus: true
-        closePolicy: Popup.NoAutoClose
-        onOpened: refresh_bluetooth_devices_clicked()
-
-        Column {
-            anchors.fill: parent
-            anchors.margins: 18
-            spacing: 14
-
-            Label {
-                width: parent.width
-                text: qsTr("Select Your Gym Device")
-                font.pixelSize: Qt.application.font.pixelSize + 10
-                font.bold: true
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-            }
-
-            Label {
-                width: parent.width
-                text: qsTr("QZ found the nearby Bluetooth trainers. Choose the machine you want to use for this session.")
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
-            }
-
-            ValueComboBox {
-                id: gymModeDeviceComboBox
-                width: parent.width
-                model: rootItem.bluetoothDevices
-                labels: ({ "Disabled": qsTr("Disabled") })
-                displayText: currentIndex >= 0 ? labelFor(currentValue) : qsTr("Select a device")
-                currentIndex: -1
-                font.pixelSize: Qt.application.font.pixelSize + 8
-
-                onActivated: {
-                    var selectedDevice = stripBluetoothDeviceName(currentValue)
-                    if (selectedDevice === "Disabled" || selectedDevice === "Wifi" || selectedDevice.length === 0) {
-                        return
-                    }
-                    popupGymMode.close()
-                    rootItem.selectGymModeDevice(selectedDevice)
-                }
-            }
-
-            Label {
-                width: parent.width
-                text: qsTr("The list refreshes automatically every 10 seconds.")
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
-                color: Material.color(Material.Grey)
-            }
-
-            Button {
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("Skip")
-                onClicked: {
-                    gymModePopupDismissed = true
-                    popupGymMode.close()
-                }
-            }
-        }
-    }
-
-    Timer {
-        id: gymModeRefreshTimer
-        interval: 10000
-        repeat: true
-        running: popupGymMode.visible
-        onTriggered: refresh_bluetooth_devices_clicked()
-    }
-
-    Popup {
-        id: popupWhatsOnZwiftHelper
-         parent: Overlay.overlay
-
-       x: Math.round((parent.width - width) / 2)
-         y: Math.round((parent.height - height) / 2)
-         width: 380
-         height: 130
-         modal: true
-         focus: true
-         palette.text: "white"
-         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-         onClosed: {
-             stackView.push("WebEngineTest.qml")
-             drawer.close()
-             stackView.currentItem.trainprogram_zwo_loaded.connect(trainprogram_zwo_loaded)
-             stackView.currentItem.trainprogram_zwo_loaded.connect(function(s) {
-                 stackView.pop();
-              });
-         }
-
-         enter: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-         }
-         exit: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-         }
-         Column {
-             anchors.horizontalCenter: parent.horizontalCenter
-         Label {
-             anchors.horizontalCenter: parent.horizontalCenter
-             text: qsTr("Browse the What's on Zwift workout library<br>and choose your workout. It will<br> be automatically loaded on QZ when you will<br>press the load button on the top!<br><br>QZ is not affiliated with Zwift<br>or https://whatsonzwift.com/ website.")
-            }
-         }
-    }
-
-    Popup {
-        id: popupLoadSettings
-         parent: Overlay.overlay
-
-       x: Math.round((parent.width - width) / 2)
-         y: Math.round((parent.height - height) / 2)
-         width: 380
-         height: 60
-         modal: true
-         focus: true
-         palette.text: "white"
-         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-         enter: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-         }
-         exit: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-         }
-         Column {
-             anchors.horizontalCenter: parent.horizontalCenter
-         Label {
-             anchors.horizontalCenter: parent.horizontalCenter
-             text: qsTr("Settings has been loaded correctly. Restart the app!")
-            }
-         }
-    }
-
-    Popup {
-        id: popupSaveFile
-         parent: Overlay.overlay
-
-         x: Math.round((parent.width - width) / 2)
-         y: Math.round((parent.height - height) / 2)
-         width: 380
-         height: 60
-         modal: true
-         focus: true
-         palette.text: "white"
-         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-         enter: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-         }
-         exit: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-         }
-         Column {
-             anchors.horizontalCenter: parent.horizontalCenter
-         Label {
-             anchors.horizontalCenter: parent.horizontalCenter
-             text: qsTr("Saved! Check your private folder (Android)<br>or Files App (iOS)")
-            }
-         }
-    }
-
-    Popup {
-        id: popupStravaConnected
-         parent: Overlay.overlay
-         enabled: rootItem.generalPopupVisible
-         onEnabledChanged: { if(rootItem.generalPopupVisible) popupStravaConnected.open() }
-         onClosed: { rootItem.generalPopupVisible = false; }
-
-         x: Math.round((parent.width - width) / 2)
-         y: Math.round((parent.height - height) / 2)
-         width: 380
-         height: 120
-         modal: true
-         focus: true
-         palette.text: "white"
-         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-         enter: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-         }
-         exit: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-         }
-         Column {
-             anchors.horizontalCenter: parent.horizontalCenter
-         Label {
-             anchors.horizontalCenter: parent.horizontalCenter
-             width: 370
-             height: 120
-             text: qsTr("Your Strava account is now connected!<br><br>When you will save a FIT file it will<br>automatically uploaded to Strava!")
-            }
-         }
-    }
-
-    Popup {
-        id: popupPelotonConnected
-         parent: Overlay.overlay
-         enabled: rootItem.pelotonPopupVisible
-         onEnabledChanged: { if(rootItem.pelotonPopupVisible) popupPelotonConnected.open() }
-         onClosed: { rootItem.pelotonPopupVisible = false; }
-
-         x: Math.round((parent.width - width) / 2)
-         y: Math.round((parent.height - height) / 2)
-         width: 380
-         height: 120
-         modal: true
-         focus: true
-         palette.text: "white"
-         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-         enter: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-         }
-         exit: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-         }
-         Column {
-             anchors.horizontalCenter: parent.horizontalCenter
-         Label {
-             anchors.horizontalCenter: parent.horizontalCenter
-             width: 370
-             height: 120
-             text: qsTr("Your Peloton account is now connected!<br><br>Restart the app to apply this change!")
-            }
-         }
-    }
-
-    Timer {
-        id: popupLicenseAutoClose
-        interval: 120000; running: rootItem.licensePopupVisible; repeat: false
-        onTriggered: popupLicense.close();
-    }
-
-    Popup {
-        id: popupLicense
-         parent: Overlay.overlay
-         enabled: rootItem.licensePopupVisible
-         onEnabledChanged: { if(rootItem.licensePopupVisible) popupLicense.open() }
-         onClosed: { Qt.openUrlExternally("https://www.patreon.com/bePatron?u=45290147"); Qt.callLater(Qt.quit); }
-
-         x: Math.round((parent.width - width) / 2)
-         y: Math.round((parent.height - height) / 2)
-         width: 580
-         height: 230
-         modal: true
-         focus: true
-         palette.text: "white"
-         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-         enter: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-         }
-         exit: Transition
-         {
-             NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-         }
-         Column {
-             anchors.horizontalCenter: parent.horizontalCenter
-         Label {
-             anchors.horizontalCenter: parent.horizontalCenter
-             width: 570
-             height: 220
-             text: qsTr("Trial time expired!<br><br>Please join the QZ Patreon Membership to unlock the full license!<br>https://www.patreon.com/bePatron?u=45290147<br><br>Then add your patreon email in the email field in the general settings.<br>The App will now close.")
-            }
-         }
-    }
-
-    MessageDialog {
         id: popupRestartApp
         text: qsTr("Settings changed")
         informativeText: qsTr("In order to apply the changes you need to restart the app.\nDo you want to do it now?")
@@ -815,107 +243,10 @@ ApplicationWindow {
         visible: false
     }
 
-    // In landscape the camera side keeps an empty margin as wide as the cutout. The first time
-    // it happens (the cutout inset is wider than the system bar one), ask once whether to let
-    // the content go under the cutout instead. The delay lets the rotation settle first.
-    readonly property bool landscapeCutoutPromptDue: Qt.platform.os === "android" && AndroidStatusBar.apiLevel >= 31 &&
-        (Screen.orientation === Qt.LandscapeOrientation || Screen.orientation === Qt.InvertedLandscapeOrientation) &&
-        settings.android_landscape_cutout_margin && !settings.android_landscape_cutout_prompt_shown &&
-        // the cutout safe inset also covers curved (waterfall) edges, which are not a camera
-        (AndroidStatusBar.leftInset > Math.max(AndroidStatusBar.systemBarLeftInset, AndroidStatusBar.waterfallLeftInset) ||
-         AndroidStatusBar.rightInset > Math.max(AndroidStatusBar.systemBarRightInset, AndroidStatusBar.waterfallRightInset))
-
-    Timer {
-        interval: 5000
-        running: window.landscapeCutoutPromptDue
-        onTriggered: {
-            settings.android_landscape_cutout_prompt_shown = true
-            popupLandscapeCutout.visible = true
-        }
-    }
-
     MessageDialog {
-        id: popupLandscapeCutout
-        text: qsTr("Camera Cutout")
-        informativeText: qsTr("In landscape, QZ keeps a margin on the camera side so the camera hole does not cover the content.\nDo you want to use the full screen width instead?\n\nYou can change it later in Settings > General UI Options > Keep Content Clear of the Camera Cutout.")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: settings.android_landscape_cutout_margin = false
-        onNoClicked: this.visible = false
-        visible: false
-    }
-
-    // a new workout history database was started (first start, reinstall, database removed):
-    // the workouts of a previous install may still be in the QZ folder, hidden from the app
-    MessageDialog {
-        id: popupHistoryRecovery
-        text: qsTr("Workout History")
-        informativeText: qsTr("Workouts of a previous installation may still be in the QZ folder.\nDo you want to look for them?\n\nIn the next window, allow access to the QZ folder.")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: rootItem.importFitFolder()
-        onNoClicked: this.visible = false
-        visible: false
-    }
-
-    Connections {
-        target: rootItem
-        ignoreUnknownSignals: true
-        function onHistoryRecoveryOfferRequested() {
-            popupHistoryRecovery.visible = true
-        }
-    }
-
-    // a device changed a setting on its own (auto-detection): the message says what QZ found and why it must restart
-    MessageDialog {
-        id: popupRestartAppDetected
-        text: ""
-        informativeText: qsTr("Restart now?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: Qt.callLater(Qt.quit)
-        onNoClicked: this.visible = false;
-        visible: false
-    }
-
-    Connections {
-        target: rootItem
-        ignoreUnknownSignals: true
-        function onRestartToApplyRequested(message) {
-            popupRestartAppDetected.text = message;
-            popupRestartAppDetected.visible = true;
-        }
-    }
-
-    MessageDialog {
-        text: qsTr("Strava")
-        informativeText: qsTr("Do you want to upload the workout to Strava?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: {strava_upload_file_prepare(); rootItem.stravaUploadRequested = false;}
-        onNoClicked: {rootItem.stravaUploadRequested = false;}
-        visible: rootItem.stravaUploadRequested
-    }
-
-    MessageDialog {
-        text: qsTr("Garmin Workout Planned")
-        informativeText: qsTr("Workout found:\n") + rootItem.garminWorkoutPromptName +
-                         (rootItem.garminWorkoutPromptDate.length > 0 ? qsTr("\nDate: ") + rootItem.garminWorkoutPromptDate : "") +
-                         qsTr("\n\nDo you want to start it now?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: { rootItem.garmin_start_downloaded_workout(); }
-        onNoClicked: { rootItem.garmin_dismiss_downloaded_workout_prompt(); }
-        visible: rootItem.garminWorkoutPromptRequested
-    }
-
-    MessageDialog {
-        text: qsTr("Garmin FTP Update")
-        informativeText: rootItem.garminFtpPromptMessage
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: { rootItem.garmin_accept_ftp_update(); }
-        onNoClicked: { rootItem.garmin_dismiss_ftp_update(); }
-        visible: rootItem.garminFtpPromptRequested
-    }
-
-    MessageDialog {
-        text: qsTr("Clipboard Workout")
-        informativeText: qsTr("Workout found in clipboard:\n%1\n\nDo you want to open the workout preview?").arg(rootItem.clipboardWorkoutPromptName)
+        text: "Clipboard Workout"
+        informativeText: "Workout found in clipboard:\n" + rootItem.clipboardWorkoutPromptName +
+                         "\n\nDo you want to open the workout preview?"
         buttons: (MessageDialog.Yes | MessageDialog.No)
         onYesClicked: {
             var workoutUrl = rootItem.clipboard_workout_url()
@@ -938,204 +269,20 @@ ApplicationWindow {
     }
 
     MessageDialog {
-        text: qsTr("Clipboard Workout")
-        informativeText: qsTr("The clipboard workout has ended.\n\nDo you want to delete the file?")
+        text: "Clipboard Workout"
+        informativeText: "The clipboard workout has ended.\n\nDo you want to delete the file?"
         buttons: (MessageDialog.Yes | MessageDialog.No)
         onYesClicked: rootItem.clipboard_delete_finished_workout()
         onNoClicked: rootItem.clipboard_keep_finished_workout()
         visible: rootItem.clipboardWorkoutDeletePromptRequested
     }
 
-    MessageDialog {
-        text: qsTr("Echelon Unlock")
-        informativeText: qsTr("The bike has been unlocked and cadence is flowing.\n\nDo you want to switch to the classic Bluetooth bridge for this session?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: { rootItem.echelon_switch_to_classic_bridge(); }
-        onNoClicked: { rootItem.echelon_dismiss_bridge_switch_prompt(); }
-        visible: rootItem.echelonBridgeSwitchPromptRequested
-    }
-
-    Popup {
-        id: echelonEnablePopup
-        parent: Overlay.overlay
-        modal: true
-        focus: true
-        closePolicy: Popup.NoAutoClose
-        width: Math.min(window.width - 40, 460)
-        height: Math.min(window.height - 60, 420)
-        x: Math.round((parent.width - width) / 2)
-        y: Math.round((parent.height - height) / 2)
-        visible: rootItem.echelonEnablePromptRequested
-
-        background: Rectangle {
-            radius: 8
-            color: Material.background
-            border.color: Material.accent
-            border.width: 1
-        }
-
-        Column {
-            anchors.fill: parent
-            anchors.margins: 16
-            spacing: 12
-
-            Label {
-                width: parent.width
-                text: qsTr("Echelon Locked Bike")
-                font.bold: true
-                font.pixelSize: 20
-                wrapMode: Text.WordWrap
-            }
-
-            ScrollView {
-                width: parent.width
-                height: parent.height - buttonsRow.height - 52
-                clip: true
-
-                TextArea {
-                    width: echelonEnablePopup.width - 56
-                    readOnly: true
-                    wrapMode: TextEdit.Wrap
-                    selectByMouse: true
-                    text:
-                        qsTr("Your bike is locked by Echelon, but QZ can unlock it.\n\n") +
-                        qsTr("Enable Virtual Echelon in the experimental settings and restart qz, then open the official Echelon app on a separate device and connect to the bike once.\n\n") +
-                        qsTr("After initialization, return to QZ and everything will work normally.\n\n") +
-                        qsTr("You have to repeat this for each session, would you like to enable the Virtual Echelon setting now for this?")
-                }
-            }
-
-            Row {
-                id: buttonsRow
-                width: parent.width
-                spacing: 12
-                layoutDirection: Qt.RightToLeft
-
-                Button {
-                    text: qsTr("Yes")
-                    onClicked: rootItem.echelon_enable_virtual_bridge()
-                }
-
-                Button {
-                    text: qsTr("No")
-                    onClicked: rootItem.echelon_dismiss_enable_prompt()
-                }
-            }
-        }
-    }
-
-    Popup {
-        id: androidNotificationPopup
-        parent: Overlay.overlay
-        modal: true
-        focus: true
-        closePolicy: Popup.NoAutoClose
-        width: Math.min(window.width - 40, 460)
-        height: Math.min(window.height - 60, 380)
-        x: Math.round((parent.width - width) / 2)
-        y: Math.round((parent.height - height) / 2)
-        visible: rootItem.androidNotificationPromptRequested
-
-        background: Rectangle {
-            radius: 8
-            color: Material.background
-            border.color: Material.accent
-            border.width: 1
-        }
-
-        Column {
-            anchors.fill: parent
-            anchors.margins: 16
-            spacing: 12
-
-            Label {
-                width: parent.width
-                text: qsTr("Connection lost in the background")
-                font.bold: true
-                font.pixelSize: 20
-                wrapMode: Text.WordWrap
-            }
-
-            ScrollView {
-                width: parent.width
-                height: parent.height - androidNotificationButtons.height - 52
-                clip: true
-
-                TextArea {
-                    width: androidNotificationPopup.width - 56
-                    readOnly: true
-                    wrapMode: TextEdit.Wrap
-                    text:
-                        qsTr("Android cut QZ's network while it was in the background, so the app connected to QZ over Wi-Fi (Zwift, for example) lost it.\n\n") +
-                        qsTr("The Android notification keeps QZ running in the background. Enable it now? The workout keeps going, no restart needed.")
-                }
-            }
-
-            // Flow, not Row: three buttons don't fit one row on a phone once translated
-            Flow {
-                id: androidNotificationButtons
-                width: parent.width
-                spacing: 12
-                layoutDirection: Qt.RightToLeft
-
-                Button {
-                    text: qsTr("Enable")
-                    onClicked: rootItem.android_notification_prompt_enable()
-                }
-
-                Button {
-                    text: qsTr("Not now")
-                    onClicked: rootItem.android_notification_prompt_dismiss(false)
-                }
-
-                Button {
-                    text: qsTr("Don't ask again")
-                    onClicked: rootItem.android_notification_prompt_dismiss(true)
-                }
-            }
-        }
-    }
-
-    MessageDialog {
-        id: stravaLogoutConfirm
-        text: qsTr("Strava")
-        informativeText: qsTr("You are already connected to Strava. Do you want to log out?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: { rootItem.strava_logout(); }
-        onNoClicked: this.visible = false
-        visible: false
-    }
-
-    MessageDialog {
-        id: pelotonLogoutConfirm
-        text: qsTr("Peloton")
-        informativeText: qsTr("You are already connected to Peloton. Do you want to log out?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: { rootItem.peloton_logout(); }
-        onNoClicked: this.visible = false
-        visible: false
-    }
-
-    MessageDialog {
-        id: intervalsICULogoutConfirm
-        text: qsTr("Intervals.icu")
-        informativeText: qsTr("You are already connected to Intervals.icu. Do you want to log out?")
-        buttons: (MessageDialog.Yes | MessageDialog.No)
-        onYesClicked: { rootItem.intervalsicu_logout(); }
-        onNoClicked: this.visible = false
-        visible: false
-    }
-
     header: ToolBar {
         contentHeight: toolButton.implicitHeight
-        Material.primary: settings.theme_status_bar_background_color
+        Material.primary: "#800080"
         id: headerToolbar
-        // Opacity, not visible: some pages set headerToolbar.visible themselves
-        opacity: window.rootReady ? 1 : 0
-        property bool settingsPageActive: stackView.currentItem && typeof stackView.currentItem.showSettingsSearch === "function"
+        property bool settingsPageActive: stackView.currentItem && stackView.currentItem.objectName === "settingsPage"
         topPadding: getTopPadding()
-        // Clear of the side system bar and the cutout held sideways, as the page stack: with
-        // button navigation the bar on the right covered the rightmost button
         leftPadding: getLeftPadding()
         rightPadding: getRightPadding()
 
@@ -1146,9 +293,13 @@ ApplicationWindow {
             font.pixelSize: Qt.application.font.pixelSize * 1.6
             onClicked: {
                 if (stackView.depth > 1) {
-                    // Back to the settings search results after one of them was opened, as the
-                    // back key does; the other pages keep their own back buttons
-                    navigateBack(!!(stackView.currentItem && stackView.currentItem.searchReturn))
+                    if(window.settings_restart_to_apply === true) {
+                        window.settings_restart_to_apply = false;
+                        popupRestartApp.visible = true;
+                    }
+
+                    stackView.pop()
+                    rootItem.sortTiles()
                 } else {
                     drawer.open()
                 }
@@ -1187,7 +338,7 @@ ApplicationWindow {
                  anchors.horizontalCenter: parent.horizontalCenter
              Label {
                  anchors.horizontalCenter: parent.horizontalCenter
-                 text: rootItem.autoResistance ? qsTr("Auto Resistance enabled") : qsTr("Auto Resistance disabled")
+                 text: "Automatic incline " + (rootItem.autoResistance ? "enabled" : "disabled")
                 }
              }
         }
@@ -1197,113 +348,6 @@ ApplicationWindow {
             interval: 2000; running: false; repeat: false
             onTriggered: popupAutoResistance.close();
         }
-
-        Popup {
-            id: popuplockTiles
-             parent: Overlay.overlay
-
-             x: Math.round((parent.width - width) / 2)
-             y: Math.round((parent.height - height) / 2)
-             width: 380
-             height: 60
-             modal: true
-             focus: true
-             palette.text: "white"
-             closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-             enter: Transition
-             {
-                 NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-             }
-             exit: Transition
-             {
-                 NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-             }
-             Column {
-                 anchors.horizontalCenter: parent.horizontalCenter
-             Label {
-                 anchors.horizontalCenter: parent.horizontalCenter
-                 text: window.lockTiles ? qsTr("You can move the tiles!") : qsTr("The tiles are locked now")
-                }
-             }
-        }
-
-        Timer {
-            id: popuplockTilesAutoClose
-            interval: 2000; running: false; repeat: false
-            onTriggered: popuplockTiles.close();
-        }
-
-        ToolButton {
-            id: toolButtonLoadSettings
-            icon.source: "icons/icons/tray-arrow-up.png"
-            onClicked: {
-                stackView.push("SettingsList.qml")
-                stackView.currentItem.loadSettings.connect(loadSettings)
-                stackView.currentItem.loadSettings.connect(function(url) {
-                    stackView.pop();
-                    if (stackView.depth > 1) {
-                        stackView.pop()
-                    }
-                    popupLoadSettings.open();
-                 });
-                drawer.close()
-            }
-            anchors.right: toolButtonSaveSettings.left
-            visible: false
-        }
-
-        ToolButton {
-            id: toolButtonSettingsSearch
-            Accessible.name: qsTr("Search settings")
-            // A drawn magnifier instead of the emoji: the emoji is blank on devices without a
-            // glyph for it. Painted once, again only when the colour changes
-            Canvas {
-                id: settingsSearchIcon
-                property color color: toolButtonSettingsSearch.Material.foreground
-                anchors.centerIn: parent
-                // Drawn at the pixel density of the screen and scaled down, so it stays sharp
-                width: 24 * Screen.devicePixelRatio
-                height: 24 * Screen.devicePixelRatio
-                scale: 1 / Screen.devicePixelRatio
-                onColorChanged: requestPaint()
-                onPaint: {
-                    var ctx = getContext("2d")
-                    ctx.reset()
-                    // Material Symbols "search", viewBox 0 -960 960 960
-                    ctx.scale(width / 960, height / 960)
-                    ctx.translate(0, 960)
-                    ctx.path = "M380-320q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"
-                    ctx.fillStyle = color
-                    ctx.fill()
-                }
-            }
-            onClicked: {
-                if (headerToolbar.settingsPageActive)
-                    stackView.currentItem.showSettingsSearch()
-            }
-            anchors.right: toolButtonLoadSettings.left
-            visible: headerToolbar.settingsPageActive
-            ToolTip.visible: hovered
-            ToolTip.text: qsTr("Search settings")
-        }
-
-        ToolButton {
-            id: toolButtonSaveSettings
-            icon.source: "icons/icons/tray-arrow-down.png"
-            onClicked: {
-                saveSettings("settings");
-                popupSaveFile.open()
-            }
-            anchors.right: toolButtonAutoResistance.left/*toolClassifica.left*/
-            visible: false
-        }
-
-        /*ToolButton {
-            id: toolClassifica
-            icon.source: "icons/icons/chart.png"
-            onClicked: {  if(settings.classifica_enable) stackView.push("Classifica.qml"); else popupClassificaHelper.open(); }
-            anchors.right: toolButtonAutoResistance.left
-        }*/
 
         ToolButton {
             function loadMaps() {
@@ -1323,7 +367,7 @@ ApplicationWindow {
             onClicked: { loadMaps(); }
             anchors.right: toolButtonChart.left
             visible: rootItem.mapsVisible
-        }      
+        }
 
         ToolButton {
             function loadVideo() {
@@ -1346,16 +390,8 @@ ApplicationWindow {
             id: toolButtonChart
             icon.source: ( "icons/icons/chart.png" )
             onClicked: { rootItem.chartFooterVisible = !rootItem.chartFooterVisible }
-            anchors.right: toolButtonLockTiles.left
-            visible: rootItem.chartIconVisible
-        }
-
-        ToolButton {
-            id: toolButtonLockTiles
-            icon.source: ( window.lockTiles ? "icons/icons/unlock.png" : "icons/icons/lock.png")
-            onClicked: { window.lockTiles = !window.lockTiles; console.log("lock tiles toggled " + window.lockTiles); popuplockTiles.open(); popuplockTilesAutoClose.running = true; }
             anchors.right: toolButtonAutoResistance.left
-            visible: !toolButtonSaveSettings.visible
+            visible: rootItem.chartIconVisible
         }
 
         ToolButton {
@@ -1394,43 +430,12 @@ ApplicationWindow {
                 spacing: 3
 
                 ItemDelegate {
-                    text: qsTr("Profile: ") + settings.profile_name
-                    width: parent.width
-                    onClicked: {
-                        toolButtonLoadSettings.visible = true;
-                        toolButtonSaveSettings.visible = true;
-                        stackView.push("profiles.qml")
-                        stackView.currentItem.profile_open_clicked.connect(profile_open_clicked)
-                        drawer.close()
-                    }
-                }
-
-                ItemDelegate {
                     text: qsTr("Settings")
                     width: parent.width
                     onClicked: {
-                        toolButtonLoadSettings.visible = true;
-                        toolButtonSaveSettings.visible = true;                        
                         stackView.push("settings.qml")
-                         drawer.close()
-                    }
-                }
 
-            ItemDelegate {
-                text: qsTr("Workouts History")
-                width: parent.width
-                onClicked: {
-                    stackView.push("WorkoutsHistory.qml")
-                    stackView.currentItem.fitfile_preview_clicked.connect(fitfile_preview_clicked)
-                    drawer.close()
-                }
-            }
-                ItemDelegate {
-                    text: qsTr("Swag Bag")
-                    width: parent.width
-                    onClicked: {
-                        stackView.push("SwagBagView.qml")
-                        drawer.close()
+                         drawer.close()
                     }
                 }
 
@@ -1499,59 +504,14 @@ ApplicationWindow {
                         drawer.close()
                     }
                 }
-                /*
-                ItemDelegate {
-                    text: qsTr("What's On Zwift™")
-                    width: parent.width
-                    onClicked: {
-                        popupWhatsOnZwiftHelper.open()
-                    }
-                }*/
 
                 ItemDelegate {
-                    id: gpx_save
-                    text: qsTr("Save GPX")
+                    id: launch_ifit
+                    text: qsTr("Launch iFit App")
                     width: parent.width
+                    visible: OS_VERSION === "Android" ? true : false
                     onClicked: {
-                        gpx_save_clicked()
-                        drawer.close()
-                        popupSaveFile.open()
-                    }
-                }
-                ItemDelegate {
-                    id: fit_save
-                    text: qsTr("Save FIT")
-                    width: parent.width
-                    onClicked: {
-                        fit_save_clicked()
-                        drawer.close()
-                        popupSaveFile.open()
-                    }
-                }
-                ItemDelegate {
-                    id: wizardItem
-                    text: qsTr("Wizard")
-                    width: parent.width
-                    onClicked: {
-                        stackView.push("Wizard.qml")
-                        drawer.close()
-                    }
-                }
-                ItemDelegate {
-                    id: help
-                    text: qsTr("Help")
-                    width: parent.width
-                    onClicked: {
-                        Qt.openUrlExternally("https://robertoviola.cloud/qdomyos-zwift-guide/");
-                        drawer.close()
-                    }
-                }
-                ItemDelegate {
-                    id: community
-                    text: qsTr("Community")
-                    width: parent.width
-                    onClicked: {
-                        Qt.openUrlExternally("https://www.facebook.com/groups/149984563348738");
+                        rootItem.launchIFitApp();
                         drawer.close()
                     }
                 }
@@ -1574,107 +534,13 @@ ApplicationWindow {
                 }
 
                 ItemDelegate {
-                    text: "version 2.22.0"
+                    text: "version 2.21.5"
                     width: parent.width
-                }
-
-                ItemDelegate {
-                    id: strava_connect
-                    Image {
-                        anchors.left: parent.left;
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: "icons/icons/btn_strava_connectwith_orange.png"
-                        fillMode: Image.PreserveAspectFit
-                        visible: true
-                        width: parent.width
-                    }
-                    width: parent.width
-                    onClicked: {
-                        if (rootItem.isStravaLoggedIn()) {
-                            stravaLogoutConfirm.visible = true
-                            drawer.close()
-                        } else {
-                            stackView.push("WebStravaAuth.qml")
-                            strava_connect_clicked()
-                            drawer.close()
-                        }
-                    }
-                }
-
-                ItemDelegate {
-                    Image {
-                        anchors.left: parent.left;
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: "icons/icons/Button_Connect_Rect_DarkMode.png"
-                        fillMode: Image.PreserveAspectFit
-                        visible: true
-                        width: parent.width
-                    }
-                    width: parent.width
-                    onClicked: {
-                        if (rootItem.isPelotonLoggedIn()) {
-                            pelotonLogoutConfirm.visible = true
-                            drawer.close()
-                        } else {
-                            stackView.push("WebPelotonAuth.qml")
-                            stackView.currentItem.goBack.connect(function() {
-                                stackView.pop();
-                            })
-                            peloton_connect_clicked()
-                            drawer.close()
-                        }
-                    }
-                }
-
-                ItemDelegate {
-                    Image {
-                        anchors.left: parent.left;
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: "icons/icons/garmin-connect-badge.png"
-                        fillMode: Image.PreserveAspectFit
-                        visible: true
-                        width: parent.width
-                        height: 48
-                    }
-                    width: parent.width
-                    onClicked: {
-                        toolButtonLoadSettings.visible = true;
-                        toolButtonSaveSettings.visible = true;
-                        stackView.push("settings.qml")
-                        if (stackView.currentItem) {
-                            if (stackView.currentItem.openGarminSection) {
-                                stackView.currentItem.openGarminSection()
-                            }
-                        }
-                        drawer.close()
-                    }
-                }
-
-				ItemDelegate {
-                    Image {
-                        anchors.left: parent.left;
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: "icons/icons/intervals-logo-with-name.png"
-                        fillMode: Image.PreserveAspectFit
-                        visible: true
-                        width: parent.width
-                    }
-                    width: parent.width
-                    onClicked: {
-                        if (rootItem.isIntervalsICULoggedIn()) {
-                            intervalsICULogoutConfirm.visible = true
-                            drawer.close()
-                        } else {
-                            stackView.push("WebIntervalsICUAuth.qml")
-                            intervalsicu_connect_clicked()
-                            drawer.close()
-                        }
-                    }
                 }
 
                     FileDialog {
                         id: fileDialogGPX
-                         title: qsTr("Please choose a file")
+                         title: "Please choose a file"
                          folder: "file://" + rootItem.getWritableAppDir() + 'gpx'
                          onAccepted: {
                              console.log("You chose: " + fileDialogGPX.fileUrl)
@@ -1695,113 +561,16 @@ ApplicationWindow {
     Item {
         anchors.fill: parent
         Accessible.ignored: true
-        opacity: window.rootReady ? 1 : 0
 
         StackView {
             id: stackView
             initialItem: "Home.qml"
             anchors.fill: parent
-            // Clear of the bottom system bar in any orientation: held sideways with gesture
-            // navigation the bar stays at the bottom (with buttons it moves to the side, and the
-            // bottom inset is 0 then)
-            anchors.bottomMargin: getBottomPadding()
+            anchors.bottomMargin: (Screen.orientation === Qt.PortraitOrientation || Screen.orientation === Qt.InvertedPortraitOrientation) ? getBottomPadding() : 0
             anchors.rightMargin: getRightPadding()
             anchors.leftMargin: getLeftPadding()
             focus: true
-            Connections {
-                target: stackView.currentItem
-                ignoreUnknownSignals: true
-                function onPeloton_connect_clicked() {
-                    if (rootItem.isPelotonLoggedIn()) {
-                        pelotonLogoutConfirm.visible = true
-                    } else {
-                        stackView.push("WebPelotonAuth.qml")
-                        stackView.currentItem.goBack.connect(function() {
-                            stackView.pop();
-                        })
-                        peloton_connect_clicked()
-                    }
-                }
-            }
-            Keys.onVolumeUpPressed: (event)=> { console.log("onVolumeUpPressed"); volumeUp(); event.accepted = settings.volume_change_gears; }
-            Keys.onVolumeDownPressed: (event)=> { console.log("onVolumeDownPressed"); volumeDown(); event.accepted = settings.volume_change_gears; }
-            Keys.onPressed: (event)=> {
-                if (event.key === Qt.Key_MediaPrevious) {
-                    keyMediaPrevious();
-                    event.accepted = true;
-                } else if (event.key === Qt.Key_MediaNext) {
-                    keyMediaNext();
-                    event.accepted = true;
-                } else {
-                    event.accepted = false;
-                }
-            }
 
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_speed_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("speed") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_speed_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("speed") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_inclination_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("inclination") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_inclination_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("inclination") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_resistance_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("resistance") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_resistance_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("resistance") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_resistance_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("peloton_resistance") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_resistance_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("peloton_resistance") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_resistance_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("target_resistance") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_resistance_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("target_resistance") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_power_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("target_power") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_power_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("target_power") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_zone_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("target_zone") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_zone_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("target_zone") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_speed_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("target_speed") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_speed_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("target_speed") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_incline_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("target_inclination") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_target_incline_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("target_inclination") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_fan_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("fan") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_fan_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("fan") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_offset_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("peloton_offset") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_offset_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("peloton_offset") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_remaining_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("peloton_remaining") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_peloton_remaining_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("peloton_remaining") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_remaining_time_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("remainingtimetrainprogramrow") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_remaining_time_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("remainingtimetrainprogramrow") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_gears_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("gears") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_gears_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("gears") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_pid_hr_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("pid_hr") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_pid_hr_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("pid_hr") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_ext_incline_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardPlus("external_inclination") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_ext_incline_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardMinus("external_inclination") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_biggears_plus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("biggearsplus") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_biggears_minus; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("biggearsminus") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_avs_cruise; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("autoVirtualShiftingCruise") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_avs_climb; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("autoVirtualShiftingClimb") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_avs_sprint; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("autoVirtualShiftingSprint") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_power_avg; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("powerAvg") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_erg_mode; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("erg_mode") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_resistance_1; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_resistance_1") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_resistance_2; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_resistance_2") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_resistance_3; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_resistance_3") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_resistance_4; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_resistance_4") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_resistance_5; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_resistance_5") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_speed_1; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_speed_1") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_speed_2; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_speed_2") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_speed_3; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_speed_3") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_speed_4; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_speed_4") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_speed_5; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_speed_5") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_inclination_1; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_inclination_1") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_inclination_2; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_inclination_2") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_inclination_3; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_inclination_3") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_inclination_4; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_inclination_4") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_inclination_5; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_inclination_5") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_powerzone_1; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_powerzone_1") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_powerzone_2; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_powerzone_2") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_powerzone_3; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_powerzone_3") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_powerzone_4; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_powerzone_4") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_powerzone_5; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_powerzone_5") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_powerzone_6; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_powerzone_6") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_preset_powerzone_7; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLargeButton("preset_powerzone_7") }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_auto_resistance; enabled: shortcutReady(sequence); onActivated: rootItem.setAutoResistance(!rootItem.autoResistance) }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_lap; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardLap() }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_start_stop; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardStartStop() }
-            Shortcut { context: Qt.WindowShortcut; sequence: settings.shortcut_stop; enabled: shortcutReady(sequence); onActivated: rootItem.keyboardStop() }
         }
     }
 }

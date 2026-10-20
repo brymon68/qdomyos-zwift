@@ -43,8 +43,6 @@ function connect() {
             if (!msg.content.deviceId) {
                 $("#spntimev").attr('class', 'err').text('--:--:--');
                 $("#spndistancev").attr('class', 'err').text('---');
-                $("#spnwattv").attr('class', 'err').text('---');
-                $("#spnwattavgv").attr('class', 'err').text('---');
                 $("#spncaloriev").attr('class', 'err').text('---');
                 $("#spnrpmv").attr('class', 'err').text('---');
                 $("#spnrpmavgv").attr('class', 'err').text('---');
@@ -57,8 +55,6 @@ function connect() {
             else {
                 $("#spntimev").attr('class', 'normal').text(workout.elapsed_h + ':' + pad(workout.elapsed_m, 2) + ':'  + pad(workout.elapsed_s, 2));
                 $("#spndistancev").attr('class', 'normal').text(workout.distance.toFixed(2));
-                $("#spnwattv").attr('class', getClass(workout, 'watts')).text(workout.watts.toFixed(0));
-                $("#spnwattavgv").attr('class', 'normalavg').text(workout.watts_avg.toFixed(0));
                 $("#spncaloriev").attr('class', 'normal').text(workout.calories.toFixed(0));
                 $("#spninclinev").attr('class', 'normal').text(workout.resistance.toFixed(0));
                 if (workout.cadence) {
